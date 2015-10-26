@@ -30,11 +30,8 @@ class SobjectEditLauncherWdg(BaseTableElementWdg):
         'sobject_code': {
             'description': "The sobject's code.",
         },
-        # I hoped the expression could be something like {@GET(twog/client.code)}
-        # but I don't think an expression arg type actually exists.
-        # This works by inserting the sobject_code_expression into an expression like
-        # "@GET(twog/title['code','TITLE1337']{sobject_code_expression})"
-        # where it would be something like '.twog/client.code'
+        # I finally figured out how to do an expression like @GET(twog/client.code)
+        # This evaluates the expression and passes the current sobject from the table.
         'sobject_code_expression': {
             'description': "An expression to get the sobject code.",
             'type': 'expression',
@@ -71,9 +68,7 @@ class SobjectEditLauncherWdg(BaseTableElementWdg):
         if not sobject_code:
             code_expression = self.kwargs.get('sobject_code_expression')
             this_sobject = self.get_current_sobject()
-            search_type = this_sobject.get_search_type()
-            expression = "@GET({0}['code','{1}']{2})"
-            sobject_code = self.server.eval(expression.format(search_type, this_sobject.get('code'), code_expression))
+            sobject_code = self.server.eval(code_expression, search_keys=[this_sobject.get_search_key()])
             if sobject_code:
                 sobject_code = sobject_code[0]
             else:
