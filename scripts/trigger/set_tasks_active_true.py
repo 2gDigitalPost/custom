@@ -230,41 +230,28 @@ def main(server=None, input=None):
                                 for proj in projs:
                                     if proj.get('code') == ptask.get('lookup_code'):
                                         do_wo_loop(proj, bool)
-                             
-                    
-        
+
         if errors_bool:
             raise TacticException('You still have %s critical errors with your order. You may put this into production once you fix the errors.' % error_count['Critical'])
         else:
             # now make sure that all tasks under this order are set to active or off active
-            for tcode in title_codes:
-                projs = server.eval("@SOBJECT(twog/proj['title_code','%s'])" % tcode)
-                for proj in projs:
-                    ptask = server.eval("@SOBJECT(sthpw/task['code','%s'])" % proj.get('task_code'))
-                    if ptask:
-                        ptask = ptask[0]
-                        server.update(ptask.get('__search_key__'), {'active': bool}, triggers=False)
-                    wos = server.eval("@SOBJECT(twog/work_order['proj_code','%s'])" % proj.get('code'))
-                    for wo in wos:
-                        wtask = server.eval("@SOBJECT(sthpw/task['code','%s'])" % wo.get('task_code'))
-                        if wtask:
-                            wtask = wtask[0]
-                            server.update(wtask.get('__search_key__'), {'active': bool}, triggers=False)
-            if classification in ['in_production','In Production']:
+            task_search_keys = server.eval("@GET(sthpw/task['order_code','{0}'].__search_key__)".format(sob_code))
+            task_update_data = dict.fromkeys(task_search_keys, {'active': bool})
+            server.update_multiple(task_update_data, triggers=False)
+            if classification in ['in_production', 'In Production']:
                 from pyasm.common import Environment
                 from cost_builder.cost_calculator import CostCalculator
                 login = Environment.get_login()
                 user = login.get_login()
-                ccw = CostCalculator(order_code=sob_code,user=user) 
+                ccw = CostCalculator(order_code=sob_code, user=user)
                 cost_arr = ccw.update_costs()
                 # Update actual start dates for the order and titles
-                server.update(order_sk, {'actual_start_date': SPTDate.convert_to_local(make_timestamp())})
-                for title in titles:
-                    server.update(title.get('__search_key__'), {'actual_start_date': SPTDate.convert_to_local(make_timestamp())})
-            
-                                         
-                
-        #print "LEAVING SET TASKS ACTIVE TRUE"
+                datetime_now = SPTDate.convert_to_local(make_timestamp())
+                update_start_date_keys = [title.get('__search_key__') for title in titles]
+                update_start_date_keys.insert(0, order_sk)
+                update_start_date_data = dict.fromkeys(update_start_date_keys, {'actual_start_date': datetime_now})
+                server.update_multiple(update_start_date_data)
+
     except AttributeError as e:
         traceback.print_exc()
         print str(e) + '\nMost likely the server object does not exist.'
