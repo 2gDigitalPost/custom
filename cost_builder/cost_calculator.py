@@ -127,6 +127,9 @@ class CostCalculator(BaseRefreshWdg):
                     order_dict['actual_cost'] = float(order_dict['actual_cost']) + cost_to_add
                     wheq = my.server.eval("@SOBJECT(twog/equipment_used['work_order_code','%s'])" % twh.get('code'))
                     for equip in wheq:
+                        # I'm almost certain this entire code block has never worked
+                        # because the idiot that wrote it never actually tested the code
+                        my.server.log('info', 'An unknown miracle has occurred. [{0}]'.format(equip.get('code')))
                         #print "WHEQUIP = %s" % equip
                         eq_u_code = equip.get('code')
                         #######
