@@ -4217,39 +4217,41 @@ class MetaDataReportWdg(BaseTableElementWdg):
         return select
 
     def make_audio_tbl(my, wholedict, top_title, pairs, meta_code):
-        type_pull = ['(5.1) L','(5.1) R','(5.1) C','(5.1) Lfe','(5.1) Ls','(5.1) Rs','(Stereo) Lt','(Stereo) Rt','(Stereo) Lt, Rt','(Stereo) L','(Stereo) R','(Stereo) L, R','Mono', '-']
+        type_pull = ['(5.1) L', '(5.1) R', '(5.1) C', '(5.1) Lfe', '(5.1) Ls', '(5.1) Rs',
+                     '(7.1) L', '(7.1) R', '(7.1) C', '(7.1) Lfe', '(7.1) Ls', '(7.1) Rs', '(7.1) SBL', '(7.1) SBR',
+                     '(Stereo) Lt', '(Stereo) Rt', '(Stereo) Lt, Rt', '(Stereo) L', '(Stereo) R', '(Stereo) L, R',
+                     'Mono', '-']
         tbl = Table()
         tbl.add_row()
         tbl.add_cell('&nbsp;')
 
         ttl = Table()
-        ttl.add_attr('border','1')
-        ttl.add_attr('width','100%s' % '%')
+        ttl.add_attr('border', '1')
+        ttl.add_attr('width', '100%s' % '%')
         ttl.add_style('border-width: 3px;')
         ttl.add_row()
         tcr = ttl.add_cell('<b>%s</b>' % top_title)
-        tcr.add_attr('align','center')
-        tcr.add_attr('width','100%s' % '%')
+        tcr.add_attr('align', 'center')
+        tcr.add_attr('width', '100%s' % '%')
  
         tbl.add_cell(ttl)
         ctr = 1
         for pair in pairs:
             tbl.add_row()
             trk = tbl.add_cell('TRK. %s' % ctr)
-            trk.add_attr('nowrap','nowrap')
+            trk.add_attr('nowrap', 'nowrap')
             spl = pair.split('|')
             t2 = Table() 
-            t2.add_attr('border','1')
+            t2.add_attr('border', '1')
             t2.add_row()
-            lang_sel = my.make_a_sel(wholedict, spl[0], my.languages, 100, True, False, '--,--Add New...')
-            lang_sel.add_behavior(my.lang_change(wholedict.get('work_order_code'),meta_code))
+            lang_sel = my.make_a_sel(wholedict, spl[0], my.languages, 100, True, False, '--')
             mm1 = t2.add_cell(lang_sel)
-            mm1.add_attr('class','select_cell')
+            mm1.add_attr('class', 'select_cell')
 
             mm2 = t2.add_cell(my.make_a_sel(wholedict, spl[1], type_pull, 100))
-            mm2.add_attr('class','select_cell')
+            mm2.add_attr('class', 'select_cell')
             tbl.add_cell(t2)
-            ctr = ctr + 1
+            ctr += 1
         return tbl
 
     def fix_date(my, date):
