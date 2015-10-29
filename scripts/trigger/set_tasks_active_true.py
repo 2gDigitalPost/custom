@@ -162,32 +162,34 @@ def main(server=None, input=None):
         elif classification in ['completed','Completed'] and old_classification in ['in_production','In Production']:
             server.update(input.get('search_key'), {'completion_date': SPTDate.convert_to_local(make_timestamp()), 'needs_completion_review': False})
         # Need to force the order checker to check if going into in_production from anything other than 'completed'  
-        if classification in ['in_production','In Production']:
-            bool = True 
+        if classification in ['in_production', 'In Production']:
+            bool = True
             wo_under = server.eval("@GET(twog/title['order_code','%s'].twog/proj.twog/work_order.code)" % sob_code)
             if len(wo_under) < 1:
-                raise TacticException("You have to build your order before you can put it into production.") 
-            #elif sob.get('imdb_url') in [None,'']:
-            #    raise TacticException("You have to associate the Order with an IMDb entry before you can put it into production.") 
+                raise TacticException("You have to build your order before you can put it into production.")
             else:
                 order_sk = server.build_search_key('twog/order', sob_code)
                 titles = server.eval("@SOBJECT(twog/title['order_code','%s'])" % sob_code)
+                work_order_count_update = {}
                 total_order_wos = 0
                 total_order_completed = 0
                 for title in titles:
                     title_code = title.get('code')
                     tasks_total = server.eval("@COUNT(sthpw/task['title_code','%s']['lookup_code','~','WORK_ORDER'])" % title_code) 
                     tasks_completed = server.eval("@COUNT(sthpw/task['title_code','%s']['lookup_code','~','WORK_ORDER']['status','Completed'])" % title_code) 
-                    if tasks_total in ['',None]:
+                    if tasks_total in ['', None]:
                         tasks_total = 0
-                    if tasks_completed in ['',None]:
+                    if tasks_completed in ['', None]:
                         tasks_completed = 0
-                    server.update(title.get('__search_key__'), {'wo_count': tasks_total, 'wo_completed': tasks_completed})
+                    work_order_data = {'wo_count': tasks_total, 'wo_completed': tasks_completed}
+                    work_order_count_update[title.get('__search_key__')] = work_order_data
                     total_order_wos = total_order_wos + tasks_total
                     total_order_completed = total_order_completed + tasks_completed
-                server.update(order_sk, {'wo_count': total_order_wos, 'wo_completed': total_order_completed})
-         
-            if old_classification not in ['completed','Completed']:
+                work_order_count_update[order_sk] = {'wo_count': total_order_wos, 'wo_completed': total_order_completed}
+                # I have no idea if triggers should be ignored on this update_multiple
+                server.update_multiple(work_order_count_update)
+
+            if old_classification not in ['completed', 'Completed']:
                 from order_builder import OrderCheckerWdg
                 ocw = OrderCheckerWdg(sk=input.get('search_key'))
                 error_count = ocw.return_error_count_dict()
@@ -250,6 +252,7 @@ def main(server=None, input=None):
                 update_start_date_keys = [title.get('__search_key__') for title in titles]
                 update_start_date_keys.insert(0, order_sk)
                 update_start_date_data = dict.fromkeys(update_start_date_keys, {'actual_start_date': datetime_now})
+                # I have no idea if triggers should be ignored on this update_multiple
                 server.update_multiple(update_start_date_data)
 
     except AttributeError as e:
