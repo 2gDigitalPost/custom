@@ -46,6 +46,18 @@ def replace_multiple(string, rep_dict):
     return pattern.sub(lambda x: rep_dict[x.group(0)], string)
 
 
+def replace_non_ascii_characters(string):
+    """Replace the illegal characters with their ascii equivalent.
+
+    :param string: the input string to replace
+    :return: the new string with fixed ascii characters
+    """
+    replace_dict = {u'\u2018': "'", u'\u2019': "'", u'\u201c': '"', u'\u201d': '"',
+                    u'\xa0': u' ', u'\u2013': '-', u'\u2014': '-'}
+    fixed_string = replace_multiple(string, replace_dict)
+    return fixed_string
+
+
 def fix_date(date):
     # This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
     from pyasm.common import SPTDate
