@@ -22,15 +22,60 @@ def get_server():
     return server
 
 
-def get_project_setting(key, search_type=None, server=None):
-    """
+def get_project_setting(key, search_type=None, server=None, return_raw=False, additional_filters=None):
+    """Get a setting from the config/prod_setting table. The type of the return value
+    depends on the type of the project setting: string -> str, sequence -> list, map -> dict
+    In the future I would like to implement int, float, and bool values as well.
 
-    :param key:
-    :param search_type:
-    :return:
+    Note: there is also the ProdSetting in pyasm.prod.biz,
+    but it doesn't work on client machines.
+    color_dict = ProdSetting.get_dict_by_key('status_color_map')
+
+    :param key: the key for the setting you want to get
+    :param search_type: an optional search type filter
+    :param server: a TacticServerStub object
+    :param return_raw: bool to return the string instead of list, dict, etc.
+    :param additional_filters: a list of additional filters to apply
+    :return: the project setting for the specified key
     """
     if not server:
         server = get_server()
+
+    filters = [('key', key)]
+    if search_type:
+        filters.append(('search_type', search_type))
+    if additional_filters:
+        filters.extend(additional_filters)
+
+    setting = server.query('config/prod_setting', filters=filters)
+    if not setting:
+        return None
+    elif len(setting) > 1:
+        # You can't have multiple settings with the same key
+        raise Exception("Multiple settings found with key [{0}]. You may need to pass a search type.".format(key))
+    elif return_raw:
+        return setting[0].get('value')
+
+    value_string = setting[0].get('value')
+    value_type = setting[0].get('type')
+    if value_type == 'sequence':
+        return value_string.split('|')
+    elif value_type == 'map':
+        # I would like this to be an OrderedDict, but I can't figure out how to
+        # update to python 2.7, there's nothing in the docs or forums
+        pairs = value_string.split('|')
+        setting_dict = {}
+        for pair in pairs:
+            try:
+                k, v = pair.split(':')
+                setting_dict[k] = v
+            except Exception as e:
+                print "Cannot convert project setting [{0}] into a dictionary.".format(key)
+                raise e
+        return setting_dict
+    else:
+        # If the type is 'string' or anything else
+        return value_string
 
 
 def replace_multiple(string, rep_dict):
