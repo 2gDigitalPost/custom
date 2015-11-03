@@ -16,12 +16,13 @@ def get_notification_setting(login_group, server):
     Return True if the group should get the notification.
 
     :param login_group: the login group name as a string
+    :param server: a TacticServerStub object
     :return: boolean if group should get notification or not
     """
-    # TODO: use some kind of user/group setting
-    if login_group == 'localization':
-        return True
-    return False
+    notification_settings = ctu.get_project_setting('department_work_order_notification', server=server)
+    department_setting = notification_settings.get(login_group, 'False')
+
+    return department_setting == 'True'
 
 
 def get_update_message(prev_data, update_data):
@@ -133,6 +134,7 @@ def main(server=None, event_data=None):
             internal_data['due_date'] = ctu.fix_date(internal_data.get('due_date'))
 
             # TODO: generalize this and make it a prod setting
+            # I would rather do this in the email_sender, so I need to refactor it first
             if 'tactic03' in server.server_name or 'tactic04' in server.server_name:
                 internal_data['to_email'] = 'topher.hughes@2gdigital.com'
                 internal_data['ccs'] = ''
