@@ -113,19 +113,9 @@ def main(server=None, input=None):
                 #Make sure they have set the assigned person to the work order.
                 if sobj.get('assigned') in [None,'']:
                     raise TacticException('Before completing a work order, someone must be assigned to it.')
-                #Make sure they have added work hours. If not, error out.
-                whs_expr = "@SOBJECT(sthpw/work_hour['task_code','%s'])" % task_code
-                whs = server.eval(whs_expr)
-                sum = 0
-                for wh in whs:
-                    straight_time = wh.get('straight_time')
-                    if straight_time in [None,'']:
-                        straight_time = 0
-                    else:
-                        straight_time = float(straight_time)
-                    sum = float(sum) + straight_time
-                    sum = str(sum)
-                if sum in ['0','',0,0.0]:
+                # Make sure they have added work hours. If not, error out.
+                total_time = server.eval("@SUM(sthpw/work_hour['task_code','{0}'].straight_time)".format(task_code))
+                if total_time < 0.001:  # account for floating point inaccuracy
                     raise TacticException('You need to save the hours you worked on this before you can set the status to "Completed".')
                 #print "SUM = %s" % sum
             t_wo_completed = title.get('wo_completed') #This is for the completion ratio on title
@@ -308,11 +298,10 @@ def main(server=None, input=None):
                                         else:
                                             oip = int(oip)
                                         smallest_wo = (oip * 1000) + 10
-                                        nwt_expr = "@SOBJECT(twog/work_order['proj_code','%s']['order_in_pipe','<=','%s'].WT:sthpw/task['status','Pending']['@ORDER_BY','order_in_pipe desc'])" % (next_task.get('lookup_code'), smallest_wo)
-                                        next_wo_tasks = server.eval(nwt_expr)
-                                        for nwo in next_wo_tasks:
-                                            #print "MAKING %s READY" % nwo.get('__search_key__')
-                                            server.update(nwo.get('__search_key__'), {'status': READY}, triggers=False)
+                                        nwt_expr = "@GET(twog/work_order['proj_code','{0}']['order_in_pipe','<=','{1}'].WT:sthpw/task['status','Pending']['@ORDER_BY','order_in_pipe desc'].__search_key__)"
+                                        task_search_keys = server.eval(nwt_expr.format(next_task.get('lookup_code'), smallest_wo))
+                                        task_update_data = dict.fromkeys(task_search_keys, {'status': READY})
+                                        server.update_multiple(task_update_data, triggers=False)
                 
         # Now see if all wos under proj or all projs under title are completed. If so, make their parent's status completed
         all_wos_completed = False
