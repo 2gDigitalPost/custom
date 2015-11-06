@@ -7,6 +7,7 @@ __date__ = '10/09/2015'
 
 import os
 import string
+import common_tools.utils as ctu
 
 DEFAULT_TEMPLATE = r'/opt/spt/custom/formatted_emailer/fill_in_template.html'
 EMAIL_HTML_DIR = r'/var/www/html/formatted_emails/'
@@ -124,7 +125,8 @@ def write_email_file(email_html, email_file_name):
     file_name, extension = os.path.splitext(file_name)
     counter = 0
     while os.path.exists(email_path):
-        email_path = os.path.join(directory, file_name + str(counter) + extension)
+        incremented_file_name = '{0}_{1}{2}'.format(file_name, str(counter), extension)
+        email_path = os.path.join(directory, incremented_file_name)
         counter += 1
 
     with open(email_path, 'w') as f:
@@ -133,7 +135,7 @@ def write_email_file(email_html, email_file_name):
     return email_path
 
 
-def send_email(template=DEFAULT_TEMPLATE, email_data=None, email_file_name='temp_email.html'):
+def send_email(template=DEFAULT_TEMPLATE, email_data=None, email_file_name='temp_email.html', server=None):
     """Formats an email template, saves the file as html, and sends it.
     The data should contain: to_email, from_email, subject, and message
 
@@ -142,6 +144,7 @@ def send_email(template=DEFAULT_TEMPLATE, email_data=None, email_file_name='temp
     :param email_file_name: file name for temp html file
         Note: the file name may contain subdirectories,
         all email html files will be in /var/www/html/formatted_emails/
+    :param server: a TacticServerStub object used to get any misc data
     :return:
     """
     if not email_data:
@@ -158,6 +161,13 @@ def send_email(template=DEFAULT_TEMPLATE, email_data=None, email_file_name='temp
     email_data['from_name'] = email_data.get('from_name', default_name)
     email_data['subject'] = email_data.get('subject', '')
     email_data['message'] = fix_message_characters(email_data.get('message', ''))
+
+    if server:
+        # This will be None by default
+        override = ctu.get_project_setting('override_to_email', server=server)
+        if override == 'True':
+            email_data['to_email'] = 'TacticDebug@2gdigital.com'
+            email_data['ccs'] = ''
 
     with open(template, 'r') as f:
         email_html = f.read()

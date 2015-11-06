@@ -133,15 +133,10 @@ def main(server=None, event_data=None):
             internal_data['start_date'] = ctu.fix_date(internal_data.get('start_date'))
             internal_data['due_date'] = ctu.fix_date(internal_data.get('due_date'))
 
-            # TODO: generalize this and make it a prod setting
-            # I would rather do this in the email_sender, so I need to refactor it first
-            if 'tactic03' in server.server_name or 'tactic04' in server.server_name:
-                internal_data['to_email'] = 'topher.hughes@2gdigital.com'
-                internal_data['ccs'] = ''
-
             email_template = '/opt/spt/custom/formatted_emailer/work_order_email_template.html'
             email_file_name = 'work_order_inserted/work_order_{0}.html'.format(work_order.get('code'))
-            email_sender.send_email(template=email_template, email_data=internal_data, email_file_name=email_file_name)
+            email_sender.send_email(template=email_template, email_data=internal_data,
+                                    email_file_name=email_file_name, server=server)
 
     except AttributeError as e:
         traceback.print_exc()
