@@ -11,7 +11,7 @@ import common_tools.utils as ctu
 
 DEFAULT_TEMPLATE = r'/opt/spt/custom/formatted_emailer/fill_in_template.html'
 EMAIL_HTML_DIR = r'/var/www/html/formatted_emails/'
-SEND_EMAIL_COMMAND = r'/opt/spt/custom/formatted_emailer/inserted_order_email.php'
+SEND_EMAIL_COMMAND = r'/opt/spt/custom/formatted_emailer/default_emailer.php'
 TAB = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
 NEWLINE = '<br/>'
 
@@ -135,7 +135,8 @@ def write_email_file(email_html, email_file_name):
     return email_path
 
 
-def send_email(template=DEFAULT_TEMPLATE, email_data=None, email_file_name='temp_email.html', server=None):
+def send_email(template=DEFAULT_TEMPLATE, email_data=None, email_file_name='temp_email.html',
+               attachments=None, server=None):
     """Formats an email template, saves the file as html, and sends it.
     The data should contain: to_email, from_email, subject, and message
 
@@ -144,23 +145,25 @@ def send_email(template=DEFAULT_TEMPLATE, email_data=None, email_file_name='temp
     :param email_file_name: file name for temp html file
         Note: the file name may contain subdirectories,
         all email html files will be in /var/www/html/formatted_emails/
+    :param attachments: a list of file paths to attach to the email
     :param server: a TacticServerStub object used to get any misc data
     :return:
     """
     if not email_data:
         email_data = {}
+    if not attachments:
+        attachments = []
 
     if not os.path.exists(template):
         raise Exception('Email template not found: {0}'.format(template))
 
     # fill in default email data, fix message characters
-    # TODO: figure out what the default email address should be
-    email_data['to_email'] = email_data.get('to_email', 'tactic@2gdigital.com')
-    email_data['from_email'] = email_data.get('from_email', 'tactic@2gdigital.com')
+    email_data['to_email'] = email_data.get('to_email', 'TacticDebug@2gdigital.com')
+    email_data['from_email'] = email_data.get('from_email', 'TacticDebug@2gdigital.com')
     default_name = email_data['from_email'].split('@')[0].replace('.', ' ').title()
     email_data['from_name'] = email_data.get('from_name', default_name)
-    email_data['subject'] = email_data.get('subject', '')
-    email_data['message'] = fix_message_characters(email_data.get('message', ''))
+    email_data['subject'] = email_data.get('subject', 'No Subject')
+    email_data['message'] = fix_message_characters(email_data.get('message', 'No message'))
 
     if server:
         # This will be None by default
@@ -172,6 +175,9 @@ def send_email(template=DEFAULT_TEMPLATE, email_data=None, email_file_name='temp
     with open(template, 'r') as f:
         email_html = f.read()
     formatted_email = safe_format_string(email_html, email_data)
+    for attachment in attachments:
+        # This attachment keyword has to be something that won't likely be typed by a user
+        formatted_email += '\n@ACHM3NT:{0}'.format(attachment)
     email_file_path = write_email_file(formatted_email, email_file_name)
 
     args = [SEND_EMAIL_COMMAND, email_file_path, email_data['to_email'], email_data['from_email'],

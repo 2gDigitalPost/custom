@@ -72,6 +72,19 @@ def get_sobjects(server, event_data):
     return work_order, task
 
 
+def get_department_email(assigned_group, server):
+    """
+    Get the email address for the assigned department.
+
+    :param assigned_group: the assigned group as a string
+    :param server: a TacticServerStub object
+    :return: a formatted email address
+    """
+    # Eventually this should get the emails from tactic, but I'm hesitant to
+    # modify the login group object before I can thoroughly test it.
+    return '{0}@2gdigital.com'.format(assigned_group)
+
+
 def get_is_insert(update_data):
     """
     The 'insert' logic had to change because work orders are not ready when they are created.
@@ -110,8 +123,7 @@ def main(server=None, event_data=None):
             title = title[0] if title else {}
 
             # to_email should be the department distribution group
-            # TODO: get the actual department distribution email address
-            internal_data['to_email'] = '{0}@2gdigital.com'.format(assigned_group)
+            internal_data['to_email'] = get_department_email(assigned_group, server)
             if get_is_insert(event_data.get('update_data')):
                 subject = 'Work Order "{0}" assigned to "{1}"'.format(work_order.get('process'), assigned_group)
                 message = work_order.get('instructions')
