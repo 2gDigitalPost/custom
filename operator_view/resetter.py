@@ -1028,7 +1028,7 @@ class ForceResponseWdg(BaseRefreshWdg):
                                            sources_str = '';
                                            if(sources.length > 0){
                                                for(var q = 0; q < sources.length; q++){
-                                                   the_barcode = server.eval("@GET(twog/source['code','" + sources[r].source_code + "'].barcode)")[0];
+                                                   the_barcode = server.eval("@GET(twog/source['code','" + sources[q].source_code + "'].barcode)")[0];
                                                    if(sources_str == ''){
                                                        sources_str = the_barcode;
                                                    }else{
