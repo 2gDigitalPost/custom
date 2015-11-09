@@ -74,10 +74,11 @@ def main(server=None, input=None):
         
         import os, time, sys
         from pyasm.common import Environment
+        import common_tools.utils as ctu
         #print "IN NOTE INSERTED"
         allow_client_emails = True
         external_template_file = '/opt/spt/custom/formatted_emailer/external_email_template.html'
-        internal_template_file = '/opt/spt/custom/formatted_emailer/internal_email_template.html'
+        internal_template_file = '/opt/spt/custom/formatted_emailer/note_inserted_email_template.html'
         note_dict = input.get('sobject')
         search_type = note_dict.get('search_type').split('?')[0]
         search_id = note_dict.get('search_id')
@@ -115,7 +116,7 @@ def main(server=None, input=None):
             proj_row = ''
             is_external_rejection = False
             if parent_tall_str in ['ORDER','TITLE','PROJ','WORK_ORDER']: # and (('compression' not in groups and 'compression supervisor' not in groups) or override_compression):
-                from formatted_emailer import EmailDirections
+                from formatted_emailer import EmailDirections, email_sender
                 right_ending = make_right_code_ending(search_id)
                 parent_code = '%s%s' % (parent_tall_str, right_ending)
                 parent = server.eval("@SOBJECT(%s['code','%s'])" % (search_type, parent_code))
@@ -219,11 +220,11 @@ def main(server=None, input=None):
                     the_command = "php /opt/spt/custom/formatted_emailer/trusty_emailer.php '''%s''' '''%s''' '''%s''' '''%s''' '''%s''' '''%s'''" % (filled_in_email, ext_data['to_email'], ext_data['from_email'], ext_data['from_name'], subject, ext_data['ext_ccs'].replace(';','#Xs*'))
                     if ext_data['to_email'] not in [None,''] and ext_data['ext_ccs'] not in [None,'',';']:
                         os.system(the_command)
+
                 # Now do internal email
                 details = order.get('details', '')
-                order_name = int_data.get('order_hyperlink', int_data['order_name'])
                 if details:
-                    order_name += " - " + details
+                    int_data['order_hyperlink'] += ' - ' + details
                 if title:
                     full_title = title.get('title')
                     if title.get('episode') not in [None,'']:
@@ -234,52 +235,30 @@ def main(server=None, input=None):
                 if is_external_rejection:
                     title_row = title_row.replace('#06C', '#FF0000')
                     proj_row = proj_row.replace('#06C', '#FF0000')
-                
-                int_template = open(internal_template_file, 'r')
-                filled = ''
-                for line in int_template:
-                    line = line.replace('[ORDER_CODE]', int_data['order_code'])
-                    line = line.replace('[PO_NUMBER]', int_data['po_number'])
-                    line = line.replace('[CLIENT_EMAIL]', int_data['client_email'])
-                    line = line.replace('[EMAIL_CC_LIST]', int_data['int_ccs'])
-                    line = line.replace('[SCHEDULER_EMAIL]', int_data['scheduler_email'])
-                    line = line.replace('[SUBJECT]', subject_int_see)
-                    line = line.replace('[MESSAGE]', message)
-                    line = line.replace('[CLIENT]', int_data['client_name'])
-                    line = line.replace('[CLIENT_LOGIN]', int_data['client_login'])
-                    line = line.replace('[ORDER_NAME]', order_name)
-                    line = line.replace('[START_DATE]', fix_date(int_data['start_date']))
-                    line = line.replace('[DUE_DATE]', fix_date(int_data['due_date']))
-                    line = line.replace('[TITLE_ROW]', title_row)
-                    line = line.replace('[PROJ_ROW]', proj_row)
-                    if is_external_rejection:
-                        line = line.replace('#06C', '#FF0000')
-                    filled = '%s%s' % (filled, line)
-                int_template.close()
-                filled_in_email = '/var/www/html/formatted_emails/int_note_inserted_%s.html' % note_id
-                filler = open(filled_in_email, 'w')
-                filler.write(filled)
-                filler.close()
-                if addressed_to not in [None,'']:
-                    adt = addressed_to.split(',')
-                    for adta in adt:
-                        if '@2gdigital' in adta and adta not in int_data['int_ccs']:
-                            if int_data['int_ccs'] == '':
-                                int_data['int_ccs'] = adta
-                            else:
-                                int_data['int_ccs'] = '%s;%s' % (int_data['int_ccs'], adta)
-                if int_data['int_ccs'] in [None,'']:
-                    int_data['int_ccs'] = 'jaime.torres@2gdigital.com;Justin.Kelley@2gdigital.com'
-                else:
-                    int_data['int_ccs'] = '%s;jaime.torres@2gdigital.com;Justin.Kelley@2gdigital.com' % int_data['int_ccs']
+
+                int_data['subject'] = subject_int
+                int_data['message'] = message
+                int_data['title_row'] = title_row
+                int_data['proj_row'] = proj_row
+                int_data['start_date'] = ctu.fix_date(int_data['start_date'])
+                int_data['due_date'] = ctu.fix_date(int_data['due_date'])
+
+                cc_addresses = int_data['int_ccs'].split(';')
+                if addressed_to:
+                    cc_addresses.extend([x for x in addressed_to.split(',') if '@2gdigital' in x])
                 if is_external_rejection:
-                    int_data['int_ccs'] = '%s;rejections@2gdigital.com' % (int_data['int_ccs']) 
-                login_email = server.eval("@GET(sthpw/login['login','%s'].email)" % login)
+                    cc_addresses.append('rejections@2gdigital.com')
+                cc_addresses.append('Operations@2gdigital.com')
+                int_data['ccs'] = ';'.join(set(cc_addresses))
+
+                login_email = server.eval("@GET(sthpw/login['login','{0}'].email)".format(login))
                 if login_email:
                     int_data['from_email'] = login_email[0]
-                the_command = "php /opt/spt/custom/formatted_emailer/trusty_emailer.php '''%s''' '''%s''' '''%s''' '''%s''' '''%s''' '''%s'''" % (filled_in_email, int_data['to_email'], int_data['from_email'], int_data['from_name'], subject_int, int_data['int_ccs'].replace(';','#Xs*'))
-                if int_data['to_email'] not in [None,''] and int_data['int_ccs'] not in [None,'',';']:
-                    os.system(the_command)
+
+                if int_data['to_email']:
+                    email_sender.send_email(template=internal_template_file, email_data=int_data,
+                                            email_file_name='int_note_inserted_{0}.html'.format(note_id), server=server)
+
             elif 'WHATS_NEW' in parent_tall_str:
                 subject = 'Updates have been made to Tactic'
                 subject_int = subject.replace(' ','..')
