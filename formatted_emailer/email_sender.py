@@ -12,8 +12,6 @@ import common_tools.utils as ctu
 DEFAULT_TEMPLATE = r'/opt/spt/custom/formatted_emailer/fill_in_template.html'
 EMAIL_HTML_DIR = r'/var/www/html/formatted_emails/'
 SEND_EMAIL_COMMAND = r'/opt/spt/custom/formatted_emailer/default_emailer.php'
-TAB = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-NEWLINE = '<br/>'
 
 
 class SafeFormatter(string.Formatter):
@@ -79,37 +77,6 @@ def safe_format_string(format_string, keyword_dict):
     return SafeFormatter().format(format_string, **keyword_dict)
 
 
-def fix_message_characters(message):
-    """Fixes the escaped characters and replaces them with equivalents
-    that are formatted for html.
-
-    :param message: the message as a string
-    :return: the html-formatted string
-    """
-    import sys
-    from json import dumps as jsondumps
-    if message not in [None, '']:
-        if sys.stdout.encoding:
-            message = message.decode(sys.stdout.encoding)
-    message = jsondumps(message)
-
-    # OrderedDict does not exist in python 2.6, so do this the long way for now
-    message = message.replace('||t', TAB)
-    message = message.replace('\\\\t', TAB)
-    message = message.replace('\\\t', TAB)
-    message = message.replace('\\t', TAB)
-    message = message.replace('\t', TAB)
-    message = message.replace('||n', NEWLINE)
-    message = message.replace('\\\\n', NEWLINE)
-    message = message.replace('\\\n', NEWLINE)
-    message = message.replace('\\n', NEWLINE)
-    message = message.replace('\n', NEWLINE)
-    message = message.replace('\\"', '"')
-    message = message.replace('\"', '"')
-
-    return message
-
-
 def write_email_file(email_html, email_file_name):
     """Writes the email html to a file, creating the directory if necessary.
 
@@ -163,7 +130,7 @@ def send_email(template=DEFAULT_TEMPLATE, email_data=None, email_file_name='temp
     default_name = email_data['from_email'].split('@')[0].replace('.', ' ').title()
     email_data['from_name'] = email_data.get('from_name', default_name)
     email_data['subject'] = email_data.get('subject', 'No Subject')
-    email_data['message'] = fix_message_characters(email_data.get('message', 'No message'))
+    email_data['message'] = ctu.fix_message_characters(email_data.get('message', 'No message'))
 
     if server:
         # This will be None by default
