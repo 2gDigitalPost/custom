@@ -152,8 +152,8 @@ def main(server=None, input=None):
         from pyasm.common import SPTDate
         update_data = input.get('update_data')
         prev_data = input.get('prev_data')
-        old_classification = prev_data.get('classification').replace(' ').lower()
-        classification = update_data.get('classification').replace(' ').lower()
+        old_classification = prev_data.get('classification').replace(' ', '_').lower()
+        classification = update_data.get('classification').replace(' ', '_').lower()
         sobject = input.get('sobject')
         sob_code = sobject.get('code')
         is_in_production = False
