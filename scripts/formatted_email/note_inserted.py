@@ -7,6 +7,7 @@ __author__ = 'Topher.Hughes'
 __date__ = '04/08/2015'
 
 import traceback
+import common_tools.utils as ctu
 
 
 def main(server=None, input=None):
@@ -74,7 +75,6 @@ def main(server=None, input=None):
         
         import os, time, sys
         from pyasm.common import Environment
-        import common_tools.utils as ctu
         #print "IN NOTE INSERTED"
         allow_client_emails = True
         external_template_file = '/opt/spt/custom/formatted_emailer/external_email_template.html'
