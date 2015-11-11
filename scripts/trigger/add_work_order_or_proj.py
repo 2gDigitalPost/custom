@@ -323,28 +323,28 @@ def main(server=None, input=None):
                                   'estimated_work_hours': transfer.get('estimated_work_hours')
                                   }
                         server.update(wo_insert.get('__search_key__'), wo_upd)
-                        all_eqs = server.eval("@SOBJECT(twog/equipment_used['work_order_code','%s'])" % transfer_wo)
-                        all_wods = server.eval("@SOBJECT(twog/work_order_deliverables['work_order_code','%s'])" % transfer_wo)
-                        all_wois = server.eval("@SOBJECT(twog/work_order_intermediate['work_order_code','%s'])" % transfer_wo)
-                        all_wops = server.eval("@SOBJECT(twog/work_order_passin['work_order_code','%s'])" % transfer_wo)
-                        all_woprs = server.eval("@SOBJECT(twog/work_order_prereq['work_order_code','%s'])" % transfer_wo)
-                        all_woss = server.eval("@SOBJECT(twog/work_order_sources['work_order_code','%s'])" % transfer_wo)
-                        #Attach these objects to the work order
-                        for guy in all_eqs:
-                            server.update(guy.get('__search_key__'), {'work_order_code': wo_insert.get('code')})
-                        for guy in all_wods:
-                            server.update(guy.get('__search_key__'), {'work_order_code': wo_insert.get('code')})
-                        for guy in all_wois:
-                            server.update(guy.get('__search_key__'), {'work_order_code': wo_insert.get('code')})
-                        for guy in all_wops:
-                            server.update(guy.get('__search_key__'), {'work_order_code': wo_insert.get('code')})
-                        for guy in all_woprs:
-                            server.update(guy.get('__search_key__'), {'work_order_code': wo_insert.get('code')})
-                        for guy in all_woss:
-                            server.update(guy.get('__search_key__'), {'work_order_code': wo_insert.get('code')})
+                        all_eqs = server.eval("@GET(twog/equipment_used['work_order_code','%s'].__search_key__)" % transfer_wo)
+                        all_wods = server.eval("@GET(twog/work_order_deliverables['work_order_code','%s'].__search_key__)" % transfer_wo)
+                        all_wois = server.eval("@GET(twog/work_order_intermediate['work_order_code','%s'].__search_key__)" % transfer_wo)
+                        all_wops = server.eval("@GET(twog/work_order_passin['work_order_code','%s'].__search_key__)" % transfer_wo)
+                        all_woprs = server.eval("@GET(twog/work_order_prereq['work_order_code','%s'].__search_key__)" % transfer_wo)
+                        all_woss = server.eval("@GET(twog/work_order_sources['work_order_code','%s'].__search_key__)" % transfer_wo)
+                        # Attach these objects to the work order
+                        for equipment_sk in all_eqs:
+                            # equipment_used has update triggers, so I'm wary about doing an update_multiple
+                            server.update(equipment_sk, {'work_order_code': wo_insert.get('code')})
+                        update_data = {}
+                        update_value = {'work_order_code': wo_insert.get('code')}
+                        update_data.update(dict.fromkeys(all_wods, update_value))
+                        update_data.update(dict.fromkeys(all_wois, update_value))
+                        update_data.update(dict.fromkeys(all_wops, update_value))
+                        update_data.update(dict.fromkeys(all_woprs, update_value))
+                        update_data.update(dict.fromkeys(all_woss, update_value))
+                        server.update_multiple(update_data)
                         tr = server.eval("@SOBJECT(twog/work_order_transfer['code','%s'])" % transfer.get('code'))
                         if len(tr) > 0:
                             server.retire_sobject(transfer.get('__search_key__'))
+
             if 'twog/title' in sobj.get('search_type'):
                 #The resulting object will be a proj
                 title = server.eval("@SOBJECT(twog/title['code','%s'])" % sobj.get('title_code'))[0]
