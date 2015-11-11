@@ -66,7 +66,7 @@ def main(server=None, input=None):
 
             if int_data['location'] == 'external' and allow_client_emails:
                 ext_data = ed.get_external_data()
-                #Open the external template file and create a new file to send as email
+                # Open the external template file and create a new file to send as email
                 template = open(external_template_file, 'r')
                 filled = ''
                 for line in template:
@@ -88,7 +88,7 @@ def main(server=None, input=None):
                 filler = open(filled_in_email, 'w')
                 filler.write(filled)
                 filler.close()
-                #Send the External Email
+                # Send the External Email
                 the_command = "php /opt/spt/custom/formatted_emailer/inserted_order_email.php '''%s''' '''%s''' '''%s''' '''%s''' '''%s''' '''%s'''" % (filled_in_email, ext_data['to_email'], ext_data['from_email'], ext_data['from_name'], subject, ext_data['ccs'].replace(';','#Xs*'))
                 os.system(the_command)
     except AttributeError as e:
