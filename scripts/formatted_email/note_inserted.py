@@ -37,42 +37,6 @@ def main(server=None, input=None):
                     ending = '0%s' % ending
             return ending
         
-        def fix_date(date):
-            #This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-            from pyasm.common import SPTDate
-            return_date = ''
-            date_obj = SPTDate.convert_to_local(date)
-            if date_obj not in [None,'']:
-                return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-            return return_date
-        
-        def fix_note_chars(note):
-            if isinstance(note, bool):
-                note2 = 'False'
-                if note:
-                    note2 = 'True'
-                note = note2
-            else:
-                import sys
-                from json import dumps as jsondumps
-                if note not in [None,'']:
-                    if sys.stdout.encoding:
-                        note = note.decode(sys.stdout.encoding)
-                note = jsondumps(note)
-                note = note.replace('||t','&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                note = note.replace('\\\\t','&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                note = note.replace('\\\t','&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                note = note.replace('\\t','&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                note = note.replace('\t','&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                note = note.replace('\\"','"')
-                note = note.replace('\"','"')
-                note = note.replace('||n','<br/>')
-                note = note.replace('\\\\n','<br/>')
-                note = note.replace('\\\n','<br/>')
-                note = note.replace('\\n','<br/>')
-                note = note.replace('\n','<br/>')
-            return note
-        
         import os, time, sys
         from pyasm.common import Environment
         #print "IN NOTE INSERTED"
@@ -185,7 +149,7 @@ def main(server=None, input=None):
                 subject = subject.replace(' ','..')
                 subject_int_see = subject_int
                 subject_int = subject_int.replace(' ','..')
-                note = fix_note_chars(note)
+                note = ctu.fix_message_characters(note)
                 message = '%s has added a new note for %s:<br/><br/><p style="font-size: 16px;"><b>Note:</b><i><br/>%s<br/>%s</i></p>' % (ext_data['from_name'], ident_str, note, timestamp)
                 if going_to_client and allow_client_emails:
                     ext_template = open(external_template_file, 'r')
@@ -201,8 +165,8 @@ def main(server=None, input=None):
                         line = line.replace('[CLIENT]', ext_data['client_name'])
                         line = line.replace('[CLIENT_LOGIN]', ext_data['client_login'])
                         line = line.replace('[ORDER_NAME]', ext_data['order_name'])
-                        line = line.replace('[START_DATE]', fix_date(ext_data['start_date']))
-                        line = line.replace('[DUE_DATE]', fix_date(ext_data['due_date']))
+                        line = line.replace('[START_DATE]', ctu.fix_date(ext_data['start_date']))
+                        line = line.replace('[DUE_DATE]', ctu.fix_date(ext_data['due_date']))
                         filled = '%s%s' % (filled, line)
                     ext_template.close()
                     filled_in_email = '/var/www/html/formatted_emails/ext_note_inserted_%s.html' % note_id
@@ -281,7 +245,7 @@ def main(server=None, input=None):
             elif 'CLIENT' in parent_tall_str:
                 subject = 'A client has been put on a billing hold'
                 subject_int = subject.replace(' ','..')
-                note = fix_note_chars(note)
+                note = ctu.fix_message_characters(note)
                 message = '%s' % note
                 internal_template_file = '/opt/spt/custom/formatted_emailer/whats_new_email.html'
                 int_template = open(internal_template_file, 'r')
@@ -299,7 +263,7 @@ def main(server=None, input=None):
                 the_command = "php /opt/spt/custom/formatted_emailer/trusty_emailer.php '''%s''' '''%s''' '''%s''' '''%s''' '''%s''' '''%s'''" % (filled_in_email, addressed_to, from_email, 'Accounting', subject_int, 'matt.misenhimer@2gdigital.com')
                 os.system(the_command)
             elif 'EXTERNAL_REJECTION' in parent_tall_str:
-                note = fix_note_chars(note)
+                note = ctu.fix_message_characters(note)
                 right_ending = make_right_code_ending(search_id)
                 parent_code = '%s%s' % (parent_tall_str, right_ending)
                 parent = server.eval("@SOBJECT(%s['code','%s'])" % (search_type, parent_code))[0]
