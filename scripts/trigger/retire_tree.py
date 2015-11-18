@@ -60,6 +60,10 @@ def main(server=None, input=None):
                     server.insert('twog/hackpipe_out', {'lookup_code': ao, 'out_to': al})
             if parent_exists:
                 parent = server.get_parent(deld_sk)
+                if not parent:
+                    # I don't understand how this is possible, but it does happen
+                    return
+
                 parent_sk = parent.get('__search_key__')
                 parent_code = parent_sk.split('code=')[1]
                 # Get all process information from the pipeline regarding processes linked to this process in the normal pipeline

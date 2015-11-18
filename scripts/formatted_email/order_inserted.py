@@ -29,42 +29,6 @@ def main(server=None, input=None):
         # This was made to report by email that a new order has been inserted
         # Do not send external if location is internal
 
-        def fix_date(date):
-            #This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-            from pyasm.common import SPTDate
-            return_date = ''
-            date_obj = SPTDate.convert_to_local(date)
-            if date_obj not in [None,'']:
-                return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-            return return_date
-
-        def fix_note_chars(note):
-            if isinstance(note, bool):
-                note2 = 'False'
-                if note:
-                    note2 = 'True'
-                note = note2
-            else:
-                import sys
-                from json import dumps as jsondumps
-                if note not in [None,'']:
-                    if sys.stdout.encoding:
-                        note = note.decode(sys.stdout.encoding)
-                note = jsondumps(note)
-                note = note.replace('||t','&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                note = note.replace('\\\\t','&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                note = note.replace('\\\t','&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                note = note.replace('\\t','&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                note = note.replace('\t','&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                note = note.replace('\\"','"')
-                note = note.replace('\"','"')
-                note = note.replace('||n','<br/>')
-                note = note.replace('\\\\n','<br/>')
-                note = note.replace('\\\n','<br/>')
-                note = note.replace('\\n','<br/>')
-                note = note.replace('\n','<br/>')
-            return note
-
         import os
         from pyasm.common import Environment
         from pyasm.common import SPTDate
@@ -90,7 +54,7 @@ def main(server=None, input=None):
             # inserted into the initial_po_upload_list after being selected by the client
             if initial_po_upload_list not in [None, '']:
                 message = '%s<br/>Uploaded PO File: %s' % (message, initial_po_upload_list)
-            message = fix_note_chars(message)
+            message = ctu.fix_message_characters(message)
 
             int_data['subject'] = subject
             int_data['message'] = message
@@ -102,7 +66,7 @@ def main(server=None, input=None):
 
             if int_data['location'] == 'external' and allow_client_emails:
                 ext_data = ed.get_external_data()
-                #Open the external template file and create a new file to send as email
+                # Open the external template file and create a new file to send as email
                 template = open(external_template_file, 'r')
                 filled = ''
                 for line in template:
@@ -116,15 +80,15 @@ def main(server=None, input=None):
                     line = line.replace('[CLIENT]', ext_data['client_name'])
                     line = line.replace('[CLIENT_LOGIN]', ext_data['client_login'])
                     line = line.replace('[ORDER_NAME]', ext_data['order_name'])
-                    line = line.replace('[START_DATE]', fix_date(ext_data['start_date']))
-                    line = line.replace('[DUE_DATE]', fix_date(ext_data['due_date']))
+                    line = line.replace('[START_DATE]', ctu.fix_date(ext_data['start_date']))
+                    line = line.replace('[DUE_DATE]', ctu.fix_date(ext_data['due_date']))
                     filled = '%s%s' % (filled, line)
                 template.close()
                 filled_in_email = '/var/www/html/formatted_emails/ext_order_inserted_%s.html' % order_code
                 filler = open(filled_in_email, 'w')
                 filler.write(filled)
                 filler.close()
-                #Send the External Email
+                # Send the External Email
                 the_command = "php /opt/spt/custom/formatted_emailer/inserted_order_email.php '''%s''' '''%s''' '''%s''' '''%s''' '''%s''' '''%s'''" % (filled_in_email, ext_data['to_email'], ext_data['from_email'], ext_data['from_name'], subject, ext_data['ccs'].replace(';','#Xs*'))
                 os.system(the_command)
     except AttributeError as e:
