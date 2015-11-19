@@ -112,7 +112,7 @@ def main(server=None, input=None):
             int_data['root_cause'] = root_cause
             int_data['corrective_action'] = corrective_action
 
-            cc_addresses = int_data['int_ccs']
+            cc_addresses = int_data['int_ccs'].split(';')
             if addressed_to:
                 cc_addresses.extend([x for x in addressed_to.split(',') if '@2gdigital' in x])
             cc_addresses.append('Operations@2gdigital.com')

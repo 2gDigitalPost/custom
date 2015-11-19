@@ -98,6 +98,7 @@ def main(server=None, input=None):
 
                 ed = EmailDirections(order_code=order.get('code'))
                 int_data = ed.get_internal_data()
+                int_data['info_text_color'] = '#06C'
                 ext_data = ed.get_external_data()
 
                 if title:
@@ -183,6 +184,7 @@ def main(server=None, input=None):
                 if proj:
                     proj_row = "<tr><td align='left' style='color: #06C; font-size: 16px;'>Project: <strong>%s</strong> | Project Code: <strong>%s</strong></td></tr>" % (proj.get('process'), proj.get('code'))
                 if is_external_rejection:
+                    int_data['info_text_color'] = '#FF0000'
                     title_row = title_row.replace('#06C', '#FF0000')
                     proj_row = proj_row.replace('#06C', '#FF0000')
 
