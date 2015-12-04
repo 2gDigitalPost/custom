@@ -149,6 +149,22 @@ def fix_message_characters(message):
     return message
 
 
+def make_zero_padded(number, padding):
+    """Takes a number and pads the beginning with zeros.
+    This can take integers, strings, and floats. Non-number strings will work,
+    but will give weird results. Also note that currently only positive
+    numbers will work.
+
+    Ex. make_zero_padded(123, 5)
+    -> '00123'
+
+    :param number: the number to pad with zeros
+    :param padding: an integer of how many digits it should be
+    :return: a string with padded zeros
+    """
+    return '{number:0>{padding}}'.format(number=number, padding=padding)
+
+
 def get_sobject_type(search_key):
     """Get the sobject type from the search key or search_type.
     This essentially strips the project and code, returning only

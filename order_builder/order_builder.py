@@ -3904,7 +3904,7 @@ class DeliverableCountWdg(BaseRefreshWdg):
         delivs = delivs_search.get_sobjects()
         linked = []
         for d in delivs:
-            linked_delivs.append(d.get_value('satisfied'))
+            linked.append(d.get_value('satisfied'))
         satisfied = 0
         unsatisfied = 0
         for link in linked:
