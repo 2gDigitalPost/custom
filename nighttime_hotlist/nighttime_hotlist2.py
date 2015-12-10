@@ -720,7 +720,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         table.add_style('font-family: Helvetica;')
         table.add_style('color: #000000;')
         table.add_style('background-color: #f2f2f2;')
-        table.add_style('border-color: #e0e0e0;')
+        table.add_style('border-color: #444444;')
         table.add_class('spt_group_row')
         table.add_row()
         tcol = table.add_cell('&nbsp;&nbsp;&nbsp;<b>Title</b>')
@@ -1887,7 +1887,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         t2.add_attr('width','100%s' % '%')
         t2.add_attr('bgcolor','#fcfcfc')
         t2.add_attr('border','1')
-        t2.add_style('border-color: #eeeeee;')
+        t2.add_style('border-color: #444444;')
         t2.add_style('color: #000000;')
         t2.add_style('font-family: Helvetica;')
         # Need to alternate row colors starting at fcfcfc, then going to ffffff
