@@ -7,10 +7,12 @@ from pyasm.web import Table, DivWdg
 from pyasm.widget import SelectWdg, IconWdg, TextWdg, CheckboxWdg
 from pyasm.search import Search
 
+
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
 from tactic.ui.panel import EditWdg
 from custom_piper import CustomPipelineToolWdg
+from tactic.ui.widget import CalendarInputWdg, ActionButtonWdg
 from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg, ButtonRowWdg
 from work_order_printer import WorkOrderPrintLauncherWdg
 from order_checker import OrderCheckerLauncherWdg
@@ -366,7 +368,6 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
 
     def get_display(my):
         #from tactic_client_lib import TacticServerStub
-        #from tactic.ui.widget import CalendarInputWdg
         #server = TacticServerStub.get()
         user_name = my.kwargs.get('user')
         code = my.kwargs.get('code');
@@ -1559,7 +1560,6 @@ class QuickEditWdg(BaseRefreshWdg):
         return work_sel
 
     def get_display(my):
-        from tactic.ui.widget import CalendarInputWdg, ActionButtonWdg
         my.order_sk = my.kwargs.get('order_sk')
         order_code = my.order_sk.split('code=')[1]
         my.groups_str = None 
@@ -5398,7 +5398,6 @@ class ProjDueDateChanger(BaseRefreshWdg):
     def get_display(my):   
         #from tactic.ui.widget import CalendarTimeInputWdg #3.9
 #        proj_due_date_time = time.time()
-        from tactic.ui.widget import CalendarInputWdg
         proj_code = str(my.kwargs.get('proj_code'))
         proj_name = str(my.kwargs.get('proj_name'))
         order_sk = str(my.kwargs.get('order_sk'))
@@ -6837,7 +6836,6 @@ class TitleAdderWdg(BaseRefreshWdg):
         p2.add_attr('align','left')
 
         table.add_row()
-        from tactic.ui.widget import CalendarInputWdg, ActionButtonWdg
         sd = table.add_cell('Start Date: ')
         sd.add_attr('nowrap','nowrap')
         start = CalendarInputWdg("tadd_start_date")
@@ -7367,7 +7365,6 @@ class TaskEditWdg(BaseRefreshWdg):
 
     def get_display(my):   
 #        task_edit_time = time.time()
-        from tactic.ui.widget import CalendarInputWdg #4.2
         my.task_code = my.kwargs.get('task_code')
         my.parent_sk = my.kwargs.get('parent_sk')
         my.order_sk = my.kwargs.get('order_sk')
@@ -8026,7 +8023,6 @@ class MultiManualAdderWdg(BaseRefreshWdg):
 
     def get_display(my):
         #from tactic.ui.widget import CalendarTimeInputWdg #3.9
-        from tactic.ui.widget import CalendarInputWdg
         table = Table()
         tbl_id = 'manual_wo_adder_top_%s' % my.order_sk
         if 'proj' in my.search_type:
