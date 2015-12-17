@@ -8,6 +8,9 @@ from pyasm.prod.biz import ProdSetting
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
 from pyasm.command import *
+from formatted_emailer import email_sender, EmailDirections
+import common_tools.utils as ctu
+
 
 class WOResetWdg(BaseRefreshWdg):
 
@@ -1288,7 +1291,7 @@ class ForceResponseWdg(BaseRefreshWdg):
         widget.add(table)
         widget.add_behavior(my.get_on_load())
         return widget
-        
+
 class MakeNoteWdg(Command):
 
     def __init__(my, **kwargs):
@@ -1437,45 +1440,24 @@ class MakeNoteWdg(Command):
         return my.email_info
 
     def send_internal_email(my, email_info):
-        internal_template_file = '/opt/spt/custom/formatted_emailer/internal_status_update.html'
-        int_template = open(internal_template_file, 'r')
-        filled = ''
-        for line in int_template:
-            if 'file_path' in email_info.keys():
-                line = line.replace('Operator Description','File Path(s)')
-            line = line.replace('[LOGIN]', email_info['from_name'])
-            line = line.replace('[ORDER_CODE]', email_info['order_code'])
-            line = line.replace('[ORDER_NAME]', email_info.get('order_hyperlink', email_info['order_name']))
-            line = line.replace('[PO_NUMBER]', email_info['po_number'])
-            line = line.replace('[SCHEDULER]', email_info['scheduler'])
-            line = line.replace('[CLIENT_NAME]', email_info['client_name'])
-            line = line.replace('[TITLE_FULL_NAME]', email_info['title_full_name'])
-            line = line.replace('[TITLE_DUE_DATE]', my.fix_date(email_info['title_due_date']))
-            line = line.replace('[TITLE_EXPECTED_DELIVERY]', my.fix_date(email_info['title_expected_delivery_date']))
-            line = line.replace('[TITLE_CODE]', email_info['title_code'])
-            line = line.replace('[SOURCE_BARCODES]', email_info['sources_str'])
-            line = line.replace('[PROJ_CODE]', email_info['proj_code'])
-            line = line.replace('[PROJ_PROCESS]', email_info['proj_process'])
-            line = line.replace('[GROUP]', email_info['group'])
-            line = line.replace('[WORK_ORDER_CODE]', email_info['work_order_code'])
-            line = line.replace('[WORK_ORDER_PROCESS]', email_info['work_order_process'])
-            line = line.replace('[WORK_ORDER_INSTRUCTIONS]', email_info['work_order_instructions'].replace('\n','<br/>').replace(' ','&nbsp;'))
-            line = line.replace('[OPERATOR_DESCRIPTION]', email_info['operator_description'].encode('utf-8').replace('\n','<br/>').replace(' ','&nbsp;'))
-            line = line.replace('[STATUS_UPDATE_STR]', email_info['status_update_str'])
-            line = line.replace('[ERROR_DIVS]', email_info['error_divs'])
-            if email_info['new_status'] in ['Rejected','Fix Needed','QC Rejected','Failed']:
-                line = line.replace('#0000FF', '#FF0000')
-            filled = '%s%s' % (filled, line)
-        int_template.close()
-        filled_in_email = '/var/www/html/formatted_emails/makenote_inserted_%s.html' % my.obj_sk.split('code=')[1]
-        filler = open(filled_in_email, 'w')
-        filler.write(filled.encode('utf-8'))
-        filler.close()
-        the_command = "php /opt/spt/custom/formatted_emailer/trusty_emailer.php '''%s''' '''%s''' '''%s''' '''%s''' '''%s''' '''%s'''" % (filled_in_email, email_info['to_email'], email_info['from_email'], email_info['from_name'], my.header, my.email_info['int_ccs'].replace(';','#Xs*'))
-        if email_info['to_email'] not in [None,''] and my.note_ccs not in [None,'',';']:
-            import os
-            os.system(the_command)
-        return ''
+        template_file = '/opt/spt/custom/formatted_emailer/status_update_email_template.html'
+
+        if 'file_path' in email_info.keys():
+            email_info['operator_description_header'] = 'File Path(s)'
+        else:
+            email_info['operator_description_header'] = 'Operator Description'
+
+        if email_info['new_status'] in ['Rejected','Fix Needed','QC Rejected','Failed']:
+            email_info['operator_description_color'] = '#FF0000'
+        else:
+            email_info['operator_description_color'] = '#0000FF'
+
+        email_info['subject'] = my.header
+
+        if email_info['to_email']:
+            email_sender.send_email(template=template_file, email_data=email_info,
+                                    email_file_name='status_change/operator_view_note_{0}.html'.format(email_info.get('work_order_code', '')),
+                                    server=my.server)
     
     def execute(my):   
         from pyasm.biz import Note
