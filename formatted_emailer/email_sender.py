@@ -107,6 +107,8 @@ def send_email(template=DEFAULT_TEMPLATE, email_data=None, email_file_name='temp
     """Formats an email template, saves the file as html, and sends it.
     The data should contain: to_email, from_email, subject, and message
 
+    Also expects ccs to be a semicolon separated string
+
     :param template: a path to a template file
     :param email_data: dictionary of email data
     :param email_file_name: file name for temp html file

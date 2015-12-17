@@ -1442,8 +1442,8 @@ class MakeNoteWdg(Command):
     def send_internal_email(my, email_info):
         template_file = '/opt/spt/custom/formatted_emailer/status_update_email_template.html'
 
-        email_info['title_due_date'] = my.fix_date(email_info['title_due_date'])
-        email_info['title_expected_delivery_date'] = my.fix_date(email_info['title_expected_delivery_date'])
+        email_info['title_due_date'] = ctu.fix_date(email_info.get('title_due_date', ''))
+        email_info['title_expected_delivery_date'] = ctu.fix_date(email_info.get('title_expected_delivery_date'))
 
         email_info['work_order_instructions'] = email_info['work_order_instructions'].replace('\n', '<br/>').replace(' ', '&nbsp;')
         email_info['operator_description'] = email_info['operator_description'].encode('utf-8').replace('\n', '<br/>').replace(' ', '&nbsp;')
@@ -1459,6 +1459,7 @@ class MakeNoteWdg(Command):
             email_info['operator_description_color'] = '#0000FF'
 
         email_info['subject'] = my.header
+        email_info['ccs'] = email_info.get('int_ccs', '')
 
         if email_info['to_email']:
             email_sender.send_email(template=template_file, email_data=email_info,
