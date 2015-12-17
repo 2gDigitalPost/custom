@@ -532,15 +532,15 @@ class QCReportClonerWdg(BaseTableElementWdg):
                 qc_wos = server.eval("@SOBJECT(sthpw/task['title_code','%s']['search_type','twog/proj?project=twog']['assigned_login_group','in','qc|qc supervisor'])" % title_code)
                 for qcwo in qc_wos:
                     qcwocode = qcwo.get('lookup_code')
-                    if qcwocode != wo_code:
-                        wotbl.add_row()
-                        check = CheckboxWdg('clonecheck_%s' % qcwocode)
-                        #check.set_persistence()
-                        check.set_value(False)
-                        wotbl.add_cell('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                        wotbl.add_cell(check)
-                        nw3 = wotbl.add_cell('WO: %s,  Assigned: %s, Code: %s' % (qcwo.get('process'), qcwo.get('assigned'), qcwocode)) 
-                        nw3.add_attr('nowrap','nowrap')
+                    # Used to restrict such that you could not clone to the same Work Order
+                    wotbl.add_row()
+                    check = CheckboxWdg('clonecheck_%s' % qcwocode)
+                    #check.set_persistence()
+                    check.set_value(False)
+                    wotbl.add_cell('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+                    wotbl.add_cell(check)
+                    nw3 = wotbl.add_cell('WO: %s,  Assigned: %s, Code: %s' % (qcwo.get('process'), qcwo.get('assigned'), qcwocode))
+                    nw3.add_attr('nowrap','nowrap')
                 table.add_row()
                 table.add_cell(wotbl)
                         
