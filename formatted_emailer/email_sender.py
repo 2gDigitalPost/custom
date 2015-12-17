@@ -97,7 +97,7 @@ def write_email_file(email_html, email_file_name):
         counter += 1
 
     with open(email_path, 'w') as f:
-        f.write(email_html)
+        f.write(email_html.encode('utf-8'))
 
     return email_path
 

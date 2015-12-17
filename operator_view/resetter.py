@@ -1442,6 +1442,12 @@ class MakeNoteWdg(Command):
     def send_internal_email(my, email_info):
         template_file = '/opt/spt/custom/formatted_emailer/status_update_email_template.html'
 
+        email_info['title_due_date'] = my.fix_date(email_info['title_due_date'])
+        email_info['title_expected_delivery_date'] = my.fix_date(email_info['title_expected_delivery_date'])
+
+        email_info['work_order_instructions'] = email_info['work_order_instructions'].replace('\n', '<br/>').replace(' ', '&nbsp;')
+        email_info['operator_description'] = email_info['operator_description'].encode('utf-8').replace('\n', '<br/>').replace(' ', '&nbsp;')
+
         if 'file_path' in email_info.keys():
             email_info['operator_description_header'] = 'File Path(s)'
         else:
