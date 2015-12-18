@@ -38,7 +38,7 @@ class QCReportLauncherWdg(BaseTableElementWdg):
         sob_sk = ''
         if 'code' in my.kwargs.keys():
             code = str(my.kwargs.get('code'))
-        else: 
+        else:
             sobject = my.get_current_sobject()
             code = sobject.get_code()
         widget = DivWdg()
@@ -57,9 +57,9 @@ class QCReportClonerWdg(BaseTableElementWdg):
 
     def init(my):
         nothing = 'true'
- 
+
     def get_clone_behavior(my, report_code, type, login_name):
-        behavior =  {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
+        behavior =  {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         alert('This type of report cannot be cloned yet.');
                      '''}
         if type == 'prequal':
@@ -252,7 +252,170 @@ class QCReportClonerWdg(BaseTableElementWdg):
                                             }
                                             cloned_some = true;
                                             out_lines.push('Cloned WO: ' + wo.process + '(' + wo.code + ') from Title: ' + title.title + ' ' + title.episode + ' (' + title.code + ') Report Type: ' + type.toUpperCase()); 
-                                            new_md = server.insert('twog/metadata_report', {'title': title.title, 'episode': kill_nothing(title.episode), 'title_code': title.code, 'client_code': kill_nothing(title.client_code), 'client_name': kill_nothing(title.client_name), 'order_code': title.order_code, 'wo_name': wo.process, 'work_order_code': wo.code, 'login': login_name, 'description': the_report.description, 'content': the_report.content, 'source_type': the_report.source_type, 'source_codes': source_codes, 'qc_operator': login_name, 'qc_date': today, 'qc_notes': the_report.qc_notes, 'encoding_log_no_errors_f': the_report.encoding_log_no_errors_f, 'encoding_log_no_errors_p': the_report.encoding_log_no_errors_p, 'correct_codec_used_f': the_report.correct_codec_used_f, 'correct_codec_used_p': the_report.correct_codec_used_p, 'fr_same_as_native_source_f': the_report.fr_same_as_native_source_f, 'fr_same_as_native_source_p': the_report.fr_same_as_native_source_p, 'hd_res_is_1920x1080_f': the_report.hd_res_is_1920x1080_f, 'hd_res_is_1920x1080_p': the_report.hd_res_is_1920x1080_p, 'field_dominance_is_none_f': the_report.field_dominance_is_none_f, 'field_dominance_is_none_p': the_report.field_dominance_is_none_p, 'tagged_as_progressive_f': the_report.tagged_as_progressive_f, 'tagged_as_progressive_p': the_report.tagged_as_progressive_p, 'clap_tag_removed_f': the_report.clap_tag_removed_f, 'clap_tag_removed_p': the_report.clap_tag_removed_p, 'pasp_is_correct_f': the_report.pasp_is_correct_f, 'pasp_is_correct_p': the_report.pasp_is_correct_p, 'gamma_tag_removed_f': the_report.gamme_tag_removed_f, 'gamma_tag_removed_p': the_report.gamme_tag_removed_p, 'no_fbimpaareleasedate_tagging_f': the_report.no_fbimpaareleasedate_tagging_f, 'no_fbimpaareleasedate_tagging_p': the_report.no_fbimpaareleasedate_tagging_p, 'proper_aspect_ratio_f': the_report.proper_aspect_ratio_f, 'proper_aspect_ratio_p': the_report.proper_aspect_ratio_p, 'websites_not_listed_f': the_report.websites_not_listed_f, 'websites_not_listed_p': the_report.websites_not_listed_p, 'cropping_values_correct_f': the_report.cropping_values_correct_f, 'cropping_values_correct_p': the_report.cropping_values_correct_p, 'no_promotional_bumpers_p': the_report.no_promotional_bumpers_p, 'same_aspect_ratio_as_feature_p': the_report.same_aspect_ratio_as_feature_p, 'suitable_for_general_audience_p': the_report.suitable_for_general_audience_p, 'file_starts_at_5959_w_black_f': the_report.file_starts_at_5959_w_black_f, 'file_starts_at_1hr_w_fade_p': the_report.file_starts_at_1hr_w_fade_p, 'program_starts_at_1hr_f': the_report.program_starts_at_1hr_f, 'program_begins_with_black_frame_p': the_report.program_begins_with_black_frame_p, 'program_ends_with_black_frame_f': the_report.program_ends_with_black_frame_f, 'program_ends_with_fade_p': the_report.program_ends_with_fade_p, 'video_notes': the_report.video_notes, 'aconfig_trk1_language': the_report.aconfig_trk1_language, 'aconfig_trk1_type': the_report.aconfig_trk1_type, 'aconfig_trk2_language': the_report.aconfig_trk2_language, 'aconfig_trk2_type': the_report.aconfig_trk2_type, 'aconfig_trk3_language': the_report.aconfig_trk3_language, 'aconfig_trk3_type': the_report.aconfig_trk3_type, 'aconfig_trk4_language': the_report.aconfig_trk4_language, 'aconfig_trk4_type': the_report.aconfig_trk4_type, 'aconfig_trk5_language': the_report.aconfig_trk5_language, 'aconfig_trk5_type': the_report.aconfig_trk5_type, 'aconfig_trk6_language': the_report.aconfig_trk6_language, 'aconfig_trk6_type': the_report.aconfig_trk6_type, 'aconfig_trk7_language': the_report.aconfig_trk7_language, 'aconfig_trk7_type': the_report.aconfig_trk7_type, 'aconfig_trk8_language': the_report.aconfig_trk8_language, 'aconfig_trk8_type': the_report.aconfig_trk8_type, 'abundle_trk1_language': the_report.abundle_trk1_language, 'abundle_trk1_type': the_report.abundle_trk1_type, 'abundle_trk2_language': the_report.abundle_trk2_language, 'abundle_trk2_type': the_report.abundle_trk2_type, 'abundle_trk3_language': the_report.abundle_trk3_language, 'abundle_trk3_type': the_report.abundle_trk3_type,'abundle_trk4_language': the_report.abundle_trk4_language, 'abundle_trk4_type': the_report.abundle_trk4_type,'abundle_trk5_language': the_report.abundle_trk5_language, 'abundle_trk5_type': the_report.abundle_trk5_type,'abundle_trk6_language': the_report.abundle_trk6_language, 'abundle_trk6_type': the_report.abundle_trk6_type,'abundle_trk7_language': the_report.abundle_trk7_language, 'abundle_trk7_type': the_report.abundle_trk7_type,'abundle_trk8_language': the_report.abundle_trk8_language, 'abundle_trk8_type': the_report.abundle_trk8_type, 'aconfig_trk1_language_p': the_report.aconfig_trk1_language_p, 'aconfig_trk1_type_p': the_report.aconfig_trk1_type_p,'aconfig_trk2_language_p': the_report.aconfig_trk2_language_p, 'aconfig_trk2_type_p': the_report.aconfig_trk2_type_p,'aconfig_trk3_language_p': the_report.aconfig_trk3_language_p, 'aconfig_trk3_type_p': the_report.aconfig_trk3_type_p,'aconfig_trk4_language_p': the_report.aconfig_trk4_language_p, 'aconfig_trk4_type_p': the_report.aconfig_trk4_type_p,'aconfig_trk5_language_p': the_report.aconfig_trk5_language_p, 'aconfig_trk5_type_p': the_report.aconfig_trk5_type_p,'aconfig_trk6_language_p': the_report.aconfig_trk6_language_p, 'aconfig_trk6_type_p': the_report.aconfig_trk6_type_p,'aconfig_trk7_language_p': the_report.aconfig_trk7_language_p, 'aconfig_trk7_type_p': the_report.aconfig_trk7_type_p,'aconfig_trk8_language_p': the_report.aconfig_trk8_language_p, 'aconfig_trk8_type_p': the_report.aconfig_trk8_type_p, 'aconfig_verified_f': the_report.aconfig_verified_f, 'aconfig_verified_b': the_report.aconfig_verified_b, 'aconfig_verified_p': the_report.aconfig_verified_p, 'audio_in_sync_with_video_f': the_report.audio_in_sync_with_video_f, 'audio_in_sync_with_video_b': the_report.audio_in_sync_with_video_b, 'audio_in_sync_with_video_p': the_report.audio_in_sync_with_video_p, 'audio_tagged_correctly_f': the_report.audio_tagged_correctly_f, 'audio_tagged_correctly_b': the_report.audio_tagged_correctly_b, 'audio_tagged_correctly_p': the_report.audio_tagged_correctly_p, 'no_audio_cut_off_f': the_report.no_audio_cut_off_f, 'no_audio_cut_off_b': the_report.no_audio_cut_off_b, 'no_audio_cut_off_p': the_report.no_audio_cut_off_p, 'trt_audio_is_trt_video_f': the_report.trt_audio_is_trt_video_f, 'trt_audio_is_trt_video_b': the_report.trt_audio_is_trt_video_b, 'trt_audio_is_trt_video_p': the_report.trt_audio_is_trt_video_p, 'correct_audio_language_f': the_report.correct_audio_language_f, 'correct_audio_language_b': the_report.correct_audio_language_b,'correct_audio_language_p': the_report.correct_audio_language_p, 'audio_notes': the_report.audio_notes, 'delivery_snapshot_feature': the_report.delivery_snapshot_feature, 'delivery_snapshot_alt_audio': the_report.delivery_snapshot_alt_audio, 'delivery_snapshot_subtitle': the_report.delivery_snapshot_subtitle, 'delivery_snapshot_cc': the_report.delivery_snapshot_cc, 'delivery_snapshot_vendor_notes': the_report.delivery_snapshot_vendor_notes, 'delivery_snapshot_poster_art': the_report.delivery_snapshot_poster_art, 'delivery_snapshot_dub_card': the_report.delivery_snapshot_dub_card, 'delivery_snapshot_other': the_report.delivery_snapshot_other, 'forced_narrative_f': the_report.forced_narrative_f, 'forced_narrative_p': the_report.forced_narrative_p, 'subtitles_on_feature': the_report.subtitles_on_feature, 'subtitles_on_trailer': the_report.subtitles_on_trailer, 'forced_narrative_not_overlapping_f': the_report.forced_narrative_not_overlapping_f, 'forced_narrative_not_overlapping_p': the_report.forced_narrative_not_overlapping_p, 'subtitles_on_feature_not_overlapping': the_report.subtitles_on_feature_not_overlapping, 'subtitles_on_trailer_not_overlapping': the_report.subtitles_on_trailer_not_overlapping, 'dub_card_dimensions_match_feature': the_report.dub_card_dimensions_match_feature, 'dub_card_fps_match_feature': the_report.dub_card_fps_match_feature, 'dub_card_language_match_locale': the_report.dub_card_language_match_locale, 'dub_card_duration_4_to_5': the_report.dub_card_duration_4_to_5, 'dub_card_has_no_audio_tracks': the_report.dub_card_has_no_audio_tracks, 'dub_card_text_not_cutoff_with_cropping': the_report.dub_card_text_not_cutoff_with_cropping, 'cc_in_sync_with_video': the_report.cc_in_sync_with_video, 'subtitles_in_sync_with_video': the_report.subtitles_in_sync_with_video, 'subtitles_have_correct_language': the_report.subtitles_have_correct_language, 'assets_notes': the_report.assets_notes, 'thumb_is_jpeg': the_report.thumb_is_jpeg, 'thumb_dpi_72_or_more': the_report.thumb_dpi_72_or_more, 'thumb_profile_is_rgb': the_report.thumb_profile_is_rgb, 'thumb_same_aspect_ratio_as_video': the_report.thumb_same_aspect_ratio_as_video, 'thumb_only_active_pixels': the_report.thumb_only_active_pixels, 'thumb_horiz_at_least_640': the_report.thumb_horiz_at_least_640, 'thumb_for_each_chapter_stop': the_report.thumb_for_each_chapter_stop, 'poster_is_jpeg': the_report.poster_is_jpeg, 'poster_dpi_72_or_more': the_report.poster_dpi_72_or_more, 'poster_profile_is_rgb': the_report.poster_profile_is_rgb, 'poster_rez_at_least_1400x2100': the_report.poster_rez_at_least_1400x2100, 'poster_aspect_ratio_2x3': the_report.poster_aspect_ratio_2x3, 'poster_key_art_and_title_only': the_report.poster_key_art_and_title_only, 'poster_no_dvdcover_date_urlpromo_tagging': the_report.poster_no_dvdcover_date_urlpromo_tagging, 'image_notes': the_report.image_notes, 'delivery_snapshot_trailer': the_report.delivery_snapshot_trailer, 'trt_f': the_report.trt_f, 'trt_p': the_report.trt_p}); 
+                                            new_md = server.insert('twog/metadata_report', {
+                                                'title': title.title,
+                                                'episode': kill_nothing(title.episode),
+                                                'title_code': title.code,
+                                                'client_code': kill_nothing(title.client_code),
+                                                'client_name': kill_nothing(title.client_name),
+                                                'order_code': title.order_code,
+                                                'wo_name': wo.process,
+                                                'work_order_code': wo.code,
+                                                'login': login_name,
+                                                'description': the_report.description,
+                                                'content': the_report.content,
+                                                'source_type': the_report.source_type,
+                                                'source_codes': source_codes,
+                                                'qc_operator': login_name,
+                                                'qc_date': today,
+                                                'qc_notes': the_report.qc_notes,
+                                                'encoding_log_no_errors_f': the_report.encoding_log_no_errors_f,
+                                                'encoding_log_no_errors_p': the_report.encoding_log_no_errors_p,
+                                                'correct_codec_used_f': the_report.correct_codec_used_f,
+                                                'correct_codec_used_p': the_report.correct_codec_used_p,
+                                                'fr_same_as_native_source_f': the_report.fr_same_as_native_source_f,
+                                                'fr_same_as_native_source_p': the_report.fr_same_as_native_source_p,
+                                                'hd_res_is_1920x1080_f': the_report.hd_res_is_1920x1080_f,
+                                                'hd_res_is_1920x1080_p': the_report.hd_res_is_1920x1080_p,
+                                                'field_dominance_is_none_f': the_report.field_dominance_is_none_f,
+                                                'field_dominance_is_none_p': the_report.field_dominance_is_none_p,
+                                                'tagged_as_progressive_f': the_report.tagged_as_progressive_f,
+                                                'tagged_as_progressive_p': the_report.tagged_as_progressive_p,
+                                                'clap_tag_removed_f': the_report.clap_tag_removed_f,
+                                                'clap_tag_removed_p': the_report.clap_tag_removed_p,
+                                                'pasp_is_correct_f': the_report.pasp_is_correct_f,
+                                                'pasp_is_correct_p': the_report.pasp_is_correct_p,
+                                                'gamma_tag_removed_f': the_report.gamme_tag_removed_f,
+                                                'gamma_tag_removed_p': the_report.gamme_tag_removed_p,
+                                                'no_fbimpaareleasedate_tagging_f': the_report.no_fbimpaareleasedate_tagging_f,
+                                                'no_fbimpaareleasedate_tagging_p': the_report.no_fbimpaareleasedate_tagging_p,
+                                                'proper_aspect_ratio_f': the_report.proper_aspect_ratio_f,
+                                                'proper_aspect_ratio_p': the_report.proper_aspect_ratio_p,
+                                                'websites_not_listed_f': the_report.websites_not_listed_f,
+                                                'websites_not_listed_p': the_report.websites_not_listed_p,
+                                                'cropping_values_correct_f': the_report.cropping_values_correct_f,
+                                                'cropping_values_correct_p': the_report.cropping_values_correct_p,
+                                                'no_promotional_bumpers_p': the_report.no_promotional_bumpers_p,
+                                                'same_aspect_ratio_as_feature_p': the_report.same_aspect_ratio_as_feature_p,
+                                                'suitable_for_general_audience_p': the_report.suitable_for_general_audience_p,
+                                                'file_starts_at_5959_w_black_f': the_report.file_starts_at_5959_w_black_f,
+                                                'file_starts_at_1hr_w_fade_p': the_report.file_starts_at_1hr_w_fade_p,
+                                                'program_starts_at_1hr_f': the_report.program_starts_at_1hr_f,
+                                                'program_begins_with_black_frame_p': the_report.program_begins_with_black_frame_p,
+                                                'program_ends_with_black_frame_f': the_report.program_ends_with_black_frame_f,
+                                                'program_ends_with_fade_p': the_report.program_ends_with_fade_p,
+                                                'video_notes': the_report.video_notes,
+                                                'aconfig_trk1_language': the_report.aconfig_trk1_language,
+                                                'aconfig_trk1_type': the_report.aconfig_trk1_type,
+                                                'aconfig_trk2_language': the_report.aconfig_trk2_language,
+                                                'aconfig_trk2_type': the_report.aconfig_trk2_type,
+                                                'aconfig_trk3_language': the_report.aconfig_trk3_language,
+                                                'aconfig_trk3_type': the_report.aconfig_trk3_type,
+                                                'aconfig_trk4_language': the_report.aconfig_trk4_language,
+                                                'aconfig_trk4_type': the_report.aconfig_trk4_type,
+                                                'aconfig_trk5_language': the_report.aconfig_trk5_language,
+                                                'aconfig_trk5_type': the_report.aconfig_trk5_type,
+                                                'aconfig_trk6_language': the_report.aconfig_trk6_language,
+                                                'aconfig_trk6_type': the_report.aconfig_trk6_type,
+                                                'aconfig_trk7_language': the_report.aconfig_trk7_language,
+                                                'aconfig_trk7_type': the_report.aconfig_trk7_type,
+                                                'aconfig_trk8_language': the_report.aconfig_trk8_language,
+                                                'aconfig_trk8_type': the_report.aconfig_trk8_type,
+                                                'abundle_trk1_language': the_report.abundle_trk1_language,
+                                                'abundle_trk1_type': the_report.abundle_trk1_type,
+                                                'abundle_trk2_language': the_report.abundle_trk2_language,
+                                                'abundle_trk2_type': the_report.abundle_trk2_type,
+                                                'abundle_trk3_language': the_report.abundle_trk3_language,
+                                                'abundle_trk3_type': the_report.abundle_trk3_type,
+                                                'abundle_trk4_language': the_report.abundle_trk4_language,
+                                                'abundle_trk4_type': the_report.abundle_trk4_type,
+                                                'abundle_trk5_language': the_report.abundle_trk5_language,
+                                                'abundle_trk5_type': the_report.abundle_trk5_type,
+                                                'abundle_trk6_language': the_report.abundle_trk6_language,
+                                                'abundle_trk6_type': the_report.abundle_trk6_type,
+                                                'abundle_trk7_language': the_report.abundle_trk7_language,
+                                                'abundle_trk7_type': the_report.abundle_trk7_type,
+                                                'abundle_trk8_language': the_report.abundle_trk8_language,
+                                                'abundle_trk8_type': the_report.abundle_trk8_type,
+                                                'aconfig_trk1_language_p': the_report.aconfig_trk1_language_p,
+                                                'aconfig_trk1_type_p': the_report.aconfig_trk1_type_p,
+                                                'aconfig_trk2_language_p': the_report.aconfig_trk2_language_p,
+                                                'aconfig_trk2_type_p': the_report.aconfig_trk2_type_p,
+                                                'aconfig_trk3_language_p': the_report.aconfig_trk3_language_p,
+                                                'aconfig_trk3_type_p': the_report.aconfig_trk3_type_p,
+                                                'aconfig_trk4_language_p': the_report.aconfig_trk4_language_p,
+                                                'aconfig_trk4_type_p': the_report.aconfig_trk4_type_p,
+                                                'aconfig_trk5_language_p': the_report.aconfig_trk5_language_p,
+                                                'aconfig_trk5_type_p': the_report.aconfig_trk5_type_p,
+                                                'aconfig_trk6_language_p': the_report.aconfig_trk6_language_p,
+                                                'aconfig_trk6_type_p': the_report.aconfig_trk6_type_p,
+                                                'aconfig_trk7_language_p': the_report.aconfig_trk7_language_p,
+                                                'aconfig_trk7_type_p': the_report.aconfig_trk7_type_p,
+                                                'aconfig_trk8_language_p': the_report.aconfig_trk8_language_p,
+                                                'aconfig_trk8_type_p': the_report.aconfig_trk8_type_p,
+                                                'aconfig_verified_f': the_report.aconfig_verified_f,
+                                                'aconfig_verified_b': the_report.aconfig_verified_b,
+                                                'aconfig_verified_p': the_report.aconfig_verified_p,
+                                                'audio_in_sync_with_video_f': the_report.audio_in_sync_with_video_f,
+                                                'audio_in_sync_with_video_b': the_report.audio_in_sync_with_video_b,
+                                                'audio_in_sync_with_video_p': the_report.audio_in_sync_with_video_p,
+                                                'audio_tagged_correctly_f': the_report.audio_tagged_correctly_f,
+                                                'audio_tagged_correctly_b': the_report.audio_tagged_correctly_b,
+                                                'audio_tagged_correctly_p': the_report.audio_tagged_correctly_p,
+                                                'no_audio_cut_off_f': the_report.no_audio_cut_off_f,
+                                                'no_audio_cut_off_b': the_report.no_audio_cut_off_b,
+                                                'no_audio_cut_off_p': the_report.no_audio_cut_off_p,
+                                                'trt_audio_is_trt_video_f': the_report.trt_audio_is_trt_video_f,
+                                                'trt_audio_is_trt_video_b': the_report.trt_audio_is_trt_video_b,
+                                                'trt_audio_is_trt_video_p': the_report.trt_audio_is_trt_video_p,
+                                                'correct_audio_language_f': the_report.correct_audio_language_f,
+                                                'correct_audio_language_b': the_report.correct_audio_language_b,
+                                                'correct_audio_language_p': the_report.correct_audio_language_p,
+                                                'audio_notes': the_report.audio_notes,
+                                                'delivery_snapshot_feature': the_report.delivery_snapshot_feature,
+                                                'delivery_snapshot_alt_audio': the_report.delivery_snapshot_alt_audio,
+                                                'delivery_snapshot_subtitle': the_report.delivery_snapshot_subtitle,
+                                                'delivery_snapshot_cc': the_report.delivery_snapshot_cc,
+                                                'delivery_snapshot_vendor_notes': the_report.delivery_snapshot_vendor_notes,
+                                                'delivery_snapshot_poster_art': the_report.delivery_snapshot_poster_art,
+                                                'delivery_snapshot_dub_card': the_report.delivery_snapshot_dub_card,
+                                                'delivery_snapshot_other': the_report.delivery_snapshot_other,
+                                                'forced_narrative_f': the_report.forced_narrative_f,
+                                                'forced_narrative_p': the_report.forced_narrative_p,
+                                                'subtitles_on_feature': the_report.subtitles_on_feature,
+                                                'subtitles_on_trailer': the_report.subtitles_on_trailer,
+                                                'forced_narrative_not_overlapping_f': the_report.forced_narrative_not_overlapping_f,
+                                                'forced_narrative_not_overlapping_p': the_report.forced_narrative_not_overlapping_p,
+                                                'subtitles_on_feature_not_overlapping': the_report.subtitles_on_feature_not_overlapping,
+                                                'subtitles_on_trailer_not_overlapping': the_report.subtitles_on_trailer_not_overlapping,
+                                                'dub_card_dimensions_match_feature': the_report.dub_card_dimensions_match_feature,
+                                                'dub_card_fps_match_feature': the_report.dub_card_fps_match_feature,
+                                                'dub_card_language_match_locale': the_report.dub_card_language_match_locale,
+                                                'dub_card_duration_4_to_5': the_report.dub_card_duration_4_to_5,
+                                                'dub_card_has_no_audio_tracks': the_report.dub_card_has_no_audio_tracks,
+                                                'dub_card_text_not_cutoff_with_cropping': the_report.dub_card_text_not_cutoff_with_cropping,
+                                                'cc_in_sync_with_video': the_report.cc_in_sync_with_video,
+                                                'subtitles_in_sync_with_video': the_report.subtitles_in_sync_with_video,
+                                                'subtitles_have_correct_language': the_report.subtitles_have_correct_language,
+                                                'assets_notes': the_report.assets_notes,
+                                                'thumb_is_jpeg': the_report.thumb_is_jpeg,
+                                                'thumb_dpi_72_or_more': the_report.thumb_dpi_72_or_more,
+                                                'thumb_profile_is_rgb': the_report.thumb_profile_is_rgb,
+                                                'thumb_same_aspect_ratio_as_video': the_report.thumb_same_aspect_ratio_as_video,
+                                                'thumb_only_active_pixels': the_report.thumb_only_active_pixels,
+                                                'thumb_horiz_at_least_640': the_report.thumb_horiz_at_least_640,
+                                                'thumb_for_each_chapter_stop': the_report.thumb_for_each_chapter_stop,
+                                                'poster_is_jpeg': the_report.poster_is_jpeg,
+                                                'poster_dpi_72_or_more': the_report.poster_dpi_72_or_more,
+                                                'poster_profile_is_rgb': the_report.poster_profile_is_rgb,
+                                                'poster_rez_at_least_1400x2100': the_report.poster_rez_at_least_1400x2100,
+                                                'poster_aspect_ratio_2x3': the_report.poster_aspect_ratio_2x3,
+                                                'poster_key_art_and_title_only': the_report.poster_key_art_and_title_only,
+                                                'poster_no_dvdcover_date_urlpromo_tagging': the_report.poster_no_dvdcover_date_urlpromo_tagging,
+                                                'image_notes': the_report.image_notes,
+                                                'delivery_snapshot_trailer': the_report.delivery_snapshot_trailer,
+                                                'trt_f': the_report.trt_f,
+                                                'trt_p': the_report.trt_p});
                                         }
                                         spt.app_busy.hide();
                                     }
@@ -356,8 +519,103 @@ class QCReportClonerWdg(BaseTableElementWdg):
                                             }
                                             cloned_some = true;
                                             out_lines.push('Cloned WO: ' + wo.process + '(' + wo.code + ') from Title: ' + title.title + ' ' + title.episode + ' (' + title.code + ') Report Type: ' + type.toUpperCase()); 
-                                            ele_dict = {'description': kill_nothing(the_report.description),'login': login_name,'operator': login_name,'type': kill_nothing(the_report.type),'bay': kill_nothing(the_report.bay),'machine_number': kill_nothing(the_report.machine_number),'client_code': kill_nothing(title.client_code),'client_name': kill_nothing(title.client_name),'title': kill_nothing(title.title),'episode': kill_nothing(title.episode),'version': kill_nothing(the_report.version),'title_type': kill_nothing(the_report.title_type),'format': kill_nothing(the_report.format),'standard': kill_nothing(the_report.standard),'timecode': kill_nothing(the_report.timecode),'po_number': kill_nothing(title.po_number),'style': kill_nothing(the_report.style),'order_code': kill_nothing(title.order_code),'title_code': kill_nothing(title.code),'work_order_code': kill_nothing(wo.code),'conclusion': kill_nothing(the_report.conclusion),'source_code': kill_nothing(source_codes),'wo_name': kill_nothing(wo.process),'aspect_ratio': kill_nothing(the_report.aspect_ratio),'frame_rate': kill_nothing(the_report.frame_rate),'roll_up': kill_nothing(the_report.roll_up),'bars_tone': kill_nothing(the_report.bars_tone),'black_silence_1': kill_nothing(the_report.black_silence_1),'slate_silence': kill_nothing(the_report.slate_silence),'black_silence_2': kill_nothing(the_report.black_silence_2),'video_mod_disclaimer': kill_nothing(the_report.video_mod_disclaimer),'start_of_program': kill_nothing(the_report.start_of_program),'end_of_program': kill_nothing(the_report.end_of_program),'active_video_begins': kill_nothing(the_report.active_video_begins),'active_video_ends': kill_nothing(the_report.active_video_ends),'horizontal_blanking': kill_nothing(the_report.horizontal_blanking),'vertical_blanking': kill_nothing(the_report.vertical_blanking),'video_average': kill_nothing(the_report.video_average),'video_peak': kill_nothing(the_report.video_peak),'chroma_average': kill_nothing(the_report.chroma_average),'chroma_peak': kill_nothing(the_report.chroma_peak),'video_sync': kill_nothing(the_report.video_sync),'chroma_burst': kill_nothing(the_report.chroma_burst),'setup': kill_nothing(the_report.setup),'control_track': kill_nothing(the_report.control_track),'video_rf': kill_nothing(the_report.video_rf),'front_porch': kill_nothing(the_report.front_porch),'sync_duration': kill_nothing(the_report.sync_duration),'burst_duration': kill_nothing(the_report.burst_duration),'total_runtime': kill_nothing(the_report.total_runtime),'tv_feature_trailer': kill_nothing(the_report.tv_feature_trailer),'video_aspect_ratio': kill_nothing(the_report.video_aspect_ratio),'textless_at_tail': kill_nothing(the_report.textless_at_tail),'cc_subtitles': kill_nothing(the_report.cc_subtitles),'timecodes': kill_nothing(the_report.timecodes),'vitc': kill_nothing(the_report.vitc),'ltc': kill_nothing(the_report.ltc),'record_vendor': kill_nothing(the_report.record_vendor),'record_date': kill_nothing(the_report.record_date),'language': kill_nothing(the_report.language),'comp_mne_sync': kill_nothing(the_report.comp_mne_sync),'comp_mne_phase': kill_nothing(the_report.comp_mne_phase),'missing_mne': kill_nothing(the_report.missing_mne),'average_dialogue': kill_nothing(the_report.average_dialogue),'dec_a1': kill_nothing(the_report.dec_a1),'dec_a2': kill_nothing(the_report.dec_a2),'dec_a3': kill_nothing(the_report.dec_a3),'dec_a4': kill_nothing(the_report.dec_a4),'dec_b1': kill_nothing(the_report.dec_b1),'dec_b2': kill_nothing(the_report.dec_b2),'dec_b3': kill_nothing(the_report.dec_b3),'dec_b4': kill_nothing(the_report.dec_b4),'dec_c1': kill_nothing(the_report.dec_c1),'dec_c2': kill_nothing(the_report.dec_c2),'dec_c3': kill_nothing(the_report.dec_c3),'dec_c4': kill_nothing(the_report.dec_c4),'dec_d1': kill_nothing(the_report.dec_d1),'dec_d2': kill_nothing(the_report.dec_d2),'dec_d3': kill_nothing(the_report.dec_d3),'dec_d4': kill_nothing(the_report.dec_d4),'tape_pack': kill_nothing(the_report.tape_pack),'label': kill_nothing(the_report.label),'head_logo': kill_nothing(the_report.head_logo),'tail_logo': kill_nothing(the_report.tail_logo),'notices': kill_nothing(the_report.notices),'vendor_id': kill_nothing(the_report.vendor_id),'roll_up_f': kill_nothing(the_report.roll_up_f),'bars_tone_f': kill_nothing(the_report.bars_tone_f),'black_silence_1_f': kill_nothing(the_report.black_silence_1_f),'black_silence_2_f': kill_nothing(the_report.black_silence_2_f),'slate_silence_f': kill_nothing(the_report.slate_silence_f),'video_mod_disclaimer_f': kill_nothing(the_report.video_mod_disclaimer_f),'start_of_program_f': kill_nothing(the_report.start_of_program_f),'end_of_program_f': kill_nothing(the_report.end_of_program_f)}
-                                            new_ele = server.insert('twog/element_eval', ele_dict); 
+                                            ele_dict = {
+                                                'description': kill_nothing(the_report.description),
+                                                'login': login_name,
+                                                'operator': login_name,
+                                                'type': kill_nothing(the_report.type),
+                                                'bay': kill_nothing(the_report.bay),
+                                                'machine_number': kill_nothing(the_report.machine_number),
+                                                'client_code': kill_nothing(title.client_code),
+                                                'client_name': kill_nothing(title.client_name),
+                                                'title': kill_nothing(title.title),
+                                                'episode': kill_nothing(title.episode),
+                                                'version': kill_nothing(the_report.version),
+                                                'title_type': kill_nothing(the_report.title_type),
+                                                'format': kill_nothing(the_report.format),
+                                                'standard': kill_nothing(the_report.standard),
+                                                'timecode': kill_nothing(the_report.timecode),
+                                                'po_number': kill_nothing(title.po_number),
+                                                'style': kill_nothing(the_report.style),
+                                                'order_code': kill_nothing(title.order_code),
+                                                'title_code': kill_nothing(title.code),
+                                                'work_order_code': kill_nothing(wo.code),
+                                                'conclusion': kill_nothing(the_report.conclusion),
+                                                'source_code': kill_nothing(source_codes),
+                                                'wo_name': kill_nothing(wo.process),
+                                                'aspect_ratio': kill_nothing(the_report.aspect_ratio),
+                                                'frame_rate': kill_nothing(the_report.frame_rate),
+                                                'roll_up': kill_nothing(the_report.roll_up),
+                                                'bars_tone': kill_nothing(the_report.bars_tone),
+                                                'black_silence_1': kill_nothing(the_report.black_silence_1),
+                                                'slate_silence': kill_nothing(the_report.slate_silence),
+                                                'black_silence_2': kill_nothing(the_report.black_silence_2),
+                                                'video_mod_disclaimer': kill_nothing(the_report.video_mod_disclaimer),
+                                                'start_of_program': kill_nothing(the_report.start_of_program),
+                                                'end_of_program': kill_nothing(the_report.end_of_program),
+                                                'active_video_begins': kill_nothing(the_report.active_video_begins),
+                                                'active_video_ends': kill_nothing(the_report.active_video_ends),
+                                                'horizontal_blanking': kill_nothing(the_report.horizontal_blanking),
+                                                'vertical_blanking': kill_nothing(the_report.vertical_blanking),
+                                                'video_average': kill_nothing(the_report.video_average),
+                                                'video_peak': kill_nothing(the_report.video_peak),
+                                                'chroma_average': kill_nothing(the_report.chroma_average),
+                                                'chroma_peak': kill_nothing(the_report.chroma_peak),
+                                                'video_sync': kill_nothing(the_report.video_sync),
+                                                'chroma_burst': kill_nothing(the_report.chroma_burst),
+                                                'setup': kill_nothing(the_report.setup),
+                                                'control_track': kill_nothing(the_report.control_track),
+                                                'video_rf': kill_nothing(the_report.video_rf),
+                                                'front_porch': kill_nothing(the_report.front_porch),
+                                                'sync_duration': kill_nothing(the_report.sync_duration),
+                                                'burst_duration': kill_nothing(the_report.burst_duration),
+                                                'total_runtime': kill_nothing(the_report.total_runtime),
+                                                'tv_feature_trailer': kill_nothing(the_report.tv_feature_trailer),
+                                                'video_aspect_ratio': kill_nothing(the_report.video_aspect_ratio),
+                                                'textless_at_tail': kill_nothing(the_report.textless_at_tail),
+                                                'cc_subtitles': kill_nothing(the_report.cc_subtitles),
+                                                'timecodes': kill_nothing(the_report.timecodes),
+                                                'vitc': kill_nothing(the_report.vitc),
+                                                'ltc': kill_nothing(the_report.ltc),
+                                                'record_vendor': kill_nothing(the_report.record_vendor),
+                                                'record_date': kill_nothing(the_report.record_date),
+                                                'language': kill_nothing(the_report.language),
+                                                'comp_mne_sync': kill_nothing(the_report.comp_mne_sync),
+                                                'comp_mne_phase': kill_nothing(the_report.comp_mne_phase),
+                                                'missing_mne': kill_nothing(the_report.missing_mne),
+                                                'average_dialogue': kill_nothing(the_report.average_dialogue),
+                                                'dec_a1': kill_nothing(the_report.dec_a1),
+                                                'dec_a2': kill_nothing(the_report.dec_a2),
+                                                'dec_a3': kill_nothing(the_report.dec_a3),
+                                                'dec_a4': kill_nothing(the_report.dec_a4),
+                                                'dec_b1': kill_nothing(the_report.dec_b1),
+                                                'dec_b2': kill_nothing(the_report.dec_b2),
+                                                'dec_b3': kill_nothing(the_report.dec_b3),
+                                                'dec_b4': kill_nothing(the_report.dec_b4),
+                                                'dec_c1': kill_nothing(the_report.dec_c1),
+                                                'dec_c2': kill_nothing(the_report.dec_c2),
+                                                'dec_c3': kill_nothing(the_report.dec_c3),
+                                                'dec_c4': kill_nothing(the_report.dec_c4),
+                                                'dec_d1': kill_nothing(the_report.dec_d1),
+                                                'dec_d2': kill_nothing(the_report.dec_d2),
+                                                'dec_d3': kill_nothing(the_report.dec_d3),
+                                                'dec_d4': kill_nothing(the_report.dec_d4),
+                                                'tape_pack': kill_nothing(the_report.tape_pack),
+                                                'label': kill_nothing(the_report.label),
+                                                'head_logo': kill_nothing(the_report.head_logo),
+                                                'tail_logo': kill_nothing(the_report.tail_logo),
+                                                'notices': kill_nothing(the_report.notices),
+                                                'vendor_id': kill_nothing(the_report.vendor_id),
+                                                'roll_up_f': kill_nothing(the_report.roll_up_f),
+                                                'bars_tone_f': kill_nothing(the_report.bars_tone_f),
+                                                'black_silence_1_f': kill_nothing(the_report.black_silence_1_f),
+                                                'black_silence_2_f': kill_nothing(the_report.black_silence_2_f),
+                                                'slate_silence_f': kill_nothing(the_report.slate_silence_f),
+                                                'video_mod_disclaimer_f': kill_nothing(the_report.video_mod_disclaimer_f),
+                                                'start_of_program_f': kill_nothing(the_report.start_of_program_f),
+                                                'end_of_program_f': kill_nothing(the_report.end_of_program_f)
+                                            }
+                                            new_ele = server.insert('twog/element_eval', ele_dict);
                                             for(var f = 0; f < the_lines.length; f++){
                                                 server.insert('twog/element_eval_lines', {'element_eval_code': new_ele.code, 'description': kill_nothing(the_lines[f].description), 'login': login_name, 'order_code': title.order_code, 'title_code': title.code, 'work_order_code': wo.code, 'timecode_in': kill_nothing(the_lines[f].timecode_in), 'timecode_out': kill_nothing(the_lines[f].timecode_out), 'field_out': kill_nothing(the_lines[f].field_out), 'field_in': kill_nothing(the_lines[f].field_in), 'media_type': kill_nothing(the_lines[f].media_type), 'type_code': kill_nothing(the_lines[f].type_code), 'scale': kill_nothing(the_lines[f].scale), 'sector_or_channel': kill_nothing(the_lines[f].sector_or_channel), 'in_source': kill_nothing(the_lines[f].in_source), 'source_code': kill_nothing(source_codes), 'in_safe': kill_nothing(the_lines[f].in_safe)});
                                             } 
@@ -492,7 +750,7 @@ class QCReportClonerWdg(BaseTableElementWdg):
             toggler.add_behavior(my.get_toggle_behavior(report_code))
             chktbl = Table()
             chktbl.add_row()
-            chktbl.add_cell(' ') 
+            chktbl.add_cell(' ')
             ct = chktbl.add_cell('Select/Deselect All')
             ct.add_attr('align','right')
             chktbl.add_cell(toggler)
@@ -543,7 +801,7 @@ class QCReportClonerWdg(BaseTableElementWdg):
                     nw3.add_attr('nowrap','nowrap')
                 table.add_row()
                 table.add_cell(wotbl)
-                        
+
             widget.add(table)
             loader_tbl = Table()
             loader_tbl.add_attr('id','new_titles')
@@ -580,7 +838,7 @@ class QCReportClonerWdg(BaseTableElementWdg):
                     other_titles = server.eval("@GET(twog/order['po_number','%s'].twog/title.code)" % t)
                     for ot in other_titles:
                         new_titles2.append(ot)
-                    
+
             orders = {}
             for t in new_titles2:
                 t = t.strip()
@@ -618,14 +876,14 @@ class QCReportClonerWdg(BaseTableElementWdg):
                     qcwocode = qcwo.get('lookup_code')
                     if qcwocode != wo_code:
                     #I don't know if we will want this back or not, but requiring 'feature' to be in the name is off for testing purposes
-#                        if 'feature' in qcwo.get('process').lower(): 
+#                        if 'feature' in qcwo.get('process').lower():
 #                            wotbl.add_row()
 #                            check = CheckboxWdg('clonecheck_%s' % qcwocode)
 #                            #check.set_persistence()
 #                            check.set_value(False)
 #                            wotbl.add_cell('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
 #                            wotbl.add_cell(check)
-#                            nw3 = wotbl.add_cell('WO: %s,  Assigned: %s, Code: %s' % (qcwo.get('process'), qcwo.get('assigned'), qcwocode)) 
+#                            nw3 = wotbl.add_cell('WO: %s,  Assigned: %s, Code: %s' % (qcwo.get('process'), qcwo.get('assigned'), qcwocode))
 #                            nw3.add_attr('nowrap','nowrap')
                         wotbl.add_row()
                         check = CheckboxWdg('clonecheck_%s' % qcwocode)
@@ -633,11 +891,11 @@ class QCReportClonerWdg(BaseTableElementWdg):
                         check.set_value(False)
                         wotbl.add_cell('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
                         wotbl.add_cell(check)
-                        nw3 = wotbl.add_cell('WO: %s,  Assigned: %s, Code: %s' % (qcwo.get('process'), qcwo.get('assigned'), qcwocode)) 
+                        nw3 = wotbl.add_cell('WO: %s,  Assigned: %s, Code: %s' % (qcwo.get('process'), qcwo.get('assigned'), qcwocode))
                         nw3.add_attr('nowrap','nowrap')
                 table.add_row()
                 table.add_cell(wotbl)
-                            
+
                 loader_tbl = Table()
                 loader_tbl.add_attr('id','new_titles')
                 loader_tbl.add_style('width: 100%s;' % '%')
@@ -650,7 +908,7 @@ class QCReportSelectorWdg(BaseTableElementWdg):
 
     def init(my):
         nothing = 'true'
- 
+
     def report_chosen(my, code, type, name):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
@@ -689,9 +947,9 @@ class QCReportSelectorWdg(BaseTableElementWdg):
             c.add_attr('goclass',types[type])
             c.add_style('cursor: pointer;')
             c.add_behavior(my.report_chosen(code, types[type], type))
-             
+
         widget.add(table)
- 
+
         return widget
 
 class PreQualEvalLinesWdg(BaseTableElementWdg):
@@ -909,7 +1167,7 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
                     desc_select.add_behavior(my.get_select_fillin(wo_code, rowct, code))
                     mm1 = linestbl.add_cell(desc_select)
                     mm1.add_attr('class','select_cell')
-                    type_code_select = SelectWdg('type_code') 
+                    type_code_select = SelectWdg('type_code')
                     type_code_select.append_option('-','')
                     for tc in type_codes:
                         type_code_select.append_option(tc,tc)
@@ -956,7 +1214,7 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
         desc_select.add_attr('id','description-%s' % rowct)
         desc_select.add_behavior(my.get_select_fillin(wo_code, rowct, code))
         linestbl.add_cell(desc_select)
-        type_code_select = SelectWdg('type_code') 
+        type_code_select = SelectWdg('type_code')
         type_code_select.append_option('-','')
         for tc in type_codes:
             type_code_select.append_option(tc,tc)
@@ -981,7 +1239,7 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
         erow2 = linestbl.add_row()
         erow2.add_attr('class','new_pq_line')
         return linestbl
-        
+
 
 class PrintQCReportWdg(Command):
 
@@ -995,8 +1253,8 @@ class PrintQCReportWdg(Command):
 
     def check(my):
         return True
-    
-    def execute(my):   
+
+    def execute(my):
         new_qc_file = 'generic_blah'
         if my.type == '':
             new_qc_file = '/var/www/html/qc_reports/work_orders/%s.html' % (my.preppend_file_name)
@@ -1004,7 +1262,7 @@ class PrintQCReportWdg(Command):
             new_qc_file = '/var/www/html/qc_reports/work_orders/%s_%s.html' % (my.preppend_file_name, my.type)
         if os.path.exists(new_qc_file):
             os.system('rm -rf %s' % new_qc_file)
-        new_guy = open(new_qc_file, 'w') 
+        new_guy = open(new_qc_file, 'w')
         new_guy.write(my.html.encode('utf-8'))
         new_guy.close()
         return ''
@@ -1148,7 +1406,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
                 }
          ''' % (wo_code, prequal_code)}
         return behavior
- 
+
     def get_print_bvr(my, wo_code, pq_code, type):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         function printExternal(url) {
@@ -1300,7 +1558,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         for g in groups:
             if 'qc' in g or 'edeliveries' in g:
                 show_save = True
-        if this_user == 'admin': 
+        if this_user == 'admin':
             show_save = True
         this_timestamp = str(datetime.datetime.now()).split('.')[0]
         code = my.kwargs.get('code');
@@ -1327,7 +1585,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
             prequal_code = str(my.kwargs.get('prequal_code'))
             prequal = server.eval("@SOBJECT(twog/prequal_eval['code','%s'])" % prequal_code)[0]
             prequal_lines = server.eval("@SOBJECT(twog/prequal_eval_lines['prequal_eval_code','%s'])" % prequal_code)
-        
+
         wo_pevals = server.eval("@SOBJECT(twog/prequal_eval['work_order_code','%s']['code','!=','%s'])" % (code, prequal_code))
         title_pevals = server.eval("@SOBJECT(twog/prequal_eval['title_code','%s']['work_order_code','!=','%s']['code','!=','%s'])" % (work_order.get('title_code'), work_order.get('code'), prequal_code))
         others = Table()
@@ -1366,8 +1624,8 @@ class PreQualEvalWdg(BaseTableElementWdg):
                 others.add_cell('<b>CONCLUSION:</b> %s' % w.get('conclusion'))
                 others.add_cell('<b>DATETIME:</b> %s' % w.get('timestamp'))
                 colsct = colsct + 1
-            
-        
+
+
         widget.add_attr('class','big_ol_prequal_wdg_%s' % code)
         widget.add_attr('prequal_code',prequal.get('code'))
         table = Table()
@@ -1441,7 +1699,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         format_sel.add_attr('id','format')
         format_sel.add_style('width: 153px;')
         format_sel.append_option('--Select--','')
-        for f in my.formats: 
+        for f in my.formats:
             format_sel.append_option(f,f)
         if prequal.get('format') not in [None,'']:
             format_sel.set_value(prequal.get('format'))
@@ -1472,7 +1730,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
             standard_sel.append_option(s,s)
         if prequal.get('standard') not in [None,'']:
             standard_sel.set_value(prequal.get('standard'))
-        
+
         majtbl = Table()
         majtbl.add_attr('class','majtbl')
         majtbl.add_row()
@@ -1530,7 +1788,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         frr.add_attr('nowrap','nowrap')
         mm7 = tittbl.add_cell(ar_select)
         mm7.add_attr('class','select_cell')
-       
+
         ktbl = Table()
         ktbl.add_row()
         k1 = ktbl.add_cell('<i>Code Definitions: F=Film V=Video T=Telecine A=Audio</i>')
@@ -1540,7 +1798,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         k2 = ktbl.add_cell('<i>Severity Scale: 1=Minor 2=Marginal 3=Severe</i>')
         k2.add_attr('align','right')
 
-        linestbl = PreQualEvalLinesWdg(code=prequal.get('code'),wo_code=code) 
+        linestbl = PreQualEvalLinesWdg(code=prequal.get('code'),wo_code=code)
 
         fulllines = Table()
         fulllines.add_attr('border','2')
@@ -1548,16 +1806,16 @@ class PreQualEvalWdg(BaseTableElementWdg):
         fulllines.add_cell(ktbl)
         fulllines.add_row()
         fulllines.add_cell(linestbl)
- 
-        
-             
+
+
+
         table.add_row()
         table.add_cell(toptbl)
         table.add_row()
         table.add_cell(majtbl)
         table.add_row()
         table.add_cell(tittbl)
-        
+
         darktbl = Table()
         darktbl.add_attr('id','darktbl')
         darktbl.add_style('padding-right: 10px;')
@@ -1574,7 +1832,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         darktbl.add_cell('''<textarea cols="160" rows="10" class="description" id="description" style="font-family: 'Arial, Helvetica, sans-serif'; font-size: 14px;">%s</textarea>''' % (prequal.get('description')))
         #darktbl.add_cell('''<textarea cols="160" rows="10" class="description" id="description">%s</textarea>''' % (prequal.get('description')))
         darktbl.add_cell(' ')
- 
+
         table.add_row()
         table.add_cell(darktbl)
 
@@ -1593,7 +1851,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         table.add_row()
         table.add_cell(fulllines)
 
-        
+
         stbl = Table()
         stbl.add_row()
         s1 = stbl.add_cell(' ')
@@ -1617,7 +1875,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         tt2.add_attr('width','100%s' % '%')
         widget.add(ttbl)
         widget.add(table)
-        widget.add_style("font-family: Arial, Helvetica, sans-serif;") 
+        widget.add_style("font-family: Arial, Helvetica, sans-serif;")
         widget.add_style("font-size: 14px;");
         if show_save and 'TITLE' not in original_code:
             widget.add(stbl)
@@ -1655,7 +1913,7 @@ class ElementEvalAudioWdg(BaseTableElementWdg):
 
     def selbox(my, name, val, code, old_val, width='200px'):
         fresh = my.content_pull
-        build_str = 'id="%s" code="%s" old_val="%s" width="%s"' % (name, code, old_val, width) 
+        build_str = 'id="%s" code="%s" old_val="%s" width="%s"' % (name, code, old_val, width)
         fresh = fresh.replace('REPLACE_ME',build_str)
         selected_str = 'value="%s"' % val
         if selected_str in fresh:
@@ -1670,7 +1928,7 @@ class ElementEvalAudioWdg(BaseTableElementWdg):
         txt.add_attr('code',code)
         txt.add_attr('old_val',old_val)
         txt.add_style('width: %s;' % width)
-        txt.set_value(val) 
+        txt.set_value(val)
         if js == 'yes':
             txt.add_behavior(my.get_nums_only())
         return txt
@@ -1695,10 +1953,10 @@ class ElementEvalAudioWdg(BaseTableElementWdg):
             channels = int(my.kwargs.get('channels'))
         if len(element_auds) > 0 and not force_it:
             channels = len(element_auds)
-        leng = len(element_auds) 
+        leng = len(element_auds)
         for i in range(leng, channels - leng):
             element_auds.append(None)
-        a_third = int(channels/3) 
+        a_third = int(channels/3)
         if int(float(float(float(channels)/float(3))*1000)) != a_third * 1000:
             a_third = a_third + 1
         grand_table = Table()
@@ -1725,10 +1983,10 @@ class ElementEvalAudioWdg(BaseTableElementWdg):
             if i < len(element_auds):
                 if element_auds[i] != None:
                     the_code = element_auds[i].get('code')
-                    channel = element_auds[i].get('channel')     
-                    content = element_auds[i].get('content')     
-                    tone = element_auds[i].get('tone')     
-                    peak = element_auds[i].get('peak')     
+                    channel = element_auds[i].get('channel')
+                    content = element_auds[i].get('content')
+                    tone = element_auds[i].get('tone')
+                    peak = element_auds[i].get('peak')
             #atable.add_cell('<input type="text" id="channel-%s" class="channel" code="%s" value="%s" old_val="%s" style="width: 55px;"/>' % (i, the_code, channel, channel))
             atable.add_cell(my.txtbox('channel-%s' % i,channel,the_code,channel,width='68px',js='yes'))
             #atable.add_cell('<input type="text" id="content-%s" class="content" code="%s" value="%s" style="width: 126px;"/>' % (i, the_code, content))
@@ -1939,7 +2197,7 @@ class ElementEvalBarcodesWdg(BaseTableElementWdg):
         erow2 = bctable.add_row()
         erow2.add_attr('class','new_barcode_line')
         return bctable
-                
+
 
 class ElementEvalLinesWdg(BaseTableElementWdg):
     def init(my):
@@ -2161,7 +2419,7 @@ class ElementEvalLinesWdg(BaseTableElementWdg):
                 else:
                     elm_top.append(elm)
             from operator import itemgetter
-            new_top = sorted(elm_top, key=itemgetter('ordering')) 
+            new_top = sorted(elm_top, key=itemgetter('ordering'))
             element_lines = []
             element_lines.extend(new_top)
             element_lines.extend(elm_bottom)
@@ -2225,7 +2483,7 @@ class ElementEvalLinesWdg(BaseTableElementWdg):
                     #linestbl.add_cell('<input type="text" id="timecode_out-%s" name="timecode_out" value="%s" style="width: 75px;"/>' % (rowct, el.get('timecode_out')))
                     linestbl.add_cell(my.txtbox('timecode_out-%s' % rowct,el.get('timecode_out'),width='75px',js='yes'))
                     linestbl.add_cell('<input type="text" id="field_out-%s" name="field_out" value="%s" style="width: 20px;"/>' % (rowct, el.get('field_out')))
-                    type_code_select = SelectWdg('type_code') 
+                    type_code_select = SelectWdg('type_code')
                     type_code_select.append_option('-','')
                     for tc in type_codes:
                         type_code_select.append_option(tc,tc)
@@ -2286,7 +2544,7 @@ class ElementEvalLinesWdg(BaseTableElementWdg):
         #linestbl.add_cell('<input type="text" id="timecode_out-%s" name="timecode_out" value="" style="width: 75px;"/>' % (rowct))
         linestbl.add_cell(my.txtbox('timecode_out-%s' % rowct,'',width='75px',js='yes'))
         linestbl.add_cell('<input type="text" id="field_out-%s" name="field_out" value="" style="width: 20px;"/>' % (rowct))
-        type_code_select = SelectWdg('type_code') 
+        type_code_select = SelectWdg('type_code')
         type_code_select.append_option('-','')
         for tc in type_codes:
             type_code_select.append_option(tc,tc)
@@ -2592,7 +2850,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                 }
          ''' % (wo_code, el_code)}
         return behavior
- 
+
     def get_print_bvr(my, wo_code, el_code, type):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         function replaceAll(find, replace, str) {
@@ -2917,14 +3175,110 @@ class ElementEvalWdg(BaseTableElementWdg):
         tstandard = my.kill_nothing(title.get('standard'))
         tframe_rate = my.kill_nothing(title.get('frame_rate'))
         tformat = my.kill_nothing(title.get('format'))
-        
-        my.element = {'code': '', 'description': '', 'timestamp': this_timestamp, 'login': this_user, 'operator': this_user, 'type': '', 'bay': '', 'machine_number': '', 'client_code': title.get('client_code'), 'client_name': title.get('client_name'), 'title': title.get('title'), 'episode': title.get('episode'), 'version': '', 'title_type': '', 'timecode': '', 'po_number': title.get('po_number'), 'style': '', 'title_code': work_order.get('title_code'), 'order_code': work_order.get('order_code'), 'work_order_code': code, 'conclusion': '', 'source_code': '', 'standard': my.kill_nothing(title.get('deliverable_standard')), 'aspect_ratio': my.kill_nothing(title.get('deliverable_aspect_ratio')), 'frame_rate': my.kill_nothing(title.get('deliverable_frame_rate')), 'format': my.kill_nothing(title.get('deliverable_format')), 'wo_name': work_order.get('process'), 'roll_up': '', 'bars_tone': '', 'black_silence_1': '', 'slate_silence': '', 'black_silence_2': '', 'video_mod_disclaimer': '', 'start_of_program': '', 'end_of_program': '','roll_up_f': '', 'bars_tone_f': '', 'black_silence_1_f': '', 'slate_silence_f': '', 'black_silence_2_f': '', 'video_mod_disclaimer_f': '', 'start_of_program_f': '', 'end_of_program_f': '', 'active_video_begins': '', 'active_video_ends': '', 'horizontal_blanking': '', 'vertical_blanking': '', 'video_average': '', 'video_peak': '', 'chroma_average': '', 'chroma_peak': '', 'video_sync': '', 'chroma_burst': '', 'setup': '', 'control_track': '', 'video_rf': '', 'front_porch': '', 'sync_duration': '', 'burst_duration': '', 'total_runtime': '', 'tv_feature_trailer': '', 'textless_at_tail': '', 'cc_subtitles': '', 'timecodes': '', 'vitc': '', 'ltc': '', 'record_vendor': '', 'record_date': '', 'language': '', 'comp_mne_sync': '', 'comp_mne_phase': '', 'missing_mne': '', 'average_dialogue': '', 'dec_a1': '', 'dec_a2': '', 'dec_a3': '', 'dec_a4': '', 'dec_b1': '', 'dec_b2': '', 'dec_b3': '', 'dec_b4': '', 'dec_c1': '', 'dec_c2': '', 'dec_c3': '', 'dec_c4': '', 'dec_d1': '', 'dec_d2': '', 'dec_d3': '', 'dec_d4': '', 'tape_pack': '', 'label': '', 'head_logo': '', 'tail_logo': '', 'notices': '', 'vendor_id': '', 'file_name': ''}
+
+        my.element = {
+            'code': '',
+            'description': '',
+            'timestamp': this_timestamp,
+            'login': this_user,
+            'operator': this_user,
+            'type': '',
+            'bay': '',
+            'machine_number': '',
+            'client_code': title.get('client_code'),
+            'client_name': title.get('client_name'),
+            'title': title.get('title'),
+            'episode': title.get('episode'),
+            'version': '',
+            'title_type': '',
+            'timecode': '',
+            'po_number': title.get('po_number'),
+            'style': '',
+            'title_code': work_order.get('title_code'),
+            'order_code': work_order.get('order_code'),
+            'work_order_code': code,
+            'conclusion': '',
+            'source_code': '',
+            'standard': my.kill_nothing(title.get('deliverable_standard')),
+            'aspect_ratio': my.kill_nothing(title.get('deliverable_aspect_ratio')),
+            'frame_rate': my.kill_nothing(title.get('deliverable_frame_rate')),
+            'format': my.kill_nothing(title.get('deliverable_format')),
+            'wo_name': work_order.get('process'),
+            'roll_up': '',
+            'bars_tone': '',
+            'black_silence_1': '',
+            'slate_silence': '',
+            'black_silence_2': '',
+            'video_mod_disclaimer': '',
+            'start_of_program': '',
+            'end_of_program': '','roll_up_f': '',
+            'bars_tone_f': '',
+            'black_silence_1_f': '',
+            'slate_silence_f': '',
+            'black_silence_2_f': '',
+            'video_mod_disclaimer_f': '',
+            'start_of_program_f': '',
+            'end_of_program_f': '',
+            'active_video_begins': '',
+            'active_video_ends': '',
+            'horizontal_blanking': '',
+            'vertical_blanking': '',
+            'video_average': '',
+            'video_peak': '',
+            'chroma_average': '',
+            'chroma_peak': '',
+            'video_sync': '',
+            'chroma_burst': '',
+            'setup': '',
+            'control_track': '',
+            'video_rf': '',
+            'front_porch': '',
+            'sync_duration': '',
+            'burst_duration': '',
+            'total_runtime': '',
+            'tv_feature_trailer': '',
+            'textless_at_tail': '',
+            'cc_subtitles': '',
+            'timecodes': '',
+            'vitc': '',
+            'ltc': '',
+            'record_vendor': '',
+            'record_date': '',
+            'language': '',
+            'comp_mne_sync': '',
+            'comp_mne_phase': '',
+            'missing_mne': '',
+            'average_dialogue': '',
+            'dec_a1': '',
+            'dec_a2': '',
+            'dec_a3': '',
+            'dec_a4': '',
+            'dec_b1': '',
+            'dec_b2': '',
+            'dec_b3': '',
+            'dec_b4': '',
+            'dec_c1': '',
+            'dec_c2': '',
+            'dec_c3': '',
+            'dec_c4': '',
+            'dec_d1': '',
+            'dec_d2': '',
+            'dec_d3': '',
+            'dec_d4': '',
+            'tape_pack': '',
+            'label': '',
+            'head_logo': '',
+            'tail_logo': '',
+            'notices': '',
+            'vendor_id': '',
+            'file_name': ''
+        }
         my.element_lines = [{'code': '', 'description': '', 'timestamp': this_timestamp, 's_status': '', 'keywords': '', 'login': this_user, 'id': '', 'name': '', 'element_eval_code': '', 'order_code': work_order.get('order_code'), 'title_code': work_order.get('title_code'), 'work_order_code': code, 'timecode_in': '', 'field_in': '', 'timecode_out': '', 'field_out': '', 'media_type': '', 'type_code': '', 'scale': '', 'sector_or_channel': '', 'in_safe': '', 'in_source': '', 'source_code': ''}]
         if 'element_code' in my.kwargs.keys():
             element_code = str(my.kwargs.get('element_code'))
             my.element = server.eval("@SOBJECT(twog/element_eval['code','%s'])" % element_code)[0]
             my.element_lines = server.eval("@SOBJECT(twog/element_eval_lines['element_eval_code','%s'])" % element_code)
-        
+
         wo_pevals = server.eval("@SOBJECT(twog/element_eval['work_order_code','%s']['code','!=','%s'])" % (code, element_code))
         title_pevals = server.eval("@SOBJECT(twog/element_eval['title_code','%s']['work_order_code','!=','%s']['code','!=','%s'])" % (work_order.get('title_code'), work_order.get('code'), element_code))
         others = Table()
@@ -3044,7 +3398,7 @@ class ElementEvalWdg(BaseTableElementWdg):
         format_sel.add_attr('id','format')
         format_sel.add_style('width: 153px;')
         format_sel.append_option('--Select--','')
-        for f in my.formats: 
+        for f in my.formats:
             format_sel.append_option(f,f)
         if my.element.get('format') not in [None,'']:
             format_sel.set_value(my.element.get('format'))
@@ -3076,7 +3430,7 @@ class ElementEvalWdg(BaseTableElementWdg):
         majtbl.add_cell('BAY')
         majtbl.add_cell('MACHINE #')
         majtbl.add_row()
-       
+
         majtbl.add_cell(my.txtbox('timestamp',width='137px'))
         if my.element.get('operator') not in [None,'']:
             that_login = server.eval("@SOBJECT(sthpw/login['login','%s'])" % my.element.get('operator'))
@@ -3322,8 +3676,8 @@ class ElementEvalWdg(BaseTableElementWdg):
         rcrd = CalendarInputWdg("record_date")
         rcrd.set_option('show_activator', 'true')
         rcrd.set_option('show_time','false')
-        rcrd.set_option('width', '380px')    
-        rcrd.set_option('id', 'record_date')    
+        rcrd.set_option('width', '380px')
+        rcrd.set_option('id', 'record_date')
         rcrd.set_option('display_format','MM/DD/YYYY HH:MM')
         if my.element.get('record_date') not in [None,'']:
             rcrd.set_option('default', my.element.get('record_date'))
@@ -3355,7 +3709,7 @@ class ElementEvalWdg(BaseTableElementWdg):
 
         linestbl = ElementEvalLinesWdg(code=my.element.get('code'), wo_code=code,
                                        client_code=my.element.get('client_code'))
-        audtbl = ElementEvalAudioWdg(code=my.element.get('code'),wo_code=code,channels=channels) 
+        audtbl = ElementEvalAudioWdg(code=my.element.get('code'),wo_code=code,channels=channels)
 
         fulllines = Table()
         fulllines.add_attr('border','2')
@@ -3502,7 +3856,7 @@ class TechEvalWdg(BaseTableElementWdg):
                 }
          ''' % (wo_code, tech_code)}
         return behavior
- 
+
     def get_print_bvr(my, wo_code, tech_code, type):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         function printExternal(url) {
@@ -3604,7 +3958,7 @@ class TechEvalWdg(BaseTableElementWdg):
         if date_obj not in [None,'']:
             return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
         return return_date
- 
+
     def get_display(my):
         import time, datetime
         from tactic_client_lib import TacticServerStub
@@ -3617,11 +3971,14 @@ class TechEvalWdg(BaseTableElementWdg):
         for g in groups:
             if 'qc' in g or 'edeliveries' in g:
                 show_save = True
-        if this_user == 'admin': 
+        if this_user == 'admin':
             show_save = True
         this_timestamp = str(datetime.datetime.now()).split('.')[0]
         code = my.kwargs.get('code');
         original_code = code
+
+        widget = DivWdg()
+
         if 'TITLE' in code:
             wos = my.server.eval("@GET(twog/work_order['title_code','%s'].code)" % code)
             if len(wos) > 0:
@@ -3636,7 +3993,78 @@ class TechEvalWdg(BaseTableElementWdg):
         work_order = my.server.eval("@SOBJECT(twog/work_order['code','%s'])" % code)[0]
         title = my.server.eval("@SOBJECT(twog/title['code','%s'])" % work_order.get('title_code'))[0]
         tech_code = ''
-        tech = {'code': '', 'description': '', 'timestamp': this_timestamp, 'login': this_user, 'barcode': '', 'client_code': '', 'client_name': '', 'title': title.get('title'), 'title_code': title.get('code'), 'episode': '', 'type': '', 'trt': '', 'part': '', 'label_date': '', 'capture_or_layoff': '', 'date': this_timestamp, 'order_code': work_order.get('order_code'), 'source_deck': '', 'record_deck': '', 'aspect_ratio': '', 'format': '', 'standard': '', 'timecode': '', 'text': '', 'vitc_lines': '', 'horiz_blank': '', 'active_video_lines': '', 'title_safe': '', 'error_logger': '', 'audio_ch01': '', 'audio_ch02': '', 'audio_ch03': '', 'audio_ch04': '', 'audio_ch05': '', 'audio_ch06': '', 'audio_ch07': '', 'audio_ch08': '', 'audio_ch09': '', 'audio_ch10': '', 'audio_ch11': '', 'audio_ch12': '', 'peak_ch01': '', 'peak_ch02': '', 'peak_ch03': '', 'peak_ch04': '', 'peak_ch05': '', 'peak_ch06': '', 'peak_ch07': '', 'peak_ch08': '', 'peak_ch09': '', 'peak_ch10': '', 'peak_ch11': '', 'peak_ch12': '', 'in_phase_0102': '', 'in_phase_0304': '', 'in_phase_0506': '', 'in_phase_0708': '', 'in_phase_0910': '', 'in_phase_1112': '', 'first_cut': '', 'first_cut_field': '', 'last_cut': '', 'last_cut_field': '', 'tc_verify': '', 'error_logger_messages': '', 'general_comments': '', 'operator': this_user, 'source_code': '', 'work_order_code': work_order.get('code'), 'wo_name': work_order.get('process')}
+        tech = {
+            'code': '',
+            'description': '',
+            'timestamp': this_timestamp,
+            'login': this_user,
+            'barcode': '',
+            'client_code': '',
+            'client_name': '',
+            'title': title.get('title'),
+            'title_code': title.get('code'),
+            'episode': '',
+            'type': '',
+            'trt': '',
+            'part': '',
+            'label_date': '',
+            'capture_or_layoff': '',
+            'date': this_timestamp,
+            'order_code': work_order.get('order_code'),
+            'source_deck': '',
+            'record_deck': '',
+            'aspect_ratio': '',
+            'format': '',
+            'standard': '',
+            'timecode': '',
+            'text': '',
+            'vitc_lines': '',
+            'horiz_blank': '',
+            'active_video_lines': '',
+            'title_safe': '',
+            'error_logger': '',
+            'audio_ch01': '',
+            'audio_ch02': '',
+            'audio_ch03': '',
+            'audio_ch04': '',
+            'audio_ch05': '',
+            'audio_ch06': '',
+            'audio_ch07': '',
+            'audio_ch08': '',
+            'audio_ch09': '',
+            'audio_ch10': '',
+            'audio_ch11': '',
+            'audio_ch12': '',
+            'peak_ch01': '',
+            'peak_ch02': '',
+            'peak_ch03': '',
+            'peak_ch04': '',
+            'peak_ch05': '',
+            'peak_ch06': '',
+            'peak_ch07': '',
+            'peak_ch08': '',
+            'peak_ch09': '',
+            'peak_ch10': '',
+            'peak_ch11': '',
+            'peak_ch12': '',
+            'in_phase_0102': '',
+            'in_phase_0304': '',
+            'in_phase_0506': '',
+            'in_phase_0708': '',
+            'in_phase_0910': '',
+            'in_phase_1112': '',
+            'first_cut': '',
+            'first_cut_field': '',
+            'last_cut': '',
+            'last_cut_field': '',
+            'tc_verify': '',
+            'error_logger_messages': '',
+            'general_comments': '',
+            'operator': this_user,
+            'source_code': '',
+            'work_order_code': work_order.get('code'),
+            'wo_name': work_order.get('process')
+        }
         if 'tech_code' in my.kwargs.keys():
             tech_code = str(my.kwargs.get('tech_code'))
             if tech_code not in [None,'']:
@@ -3677,7 +4105,7 @@ class TechEvalWdg(BaseTableElementWdg):
                 others.add_cell('<b>OPERATOR:</b> %s' % w.get('operator'))
                 others.add_cell('<b>DATETIME:</b> %s' % my.fix_date(w.get('date')))
                 colsct = colsct + 1
-        widget = DivWdg()
+
         widget.add_attr('class','big_ol_tech_wdg_%s' % code)
         widget.add_attr('tech_code',tech.get('code'))
         table = Table()
@@ -3731,9 +4159,9 @@ class TechEvalWdg(BaseTableElementWdg):
         qcd.set_option('show_confirm', False)
         qcd.set_option('show_text', True)
         qcd.set_option('show_today', False)
-        qcd.set_option('read_only', False)    
-        qcd.set_option('width', '120px')    
-        qcd.set_option('id', 'timestamp')    
+        qcd.set_option('read_only', False)
+        qcd.set_option('width', '120px')
+        qcd.set_option('id', 'timestamp')
         if tech.get('timestamp') not in [None,'']:
             qcd.set_option('default', my.fix_date(tech.get('timestamp')))
         qcd.get_top().add_attr('id','timestamp')
@@ -3745,9 +4173,9 @@ class TechEvalWdg(BaseTableElementWdg):
         lbld.set_option('show_confirm', False)
         lbld.set_option('show_text', True)
         lbld.set_option('show_today', False)
-        lbld.set_option('read_only', False)    
-        lbld.set_option('width', '120px')    
-        lbld.set_option('id', 'label_date')    
+        lbld.set_option('read_only', False)
+        lbld.set_option('width', '120px')
+        lbld.set_option('id', 'label_date')
         if tech.get('label_date') not in [None,'']:
             lbld.set_option('default', my.fix_date(tech.get('label_date')))
         lbld.get_top().add_attr('id','label_date')
@@ -3768,7 +4196,7 @@ class TechEvalWdg(BaseTableElementWdg):
         majtbl.add_cell('<input type="text" value="%s" class="tech_r_var" id="barcode" style="width: 240px;"/>' % tech.get('barcode'))
         majtbl.add_cell('<input type="text" value="%s" class="tech_r_var" id="client_name" style="width: 340px;"/>' % tech.get('client_name'))
         majtbl.add_cell(qcd)
-        
+
         titbl = Table()
         titbl.add_row()
         t1 = titbl.add_cell('TITLE')
@@ -3778,7 +4206,7 @@ class TechEvalWdg(BaseTableElementWdg):
         titbl.add_row()
         titbl.add_cell('<input type="text" value="%s" class="tech_r_var" id="title" style="width: 340px;"/>' % tech.get('title'))
         titbl.add_cell('<input type="text" value="%s" class="tech_r_var" id="episode" style="width: 240px;"/>' % tech.get('episode'))
-      
+
         majtbl.add_row()
         titc = majtbl.add_cell(titbl)
         titc.add_attr('colspan','3')
@@ -3796,13 +4224,13 @@ class TechEvalWdg(BaseTableElementWdg):
         majtbl.add_row()
         titr = majtbl.add_cell(trtbl)
         titr.add_attr('colspan','3')
- 
+
         dtbl = Table()
         dtbl.add_row()
         d1 = dtbl.add_cell('DESCRIPTION')
         d1.add_attr('valign','top')
         d2 = dtbl.add_cell('<textarea cols="100" rows="3" class="metadata_r_var" id="description">%s</textarea>' % tech.get('description'))
-    
+
         d2tbl = Table()
         d2tbl.add_row()
         d2tbl.add_cell('PART')
@@ -3811,7 +4239,7 @@ class TechEvalWdg(BaseTableElementWdg):
         d21 = d2tbl.add_cell('LABEL DATE')
         d21.add_attr('nowrap','nowrap')
         d2tbl.add_cell(lbld)
-  
+
         dtbl.add_cell(d2tbl)
 
         majtbl.add_row()
@@ -3830,7 +4258,7 @@ class TechEvalWdg(BaseTableElementWdg):
         majtbl.add_row()
         titr = majtbl.add_cell(ltbl)
         titr.add_attr('colspan','3')
-        
+
 
         table.add_row()
         table.add_cell(toptbl)
@@ -3860,7 +4288,7 @@ class TechEvalWdg(BaseTableElementWdg):
         widget.add(table)
         if show_save and 'TITLE' not in original_code:
             widget.add(stbl)
-             
+
         widget.add(table)
 
         return widget
@@ -3877,9 +4305,9 @@ class MetaDataReportWdg(BaseTableElementWdg):
     def get_stub(my):
         from tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
-        
+
     def fill_languages(my):
-        my.languages = my.server.eval("@GET(twog/language['@ORDER_BY','name'].name)") 
+        my.languages = my.server.eval("@GET(twog/language['@ORDER_BY','name'].name)")
 
     def get_clone_report(my, wo_code, el_code):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
@@ -3978,7 +4406,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
                 }
          ''' % (wo_code, meta_code)}
         return behavior
- 
+
     def get_print_bvr(my, wo_code, meta_code, type):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         function printExternal(url) {
@@ -4233,7 +4661,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
         tcr = ttl.add_cell('<b>%s</b>' % top_title)
         tcr.add_attr('align', 'center')
         tcr.add_attr('width', '100%s' % '%')
- 
+
         tbl.add_cell(ttl)
         ctr = 1
         for pair in pairs:
@@ -4241,7 +4669,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
             trk = tbl.add_cell('TRK. %s' % ctr)
             trk.add_attr('nowrap', 'nowrap')
             spl = pair.split('|')
-            t2 = Table() 
+            t2 = Table()
             t2.add_attr('border', '1')
             t2.add_row()
             lang_sel = my.make_a_sel(wholedict, spl[0], my.languages, 100, True, False, '--')
@@ -4275,11 +4703,14 @@ class MetaDataReportWdg(BaseTableElementWdg):
         for g in groups:
             if 'qc' in g or 'edeliveries' in g:
                 show_save = True
-        if this_user == 'admin': 
+        if this_user == 'admin':
             show_save = True
         this_timestamp = str(datetime.datetime.now()).split('.')[0]
         code = my.kwargs.get('code');
         original_code = code
+
+        widget = DivWdg()
+
         if 'TITLE' in code:
             wos = my.server.eval("@GET(twog/work_order['title_code','%s'].code)" % code)
             if len(wos) > 0:
@@ -4294,7 +4725,170 @@ class MetaDataReportWdg(BaseTableElementWdg):
         work_order = my.server.eval("@SOBJECT(twog/work_order['code','%s'])" % code)[0]
         title = my.server.eval("@SOBJECT(twog/title['code','%s'])" % work_order.get('title_code'))[0]
         metadata_code = ''
-        metadata = {'code': '', 'description': '', 'login': this_user, 'order_code': title.get('order_code'), 'title_code': title.get('code'), 'work_order_code': work_order.get('code'), 'title': title.get('title'), 'episode': title.get('episode'), 'content': '', 'source_type': '', 'source_codes': '', 'qc_operator': '', 'qc_date': this_timestamp, 'qc_notes': '', 'encoding_log_no_errors_f': '', 'encoding_log_no_errors_p': '', 'correct_codec_used_f': '', 'correct_codec_used_p': '', 'conclusion': '', 'fr_same_as_native_source_f': '', 'fr_same_as_native_source_p': '', 'hd_res_is_1920x1080_f': '', 'hd_res_is_1920x1080_p': '', 'field_dominance_is_none_f': '', 'field_dominance_is_none_p': '', 'tagged_as_progressive_f': '', 'tagged_as_progressive_p': '', 'clap_tag_removed_f': '', 'clap_tag_removed_p': '', 'pasp_is_correct_f': '', 'pasp_is_correct_p': '', 'gamma_tag_removed_f': '', 'gamma_tag_removed_p': '', 'no_fbimpaareleasedate_tagging_f': '', 'no_fbimpaareleasedate_tagging_p': '', 'proper_aspect_ratio_f': '', 'proper_aspect_ratio_p': '', 'websites_not_listed_f': '', 'websites_not_listed_p': '', 'cropping_values_correct_f': '', 'cropping_values_correct_p': '', 'no_promotional_bumpers_p': '', 'same_aspect_ratio_as_feature_p': '', 'suitable_for_general_audience_p': '', 'file_starts_at_5959_w_black_f': '', 'file_starts_at_1hr_w_fade_p': '', 'program_starts_at_1hr_f': '', 'program_begins_with_black_frame_p': '', 'program_ends_with_black_frame_f': '', 'program_ends_with_fade_p': '', 'video_notes': '', 'aconfig_trk1_language': '', 'aconfig_trk1_type': '', 'aconfig_trk2_language': '', 'aconfig_trk2_type': '', 'aconfig_trk3_language': '', 'aconfig_trk3_type': '', 'aconfig_trk4_language': '', 'aconfig_trk4_type': '', 'aconfig_trk5_language': '', 'aconfig_trk5_type': '', 'aconfig_trk6_language': '', 'aconfig_trk6_type': '', 'aconfig_trk7_language': '', 'aconfig_trk7_type': '', 'aconfig_trk8_language': '', 'aconfig_trk8_type': '', 'abundle_trk1_language': '', 'abundle_trk1_type': '', 'abundle_trk2_language': '', 'abundle_trk2_type': '', 'abundle_trk3_language': '', 'abundle_trk3_type': '', 'abundle_trk4_language': '', 'abundle_trk4_type': '', 'abundle_trk5_language': '', 'abundle_trk5_type': '', 'abundle_trk6_language': '', 'abundle_trk6_type': '', 'abundle_trk7_language': '', 'abundle_trk7_type': '', 'abundle_trk8_language': '', 'abundle_trk8_type': '', 'aconfig_trk1_language_p': '', 'aconfig_trk1_type_p': '', 'aconfig_trk2_language_p': '', 'aconfig_trk2_type_p': '', 'aconfig_trk3_language_p': '', 'aconfig_trk3_type_p': '', 'aconfig_trk4_language_p': '', 'aconfig_trk4_type_p': '', 'aconfig_trk5_language_p': '', 'aconfig_trk5_type_p': '', 'aconfig_trk6_language_p': '', 'aconfig_trk6_type_p': '', 'aconfig_trk7_language_p': '', 'aconfig_trk7_type_p': '', 'aconfig_trk8_language_p': '', 'aconfig_trk8_type_p': '', 'aconfig_verified_f': '', 'aconfig_verified_b': '', 'aconfig_verified_p': '', 'audio_in_sync_with_video_f': '', 'audio_in_sync_with_video_b': '', 'audio_in_sync_with_video_p': '', 'audio_tagged_correctly_f': '', 'audio_tagged_correctly_b': '', 'audio_tagged_correctly_p': '', 'no_audio_cut_off_f': '', 'no_audio_cut_off_b': '', 'no_audio_cut_off_p': '', 'trt_audio_is_trt_video_f': '', 'trt_audio_is_trt_video_b': '', 'trt_audio_is_trt_video_p': '', 'correct_audio_language_f': '', 'correct_audio_language_b': '', 'correct_audio_language_p': '', 'audio_notes': '', 'delivery_snapshot_feature': '', 'delivery_snapshot_trailer': '', 'delivery_snapshot_alt_audio': '', 'delivery_snapshot_subtitle': '', 'delivery_snapshot_cc': '', 'delivery_snapshot_vendor_notes': '', 'delivery_snapshot_poster_art': '', 'delivery_snapshot_dub_card': '', 'delivery_snapshot_other': '', 'forced_narrative_f': '', 'forced_narrative_p': '', 'subtitles_on_feature': '', 'subtitles_on_trailer': '', 'forced_narrative_not_overlapping_f': '', 'forced_narrative_not_overlapping_p': '', 'subtitles_on_feature_not_overlapping': '', 'subtitles_on_trailer_not_overlapping': '', 'dub_card_dimensions_match_feature': '', 'dub_card_fps_match_feature': '', 'dub_card_language_match_locale': '', 'dub_card_duration_4_to_5': '', 'dub_card_has_no_audio_tracks': '', 'dub_card_text_not_cutoff_with_cropping': '', 'cc_in_synch_with_video': '', 'subtitles_in_synch_with_video': '', 'subtitles_have_correct_language': '', 'assets_notes': '', 'thumb_is_jpeg': '', 'thumb_dpi_72_or_more': '', 'thumb_profile_is_rgb': '', 'thumb_same_aspect_ratio_as_video': '', 'thumb_only_active_pixels': '', 'thumb_horiz_at_least_640': '', 'thumb_for_each_chapter_stop': '', 'poster_is_jpeg': '', 'poster_dpi_72_or_more': '', 'poster_profile_is_rgb': '', 'poster_rez_at_least_1400x2100': '', 'poster_aspect_ratio_2x3': '', 'poster_key_art_and_title_only': '', 'poster_no_dvdcover_date_urlpromo_tagging': '', 'image_notes': '', 'trt_f': '', 'trt_p': ''}
+        metadata = {
+            'code': '',
+            'description': '',
+            'login': this_user,
+            'order_code': title.get('order_code'),
+            'title_code': title.get('code'),
+            'work_order_code': work_order.get('code'),
+            'title': title.get('title'),
+            'episode': title.get('episode'),
+            'content': '',
+            'source_type': '',
+            'source_codes': '',
+            'qc_operator': '',
+            'qc_date': this_timestamp,
+            'qc_notes': '',
+            'encoding_log_no_errors_f': '',
+            'encoding_log_no_errors_p': '',
+            'correct_codec_used_f': '',
+            'correct_codec_used_p': '',
+            'conclusion': '',
+            'fr_same_as_native_source_f': '',
+            'fr_same_as_native_source_p': '',
+            'hd_res_is_1920x1080_f': '',
+            'hd_res_is_1920x1080_p': '',
+            'field_dominance_is_none_f': '',
+            'field_dominance_is_none_p': '',
+            'tagged_as_progressive_f': '',
+            'tagged_as_progressive_p': '',
+            'clap_tag_removed_f': '',
+            'clap_tag_removed_p': '',
+            'pasp_is_correct_f': '',
+            'pasp_is_correct_p': '',
+            'gamma_tag_removed_f': '',
+            'gamma_tag_removed_p': '',
+            'no_fbimpaareleasedate_tagging_f': '',
+            'no_fbimpaareleasedate_tagging_p': '',
+            'proper_aspect_ratio_f': '',
+            'proper_aspect_ratio_p': '',
+            'websites_not_listed_f': '',
+            'websites_not_listed_p': '',
+            'cropping_values_correct_f': '',
+            'cropping_values_correct_p': '',
+            'no_promotional_bumpers_p': '',
+            'same_aspect_ratio_as_feature_p': '',
+            'suitable_for_general_audience_p': '',
+            'file_starts_at_5959_w_black_f': '',
+            'file_starts_at_1hr_w_fade_p': '',
+            'program_starts_at_1hr_f': '',
+            'program_begins_with_black_frame_p': '',
+            'program_ends_with_black_frame_f': '',
+            'program_ends_with_fade_p': '',
+            'video_notes': '',
+            'aconfig_trk1_language': '',
+            'aconfig_trk1_type': '',
+            'aconfig_trk2_language': '',
+            'aconfig_trk2_type': '',
+            'aconfig_trk3_language': '',
+            'aconfig_trk3_type': '',
+            'aconfig_trk4_language': '',
+            'aconfig_trk4_type': '',
+            'aconfig_trk5_language': '',
+            'aconfig_trk5_type': '',
+            'aconfig_trk6_language': '',
+            'aconfig_trk6_type': '',
+            'aconfig_trk7_language': '',
+            'aconfig_trk7_type': '',
+            'aconfig_trk8_language': '',
+            'aconfig_trk8_type': '',
+            'abundle_trk1_language': '',
+            'abundle_trk1_type': '',
+            'abundle_trk2_language': '',
+            'abundle_trk2_type': '',
+            'abundle_trk3_language': '',
+            'abundle_trk3_type': '',
+            'abundle_trk4_language': '',
+            'abundle_trk4_type': '',
+            'abundle_trk5_language': '',
+            'abundle_trk5_type': '',
+            'abundle_trk6_language': '',
+            'abundle_trk6_type': '',
+            'abundle_trk7_language': '',
+            'abundle_trk7_type': '',
+            'abundle_trk8_language': '',
+            'abundle_trk8_type': '',
+            'aconfig_trk1_language_p': '',
+            'aconfig_trk1_type_p': '',
+            'aconfig_trk2_language_p': '',
+            'aconfig_trk2_type_p': '',
+            'aconfig_trk3_language_p': '',
+            'aconfig_trk3_type_p': '',
+            'aconfig_trk4_language_p': '',
+            'aconfig_trk4_type_p': '',
+            'aconfig_trk5_language_p': '',
+            'aconfig_trk5_type_p': '',
+            'aconfig_trk6_language_p': '',
+            'aconfig_trk6_type_p': '',
+            'aconfig_trk7_language_p': '',
+            'aconfig_trk7_type_p': '',
+            'aconfig_trk8_language_p': '',
+            'aconfig_trk8_type_p': '',
+            'aconfig_verified_f': '',
+            'aconfig_verified_b': '',
+            'aconfig_verified_p': '',
+            'audio_in_sync_with_video_f': '',
+            'audio_in_sync_with_video_b': '',
+            'audio_in_sync_with_video_p': '',
+            'audio_tagged_correctly_f': '',
+            'audio_tagged_correctly_b': '',
+            'audio_tagged_correctly_p': '',
+            'no_audio_cut_off_f': '',
+            'no_audio_cut_off_b': '',
+            'no_audio_cut_off_p': '',
+            'trt_audio_is_trt_video_f': '',
+            'trt_audio_is_trt_video_b': '',
+            'trt_audio_is_trt_video_p': '',
+            'correct_audio_language_f': '',
+            'correct_audio_language_b': '',
+            'correct_audio_language_p': '',
+            'audio_notes': '',
+            'delivery_snapshot_feature': '',
+            'delivery_snapshot_trailer': '',
+            'delivery_snapshot_alt_audio': '',
+            'delivery_snapshot_subtitle': '',
+            'delivery_snapshot_cc': '',
+            'delivery_snapshot_vendor_notes': '',
+            'delivery_snapshot_poster_art': '',
+            'delivery_snapshot_dub_card': '',
+            'delivery_snapshot_other': '',
+            'forced_narrative_f': '',
+            'forced_narrative_p': '',
+            'subtitles_on_feature': '',
+            'subtitles_on_trailer': '',
+            'forced_narrative_not_overlapping_f': '',
+            'forced_narrative_not_overlapping_p': '',
+            'subtitles_on_feature_not_overlapping': '',
+            'subtitles_on_trailer_not_overlapping': '',
+            'dub_card_dimensions_match_feature': '',
+            'dub_card_fps_match_feature': '',
+            'dub_card_language_match_locale': '',
+            'dub_card_duration_4_to_5': '',
+            'dub_card_has_no_audio_tracks': '',
+            'dub_card_text_not_cutoff_with_cropping': '',
+            'cc_in_synch_with_video': '',
+            'subtitles_in_synch_with_video': '',
+            'subtitles_have_correct_language': '',
+            'assets_notes': '',
+            'thumb_is_jpeg': '',
+            'thumb_dpi_72_or_more': '',
+            'thumb_profile_is_rgb': '',
+            'thumb_same_aspect_ratio_as_video': '',
+            'thumb_only_active_pixels': '',
+            'thumb_horiz_at_least_640': '',
+            'thumb_for_each_chapter_stop': '',
+            'poster_is_jpeg': '',
+            'poster_dpi_72_or_more': '',
+            'poster_profile_is_rgb': '',
+            'poster_rez_at_least_1400x2100': '',
+            'poster_aspect_ratio_2x3': '',
+            'poster_key_art_and_title_only': '',
+            'poster_no_dvdcover_date_urlpromo_tagging': '',
+            'image_notes': '',
+            'trt_f': '',
+            'trt_p': ''
+        }
 
         if 'metadata_code' in my.kwargs.keys():
             metadata_code = str(my.kwargs.get('metadata_code'))
@@ -4305,7 +4899,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
         wo_reports = my.server.eval("@SOBJECT(twog/metadata_report['work_order_code','%s']['code','!=','%s'])" % (code, metadata_code))
         title_reports = my.server.eval("@SOBJECT(twog/metadata_report['title_code','%s']['work_order_code','!=','%s']['code','!=','%s'])" % (work_order.get('title_code'), work_order.get('code'), metadata_code))
         others = Table()
-        others.add_style('background-color: #528B8B; width: 100%s;' % '%');
+        others.add_style('background-color: #528B8B; width: 100%s;' % '%')
         cols = ['#537072','#518A1A']
         colsct = 0
         if len(title_reports) > 0:
@@ -4338,9 +4932,8 @@ class MetaDataReportWdg(BaseTableElementWdg):
                 others.add_cell('<b>CONCLUSION:</b> %s' % w.get('conclusion'))
                 others.add_cell('<b>DATETIME:</b> %s' % my.fix_date(w.get('qc_date')))
                 colsct = colsct + 1
-            
-        
-        widget = DivWdg()
+
+
         widget.add_attr('class','big_ol_metadata_wdg_%s' % code)
         widget.add_attr('metadata_code',metadata.get('code'))
         table = Table()
@@ -4394,14 +4987,14 @@ class MetaDataReportWdg(BaseTableElementWdg):
         qcd.set_option('show_confirm', False)
         qcd.set_option('show_text', True)
         qcd.set_option('show_today', False)
-        qcd.set_option('read_only', False)    
-        qcd.set_option('width', '320px')    
-        qcd.set_option('id', 'qc_date')    
+        qcd.set_option('read_only', False)
+        qcd.set_option('width', '320px')
+        qcd.set_option('id', 'qc_date')
         if metadata.get('qc_date') not in [None,'']:
             qcd.set_option('default', my.fix_date(metadata.get('qc_date')))
         qcd.get_top().add_attr('id','qc_date')
         qcd.set_persist_on_submit()
-      
+
         majtbl = Table()
         majtbl.add_row()
         mt = majtbl.add_cell('TITLE:')
@@ -4473,11 +5066,11 @@ class MetaDataReportWdg(BaseTableElementWdg):
         s1_list2 = ['TRAILER DOES NOT CONTAIN ANY PROMOTIONAL BUMPERS?', 'TRAILER IS SAME ASPECT RATIO AS FEATURE?', '*TRAILER CONTAINS CONTENT SUITABLE FOR A GENERAL AUDIENCE?']
         s1_dict2 = {'TRAILER DOES NOT CONTAIN ANY PROMOTIONAL BUMPERS?': 'no_promotional_bumpers_p', 'TRAILER IS SAME ASPECT RATIO AS FEATURE?': 'same_aspect_ratio_as_feature_p', '*TRAILER CONTAINS CONTENT SUITABLE FOR A GENERAL AUDIENCE?': 'suitable_for_general_audience_p'}
 
-        st_fr = {'HD FEATURE': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25, 29.97)?','SD FEATURE NTSC': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 29.97)?','SD FEATURE PAL': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25)?','HD TV': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25, 29.97)?','SD TV NTSC': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 29.97)?','SD TV PAL': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25)?'};
-        st_res = {'HD FEATURE': 'HD RESOLUTION IS 1920X1080 (SQUARE PIXEL ASPECT RATIO)?','SD FEATURE NTSC': 'SD NTSC RESOLUTION IS 720X480 OR 720X486?','SD FEATURE PAL': 'SD PAL RESOLUTION IS 720X576?','HD TV': 'HD RESOLUTION IS 1920X1080 (SQUARE PIXEL ASPECT RATIO)?','SD TV NTSC': 'SD NTSC RESOLUTION IS 720X480 OR 720X486?','SD TV PAL': 'SD PAL RESOLUTION IS 720X576?'};
-        st_pasp = {'HD FEATURE': 'PASP IS CORRECT? (1:1)','SD FEATURE NTSC': 'PASP IS CORRECT? (4x3 = 0.889:1, 16x9 = 1.185:1)','SD FEATURE PAL': 'PASP IS CORRECT? (4x3 = 1.067:1, 16x9 = 1.422:1)','HD TV': 'PASP IS CORRECT? (1:1)','SD TV NTSC': 'PASP IS CORRECT? (4x3 = 0.889:1, 16x9 = 1.185:1)','SD TV PAL': 'PASP IS CORRECT? (4x3 = 1.067:1, 16x9 = 1.422:1)'};
-        st_asterix = {'HD FEATURE': '&nbsp;','SD FEATURE NTSC': '<i>*SD CONTENT FROM 525 720x486 SOURCES = MIN CROP OF 4 FROM TOP AND 2 FROM BOTTOM</i>','SD FEATURE PAL': '&nbsp;','HD TV': '&nbsp;','SD TV NTSC': '<i>*SD CONTENT FROM 525 720x486 SOURCES = MIN CROP OF 4 FROM TOP AND 2 FROM BOTTOM</i>','SD TV PAL': '&nbsp;'};
-        st_featepis = {'HD FEATURE': 'FEATURE','SD FEATURE NTSC': 'FEATURE','SD FEATURE PAL': 'FEATURE','HD TV': 'EPISODE','SD TV NTSC': 'EPISODE','SD TV PAL': 'EPISODE'};
+        st_fr = {'HD FEATURE': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25, 29.97)?','SD FEATURE NTSC': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 29.97)?','SD FEATURE PAL': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25)?','HD TV': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25, 29.97)?','SD TV NTSC': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 29.97)?','SD TV PAL': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25)?'}
+        st_res = {'HD FEATURE': 'HD RESOLUTION IS 1920X1080 (SQUARE PIXEL ASPECT RATIO)?','SD FEATURE NTSC': 'SD NTSC RESOLUTION IS 720X480 OR 720X486?','SD FEATURE PAL': 'SD PAL RESOLUTION IS 720X576?','HD TV': 'HD RESOLUTION IS 1920X1080 (SQUARE PIXEL ASPECT RATIO)?','SD TV NTSC': 'SD NTSC RESOLUTION IS 720X480 OR 720X486?','SD TV PAL': 'SD PAL RESOLUTION IS 720X576?'}
+        st_pasp = {'HD FEATURE': 'PASP IS CORRECT? (1:1)','SD FEATURE NTSC': 'PASP IS CORRECT? (4x3 = 0.889:1, 16x9 = 1.185:1)','SD FEATURE PAL': 'PASP IS CORRECT? (4x3 = 1.067:1, 16x9 = 1.422:1)','HD TV': 'PASP IS CORRECT? (1:1)','SD TV NTSC': 'PASP IS CORRECT? (4x3 = 0.889:1, 16x9 = 1.185:1)','SD TV PAL': 'PASP IS CORRECT? (4x3 = 1.067:1, 16x9 = 1.422:1)'}
+        st_asterix = {'HD FEATURE': '&nbsp;','SD FEATURE NTSC': '<i>*SD CONTENT FROM 525 720x486 SOURCES = MIN CROP OF 4 FROM TOP AND 2 FROM BOTTOM</i>','SD FEATURE PAL': '&nbsp;','HD TV': '&nbsp;','SD TV NTSC': '<i>*SD CONTENT FROM 525 720x486 SOURCES = MIN CROP OF 4 FROM TOP AND 2 FROM BOTTOM</i>','SD TV PAL': '&nbsp;'}
+        st_featepis = {'HD FEATURE': 'FEATURE','SD FEATURE NTSC': 'FEATURE','SD FEATURE PAL': 'FEATURE','HD TV': 'EPISODE','SD TV NTSC': 'EPISODE','SD TV PAL': 'EPISODE'}
         pulls = Table()
         pulls_l = Table()
         pulls_r = Table()
@@ -4486,7 +5079,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
             pulls_l.add_row()
             pulls_r.add_row()
             stext = s
-            id_to_set = '' 
+            id_to_set = ''
             field_name = s1_dict1[s]
             if source_type not in [None,'']:
                 if 'pasp_' in field_name:
@@ -4502,9 +5095,9 @@ class MetaDataReportWdg(BaseTableElementWdg):
             scl.add_attr('align','right')
             if id_to_set != '':
                 scl.add_attr('id',id_to_set)
-            mm1 = pulls_l.add_cell(my.make_a_sel(metadata, '%sf' % field_name, my.ynd, 70))  
+            mm1 = pulls_l.add_cell(my.make_a_sel(metadata, '%sf' % field_name, my.ynd, 70))
             mm1.add_attr('class','select_cell')
-            mm2 = pulls_r.add_cell(my.make_a_sel(metadata, '%sp' % field_name, my.ynd, 70))  
+            mm2 = pulls_r.add_cell(my.make_a_sel(metadata, '%sp' % field_name, my.ynd, 70))
             mm2.add_attr('class','select_cell')
         pulls_l.add_row()
         ast_text = '&nbsp;'
@@ -4543,11 +5136,11 @@ class MetaDataReportWdg(BaseTableElementWdg):
         pulls.add_cell(' ')
         ps = pulls.add_cell('*Flag all nudity, profanity, or gore for approval')
         ps.add_style('font-size: 9px;')
-        
+
         s1.add_row()
         ssr = s1.add_cell(pulls)
         ssr.add_attr('align','center')
-  
+
 
 
         s1_listc1 = ['FILE STARTS @ 00:59:59:00 WITH BLACK?','PROGRAM STARTS @ 1:00:00:00?', '&nbsp;&nbsp;&nbsp;PROGRAM ENDS WITH AT LEAST ONE BLACK FRAME?']
@@ -4590,18 +5183,18 @@ class MetaDataReportWdg(BaseTableElementWdg):
         ctbl.add_row()
         cct = ctbl.add_cell(ntbl)
         cct.add_attr('align','left')
-         
+
         s1.add_row()
         s1.add_cell('&nbsp;')
         s1.add_row()
         s1.add_cell(ctbl)
-     
+
         s1_tbl = Table()
         s1_tbl.add_row()
         s1_tbl.add_cell(s1)
         s1_tbl.add_attr('border','1')
         s1_tbl.add_style('border-width: 5px;')
-        
+
         s2 = Table()
         s2.add_attr('class','section2')
         s2.add_attr('width','100%s' % '%')
@@ -4613,7 +5206,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
 
         audio_config_tbl = my.make_audio_tbl(metadata, 'FEATURE: AUDIO CONFIG', ['aconfig_trk1_language|aconfig_trk1_type', 'aconfig_trk2_language|aconfig_trk2_type', 'aconfig_trk3_language|aconfig_trk3_type','aconfig_trk4_language|aconfig_trk4_type', 'aconfig_trk5_language|aconfig_trk5_type', 'aconfig_trk6_language|aconfig_trk6_type', 'aconfig_trk7_language|aconfig_trk7_type', 'aconfig_trk8_language|aconfig_trk8_type'], metadata.get('code'))
         audio_bundle_tbl = my.make_audio_tbl(metadata, 'AUDIO BUNDLE', ['abundle_trk1_language|abundle_trk1_type', 'abundle_trk2_language|abundle_trk2_type', 'abundle_trk3_language|abundle_trk3_type', 'abundle_trk4_language|abundle_trk4_type', 'abundle_trk5_language|abundle_trk5_type', 'abundle_trk6_language|abundle_trk6_type', 'abundle_trk7_language|abundle_trk7_type', 'abundle_trk8_language|abundle_trk8_type'], metadata.get('code'))
-        audio_preview_tbl = my.make_audio_tbl(metadata, 'PREVIEW/TRAILER: AUDIO CONFIG', ['aconfig_trk1_language_p|aconfig_trk1_type_p', 'aconfig_trk2_language_p|aconfig_trk2_type_p', 'aconfig_trk3_language_p|aconfig_trk3_type_p', 'aconfig_trk4_language_p|aconfig_trk4_type_p', 'aconfig_trk5_language_p|aconfig_trk5_type_p', 'aconfig_trk6_language_p|aconfig_trk6_type_p', 'aconfig_trk7_language_p|aconfig_trk7_type_p', 'aconfig_trk8_language_p|aconfig_trk8_type_p'], metadata.get('code')) 
+        audio_preview_tbl = my.make_audio_tbl(metadata, 'PREVIEW/TRAILER: AUDIO CONFIG', ['aconfig_trk1_language_p|aconfig_trk1_type_p', 'aconfig_trk2_language_p|aconfig_trk2_type_p', 'aconfig_trk3_language_p|aconfig_trk3_type_p', 'aconfig_trk4_language_p|aconfig_trk4_type_p', 'aconfig_trk5_language_p|aconfig_trk5_type_p', 'aconfig_trk6_language_p|aconfig_trk6_type_p', 'aconfig_trk7_language_p|aconfig_trk7_type_p', 'aconfig_trk8_language_p|aconfig_trk8_type_p'], metadata.get('code'))
 
         s2_pulls = Table()
 
@@ -4623,11 +5216,11 @@ class MetaDataReportWdg(BaseTableElementWdg):
         s2_pulls.add_cell(audio_bundle_tbl)
         s2_pulls.add_cell('&nbsp;')
         s2_pulls.add_cell(audio_preview_tbl)
-      
-        s2.add_row() 
+
+        s2.add_row()
         s2pc = s2.add_cell(s2_pulls)
         s2pc.add_attr('align','center')
-    
+
         s2.add_row()
         s2.add_cell('&nbsp;&nbsp;')
         s2.add_row()
@@ -4647,13 +5240,13 @@ class MetaDataReportWdg(BaseTableElementWdg):
             s2c = s2_l.add_cell('%s&nbsp;&nbsp;' % s)
             s2c.add_attr('nowrap','nowrap')
             s2c.add_attr('align','right')
-            mm1 = s2_l.add_cell(my.make_a_sel(metadata, '%sf' % s2_dict[s], my.ynd, 70)) 
+            mm1 = s2_l.add_cell(my.make_a_sel(metadata, '%sf' % s2_dict[s], my.ynd, 70))
             mm1.add_attr('class','select_cell')
 
-            mm2 = s2_c.add_cell(my.make_a_sel(metadata, '%sb' % s2_dict[s], my.ynd, 70)) 
+            mm2 = s2_c.add_cell(my.make_a_sel(metadata, '%sb' % s2_dict[s], my.ynd, 70))
             mm2.add_attr('class','select_cell')
 
-            mm3 = s2_r.add_cell(my.make_a_sel(metadata, '%sp' % s2_dict[s], my.ynd, 70)) 
+            mm3 = s2_r.add_cell(my.make_a_sel(metadata, '%sp' % s2_dict[s], my.ynd, 70))
             mm3.add_attr('class','select_cell')
 
         s2_annoy = Table()
@@ -4673,10 +5266,10 @@ class MetaDataReportWdg(BaseTableElementWdg):
         s2_annoy.add_cell(s2_c)
         s2_annoy.add_cell('&nbsp;&nbsp;')
         s2_annoy.add_cell(s2_r)
- 
+
         s2.add_row()
         s2.add_cell(s2_annoy)
-        
+
         s2_n = Table()
         s2_n.add_row()
         s2nc = s2_n.add_cell('AUDIO NOTES:')
@@ -4705,7 +5298,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
 
         s3_list1 = ['FEATURE:', 'TRAILER:', 'ALT AUDIO:', 'SUBTITLE:', 'CC:', 'VENDOR NOTES:', 'POSTER ART:', 'DUB CARD:']
         s3_dict1 = {'FEATURE:': 'delivery_snapshot_feature', 'TRAILER:': 'delivery_snapshot_trailer', 'ALT AUDIO:': 'delivery_snapshot_alt_audio', 'SUBTITLE:': 'delivery_snapshot_subtitle', 'CC:': 'delivery_snapshot_cc', 'VENDOR NOTES:': 'delivery_snapshot_vendor_notes', 'POSTER ART:': 'delivery_snapshot_poster_art', 'DUB CARD:': 'delivery_snapshot_dub_card'}
-        
+
         snap = Table()
         snap.add_row()
         scen = snap.add_cell('<b>DELIVERY SNAPSHOT</b>')
@@ -4716,19 +5309,19 @@ class MetaDataReportWdg(BaseTableElementWdg):
             sn1 = snap.add_cell('%s&nbsp;&nbsp;' % s)
             sn1.add_attr('nowrap','nowrap')
             sn1.add_attr('align','right')
-            mm1 = snap.add_cell(my.make_a_sel(metadata, s3_dict1[s], my.ynd, 70)) 
+            mm1 = snap.add_cell(my.make_a_sel(metadata, s3_dict1[s], my.ynd, 70))
             mm1.add_attr('class','select_cell')
         snap.add_row()
         sn2 = snap.add_cell('OTHER:')
         sn2.add_attr('align','right')
         snap.add_cell('<input type="text" value="%s" class="metadata_r_var" id="delivery_snapshot_other" style="width: 70px;"/>' % metadata.get('delivery_snapshot_other'))
-            
-        
+
+
         snap_t = Table()
         snap_t.add_attr('border','1')
         snap_t.add_style('border-width: 2px;')
         snap_t.add_cell(snap)
-     
+
 
         s3_list2 = ['FORCED NARRATIVE ON FEATURE?', 'FORCED NARRATIVE ON TRAILER?', 'SUBTITLES ON FEATURE?', 'SUBTITLES ON TRAILER?']
         s3_dict2 = {'FORCED NARRATIVE ON FEATURE?': 'forced_narrative_f|forced_narrative_not_overlapping_f', 'FORCED NARRATIVE ON TRAILER?': 'forced_narrative_p|forced_narrative_not_overlapping_p', 'SUBTITLES ON FEATURE?': 'subtitles_on_feature|subtitles_on_feature_not_overlapping', 'SUBTITLES ON TRAILER?': 'subtitles_on_trailer|subtitles_on_trailer_not_overlapping'}
@@ -4741,7 +5334,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
             mm1 = s32.add_cell(my.make_a_sel(metadata, s3_dict2[s].split('|')[0], my.ynd, 70))
             mm1.add_attr('class','select_cell')
             s32.add_cell('->')
-            s32c2 = s32.add_cell('...DOES NOT OVERLAP ANY CREDITS OR OTHER TEXT?&nbsp;&nbsp;') 
+            s32c2 = s32.add_cell('...DOES NOT OVERLAP ANY CREDITS OR OTHER TEXT?&nbsp;&nbsp;')
             s32c2.add_attr('nowrap','nowrap')
             mm2 = s32.add_cell(my.make_a_sel(metadata, s3_dict2[s].split('|')[1], my.ynd, 70))
             mm2.add_attr('class','select_cell')
@@ -4757,9 +5350,9 @@ class MetaDataReportWdg(BaseTableElementWdg):
             s33c.add_attr('align','right')
             mm1 = s33.add_cell(my.make_a_sel(metadata, s3_dict3[s], my.ynd, 70))
             mm1.add_attr('class','select_cell')
-       
-        s3_list4 = ['CC IS IN SYNC WITH VIDEO?','SUBTITLES ARE IN SYNC WITH VIDEO?','SUBTITLES HAVE CORRECT LANGUAGE?'] 
-        s3_dict4 = {'CC IS IN SYNC WITH VIDEO?': 'cc_in_synch_with_video','SUBTITLES ARE IN SYNC WITH VIDEO?': 'subtitles_in_synch_with_video','SUBTITLES HAVE CORRECT LANGUAGE?': 'subtitles_have_correct_language'} 
+
+        s3_list4 = ['CC IS IN SYNC WITH VIDEO?','SUBTITLES ARE IN SYNC WITH VIDEO?','SUBTITLES HAVE CORRECT LANGUAGE?']
+        s3_dict4 = {'CC IS IN SYNC WITH VIDEO?': 'cc_in_synch_with_video','SUBTITLES ARE IN SYNC WITH VIDEO?': 'subtitles_in_synch_with_video','SUBTITLES HAVE CORRECT LANGUAGE?': 'subtitles_have_correct_language'}
         s34 = Table()
         for s in s3_list4:
             s34.add_row()
@@ -4768,12 +5361,12 @@ class MetaDataReportWdg(BaseTableElementWdg):
             s34c.add_attr('align','right')
             mm1 = s34.add_cell(my.make_a_sel(metadata, s3_dict4[s], my.ynd, 70))
             mm1.add_attr('class','select_cell')
-        
+
         s3.add_row()
         s3.add_cell(snap_t)
-        
+
         sj = Table()
-        sj.add_row() 
+        sj.add_row()
         lcell2 = sj.add_cell(s32)
         lcell2.add_attr('colspan','3')
         sj.add_row()
@@ -4783,14 +5376,14 @@ class MetaDataReportWdg(BaseTableElementWdg):
         sj.add_cell('&nbsp;&nbsp;&nbsp;')
         sj4c = sj.add_cell(s34)
         sj4c.add_attr('valign','top')
-  
+
         sj2 = Table()
         sj2.add_row()
         sjc = sj2.add_cell('DUB CARD TEXT IS NOT CUT OFF WHEN FEATURE CROPPING VALUES ARE APPLIED?&nbsp;')
         sjc.add_attr('nowrap','nowrap')
         mm11 = sj2.add_cell(my.make_a_sel(metadata, 'dub_card_text_not_cutoff_with_cropping', my.ynd, 70))
         mm11.add_attr('class','select_cell')
- 
+
 
         s3.add_cell(sj)
         s3.add_row()
@@ -4805,7 +5398,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
         tll.add_attr('valign','top')
         tlong = ltbl.add_cell('<textarea cols="156" rows="5" class="metadata_r_var" id="assets_notes">%s</textarea>' % metadata.get('assets_notes'))
         s3.add_cell(ltbl)
-      
+
         s3_tbl = Table()
         s3_tbl.add_row()
         s3_tbl.add_cell(s3)
@@ -4821,7 +5414,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
         c1.add_attr('nowrap','nowrap')
         s4.add_row()
         spc4 = s4.add_cell('&nbsp;')
-     
+
         s4_list1 = ['IMAGE IS A JPEG (.JPG EXTENSION)?', 'DPI IS 72 OR GREATER?', 'COLOR PROFILE IS RGB?', 'SAME ASPECT RATIO AS VIDEO?', 'ONLY ACTIVE PIXELS ARE INCLUDED (NO DIRTY EDGES)?', 'HORIZONTAL DIMENSION IS AT LEAST 640?', 'EACH CHAPTER STOP HAS A THUMBNAIL?']
         s4_dict1 = {'IMAGE IS A JPEG (.JPG EXTENSION)?': 'thumb_is_jpeg', 'DPI IS 72 OR GREATER?': 'thumb_dpi_72_or_more', 'COLOR PROFILE IS RGB?': 'thumb_profile_is_rgb', 'SAME ASPECT RATIO AS VIDEO?': 'thumb_same_aspect_ratio_as_video', 'ONLY ACTIVE PIXELS ARE INCLUDED (NO DIRTY EDGES)?': 'thumb_only_active_pixels', 'HORIZONTAL DIMENSION IS AT LEAST 640?': 'thumb_horiz_at_least_640', 'EACH CHAPTER STOP HAS A THUMBNAIL?': 'thumb_for_each_chapter_stop'}
         s41 = Table()
@@ -4843,7 +5436,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
             s42c.add_attr('align','right')
             mm1 = s42.add_cell(my.make_a_sel(metadata, s4_dict2[s], my.ynd, 70))
             mm1.add_attr('class','select_cell')
-   
+
         cmbn = Table()
         cmbn.add_row()
         ct1 = cmbn.add_cell('<b>CHAPTER THUMBNAILS</b>')
@@ -4855,7 +5448,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
         cmbn.add_row()
         cmbn.add_cell(s41)
         cmbn.add_cell(s42)
-        
+
         ltbl2 = Table()
         ltbl2.add_row()
         tll = ltbl2.add_cell('IMAGES NOTES:')
@@ -4876,7 +5469,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
         s4_tbl.add_attr('border','1')
         s4_tbl.add_attr('width','100%s' % '%')
         s4_tbl.add_style('border-width: 5px;')
-            
+
         table.add_row()
         table.add_cell(toptbl)
         table.add_row()
@@ -4915,9 +5508,9 @@ class MetaDataReportWdg(BaseTableElementWdg):
             #s33.add_behavior(my.get_clone_report(code, metadata.get('code')))
             s4 = stbl.add_cell('<input type="button" value="Delete This Report"/>')
             s4.add_behavior(my.get_delete_report(code, metadata.get('code')))
-        
+
         ttbl = Table()
-        ttbl.add_style('background-color: #528B8B; width: 100%s;' % '%');
+        ttbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
         ttbl.add_row()
         tt1 = ttbl.add_cell(others)
         tt1.add_attr('width','100%s' % '%')
@@ -5072,7 +5665,7 @@ class ReportTimecodeShifterWdg(BaseTableElementWdg):
         sb = table.add_cell('(Must exactly match the following format EX: 01:33:57:19)')
         sb.add_attr('nowrap','nowrap')
         table.add_row()
-        table.add_cell('Add:') 
+        table.add_cell('Add:')
         table.add_cell(my.txtbox('add_amt', '',width='75px',js='yes'))
         sc = table.add_cell('(Minute:Second:Frame or Minute:Second)')
         sc.add_attr('nowrap','nowrap')
