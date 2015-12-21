@@ -52,7 +52,7 @@ def main(server=None, input=None):
             if client_name not in [None,'']:
                 client_portion = "<br/>Client: %s" % client_name
             head_message = "Created a Portal Login<br/>Username: <font color='#71cd4c'>%s</font><br/>Password: <font color='#71cd4d'>%s</font><br/>Email: %s%s<br/><br/><a href='http://tactic.2gdigital.com/tactic/twog/client_view' target='_blank'>Link to 2G's Client Portal</a>" % (sobject.get('login'), passwo, email, client_portion)
-            head_message = '<table style="font-size: 14px; color: #440000;"><tr><td><b>%s</b></td></tr></table>' % head_message
+            head_message = '<table style="font-size: 14px; color: #000000;"><tr><td><b>%s</b></td></tr></table>' % head_message
             
             int_template = open(internal_template_file, 'r')
             filled = ''
