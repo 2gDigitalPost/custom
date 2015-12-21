@@ -3,6 +3,9 @@ This file was generated automatically from a custom script found in Project -> S
 The custom script was moved to a file so that it could be integrated with GitHub.
 """
 
+# TODO: Almost certain this file isn't needed
+# IT DOESN'T EVEN TEST ANYTHING
+
 __author__ = 'Topher.Hughes'
 __date__ = '04/08/2015'
 

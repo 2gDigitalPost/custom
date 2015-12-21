@@ -19,7 +19,44 @@ class WOResetWdg(BaseRefreshWdg):
         my.server = TacticServerStub.get()
         login = Environment.get_login()
         my.user = login.get_login()
-        my.stat_colors = {'Assignment': '#fcaf88', 'Pending': '#d7d7d7', 'In Progress': '#f5f3a4', 'In_Progress': '#f5f3a4', 'In Production': '#f5f3a4', 'In_Production': '#f5f3a4', 'In production': '#f5f3a4', 'In_production': '#f5f3a4', 'Waiting': '#ffd97f', 'Need Assistance': '#fc88fb', 'Need_Assistance': '#fc88fb', 'Review': '#888bfc', 'Approved': '#d4b5e7', 'On Hold': '#e8b2b8', 'On_Hold': '#e8b2b8', 'Client Response': '#ddd5b8', 'Completed': '#b7e0a5', 'Ready': '#b2cee8', 'Internal Rejection': '#ff0000', 'External Rejection': '#ff0000', 'Rejected': '#ff0000', 'Failed QC': '#ff0000', 'Fix Needed': '#c466a1', 'Need Buddy Check': '#e3701a', 'DR In_Progress': '#d6e0a4', 'DR In Progress': '#d6e0a4','Amberfin01_In_Progress':'#D8F1A8', 'Amberfin01 In Progress':'#D8F1A8', 'Amberfin02_In_Progress':'#F3D291',  'Amberfin02 In Progress':'#F3D291','BATON In_Progress': '#c6e0a4', 'BATON In Progress': '#c6e0a4','Export In_Progress': '#796999', 'Export In Progress': '#796999','Buddy Check In_Progress': '#1aade3','Buddy Check In Progress': '#1aade3'}
+        my.stat_colors = {
+            'Assignment': '#fcaf88',
+            'Pending': '#d7d7d7',
+            'In Progress': '#f5f3a4',
+            'In_Progress': '#f5f3a4',
+            'In Production': '#f5f3a4',
+            'In_Production': '#f5f3a4',
+            'In production': '#f5f3a4',
+            'In_production': '#f5f3a4',
+            'Waiting': '#ffd97f',
+            'Need Assistance': '#fc88fb',
+            'Need_Assistance': '#fc88fb',
+            'Review': '#888bfc',
+            'Approved': '#d4b5e7',
+            'On Hold': '#e8b2b8',
+            'On_Hold': '#e8b2b8',
+            'Client Response': '#ddd5b8',
+            'Completed': '#b7e0a5',
+            'Ready': '#b2cee8',
+            'Internal Rejection': '#ff0000',
+            'External Rejection': '#ff0000',
+            'Rejected': '#ff0000',
+            'Failed QC': '#ff0000',
+            'Fix Needed': '#c466a1',
+            'Need Buddy Check': '#e3701a',
+            'DR In_Progress': '#d6e0a4',
+            'DR In Progress': '#d6e0a4',
+            'Amberfin01_In_Progress':'#D8F1A8',
+            'Amberfin01 In Progress':'#D8F1A8',
+            'Amberfin02_In_Progress':'#F3D291',
+            'Amberfin02 In Progress':'#F3D291',
+            'BATON In_Progress': '#c6e0a4',
+            'BATON In Progress': '#c6e0a4',
+            'Export In_Progress': '#796999',
+            'Export In Progress': '#796999',
+            'Buddy Check In_Progress': '#1aade3',
+            'Buddy Check In Progress': '#1aade3'
+        }
 
     def get_set_notify(my, s, title_code):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
@@ -71,7 +108,34 @@ class WOResetWdg(BaseRefreshWdg):
                         error_entry = error_entries[error_entries.length - 1];
                         server.update(error_entry.__search_key__, {'operator_description': note});
                     }
-                    group_email_lookup = {'admin': 'administrator@2gdigital.com', 'it': 'IT@2gdigital.com', 'qc': 'QC@2gdigital.com', 'qc_supervisor': 'QC@2gdigital.com', 'compression': 'Compression@2gdigital.com', 'billing_and_accounts_receivable': '2GSales@2gdigital.com', 'audio': 'Audio@2gdigital.com', 'compression_supervisor': 'Compression@2gdigital.com', 'edeliveries': 'Edeliveries@2gdigital.com', 'machine_room': 'MR@2gdigital.com', 'media_vault': 'Mediavault@2gdigital.com', 'media_vault_supervisor': 'Mediavault@2gdigital.com', 'edit_supervisor': 'Editors@2gdigital.com', 'machine_room_supervisor': 'MR@2gdigital.com', 'office_employees': 'jaime.torres@2gdigital.com;adriana.amador@2gdigital.com', 'edit': 'Editors@2gdigital.com', 'sales': '2GSales@2gdigital.com', 'senior_staff': 'fernando.vasquez@2gdigital.com;jaime.torres@2gdigital.com;adriana.amador@2gdigital.com;stephen.buchsbaum@2gdigital.com', 'executives': 'stephen.buchsbaum@2gdigital.com', 'management': 'jaime.torres@2gdigital.com;adriana.amador@2gdigital.com', 'scheduling': 'scheduling@2gdigital.com', 'streamz': 'MR@2gdigital.com;QC@2gdigital.com;Editors@2gdigital.com', 'technical_services': 'IT@2gdigital.com', 'sales_supervisor': '2GSales@2gdigital.com', 'scheduling_supervisor': 'scheduling@2gdigital.com', 'vault': 'Mediavault@2gdigital.com'}
+                    group_email_lookup = {
+                        'admin': 'administrator@2gdigital.com',
+                        'it': 'IT@2gdigital.com',
+                        'qc': 'QC@2gdigital.com',
+                        'qc_supervisor': 'QC@2gdigital.com',
+                        'compression': 'Compression@2gdigital.com',
+                        'billing_and_accounts_receivable': '2GSales@2gdigital.com',
+                        'audio': 'Audio@2gdigital.com',
+                        'compression_supervisor': 'Compression@2gdigital.com',
+                        'edeliveries': 'Edeliveries@2gdigital.com',
+                        'machine_room': 'MR@2gdigital.com',
+                        'media_vault': 'Mediavault@2gdigital.com',
+                        'media_vault_supervisor': 'Mediavault@2gdigital.com',
+                        'edit_supervisor': 'Editors@2gdigital.com',
+                        'machine_room_supervisor': 'MR@2gdigital.com',
+                        'office_employees': 'jaime.torres@2gdigital.com;adriana.amador@2gdigital.com',
+                        'edit': 'Editors@2gdigital.com',
+                        'sales': '2GSales@2gdigital.com',
+                        'senior_staff': 'fernando.vasquez@2gdigital.com;jaime.torres@2gdigital.com;adriana.amador@2gdigital.com;stephen.buchsbaum@2gdigital.com',
+                        'executives': 'stephen.buchsbaum@2gdigital.com',
+                        'management': 'jaime.torres@2gdigital.com;adriana.amador@2gdigital.com',
+                        'scheduling': 'scheduling@2gdigital.com',
+                        'streamz': 'MR@2gdigital.com;QC@2gdigital.com;Editors@2gdigital.com',
+                        'technical_services': 'IT@2gdigital.com',
+                        'sales_supervisor': '2GSales@2gdigital.com',
+                        'scheduling_supervisor': 'scheduling@2gdigital.com',
+                        'vault': 'Mediavault@2gdigital.com'
+                    }
                     if(confirm("Change all selected work orders to " + status + "?")){
                         spt.app_busy.show("Setting selected work order statuses to " + status); 
                         for(var r = 0; r < checkboxes.length; r++){
@@ -380,7 +444,34 @@ class WOResetWdg(BaseRefreshWdg):
                            var fix_wo_code = '%s';
                            var fix_wo_name = '%s';
                            var title_code = '%s';
-                           group_email_lookup = {'admin': 'administrator@2gdigital.com', 'it': 'IT@2gdigital.com', 'qc': 'QC@2gdigital.com', 'qc_supervisor': 'QC@2gdigital.com', 'compression': 'Compression@2gdigital.com', 'billing_and_accounts_receivable': '2GSales@2gdigital.com', 'audio': 'Audio@2gdigital.com', 'compression_supervisor': 'Compression@2gdigital.com', 'edeliveries': 'Edeliveries@2gdigital.com', 'machine_room': 'MR@2gdigital.com', 'media_vault': 'Mediavault@2gdigital.com', 'media_vault_supervisor': 'Mediavault@2gdigital.com', 'edit_supervisor': 'Editors@2gdigital.com', 'machine_room_supervisor': 'MR@2gdigital.com', 'office_employees': 'jaime.torres@2gdigital.com;adriana.amador@2gdigital.com', 'edit': 'Editors@2gdigital.com', 'sales': '2GSales@2gdigital.com', 'senior_staff': 'fernando.vasquez@2gdigital.com;jaime.torres@2gdigital.com;adriana.amador@2gdigital.com;stephen.buchsbaum@2gdigital.com', 'executives': 'stephen.buchsbaum@2gdigital.com', 'management': 'jaime.torres@2gdigital.com;adriana.amador@2gdigital.com', 'scheduling': 'scheduling@2gdigital.com', 'streamz': 'MR@2gdigital.com;QC@2gdigital.com;Editors@2gdigital.com', 'technical_services': 'IT@2gdigital.com', 'sales_supervisor': '2GSales@2gdigital.com', 'scheduling_supervisor': 'scheduling@2gdigital.com', 'vault': 'Mediavault@2gdigital.com'}
+                           group_email_lookup = {
+			                'admin': 'administrator@2gdigital.com',
+                            'it': 'IT@2gdigital.com',
+                            'qc': 'QC@2gdigital.com',
+                            'qc_supervisor': 'QC@2gdigital.com',
+                            'compression': 'Compression@2gdigital.com',
+                            'billing_and_accounts_receivable': '2GSales@2gdigital.com',
+                            'audio': 'Audio@2gdigital.com',
+                            'compression_supervisor': 'Compression@2gdigital.com',
+                            'edeliveries': 'Edeliveries@2gdigital.com',
+                            'machine_room': 'MR@2gdigital.com',
+                            'media_vault': 'Mediavault@2gdigital.com',
+                            'media_vault_supervisor': 'Mediavault@2gdigital.com',
+                            'edit_supervisor': 'Editors@2gdigital.com',
+                            'machine_room_supervisor': 'MR@2gdigital.com',
+                            'office_employees': 'jaime.torres@2gdigital.com;adriana.amador@2gdigital.com',
+                            'edit': 'Editors@2gdigital.com',
+                            'sales': '2GSales@2gdigital.com',
+                            'senior_staff': 'fernando.vasquez@2gdigital.com;jaime.torres@2gdigital.com;adriana.amador@2gdigital.com;stephen.buchsbaum@2gdigital.com',
+                            'executives': 'stephen.buchsbaum@2gdigital.com',
+                            'management': 'jaime.torres@2gdigital.com;adriana.amador@2gdigital.com',
+                            'scheduling': 'scheduling@2gdigital.com',
+                            'streamz': 'MR@2gdigital.com;QC@2gdigital.com;Editors@2gdigital.com',
+                            'technical_services': 'IT@2gdigital.com',
+                            'sales_supervisor': '2GSales@2gdigital.com',
+                            'scheduling_supervisor': 'scheduling@2gdigital.com',
+                            'vault': 'Mediavault@2gdigital.com'
+                            }
                            rnow = new Date();
                            valof = ( new Date() ).valueOf();
                            timestamp = rnow.getFullYear() + '-' + (rnow.getMonth() + 1) + '-' + rnow.getDate() + ' ' + valof;

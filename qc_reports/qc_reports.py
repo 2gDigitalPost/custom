@@ -128,7 +128,7 @@ class QCReportClonerWdg(BaseTableElementWdg):
                                             }
                                             cloned_some = true;
                                             out_lines.push('Cloned WO: ' + wo.process + '(' + wo.code + ') from Title: ' + title.title + ' ' + title.episode + ' (' + title.code + ') Report Type: ' + type.toUpperCase()); 
-                                            new_pq = server.insert('twog/prequal_eval', {'title': title.title, 'episode': kill_nothing(title.episode), 'title_code': title.code, 'client_code': kill_nothing(title.client_code), 'client_name': kill_nothing(title.client_name), 'title_type': kill_nothing(the_report.title_type), 'po_number': kill_nothing(title.po_number), 'order_code': title.order_code, 'wo_name': wo.process, 'work_order_code': wo.code, 'source_code': kill_nothing(source_codes), 'standard': kill_nothing(title.deliverable_standard), 'aspect_ratio': kill_nothing(title.deliverable_aspect_ratio), 'format': kill_nothing(title.deliverable_format), 'frame_rate': kill_nothing(title.deliverable_frame_rate), 'operator': login_name, 'login': login_name, 'description': the_report.description}); 
+                                            new_pq = server.insert('twog/prequal_eval', {'title': title.title, 'episode': kill_nothing(title.episode), 'title_code': title.code, 'client_code': kill_nothing(title.client_code), 'client_name': kill_nothing(title.client_name), 'title_type': kill_nothing(the_report.title_type), 'po_number': kill_nothing(title.po_number), 'order_code': title.order_code, 'wo_name': wo.process, 'work_order_code': wo.code, 'source_code': kill_nothing(source_codes), 'standard': kill_nothing(title.deliverable_standard), 'aspect_ratio': kill_nothing(title.deliverable_aspect_ratio), 'format': kill_nothing(title.deliverable_format), 'frame_rate': kill_nothing(title.deliverable_frame_rate), 'operator': login_name, 'login': login_name, 'description': the_report.description});
                                             for(var f = 0; f < the_lines.length; f++){
                                                 server.insert('twog/prequal_eval_lines', {'prequal_eval_code': new_pq.code, 'description': kill_nothing(the_lines[f].description), 'login': login_name, 'order_code': title.order_code, 'title_code': title_code, 'work_order_code': wo.code, 'timecode': kill_nothing(the_lines[f].timecode), 'media_type': kill_nothing(the_lines[f].media_type), 'type_code': kill_nothing(the_lines[f].type_code), 'scale': kill_nothing(the_lines[f].scale), 'sector_or_channel': kill_nothing(the_lines[f].sector_or_channel), 'in_source': kill_nothing(the_lines[f].in_source), 'source_code': kill_nothing(source_codes)});
                                             } 
@@ -933,8 +933,18 @@ class QCReportSelectorWdg(BaseTableElementWdg):
         code = my.kwargs.get('code');
         widget = DivWdg()
         table = Table()
-        types = {'PreQual Evaluation': 'PreQualEvalWdg', 'Element Evaluation': 'ElementEvalWdg', 'Technical Evaluation': 'TechEvalWdg', 'MetaData Report': 'MetaDataReportWdg'}
-        colors = {'PreQual Evaluation': '#a2b2d2', 'Element Evaluation': '#d5c9dd', 'Technical Evaluation': '#aa8e98', 'MetaData Report': '#c6e2d9'}
+        types = {
+            'PreQual Evaluation': 'PreQualEvalWdg',
+            'Element Evaluation': 'ElementEvalWdg',
+            'Technical Evaluation': 'TechEvalWdg',
+            'MetaData Report': 'MetaDataReportWdg'
+        }
+        colors = {
+            'PreQual Evaluation': '#a2b2d2',
+            'Element Evaluation': '#d5c9dd',
+            'Technical Evaluation': '#aa8e98',
+            'MetaData Report': '#c6e2d9'
+        }
         table.add_row()
         t1 = table.add_cell("<b>Please Choose the type of QC Report to attach to %s</b>" % code)
         t1.add_attr('nowrap','nowrap')
@@ -1561,7 +1571,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         if this_user == 'admin':
             show_save = True
         this_timestamp = str(datetime.datetime.now()).split('.')[0]
-        code = my.kwargs.get('code');
+        code = my.kwargs.get('code')
         original_code = code
         server = TacticServerStub.get()
         widget = DivWdg()
@@ -1579,8 +1589,57 @@ class PreQualEvalWdg(BaseTableElementWdg):
         work_order = server.eval("@SOBJECT(twog/work_order['code','%s'])" % code)[0]
         title = server.eval("@SOBJECT(twog/title['code','%s'])" % work_order.get('title_code'))[0]
         prequal_code = ''
-        prequal = {'code': '', 'description': '', 'timestamp': this_timestamp, 'login': this_user, 'operator': this_user, 'type': '', 'bay': '', 'machine_number': '', 'client_code': my.kill_nothing(title.get('client_code')), 'client_name': my.kill_nothing(title.get('client_name')), 'title': my.kill_nothing(title.get('title')), 'episode': my.kill_nothing(title.get('episode')), 'version': '', 'title_type': '', 'timecode': '', 'po_number': my.kill_nothing(title.get('po_number')), 'style': '', 'title_code': work_order.get('title_code'), 'order_code': work_order.get('order_code'), 'work_order_code': code, 'conclusion': '', 'source_code': '', 'standard': my.kill_nothing(title.get('deliverable_standard')), 'aspect_ratio': my.kill_nothing(title.get('deliverable_aspect_ratio')), 'frame_rate': my.kill_nothing(title.get('deliverable_frame_rate')), 'format': my.kill_nothing(title.get('deliverable_format'))}
-        prequal_lines = [{'code': '', 'description': '', 'timestamp': this_timestamp, 's_status': '', 'keywords': '', 'login': this_user, 'id': '', 'name': '', 'prequal_eval_code': '', 'order_code': work_order.get('order_code'), 'title_code': work_order.get('title_code'), 'work_order_code': code, 'timecode': '', 'media_type': '', 'type_code': '', 'scale': '', 'sector_or_channel': '', 'in_source': '', 'source_code': ''}]
+        prequal = {
+            'code': '',
+            'description': '',
+            'timestamp': this_timestamp,
+            'login': this_user,
+            'operator': this_user,
+            'type': '',
+            'bay': '',
+            'machine_number': '',
+            'client_code': my.kill_nothing(title.get('client_code')),
+            'client_name': my.kill_nothing(title.get('client_name')),
+            'title': my.kill_nothing(title.get('title')),
+            'episode': my.kill_nothing(title.get('episode')),
+            'version': '',
+            'title_type': '',
+            'timecode': '',
+            'po_number': my.kill_nothing(title.get('po_number')),
+            'style': '',
+            'title_code': work_order.get('title_code'),
+            'order_code': work_order.get('order_code'),
+            'work_order_code': code,
+            'conclusion': '',
+            'source_code': '',
+            'standard': my.kill_nothing(title.get('deliverable_standard')),
+            'aspect_ratio': my.kill_nothing(title.get('deliverable_aspect_ratio')),
+            'frame_rate': my.kill_nothing(title.get('deliverable_frame_rate')),
+            'format': my.kill_nothing(title.get('deliverable_format'))
+        }
+        prequal_lines = [
+            {
+                'code': '',
+                'description': '',
+                'timestamp': this_timestamp,
+                's_status': '',
+                'keywords': '',
+                'login': this_user,
+                'id': '',
+                'name': '',
+                'prequal_eval_code': '',
+                'order_code': work_order.get('order_code'),
+                'title_code': work_order.get('title_code'),
+                'work_order_code': code,
+                'timecode': '',
+                'media_type': '',
+                'type_code': '',
+                'scale': '',
+                'sector_or_channel': '',
+                'in_source': '',
+                'source_code': ''
+            }
+        ]
         if 'prequal_code' in my.kwargs.keys():
             prequal_code = str(my.kwargs.get('prequal_code'))
             prequal = server.eval("@SOBJECT(twog/prequal_eval['code','%s'])" % prequal_code)[0]
@@ -2578,10 +2637,15 @@ class ElementEvalWdg(BaseTableElementWdg):
 
     def init(my):
         nothing = 'true'
-        my.formats = ['Electronic/File', 'File - ProRes','File - MXF','File - MPEG','File - WAV','DBC', 'D5', 'HDCAM SR', 'NTSC', 'PAL']
-        my.frame_rates = ['23.98fps','59.94i','50i','29.97fps','59.94p','DFTC','NDFTC','PAL/EBU','-']
-        my.machines = ['VTR221','VTR222','VTR223','VTR224','VTR225','VTR231','VTR232','VTR233','VTR234','VTR235','VTR251','VTR252','VTR253','VTR254','VTR255','VTR261','VTR262','VTR263','VTR264','VTR265','VTR281','VTR282','VTR283','VTR284','VTR285','FCP01','FCP02','FCP03','FCP04','FCP05','FCP06','FCP07','FCP08','FCP09','FCP10','FCP11','FCP12','Amberfin','Clipster','Stradis']
-        my.styles = ['Technical','Spot QC','Mastering']
+        my.formats = ['Electronic/File', 'File - ProRes', 'File - MXF', 'File - MPEG', 'File - WAV','DBC', 'D5',
+                      'HDCAM SR', 'NTSC', 'PAL']
+        my.frame_rates = ['23.98fps', '59.94i', '50i', '29.97fps', '59.94p', 'DFTC', 'NDFTC', 'PAL/EBU', '-']
+        my.machines = ['VTR221', 'VTR222', 'VTR223', 'VTR224', 'VTR225', 'VTR231', 'VTR232', 'VTR233', 'VTR234',
+                       'VTR235', 'VTR251', 'VTR252', 'VTR253', 'VTR254', 'VTR255', 'VTR261', 'VTR262', 'VTR263',
+                       'VTR264', 'VTR265', 'VTR281', 'VTR282', 'VTR283', 'VTR284', 'VTR285', 'FCP01', 'FCP02', 'FCP03',
+                       'FCP04', 'FCP05', 'FCP06', 'FCP07', 'FCP08', 'FCP09', 'FCP10', 'FCP11', 'FCP12', 'Amberfin',
+                       'Clipster', 'Stradis']
+        my.styles = ['Technical', 'Spot QC','Mastering']
         my.aspect_ratios = ['16x9 1.33',
                             '16x9 1.33 Pan & Scan',
                             '16x9 1.78 Anamorphic',
@@ -2601,11 +2665,11 @@ class ElementEvalWdg(BaseTableElementWdg):
                             '4x3 1.85 Letterbox',
                             '4x3 2.35 Letterbox',
                             '4x3 2.40 Letterbox']
-        my.standards = ['625','525','720','1080 (4:4:4)','1080','PAL','NTSC','-']
+        my.standards = ['625', '525', '720', '1080 (4:4:4)', '1080', 'PAL', 'NTSC', '-']
         my.element = None
         my.element_lines = None
         my.key_tbl = Table()
-        my.key_tbl.add_attr('border','1')
+        my.key_tbl.add_attr('border', '1')
         my.key_tbl.add_row()
         long = my.key_tbl.add_cell('SECTOR KEY')
         long.add_attr('colspan','3')
@@ -3273,7 +3337,33 @@ class ElementEvalWdg(BaseTableElementWdg):
             'vendor_id': '',
             'file_name': ''
         }
-        my.element_lines = [{'code': '', 'description': '', 'timestamp': this_timestamp, 's_status': '', 'keywords': '', 'login': this_user, 'id': '', 'name': '', 'element_eval_code': '', 'order_code': work_order.get('order_code'), 'title_code': work_order.get('title_code'), 'work_order_code': code, 'timecode_in': '', 'field_in': '', 'timecode_out': '', 'field_out': '', 'media_type': '', 'type_code': '', 'scale': '', 'sector_or_channel': '', 'in_safe': '', 'in_source': '', 'source_code': ''}]
+        my.element_lines = [
+            {
+                'code': '',
+                'description': '',
+                'timestamp': this_timestamp,
+                's_status': '',
+                'keywords': '',
+                'login': this_user,
+                'id': '',
+                'name': '',
+                'element_eval_code': '',
+                'order_code': work_order.get('order_code'),
+                'title_code': work_order.get('title_code'),
+                'work_order_code': code,
+                'timecode_in': '',
+                'field_in': '',
+                'timecode_out': '',
+                'field_out': '',
+                'media_type': '',
+                'type_code': '',
+                'scale': '',
+                'sector_or_channel': '',
+                'in_safe': '',
+                'in_source': '',
+                'source_code': ''
+            }
+        ]
         if 'element_code' in my.kwargs.keys():
             element_code = str(my.kwargs.get('element_code'))
             my.element = server.eval("@SOBJECT(twog/element_eval['code','%s'])" % element_code)[0]
