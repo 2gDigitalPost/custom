@@ -1928,6 +1928,11 @@ class BigBoardWdg2(BaseRefreshWdg):
                         
                     client_code = bb.get_value('client_code')
                     client_name = bb.get_value('client_name')
+
+                    if not client_code:
+                        # Set to default if no client assigned
+                        client_code = 'CLIENT00286'
+
                     if client_code not in thumbnail_clippings.keys():
                         img_path = my.get_client_img(client_code)
                         if img_path not in [None,'']:
@@ -1936,7 +1941,12 @@ class BigBoardWdg2(BaseRefreshWdg):
                             client_thumbnail_clippings = img_str
                     else:
                         client_thumbnail_clippings = thumbnail_clippings[client_code]
-                    platform = bb.get_value('platform')
+                    platform = bb.get_value('platform', '0')
+
+                    if not platform:
+                        # If no platform specified, set to default 0
+                        platform = '0'
+
                     if platform not in thumbnail_clippings.keys():
                         img_path = my.get_platform_img(platform)
                         if img_path not in [None,'']:
@@ -1983,7 +1993,8 @@ class BigBoardWdg2(BaseRefreshWdg):
                             client_thumbnail_clippings = img_str
                     else:
                         client_thumbnail_clippings = thumbnail_clippings[client_code]
-                    platform = bb.get_value('platform')
+                    platform = bb.get_value('platform', '0')
+
                     if platform not in thumbnail_clippings.keys():
                         img_path = my.get_platform_img(platform)
                         if img_path not in [None,'']:
