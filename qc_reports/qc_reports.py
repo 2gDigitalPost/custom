@@ -930,7 +930,7 @@ class QCReportSelectorWdg(BaseTableElementWdg):
         return behavior
 
     def get_display(my):
-        code = my.kwargs.get('code');
+        code = my.kwargs.get('code')
         widget = DivWdg()
         table = Table()
         types = {'PreQual Evaluation': 'PreQualEvalWdg', 'Element Evaluation': 'ElementEvalWdg', 'Technical Evaluation': 'TechEvalWdg', 'MetaData Report': 'MetaDataReportWdg'}
@@ -1837,7 +1837,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         table.add_cell(darktbl)
 
         printtbl = Table()
-        printtbl.add_style('background-color: #528B8B; width: 100%s;' % '%');
+        printtbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
         printtbl.add_row()
         p1 = printtbl.add_cell(' ')
         p1.add_style('width: 40%s;' % '%')
@@ -1866,7 +1866,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
             s4 = stbl.add_cell('<input type="button" value="Delete This Report"/>')
             s4.add_behavior(my.get_delete_report(code, prequal.get('code')))
         ttbl = Table()
-        ttbl.add_style('background-color: #528B8B; width: 100%s;' % '%');
+        ttbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
         ttbl.add_row()
         tt1 = ttbl.add_cell(others)
         tt1.add_attr('width','100%s' % '%')
@@ -1876,7 +1876,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         widget.add(ttbl)
         widget.add(table)
         widget.add_style("font-family: Arial, Helvetica, sans-serif;")
-        widget.add_style("font-size: 14px;");
+        widget.add_style("font-size: 14px;")
         if show_save and 'TITLE' not in original_code:
             widget.add(stbl)
 
@@ -3751,7 +3751,7 @@ class ElementEvalWdg(BaseTableElementWdg):
         #print "PQ Description = %s" % my.element.get('description')
 
         printtbl = Table()
-        printtbl.add_style('background-color: #528B8B; width: 100%s;' % '%');
+        printtbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
         printtbl.add_row()
         p1 = printtbl.add_cell(' ')
         p1.add_style('width: 40%s;' % '%')
@@ -3780,7 +3780,7 @@ class ElementEvalWdg(BaseTableElementWdg):
             s4 = stbl.add_cell('<input type="button" value="Delete This Report"/>')
             s4.add_behavior(my.get_delete_report(code, my.element.get('code')))
         ttbl = Table()
-        ttbl.add_style('background-color: #528B8B; width: 100%s;' % '%');
+        ttbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
         ttbl.add_row()
         tt1 = ttbl.add_cell(others)
         tt1.add_attr('width','100%s' % '%')
@@ -3974,7 +3974,7 @@ class TechEvalWdg(BaseTableElementWdg):
         if this_user == 'admin':
             show_save = True
         this_timestamp = str(datetime.datetime.now()).split('.')[0]
-        code = my.kwargs.get('code');
+        code = my.kwargs.get('code')
         original_code = code
 
         widget = DivWdg()
@@ -4074,7 +4074,7 @@ class TechEvalWdg(BaseTableElementWdg):
         wo_evals = my.server.eval("@SOBJECT(twog/tech_eval['work_order_code','%s']['code','!=','%s'])" % (code, tech_code))
         title_evals = my.server.eval("@SOBJECT(twog/tech_eval['title_code','%s']['work_order_code','!=','%s']['code','!=','%s'])" % (work_order.get('title_code'), work_order.get('code'), tech_code))
         others = Table()
-        others.add_style('background-color: #528B8B; width: 100%s;' % '%');
+        others.add_style('background-color: #528B8B; width: 100%s;' % '%')
         cols = ['#537072','#518A1A']
         colsct = 0
         if len(title_evals) > 0:
@@ -4142,7 +4142,7 @@ class TechEvalWdg(BaseTableElementWdg):
         toptbl.add_cell(rtbl)
 
         printtbl = Table()
-        printtbl.add_style('background-color: #528B8B; width: 100%s;' % '%');
+        printtbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
         printtbl.add_row()
         p1 = printtbl.add_cell(' ')
         p1.add_style('width: 40%s;' % '%')
@@ -4277,7 +4277,7 @@ class TechEvalWdg(BaseTableElementWdg):
             s4 = stbl.add_cell('<input type="button" value="Delete This Report"/>')
             s4.add_behavior(my.get_delete_eval(code, tech.get('code')))
         ttbl = Table()
-        ttbl.add_style('background-color: #528B8B; width: 100%s;' % '%');
+        ttbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
         ttbl.add_row()
         tt1 = ttbl.add_cell(others)
         tt1.add_attr('width','100%s' % '%')
@@ -4706,7 +4706,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
         if this_user == 'admin':
             show_save = True
         this_timestamp = str(datetime.datetime.now()).split('.')[0]
-        code = my.kwargs.get('code');
+        code = my.kwargs.get('code')
         original_code = code
 
         widget = DivWdg()
@@ -5484,7 +5484,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
         table.add_cell(s4_tbl)
 
         printtbl = Table()
-        printtbl.add_style('background-color: #528B8B; width: 100%s;' % '%');
+        printtbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
         printtbl.add_row()
         p1 = printtbl.add_cell(' ')
         p1.add_style('width: 40%s;' % '%')
