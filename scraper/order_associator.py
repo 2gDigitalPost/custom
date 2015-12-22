@@ -46,7 +46,6 @@ class OrderAssociatorLauncherWdg(BaseTableElementWdg):
         return behavior
 
     def get_display(my):
-        code = ''
         name = ''
         if 'code' in my.kwargs.keys():
             code = my.kwargs.get('code') 
@@ -59,7 +58,7 @@ class OrderAssociatorLauncherWdg(BaseTableElementWdg):
         search_on_load = 'false'
         if 'search_on_load' in my.kwargs.keys():
             search_on_load = my.kwargs.get('search_on_load')
-         
+
         widget = DivWdg()
         table = Table()
         table.add_attr('width', '50px')
@@ -102,15 +101,19 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
         '''}
         return behavior 
 
-    def parse_scraper_string(my, input_string):
+    def parse_scraper_string(self, input_string):
         """
         Take a string returned from runner.php and parse it into a list.
 
         :param input_string: String returned from runner.php script
-        :return: List (of dictionaries?)
+        :return: List (of dictionaries)
 
         Originally written by MTM, edited by Tyler Standridge
+
+        NOTE: This method is a duplicate of the one in scraper.py, one of them should be removed
         """
+        # TODO: This function is a duplicate (scraper.py: ImdbScraperWdg.parse_scraper_string(input_string)
+        # One of them should be removed
 
         titles_chunked = input_string.strip().split('-MTM_TITLE_MTM-')
         title_array = []
@@ -121,20 +124,22 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
             if len(title) > 0:
                 title_dict = {}
                 subarrays = title.split(':-MTM-SUBARRAY-:')
-                for s in subarrays:
-                    array_name = 'no_name'
-                    if len(s) > 0:
-                        array_s = s.split(':-::MTM::-')
+
+                for subarray in subarrays:
+                    if len(subarray) > 0:
+                        array_s = subarray.split(':-::MTM::-')
                         array_name = array_s[0]
                         array_remainder = array_s[1]
                         title_dict[array_name] = {}
                         subfields = array_remainder.split(':-MTM-FIELD-:')
+
                         for chunk in subfields:
                             if len(chunk) > 0:
                                 chunk_s = chunk.split('=>')
                                 subfield = chunk_s[0]
                                 subval = chunk_s[1]
                                 title_dict[array_name][subfield] = subval
+
                 title_array.append(title_dict)
         return title_array
 
@@ -288,7 +293,13 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
              ''' % order_code}
         return behavior
         
-    def act_like_radio(my, title_id):             
+    def act_like_radio(my, title_id):
+        """
+        Forces a checkbox to act like a radio button (only one selectable at a time)
+        """
+
+        # TODO: Can we just change what we're clicking to radio buttons, rather than emulating radios with checkboxes?
+
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                             try{
                                 title_id = '%s'; 
@@ -369,7 +380,7 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
                 img_path = 'http://tactic01%s' % img_path
         return img_path
 
-    def get_toggler(my): 
+    def get_toggler(my):
         toggle_behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                             try{
                                 var checked_img = '<img src="/context/icons/custom/custom_checked.png"/>'
@@ -658,8 +669,7 @@ class OrderImageWdg(BaseRefreshWdg):
             snap = snaps[0]
             img_path = server.get_path_from_snapshot(snap.get_code(), mode="web")
             if img_path not in [None, '']:
-                # TODO: Remove the hardcoded URL, probably why images don't load on dev server
-                img_path = 'http://tactic01%s' % img_path
+                img_path = 'http://' + server.get_server_name() + img_path
         return img_path
 
     def get_display(my):
