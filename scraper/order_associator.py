@@ -493,11 +493,11 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
             order_table.add_cell('Completion Ratio')
             order_table.add_cell('Scheduler')
         elif my.title_of_show not in [None, ''] and my.search_when_loaded:
-            dude = order_table.add_cell('<b>No Tactic Orders Were Found With "%s" In The Name</b>' % my.title_of_show)
-            dude.add_style('font-size: 14px;')
+            description_box = order_table.add_cell('<b>No Tactic Orders Were Found With "%s" In The Name</b>' % my.title_of_show)
+            description_box.add_style('font-size: 14px;')
         else:
-            dude = order_table.add_cell('<b>Please type the name of the show in the box above</b>')
-            dude.add_style('font-size: 14px;')
+            description_box = order_table.add_cell('<b>Please type the name of the show in the box above</b>')
+            description_box.add_style('font-size: 14px;')
         for order in orders:
             checkbox = CustomCheckboxWdg(name='associate_order_%s' % order.get('code'),
                                          additional_js=my.highlight_order_row(order.get('code')),
@@ -599,8 +599,8 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
                     mcount += 1
         elif my.title_of_show not in [None, ''] and searched_imdb:
             imdb_table.add_row()
-            dude = imdb_table.add_cell('<b>No IMDb Titles Were Found With "%s" In The Name</b>' % my.title_of_show)
-            dude.add_style('font-size: 14px;')
+            description_box = imdb_table.add_cell('<b>No IMDb Titles Were Found With "%s" In The Name</b>' % my.title_of_show)
+            description_box.add_style('font-size: 14px;')
             imarow = imdb_table.add_row()
             imarow.add_attr('id', 'row_%s' % 'none')
             checkbox = CustomCheckboxWdg(name='associate_imdb_%s' % 'none', additional_js=my.act_like_radio('none'),
@@ -622,8 +622,8 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
             hidrow.add_style('display: none;')
         elif my.title_of_show not in [None, '']:
             imdb_table.add_row()
-            dude = imdb_table.add_cell("<b>No Tactic Orders Found, Didn't Query IMDb</b>")
-            dude.add_style('font-size: 14px;')
+            description_box = imdb_table.add_cell("<b>No Tactic Orders Found, Didn't Query IMDb</b>")
+            description_box.add_style('font-size: 14px;')
         table.add_row()
         order_div = DivWdg()
         order_div.add_style('overflow-y: scroll;')
