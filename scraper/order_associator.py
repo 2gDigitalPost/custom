@@ -10,6 +10,7 @@ from tactic.ui.common import BaseRefreshWdg
 from pyasm.search import Search
 from alternative_elements.customcheckbox import *
 from order_builder.order_builder import OrderBuilderLauncherWdg
+from scraper import get_multiple_title_info
 
 
 class OrderAssociatorLauncherWdg(BaseTableElementWdg):
@@ -99,49 +100,7 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
                           alert(err);
                 }
         '''}
-        return behavior 
-
-    def parse_scraper_string(self, input_string):
-        """
-        Take a string returned from runner.php and parse it into a list.
-
-        :param input_string: String returned from runner.php script
-        :return: List (of dictionaries)
-
-        Originally written by MTM, edited by Tyler Standridge
-
-        NOTE: This method is a duplicate of the one in scraper.py, one of them should be removed
-        """
-        # TODO: This function is a duplicate (scraper.py: ImdbScraperWdg.parse_scraper_string(input_string)
-        # One of them should be removed
-
-        titles_chunked = input_string.strip().split('-MTM_TITLE_MTM-')
-        title_array = []
-
-        # TODO: As is, this returns a massive list of massive dictionaries. Surely we need only to look for some
-        # information rather than returning ALL of it...
-        for title in titles_chunked:
-            if len(title) > 0:
-                title_dict = {}
-                subarrays = title.split(':-MTM-SUBARRAY-:')
-
-                for subarray in subarrays:
-                    if len(subarray) > 0:
-                        array_s = subarray.split(':-::MTM::-')
-                        array_name = array_s[0]
-                        array_remainder = array_s[1]
-                        title_dict[array_name] = {}
-                        subfields = array_remainder.split(':-MTM-FIELD-:')
-
-                        for chunk in subfields:
-                            if len(chunk) > 0:
-                                chunk_s = chunk.split('=>')
-                                subfield = chunk_s[0]
-                                subval = chunk_s[1]
-                                title_dict[array_name][subfield] = subval
-
-                title_array.append(title_dict)
-        return title_array
+        return behavior
 
     def get_hover_behavior(my, count):
         behavior = {'type': 'hover', 'cbjs_action_over': '''        
@@ -332,32 +291,6 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
              ''' % title_id}
         return behavior
 
-    def get_multiple_title_info(self, title_of_show):
-        """
-        Take the title of a show or movie, and call the IMDB script with subprocess.Popen. The function should wait
-        until the script is finished, and then pass the resulting string into the parse_scraper_string function,
-        then return the list.
-
-        :param title_of_show: String corresponding to the title you want to search for
-        :return: List
-
-        Originally written by MTM, edited by Tyler Standridge
-        """
-
-        # TODO: There HAS to be a way to refactor this script. The string it returns is absurdly long, and we only
-        # need a small portion of the returned information.
-        process = subprocess.Popen('''php /opt/spt/custom/scraper/runner.php "%s"''' % title_of_show, shell=True,
-                                   stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-
-        delimited_str, stderr = process.communicate()
-
-        if 'No Titles Found' in delimited_str or delimited_str in [None, '']:
-            info = []
-        else:
-            info = self.parse_scraper_string(delimited_str)
-
-        return info
-
     def get_poster_img(my, order_code):
         img_path = ''
         order_search = Search("twog/order")
@@ -449,7 +382,7 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
                 # orders = order_s.get_sobjects()
                 # print "ORDER LEN = %s" % len(orders)
                 if len(orders) > 0:
-                    multiple_titles = my.get_multiple_title_info(my.title_of_show)
+                    multiple_titles = get_multiple_title_info(my.title_of_show)
                     # print "MULTIPLE TITLES = %s" % multiple_titles
                     searched_imdb = True
         tb.add_behavior(my.get_search())
