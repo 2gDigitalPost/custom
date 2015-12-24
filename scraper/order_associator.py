@@ -88,79 +88,74 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
 
     def get_search(my):
         behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''        
-             try{
-                    title_of_show = bvr.src_el.value;
-                    spt.app_busy.show('Searching IMDb for ' + title_of_show);
-                    top_el = spt.api.get_parent(bvr.src_el, '.scraper');
-                    spt.api.load_panel(top_el, 'scraper.ImdbOrderAssociatorWdg', {'title_of_show': title_of_show, 'search_on_load': 'true'});
-                    spt.app_busy.hide();
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          alert(err);
-                }
+            try {
+                title_of_show = bvr.src_el.value;
+                spt.app_busy.show('Searching IMDb for ' + title_of_show);
+                top_el = spt.api.get_parent(bvr.src_el, '.scraper');
+                spt.api.load_panel(top_el, 'scraper.ImdbOrderAssociatorWdg',
+                    {'title_of_show': title_of_show, 'search_on_load': 'true'});
+                spt.app_busy.hide();
+            } catch(err) {
+                spt.app_busy.hide();
+                alert(err);
+            }
         '''}
         return behavior
 
     def get_hover_behavior(my, count):
         behavior = {'type': 'hover', 'cbjs_action_over': '''        
-                        try{
-                            var count = '%s';
-                            top_el = spt.api.get_parent(bvr.src_el, '.scraper');
-                            hiders = top_el.getElementsByClassName('hidden_info');
-                            for(var r = 0; r < hiders.length; r++){
-                                if(hiders[r].getAttribute('hidden_id') == count){
-                                    hiders[r].style.display = 'table-row';
-                                }
-                            }
-                      
+            try {
+                var count = '%s';
+                top_el = spt.api.get_parent(bvr.src_el, '.scraper');
+                hiders = top_el.getElementsByClassName('hidden_info');
+                for(var r = 0; r < hiders.length; r++) {
+                    if(hiders[r].getAttribute('hidden_id') == count) {
+                        hiders[r].style.display = 'table-row';
+                    }
                 }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
+            } catch(err) {
+                spt.app_busy.hide();
+                spt.alert(spt.exception.handler(err));
+            }
          ''' % count, 
-         'cbjs_action_out': '''
-                        try{
-                            var count = '%s';
-                            top_el = spt.api.get_parent(bvr.src_el, '.scraper');
-                            hiders = top_el.getElementsByClassName('hidden_info');
-                            for(var r = 0; r < hiders.length; r++){
-                                if(hiders[r].getAttribute('hidden_id') == count){
-                                    hiders[r].style.display = 'none';
-                                }
-                            }
+        'cbjs_action_out': '''
+            try {
+                var count = '%s';
+                top_el = spt.api.get_parent(bvr.src_el, '.scraper');
+                hiders = top_el.getElementsByClassName('hidden_info');
+                for(var r = 0; r < hiders.length; r++) {
+                    if(hiders[r].getAttribute('hidden_id') == count) {
+                        hiders[r].style.display = 'none';
+                    }
                 }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
+            } catch(err) {
+                spt.app_busy.hide();
+                spt.alert(spt.exception.handler(err));
+            }
          ''' % count}
         return behavior
 
     def get_more_info(my, count):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-                        try{
-                            var count = '%s';
-                            top_el = spt.api.get_parent(bvr.src_el, '.scraper');
-                            hiders = top_el.getElementsByClassName('hidden_info');
-                            for(var r = 0; r < hiders.length; r++){
-                                if(hiders[r].getAttribute('hidden_id') == count){
-                                    if(hiders[r].style.display == 'table_row'){
-                                        hiders[r].style.display = 'none';
-                                    }else{
-                                        hiders[r].style.display = 'table-row';
-                                    }
-                                }else{
-                                    hiders[r].style.display = 'none';
-                                }
-                            }
-                      
+            try {
+                var count = '%s';
+                top_el = spt.api.get_parent(bvr.src_el, '.scraper');
+                hiders = top_el.getElementsByClassName('hidden_info');
+                for(var r = 0; r < hiders.length; r++) {
+                    if(hiders[r].getAttribute('hidden_id') == count) {
+                        if(hiders[r].style.display == 'table_row') {
+                            hiders[r].style.display = 'none';
+                        } else {
+                            hiders[r].style.display = 'table-row';
+                        }
+                    } else {
+                        hiders[r].style.display = 'none';
+                    }
                 }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
+            } catch(err) {
+                spt.app_busy.hide();
+                spt.alert(spt.exception.handler(err));
+            }
          ''' % count}
         return behavior
 
@@ -292,6 +287,7 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
         return behavior
 
     def get_poster_img(my, order_code):
+        # TODO: Duplicate method in this file
         img_path = ''
         order_search = Search("twog/order")
         order_search.add_filter('code', order_code)
@@ -310,7 +306,7 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
             snap = snaps[0]
             img_path = server.get_path_from_snapshot(snap.get_code(), mode="web")
             if img_path not in [None, '']:
-                img_path = 'http://tactic01%s' % img_path
+                img_path = 'http://' + server.get_server_name() + img_path
         return img_path
 
     def get_toggler(my):
@@ -393,9 +389,11 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
         top_tbl.add_attr('cellspacing', '20')
         top_tbl.add_style('background-color: #417e97;')
         top_tbl.add_row()
+
         if len(orders) > 0:
             butt = top_tbl.add_cell('<input type="button" value="Associate All Selected"/>')
             butt.add_behavior(my.get_associate_em())
+
         sn = top_tbl.add_cell('<font color="#d9af1f"><b>Search Name:</b></font>&nbsp;&nbsp;&nbsp;&nbsp;')
         sn.add_attr('align', 'right')
         sn.add_attr('nowrap', 'nowrap')
@@ -407,6 +405,7 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
         order_table.add_attr('border', '1')
         order_table.add_attr('cellpadding', '10')
         order_table.add_row()
+
         if len(orders) > 0:
             toggler = CustomCheckboxWdg(name='chk_toggler', additional_js=my.get_toggler(), value_field='toggler',
                                         id='selection_toggler', checked='false', text='<b><- Select/Deselect ALL</b>',
@@ -470,9 +469,10 @@ class ImdbOrderAssociatorWdg(BaseRefreshWdg):
                     imarow.add_attr('id', 'row_%s' % m['TopLevel']['title_id'])
                     this_img = no_img
 
-                    # TODO: Image problem is probably here
+                    # TODO: Download the image and save in a temp folder
                     if m['TopLevel']['poster'] not in [None, '']:
                         this_img = m['TopLevel']['poster']
+                        imdb_image_url = m['TopLevel']['poster']
                     checkbox = CustomCheckboxWdg(name='associate_imdb_%s' % m['TopLevel']['title_id'],
                                                  additional_js=my.act_like_radio(m['TopLevel']['title_id']),
                                                  alert_name=m['TopLevel']['title'],
@@ -584,6 +584,7 @@ class OrderImageWdg(BaseRefreshWdg):
         my.code = my.kwargs.get('code')
 
     def get_poster_img(my, order_code):
+        # TODO: Duplicate method in this file
         img_path = ''
         order_search = Search("twog/order")
         order_search.add_filter('code', order_code)

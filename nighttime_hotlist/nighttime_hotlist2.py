@@ -393,7 +393,6 @@ class BigBoardSelectWdg2(BaseTableElementWdg):
 class BigBoardWOSelect4MultiTitlesWdg2(BaseRefreshWdg):
 
     def init(my):
-        from tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.title_codes = ''
 
@@ -895,7 +894,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         trower.add_style('display: table-row;')
         trower.add_style('background-color: %s;' % bgcol)
         dbl = Table()
-        dbl.add_attr('width','100%s' % '%')
+        dbl.add_attr('width','100%')
         dbl.add_style('font-size: 16px;')
         dbl.add_style('color: #000000;')
         dbl.add_style('background-color: #d7d7d7;')
@@ -905,10 +904,10 @@ class BigBoardWdg2(BaseRefreshWdg):
         dbl.add_style('border-top-left-radius', '10px')
         dbl.add_row()
         d1 = dbl.add_cell('<b><font style="size: 36px; color: #ff0000;">%s.</font> <u>%s</u></b>' % (count, name))
-        d1.add_attr('width','100%s' % '%')
+        d1.add_attr('width','100%')
         dbl.add_row()
         lil_tbl = Table()
-        lil_tbl.add_attr('cellpadding','5')
+        lil_tbl.add_attr('cellpadding', '5')
         lil_tbl.set_style('color: #000000; font-size: 14px;')
         lil_tbl.add_row()
         lil_tbl.add_cell(code)
@@ -916,12 +915,12 @@ class BigBoardWdg2(BaseRefreshWdg):
         lil_tbl.add_cell("<b>Client: %s</b>" % task.get_value('client_name'))
         lil_tbl.add_row()
         obt = Table()
-        obt.add_attr('cellpadding','5')
+        obt.add_attr('cellpadding', '5')
         obt.set_style('color: #000000; font-size: 14px;')
         obt.add_row()
         delb = obt.add_cell('<font color="%s"><b>Deliver By: %s</b></font>' % (dd_color, better_lookin_dd)) 
-        delb.add_attr('colspan','2')
-        delb.add_attr('nowrap','nowrap')
+        delb.add_attr('colspan', '2')
+        delb.add_attr('nowrap', 'nowrap')
         delb.add_style('text-shadow: 1px 1px #000000;')
         ob = OrderBuilderLauncherWdg(code=task.get_value('order_code'))
         obt.add_attr('width','260px')
@@ -956,33 +955,33 @@ class BigBoardWdg2(BaseRefreshWdg):
             dbl4.add_attr('align','left')
             prioid = 'prio_%s' % count
         tripl = Table()
-        tripl.add_attr('width','100%s' % '%')
-        tripl.add_attr('height','100%s' % '%')
+        tripl.add_attr('width','100%')
+        tripl.add_attr('height','100%')
         tripl.add_row()
         tallboy = Table()
         tallboy.add_row()
         ctc1 = tallboy.add_cell(client_thumbnail_clippings)
-        ctc1.add_attr('valign','top')
-        ctc1.add_attr('align','left')
-        ctc1.add_attr('width','25px')
+        ctc1.add_attr('valign', 'top')
+        ctc1.add_attr('align', 'left')
+        ctc1.add_attr('width', '25px')
         tallboy.add_row()
         ctc2 = tallboy.add_cell(platform_thumbnail_clippings)
-        ctc2.add_attr('valign','top')
-        ctc2.add_attr('align','left')
-        ctc2.add_attr('width','25px')
+        ctc2.add_attr('valign', 'top')
+        ctc2.add_attr('align', 'left')
+        ctc2.add_attr('width', '25px')
 
         ctc = tripl.add_cell(tallboy)
-        ctc.add_attr('valign','top')
-        ctc.add_attr('align','left')
-        ctc.add_attr('width','25px')
+        ctc.add_attr('valign', 'top')
+        ctc.add_attr('align', 'left')
+        ctc.add_attr('width', '25px')
         dc = tripl.add_cell(dbl)
         dc.add_attr('align','left')
         titl = table.add_cell(tripl)
         if count == 1:
-            titl.add_attr('class','bottom_content')
-            titl.add_attr('group','title')
-        titl.add_attr('valign','top')
-        titl.add_attr('width','%s%s' % (tpct, '%'))
+            titl.add_attr('class', 'bottom_content')
+            titl.add_attr('group', 'title')
+        titl.add_attr('valign', 'top')
+        titl.add_attr('width', '%s%s' % (tpct, '%'))
         for sg in my.seen_groups:
             if sg != task.get_value('assigned_login_group'):
                 black = table.add_cell(' ')
@@ -1108,10 +1107,10 @@ class BigBoardWdg2(BaseRefreshWdg):
             lefted.add_attr('align','left')
         dbl.add_row()
         d1 = dbl.add_cell('<b><font style="size: 36px; color: #ff0000;">%s.</font> <u>%s</u></b>' % (count, name))
-        d1.add_attr('width','100%s' % '%')
+        d1.add_attr('width','100%')
         dbl.add_row()
         lil_tbl = Table()
-        lil_tbl.add_attr('height','100%s' % '%')
+        lil_tbl.add_attr('height','100%')
         lil_tbl.set_style('color: #000000; font-size: 12px;')
         lil_tbl.add_style('background-color: %s;' % bgcol)
         lil_tbl.add_row()
@@ -1138,38 +1137,38 @@ class BigBoardWdg2(BaseRefreshWdg):
         obt.add_style('font-size: 14px;')
         obt.add_row()
         delb = obt.add_cell('<font color="%s"><b>Deliver By: %s</b></font>' % (ed_color, better_lookin_ed)) 
-        delb.add_attr('colspan','2')
-        delb.add_attr('nowrap','nowrap')
+        delb.add_attr('colspan', '2')
+        delb.add_attr('nowrap', 'nowrap')
         delb.add_style('text-shadow: 1px 1px #000000;')
         obt.add_row()
         delb = obt.add_cell('<font color="%s"><b>Due Date:&nbsp;&nbsp;&nbsp; %s</b></font>' % (dd_color, better_lookin_dd)) 
-        delb.add_attr('colspan','2')
-        delb.add_attr('nowrap','nowrap')
+        delb.add_attr('colspan', '2')
+        delb.add_attr('nowrap', 'nowrap')
         delb.add_style('text-shadow: 1px 1px #000000;')
         if title.get_value('is_external_rejection') == 'true':
             obt.add_row()
             delb = obt.add_cell('<font color="#FF00F0"><b>Received External Rejection</b></font>') 
-            delb.add_attr('colspan','2')
-            delb.add_attr('nowrap','nowrap')
+            delb.add_attr('colspan', '2')
+            delb.add_attr('nowrap', 'nowrap')
             delb.add_style('text-shadow: 1px 1px #000000;')
             delb.add_style('font-size: 18px;')
-        if ext_status not in [None,'']:
+        if ext_status not in [None, '']:
             obt.add_row()
             lefted = obt.add_cell('<font color="#FF00F0"><b>External Rejection Status: %s</b></font>' % ext_status)
-            lefted.add_attr('align','left')
-            lefted.add_attr('nowrap','nowrap')
+            lefted.add_attr('align', 'left')
+            lefted.add_attr('nowrap', 'nowrap')
             lefted.add_style('text-shadow: 1px 1px #000000;')
-        if ext_assigned not in [None,'']:
+        if ext_assigned not in [None, '']:
             obt.add_row()
             lefted = obt.add_cell('<font color="#FF00F0"><b>Assigned: %s</b></font>' % ext_assigned)
-            lefted.add_attr('align','left')
-            lefted.add_attr('nowrap','nowrap')
+            lefted.add_attr('align', 'left')
+            lefted.add_attr('nowrap', 'nowrap')
             lefted.add_style('text-shadow: 1px 1px #000000;')
-        if ext_assigned_corrective not in [None,'']:
+        if ext_assigned_corrective not in [None, '']:
             obt.add_row()
             lefted = obt.add_cell('<font color="#FF00F0"><b>Corrective Action Assigned: %s</b></font>' % ext_assigned_corrective)
-            lefted.add_attr('align','left')
-            lefted.add_attr('nowrap','nowrap')
+            lefted.add_attr('align', 'left')
+            lefted.add_attr('nowrap', 'nowrap')
             lefted.add_style('text-shadow: 1px 1px #000000;')
         ob = OrderBuilderLauncherWdg(code=title.get_value('order_code'))
         obt.add_attr('width', '260px')
@@ -1206,8 +1205,8 @@ class BigBoardWdg2(BaseRefreshWdg):
             dbltxt.add_behavior(my.show_change(prioid))
             dbl.add_cell(smtbl)
         tripl = Table()
-        tripl.add_attr('width','100%')
-        tripl.add_attr('height','100%')
+        tripl.add_attr('width', '100%')
+        tripl.add_attr('height', '100%')
         tripl.add_row()
 
         dc = tripl.add_cell(dbl)
@@ -1229,8 +1228,8 @@ class BigBoardWdg2(BaseRefreshWdg):
                 black.add_style('background-color: %s;' % bgcol)
             else:
                 tat = Table()
-                tat.add_attr('width','100%s' % '%')
-                tat.add_attr('height','100%s' % '%')
+                tat.add_attr('width','100%')
+                tat.add_attr('height','100%')
                 tat.add_style('border-color: #e0e0e0;')
                 tat.add_style('background-color: %s;' % my.bigdict[code]['groups'][sg]['relevant_status_color'])
                 tat.add_style('font-size: 10px;')
@@ -1874,7 +1873,7 @@ class BigBoardWdg2(BaseRefreshWdg):
 
         t2div = DivWdg()
         t2div.add_attr('id','title_body')
-        t2div.add_attr('width','100%s' % '%')
+        t2div.add_attr('width','100%')
         t2div.add_attr('bgcolor','#fcfcfc')
         t2div.add_style('color: #000000;')
         t2div.add_style('font-family: Helvetica;')
@@ -1882,7 +1881,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         t2div.add_style('height: 900px;')
 
         t2 = Table()
-        t2.add_attr('width','100%s' % '%')
+        t2.add_attr('width','100%')
         t2.add_attr('bgcolor','#fcfcfc')
         t2.add_attr('border','1')
         t2.add_style('border-color: #444444;')
@@ -1931,11 +1930,12 @@ class BigBoardWdg2(BaseRefreshWdg):
                         # Set to default if no client assigned
                         client_code = 'CLIENT00286'
 
+                    # TODO: Check if thumbnail_clippings even does anything, pretty sure it doesn't
                     if client_code not in thumbnail_clippings.keys():
                         img_path = hotlist_functions.get_client_img(client_code)
                         if img_path not in [None,'']:
                             img_str = '<img src="%s" alt="%s" title="%s" style="width: 32px; height: 32px;"/>' % (img_path, client_name, client_name)
-                            thumbnail_clippings[client_code] = img_str      
+                            thumbnail_clippings[client_code] = img_str
                             client_thumbnail_clippings = img_str
                     else:
                         client_thumbnail_clippings = thumbnail_clippings[client_code]
@@ -1949,10 +1949,14 @@ class BigBoardWdg2(BaseRefreshWdg):
                     # TODO: Fix so that either icon or text shows up, not both
                     if platform not in thumbnail_clippings.keys():
                         img_path = hotlist_functions.get_platform_img(platform)
+
                         if img_path not in [None,'']:
                             img_str = '<img src="%s" alt="%s" title="%s" style="width: 32px; height: 32px;"/>' % (img_path, platform, platform)
-                            thumbnail_clippings[platform] = img_str      
-                            platform_thumbnail_clippings = img_str
+                        else:
+                            img_str = platform
+
+                        thumbnail_clippings[platform] = img_str
+                        platform_thumbnail_clippings = img_str
                     else:
                         platform_thumbnail_clippings = thumbnail_clippings[platform]
                     expected_delivery_date = bb.get_value('expected_delivery_date')

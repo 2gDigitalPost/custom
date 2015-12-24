@@ -6,6 +6,7 @@ from pyasm.checkin import FileCheckin
 from pyasm.search import Search
 import urllib
 
+
 class IMDBImageAssociatorCmd(Command):
     """
     This appears to be the class that is called when you click "Associate All Selected" on the IMDb Order Associator
@@ -13,22 +14,19 @@ class IMDBImageAssociatorCmd(Command):
     """
     # TODO: Figure out what this really does and update the docstring
 
-    def __init__(my, **kwargs):
-        super(IMDBImageAssociatorCmd, my).__init__(**kwargs)
-        my.orders_str = str(kwargs.get('orders_to_associate'))
-        my.orders = my.orders_str.split(',')
-        my.server = TacticServerStub.get()
+    def __init__(self, **kwargs):
+        super(IMDBImageAssociatorCmd, self).__init__(**kwargs)
+        self.orders = str(kwargs.get('orders_to_associate')).split(',')
+        self.server = TacticServerStub.get()
 
-    def check(my):
+    def check(self):
         return True
     
-    def execute(my):
+    def execute(self):
         pic_dict = {}
         pics = []
         order_dict = {}
-        for ocode in my.orders:
-            # TODO: The following server call is almost certainly useless, remove it
-            order = my.server.eval("@SOBJECT(twog/order['code','%s'])" % ocode)[0]
+        for ocode in self.orders:
             ord_s = Search('twog/order')
             ord_s.add_filter('code', ocode)
             order = ord_s.get_sobject()
@@ -50,7 +48,7 @@ class IMDBImageAssociatorCmd(Command):
             f.write(urllib.urlopen(pic).read())
             f.close()
             pic_places[pic] = place
-            number = number + 1
+            number += 1
 
         for pic in pics:
             server_path = pic_places[pic]
@@ -71,9 +69,9 @@ class IMDBImageAssociatorCmd(Command):
 
         return ''
 
-    def check_security(my):
+    def check_security(self):
         """give the command a callback that allows it to check security"""
         return True
 
-    def get_title(my):
+    def get_title(self):
         return "Make Note"

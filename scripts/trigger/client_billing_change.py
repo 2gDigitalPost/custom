@@ -42,6 +42,7 @@ def main(server=None, input=None):
             new_task_str = 'nobook'
         if client_billing == 'On Hold - Do Not Ship':
             new_task_str = 'noship'
+
         server.execute_cmd('manual_updaters.commander.ClientBillingTaskVisibilityCmd', {'client_code': client_code, 'new_task_str': new_task_str})
         client_sk = server.build_search_key('twog/client', client_code)
         timestamp = make_timestamp()
