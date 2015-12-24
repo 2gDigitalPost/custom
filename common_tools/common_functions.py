@@ -39,3 +39,29 @@ def title_case(string):
 
     # Join the list back on an empty space and return
     return ' '.join(title_case_strings)
+
+
+def abbreviate_text(string, max_len):
+    """
+    Take a string and return an abbreviated version, cut off at max_len. Note that the "..." is factored into max_len.
+    If the last character is a space, remove it.
+
+    Examples:
+    abbreviate_text("Testing this function", 8) => "Testing..."
+    abbreviate_text("This is my example", 10) => "This is my..."
+
+    :param string: A string
+    :param max_len: The desired length for the abbreviated text
+    :return:
+    """
+
+    if len(string) > max_len:
+        abbreviated_string = string[:max_len]
+
+        # Remove trailing space, if exists
+        if abbreviated_string[-1] == ' ':
+            abbreviated_string = abbreviated_string[:-1]
+
+        return abbreviated_string + '...'
+    else:
+        return string

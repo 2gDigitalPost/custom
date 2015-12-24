@@ -6,8 +6,9 @@ from pyasm.web import Table, DivWdg
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
 from pyasm.search import Search
+from pyasm.common import Environment
 from tactic_client_lib import TacticServerStub
-from common_tools.common_functions import title_case, get_current_timestamp
+from common_tools.common_functions import title_case, get_current_timestamp, abbreviate_text
 import hotlist_functions
 
 
@@ -667,8 +668,6 @@ class BigBoardWdg2(BaseRefreshWdg):
     # TODO: Update docstring once I know what's going on here...
 
     def init(my):
-        from pyasm.common import Environment
-        from pyasm.search import Search
         my.login = Environment.get_login()
         my.user = my.login.get_login()
         my.sk = ''
@@ -804,12 +803,6 @@ class BigBoardWdg2(BaseRefreshWdg):
                 }
          ''' % (sk, name)}
         return behavior
-
-    def shorten_text(my, text, max_len):
-        ret_val = text
-        if len(text) > max_len - 3 :
-            ret_val = '%s...' % text[:max_len -3]
-        return ret_val
 
     def fix_date(my, date):
         # This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
@@ -1042,8 +1035,10 @@ class BigBoardWdg2(BaseRefreshWdg):
         code_str = code
         name = title.get_value('title')
         episode = title.get_value('episode')
-        if episode not in [None,'']:
+
+        if episode:
             name = '%s Episode %s' % (name, episode)
+
         requires_mastering = False
         if title.get_value('requires_mastering_qc') not in ['False','false','0',None,False]:
             requires_mastering = True
@@ -1061,7 +1056,6 @@ class BigBoardWdg2(BaseRefreshWdg):
             title_block_bgcol = '#b55252'
 
         if title.get_value('redo') not in [None,False]:
-            from pyasm.search import Search
             title_block_bgcol = '#ffcc00'
 
             redo_title = ''
@@ -1092,18 +1086,21 @@ class BigBoardWdg2(BaseRefreshWdg):
         trower.add_attr('current_priority',title.get_value('priority'))
         trower.add_style('display: table-row;')
         trower.add_style('background-color: %s;' % bgcol)
+
         dbl = Table()
-        dbl.add_attr('width','100%s' % '%')
-        dbl.add_attr('height','100%s' % '%')
+        dbl.add_attr('width', '100%')
+        dbl.add_attr('height', '100%')
         dbl.add_style('font-size: 14px;')
         dbl.add_style('color: #000000;')
         dbl.add_style('background-color: %s;' % title_block_bgcol)
         dbl.add_style('border-bottom-left-radius', '10px')
         dbl.add_style('border-top-left-radius', '10px')
+
         if requires_mastering:
             dbl.add_row()
             lefted = dbl.add_cell('<font color="#FF0000"><b>Requires QC Mastering</b></font>')
-            lefted.add_attr('align','left')
+            lefted.add_attr('align', 'left')
+
         dbl.add_row()
         d1 = dbl.add_cell('<b><font style="size: 36px; color: #ff0000;">%s.</font> <u>%s</u></b>' % (count, name))
         d1.add_attr('width','100%')
@@ -1248,17 +1245,21 @@ class BigBoardWdg2(BaseRefreshWdg):
                     tittat.add_attr('name',wo_code)
                     inspect_button = TaskObjLauncherWdg(code=wo_code, name=process)
                     inspect = tat.add_cell(inspect_button)
-                    pro = tat.add_cell(my.shorten_text(process,10))
+
+                    pro = tat.add_cell(abbreviate_text(process, 7))
                     pro.add_attr('nowrap','nowrap')
                     pro.add_attr('title',wo_code)
                     pro.add_attr('name',wo_code)
                     pro.add_style('background-color: %s;' % my.stat_colors[status])
-                    stcell = tat.add_cell(my.shorten_text(status,10))
+
+                    stcell = tat.add_cell(abbreviate_text(status, 7))
                     stcell.add_attr('title',wo_code)
                     stcell.add_attr('name',wo_code)
                     stcell.add_style('background-color: %s;' % my.stat_colors[status])
-                    acell = tat.add_cell(my.shorten_text(assigned,10))
+
+                    acell = tat.add_cell(abbreviate_text(assigned, 7))
                     acell.add_style('background-color: %s;' % my.stat_colors[status])
+
                     dcell = tat.add_cell(due_date)
                     dcell.add_attr('nowrap','nowrap')
                     dcell.add_style('background-color: %s;' % my.stat_colors[status])
