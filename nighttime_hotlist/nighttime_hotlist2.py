@@ -1,14 +1,11 @@
 __all__ = ["IndieBBSelectWdg","BigBoardSingleWOSelectWdg2","BigBoardViewWdg2","BigBoardSelectWdg2","BigBoardWOSelectWdg2","BigBoardWOSelect4MultiTitlesWdg2","BigBoardWdg2"]
+
 import tacticenv
 import time, datetime
-#from pyasm.common import Environment
-#from pyasm.biz import *
 from pyasm.web import Table, DivWdg
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
-#from pyasm.search import Search
-#from tactic.ui.widget import DiscussionWdg
-#from operator import itemgetter
+from common_tools.common_functions import title_case, get_current_timestamp
 
 
 class IndieBBSelectWdg(BaseTableElementWdg):
@@ -662,6 +659,11 @@ class BigBoardWOSelectWdg2(BaseRefreshWdg):
 
 
 class BigBoardWdg2(BaseRefreshWdg):
+    """
+    This appears to be the class in charge of making our "Hot Today" list on the front page. I say "appears" because,
+    despite this class's importance, I found it completely undocumented
+    """
+    # TODO: Update docstring once I know what's going on here...
 
     def init(my):
         from pyasm.common import Environment
@@ -672,10 +674,71 @@ class BigBoardWdg2(BaseRefreshWdg):
         my.seen_groups = []
         my.bigdict = {}
         my.indi_pct = 0.0
-        my.stat_colors = {'Pending':'#d7d7d7','In Progress':'#f5f3a4','In_Progress':'#f5f3a4','On Hold':'#e8b2b8','On_Hold':'#e8b2b8','Client Response': '#ddd5b8', 'Completed':'#b7e0a5','Need Buddy Check':'#e3701a','Ready':'#b2cee8','Internal Rejection':'#ff0000','External Rejection':'#ff0000','Fix Needed':'#c466a1','Failed QC':'#ff0000','Rejected': '#ff0000','DR In_Progress': '#d6e0a4', 'DR In Progress': '#d6e0a4','Amberfin01_In_Progress':'#D8F1A8', 'Amberfin01 In Progress':'#D8F1A8','Amberfin02_In_Progress':'#F3D291', 'Amberfin02 In Progress':'#F3D291','BATON In_Progress': '#c6e0a4', 'BATON In Progress': '#c6e0a4','Export In_Progress': '#796999','Export In Progress': '#796999', 'Buddy Check In_Progress': '#1aade3','Buddy Check In Progress': '#1aade3'}
-        my.stat_relevance = {'Pending': 0,'In Progress': 4,'In_Progress': 4,'On Hold': 1,'On_Hold': 1,'Client Response': 2, 'Completed': -1,'Need Buddy Check': 10, 'Buddy Check In_Progress': 11, 'Buddy Check In Progress': 11, 'Ready': 3,'Internal Rejection': 12,'External Rejection': 13,'Failed QC': 14,'Fix Needed': 16,'Rejected': 15,'DR In_Progress': 5, 'DR In Progress': 5,'BATON In_Progress': 8, 'BATON In Progress': 8,'Export In_Progress': 9, 'Export In Progress': 9,'Amberfin01_In_Progress': 6, 'Amberfin01 In Progress': 6, 'Amberfin02_In_Progress':7, 'Amberfin02 In Progress':7 }
-        my.ext_colors = {'Open': '#ff0000', 'Investigating': '#00ff26', 'Waiting for Source': '#eeff00', 'Needs Corrective Action': '#4c69fc', 'Closed': '#597007'}
-        my.timestamp = my.make_timestamp()
+        # TODO: Move stat_colors to a text file/database rather than hard coding.
+        my.stat_colors = {
+            'Pending': '#d7d7d7',
+            'In Progress': '#f5f3a4',
+            'In_Progress': '#f5f3a4',
+            'On Hold': '#e8b2b8',
+            'On_Hold': '#e8b2b8',
+            'Client Response': '#ddd5b8',
+            'Completed': '#b7e0a5',
+            'Need Buddy Check': '#e3701a',
+            'Ready': '#b2cee8',
+            'Internal Rejection': '#ff0000',
+            'External Rejection': '#ff0000',
+            'Fix Needed': '#c466a1',
+            'Failed QC': '#ff0000',
+            'Rejected': '#ff0000',
+            'DR In_Progress': '#d6e0a4',
+            'DR In Progress': '#d6e0a4',
+            'Amberfin01_In_Progress': '#D8F1A8',
+            'Amberfin01 In Progress': '#D8F1A8',
+            'Amberfin02_In_Progress': '#F3D291',
+            'Amberfin02 In Progress': '#F3D291',
+            'BATON In_Progress': '#c6e0a4',
+            'BATON In Progress': '#c6e0a4',
+            'Export In_Progress': '#796999',
+            'Export In Progress': '#796999',
+            'Buddy Check In_Progress': '#1aade3',
+            'Buddy Check In Progress': '#1aade3'
+        }
+        my.stat_relevance = {
+            'Pending': 0,
+            'In Progress': 4,
+            'In_Progress': 4,
+            'On Hold': 1,
+            'On_Hold': 1,
+            'Client Response': 2,
+            'Completed': -1,
+            'Need Buddy Check': 10,
+            'Buddy Check In_Progress': 11,
+            'Buddy Check In Progress': 11,
+            'Ready': 3,
+            'Internal Rejection': 12,
+            'External Rejection': 13,
+            'Failed QC': 14,
+            'Fix Needed': 16,
+            'Rejected': 15,
+            'DR In_Progress': 5,
+            'DR In Progress': 5,
+            'BATON In_Progress': 8,
+            'BATON In Progress': 8,
+            'Export In_Progress': 9,
+            'Export In Progress': 9,
+            'Amberfin01_In_Progress': 6,
+            'Amberfin01 In Progress': 6,
+            'Amberfin02_In_Progress': 7,
+            'Amberfin02 In Progress': 7
+        }
+        my.ext_colors = {
+            'Open': '#ff0000',
+            'Investigating': '#00ff26',
+            'Waiting for Source': '#eeff00',
+            'Needs Corrective Action': '#4c69fc',
+            'Closed': '#597007'
+        }
+        my.timestamp = get_current_timestamp()
         my.date = my.timestamp.split(' ')[0]
         my.real_date = datetime.datetime.strptime(my.date, '%Y-%m-%d')
         my.all_groups = []
@@ -689,27 +752,6 @@ class BigBoardWdg2(BaseRefreshWdg):
             fname = user.get_value('first_name')
             lname = user.get_value('last_name')
             my.username_lookup[login_name] = '%s %s' % (fname, lname)
-
-    def make_timestamp(my):
-        import datetime
-        now = datetime.datetime.now()
-        return now.strftime("%Y-%m-%d %H:%M:%S")
- 
-    def camel_case(my, str):
-        sp = str.split(' ')
-        new_str = ''
-        for s in sp:
-            if len(s) != 0:
-                partial = ''
-                if len(s) == 1:
-                    partial = s.upper()
-                else:
-                    partial = '%s%s' % (s[0].upper(), s[1:].lower())
-                if new_str == '':
-                    new_str = partial
-                else:
-                    new_str = '%s %s' % (new_str, partial)
-        return new_str 
         
     def trow_top(my):
         table = Table()
@@ -729,7 +771,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         tpct = (my.indi_pct * 2)
         tcol.add_attr('width','%s%s' % (tpct, '%'))
         for sg in my.seen_groups:
-            sgcol = table.add_cell('&nbsp;&nbsp;&nbsp;<b>%s</b>' % my.camel_case(sg))
+            sgcol = table.add_cell('&nbsp;&nbsp;&nbsp;<b>%s</b>' % title_case(sg))
             sgcol.add_attr('width','%s%s' % ((my.indi_pct), '%'))
             sgcol.add_attr('class','topper')
             sgcol.add_attr('group',sg)
@@ -885,7 +927,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         notes = obt.add_cell('<img src="/context/icons/silk/note_add.png"/>')
         notes.add_style('cursor: pointer;')
         tsearch = Search('twog/title')
-        tsearch.add_filter('code',task.get_value('title_code'))
+        tsearch.add_filter('code', task.get_value('title_code'))
         task_tit = tsearch.get_sobject()
         notes.add_behavior(my.get_launch_note_behavior(task_tit.get_search_key(),name)) 
         lil_tbl.add_cell(obt)  
