@@ -876,7 +876,6 @@ class BigBoardWdg2(BaseRefreshWdg):
     def wrow(my, task, expected_delivery_date, count, client_thumbnail_clippings, platform_thumbnail_clippings, in_tbl, bgcol):
         from order_builder.order_builder import OrderBuilderLauncherWdg
         from order_builder.taskobjlauncher import TaskObjLauncherWdg
-        from pyasm.search import Search
         expected_delivery_date = my.fix_date(expected_delivery_date)
         code = task.get_value('code')
         name = task.get_value('title')
@@ -936,7 +935,7 @@ class BigBoardWdg2(BaseRefreshWdg):
             lil_tbl.add_row()
             lil_tbl.add_cell('<font color="#FF0000"><b>REDO - NO CHARGE</b></font>')
         d2 = dbl.add_cell(lil_tbl)
-        d2.add_attr('width','100%s' % '%')
+        d2.add_attr('width','100%')
         if my.big_user:
             dbl.add_row()
             offbutt = IndieBBSelectWdg(search_key=task.get_search_key(),title_code=task.get_value('title_code'),lookup_code=task.get_value('lookup_code'),indie_bigboard=task.get_value('indie_bigboard'))
@@ -992,8 +991,8 @@ class BigBoardWdg2(BaseRefreshWdg):
                 black.add_style('background-color: %s;' % bgcol)
             else:
                 tat = Table()
-                tat.add_attr('border','1')
-                tat.add_attr('width','100%s' % '%')
+                tat.add_attr('border', '1')
+                tat.add_attr('width', '100%')
                 tat.add_style('border-color: #e0e0e0;')
                 tat.add_style('background-color: #0000FF;')
                 tat.add_style('color: #000000;')
@@ -1011,18 +1010,18 @@ class BigBoardWdg2(BaseRefreshWdg):
                 pro.add_style('background-color: %s;' % my.stat_colors[status])
                 pro.add_style('color: #000000;')
                 stcell = tat.add_cell(status)
-                stcell.add_attr('width','100%s' % '%')
+                stcell.add_attr('width','100%')
                 stcell.add_style('background-color: %s;' % my.stat_colors[status])
                 stcell.add_style('color: #000000;')
                 tat.add_row()
                 wcell = tat.add_cell(wo_code.split('WORK_ORDER')[1])
-                wcell.add_attr('width','100%s' % '%')
+                wcell.add_attr('width','100%')
                 acell = tat.add_cell(assigned)
-                acell.add_attr('width','100%s' % '%')
+                acell.add_attr('width','100%')
                 acell.add_style('background-color: %s;' % my.stat_colors[status])
                 acell.add_style('color: #000000;')
                 dcell = tat.add_cell(due_date)
-                dcell.add_attr('width','100%s' % '%')
+                dcell.add_attr('width','100%')
                 dcell.add_attr('nowrap','nowrap')
                 dcell.add_style('background-color: %s;' % my.stat_colors[status])
                 dcell.add_style('color: #000000;')
@@ -1131,7 +1130,7 @@ class BigBoardWdg2(BaseRefreshWdg):
 
         lil_tbl.add_row()
         obt = Table()
-        obt.add_attr('cellpadding','5')
+        obt.add_attr('cellpadding', '5')
         obt.add_attr('height', '100%')
         obt.add_style('color: #000000;')
         obt.add_style('font-size: 14px;')
