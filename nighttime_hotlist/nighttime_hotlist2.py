@@ -5,7 +5,10 @@ import time, datetime
 from pyasm.web import Table, DivWdg
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
+from pyasm.search import Search
+from tactic_client_lib import TacticServerStub
 from common_tools.common_functions import title_case, get_current_timestamp
+import hotlist_functions
 
 
 class IndieBBSelectWdg(BaseTableElementWdg):
@@ -15,7 +18,6 @@ class IndieBBSelectWdg(BaseTableElementWdg):
         my.server = None
 
     def get_stub(my):
-        from tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
     
     def get_launch_behavior(my, search_key, title_code, lookup_code):
@@ -755,9 +757,9 @@ class BigBoardWdg2(BaseRefreshWdg):
         
     def trow_top(my):
         table = Table()
-        table.add_attr('width','100%s' % '%')
-        table.add_attr('height','40px')
-        table.add_attr('border','1')
+        table.add_attr('width', '100%')
+        table.add_attr('height', '40px')
+        table.add_attr('border', '1')
         table.add_style('font-size: 12px;')
         table.add_style('font-family: Helvetica;')
         table.add_style('color: #000000;')
@@ -766,17 +768,17 @@ class BigBoardWdg2(BaseRefreshWdg):
         table.add_class('spt_group_row')
         table.add_row()
         tcol = table.add_cell('&nbsp;&nbsp;&nbsp;<b>Title</b>')
-        tcol.add_attr('class','topper')
-        tcol.add_attr('group','title')
+        tcol.add_attr('class', 'topper')
+        tcol.add_attr('group', 'title')
         tpct = (my.indi_pct * 2)
-        tcol.add_attr('width','%s%s' % (tpct, '%'))
+        tcol.add_attr('width', '%s%s' % (tpct, '%'))
         for sg in my.seen_groups:
             sgcol = table.add_cell('&nbsp;&nbsp;&nbsp;<b>%s</b>' % title_case(sg))
-            sgcol.add_attr('width','%s%s' % ((my.indi_pct), '%'))
-            sgcol.add_attr('class','topper')
-            sgcol.add_attr('group',sg)
+            sgcol.add_attr('width', '%s%s' % ((my.indi_pct), '%'))
+            sgcol.add_attr('class', 'topper')
+            sgcol.add_attr('group', sg)
         t2 = Table()
-        t2.add_attr('width','100%s' % '%')
+        t2.add_attr('width', '100%')
         t2.add_style('font-size: 16px;')
         t2.add_style('font-family: Helvetica;')
         t2.add_style('color: #000000;')
@@ -784,7 +786,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         t2.add_row()
         t2.add_cell(table)
         t2c = t2.add_cell('&nbsp;&nbsp;&nbsp;&nbsp;')
-        t2c.add_attr('width','10px')
+        t2c.add_attr('width', '10px')
        
         return t2
 
@@ -1122,14 +1124,16 @@ class BigBoardWdg2(BaseRefreshWdg):
             lil_tbl.add_cell("&nbsp;&nbsp;<b>Client: %s</b>" % title.get_value('client_name'))
         else:
             lil_tbl.add_cell("&nbsp;&nbsp;<b>Client:</b> %s" % client_thumbnail_clippings)
+
         if platform_thumbnail_clippings == '':
             lil_tbl.add_cell("&nbsp;&nbsp;<i>Platform: %s</i>" % title.get_value('platform'))
         else:
             lil_tbl.add_cell("&nbsp;&nbsp;<i>Platform:</i> %s" % platform_thumbnail_clippings)
+
         lil_tbl.add_row()
         obt = Table()
         obt.add_attr('cellpadding','5')
-        obt.add_attr('height','100%s' % '%')
+        obt.add_attr('height', '100%')
         obt.add_style('color: #000000;')
         obt.add_style('font-size: 14px;')
         obt.add_row()
@@ -1168,7 +1172,7 @@ class BigBoardWdg2(BaseRefreshWdg):
             lefted.add_attr('nowrap','nowrap')
             lefted.add_style('text-shadow: 1px 1px #000000;')
         ob = OrderBuilderLauncherWdg(code=title.get_value('order_code'))
-        obt.add_attr('width','260px')
+        obt.add_attr('width', '260px')
         obt.add_cell(ob)
         notes = obt.add_cell('<img src="/context/icons/silk/note_add.png"/>')
         notes.add_style('cursor: pointer;')
@@ -1178,15 +1182,15 @@ class BigBoardWdg2(BaseRefreshWdg):
             lil_tbl.add_row()
             lil_tbl.add_cell('<font color="#FF0000"><b>REDO - NO CHARGE</b></font>')
         d2 = dbl.add_cell(lil_tbl)
-        d2.add_attr('width','100%s' % '%')
+        d2.add_attr('width', '100%')
         if my.big_user:
             dbl.add_row()
             smtbl = Table()
-            smtbl.add_attr('height','100%s' % '%')
+            smtbl.add_attr('height', '100%')
             smtbl.add_style('font-size: 16px;')
             smtbl.add_style('color: #000000;')
             smtbl.add_row()
-            offbutt = BigBoardSelectWdg2(search_type='twog/title',code=title.get_value('code'),in_bigboard='Yes')
+            offbutt = BigBoardSelectWdg2(search_type='twog/title', code=title.get_value('code'), in_bigboard='Yes')
             dblbb = dbl.add_cell(offbutt)
             dblbb.add_attr('width','20px')
             dblpr = smtbl.add_cell('Set At #: ')
@@ -1202,16 +1206,16 @@ class BigBoardWdg2(BaseRefreshWdg):
             dbltxt.add_behavior(my.show_change(prioid))
             dbl.add_cell(smtbl)
         tripl = Table()
-        tripl.add_attr('width','100%s' % '%')
-        tripl.add_attr('height','100%s' % '%')
+        tripl.add_attr('width','100%')
+        tripl.add_attr('height','100%')
         tripl.add_row()
 
         dc = tripl.add_cell(dbl)
         dc.add_attr('align','left')
         titl = table.add_cell(tripl)
         if count == 1:
-            titl.add_attr('class','bottom_content')
-            titl.add_attr('group','title')
+            titl.add_attr('class', 'bottom_content')
+            titl.add_attr('group', 'title')
         titl.add_attr('valign','top')
         titl.add_attr('width','%s%s' % (tpct, '%'))
         group_keys = my.bigdict[code]['groups'].keys()
@@ -1632,57 +1636,9 @@ class BigBoardWdg2(BaseRefreshWdg):
             saveit.add_behavior(my.save_priorities())
         return btns
 
-    def get_platform_img(my, platform):
-        from pyasm.search import Search
-        img_path = ''
-        platform_search = Search("twog/platform")
-        platform_search.add_filter('name',platform)
-        platform = platform_search.get_sobject()
-        platform_id = platform.get_id()
-        snaps_s = Search("sthpw/snapshot")
-        snaps_s.add_filter('search_id',platform_id)
-        snaps_s.add_filter('search_type','twog/platform?project=twog')
-        snaps_s.add_filter('is_current','1')
-        snaps_s.add_filter('version','0',op='>')
-        snaps_s.add_where("\"context\" in ('publish','icon','MISC')")
-        snaps_s.add_order_by('timestamp desc')
-        snaps = snaps_s.get_sobjects()
-        if len(snaps) > 0:
-            from tactic_client_lib import TacticServerStub
-            server = TacticServerStub.get()
-            snap = snaps[0]
-            img_path = server.get_path_from_snapshot(snap.get_code(), mode="web")
-            if img_path not in [None,'']:
-                img_path = 'http://tactic01%s' % img_path
-        return img_path
-
-    def get_client_img(my, client_code):
-        from pyasm.search import Search
-        img_path = ''
-        client_search = Search("twog/client")
-        client_search.add_filter('code',client_code)
-        client = client_search.get_sobject()
-        client_id = client.get_id()
-        snaps_s = Search("sthpw/snapshot")
-        snaps_s.add_filter('search_id',client_id)
-        snaps_s.add_filter('search_type','twog/client?project=twog')
-        snaps_s.add_filter('is_current','1')
-        snaps_s.add_filter('version','0',op='>')
-        snaps_s.add_where("\"context\" in ('publish','icon','MISC')")
-        snaps_s.add_order_by('timestamp desc')
-        snaps = snaps_s.get_sobjects()
-        if len(snaps) > 0:
-            from tactic_client_lib import TacticServerStub
-            server = TacticServerStub.get()
-            snap = snaps[0]
-            img_path = server.get_path_from_snapshot(snap.get_code(), mode="web")
-            if img_path not in [None,'']:
-                img_path = 'http://tactic01%s' % img_path
-        return img_path
-
     def get_display(my):   
         from operator import itemgetter
-        from pyasm.search import Search
+
         my.big_user = False
         search = Search("twog/global_resource")
         search.add_filter('name','Usernames Allowed Hot Today Changes')
@@ -1976,7 +1932,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                         client_code = 'CLIENT00286'
 
                     if client_code not in thumbnail_clippings.keys():
-                        img_path = my.get_client_img(client_code)
+                        img_path = hotlist_functions.get_client_img(client_code)
                         if img_path not in [None,'']:
                             img_str = '<img src="%s" alt="%s" title="%s" style="width: 32px; height: 32px;"/>' % (img_path, client_name, client_name)
                             thumbnail_clippings[client_code] = img_str      
@@ -1989,10 +1945,12 @@ class BigBoardWdg2(BaseRefreshWdg):
                         # If no platform specified, set to default 0
                         platform = '0'
 
+                    # Looks like this is where the platform icon and text is decided
+                    # TODO: Fix so that either icon or text shows up, not both
                     if platform not in thumbnail_clippings.keys():
-                        img_path = my.get_platform_img(platform)
+                        img_path = hotlist_functions.get_platform_img(platform)
                         if img_path not in [None,'']:
-                            img_str = '<img src="%s" alt="%s" title="%s" style="width: 32px; height: 32px;"/> &nbsp; %s' % (img_path, platform, platform, platform)
+                            img_str = '<img src="%s" alt="%s" title="%s" style="width: 32px; height: 32px;"/>' % (img_path, platform, platform)
                             thumbnail_clippings[platform] = img_str      
                             platform_thumbnail_clippings = img_str
                     else:
@@ -2028,7 +1986,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                         grouping_row.add_behavior(my.toggle_groupings())
                     client_code = bb.get_value('client_code')
                     if client_code not in thumbnail_clippings.keys():
-                        img_path = my.get_client_img(client_code)
+                        img_path = hotlist_functions.get_client_img(client_code)
                         if img_path not in [None,'']:
                             img_str = '<img src="%s" style="width: 32px; height: 32px;"/>' % img_path
                             thumbnail_clippings[client_code] = img_str      
@@ -2038,7 +1996,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                     platform = bb.get_value('platform', '0')
 
                     if platform not in thumbnail_clippings.keys():
-                        img_path = my.get_platform_img(platform)
+                        img_path = hotlist_functions.get_platform_img(platform)
                         if img_path not in [None,'']:
                             img_str = '<img src="%s" style="width: 32px; height: 32px;"/>' % img_path
                             thumbnail_clippings[platform] = img_str      
