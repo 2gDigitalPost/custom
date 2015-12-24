@@ -747,7 +747,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         users_s.add_filter('location','internal')
         users = users_s.get_sobjects()
         my.username_lookup = {'': '', None: '', 'NOTHING': ''}
-        for user in users: 
+        for user in users:
             login_name = user.get_value('login')
             fname = user.get_value('first_name')
             lname = user.get_value('last_name')
@@ -765,6 +765,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         table.add_style('border-color: #444444;')
         table.add_class('spt_group_row')
         table.add_row()
+
         tcol = table.add_cell('&nbsp;&nbsp;&nbsp;<b>Title</b>')
         tcol.add_attr('class', 'topper')
         tcol.add_attr('group', 'title')
@@ -873,8 +874,10 @@ class BigBoardWdg2(BaseRefreshWdg):
         code = task.get_value('code')
         name = task.get_value('title')
         episode = task.get_value('episode')
+
         if episode not in [None,'']:
-            name = '%s Episode %s' % (name, episode)
+            name += ' Episode ' + episode
+
         better_lookin_dd, dd_color = my.get_dates_and_colors(expected_delivery_date, 'NO DELIVERY DATE')
         tpct = my.indi_pct * 2
         table = in_tbl
@@ -895,8 +898,12 @@ class BigBoardWdg2(BaseRefreshWdg):
         dbl.add_style('border-top-right-radius', '10px')
         dbl.add_style('border-top-left-radius', '10px')
         dbl.add_row()
-        d1 = dbl.add_cell('<b><font style="size: 36px; color: #ff0000;">%s.</font> <u>%s</u></b>' % (count, name))
+
+        # Line below looks like what determines each row's number and title, but changing it did nothing
+        # TODO: Find out what below line does
+        d1 = dbl.add_cell('<b><span style="size: 36px; color: #ff0000;">%s.</span> <u>%s</u></b>' % (count, name))
         d1.add_attr('width', '100%')
+
         dbl.add_row()
         lil_tbl = Table()
         lil_tbl.add_attr('cellpadding', '5')
@@ -922,7 +929,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         tsearch = Search('twog/title')
         tsearch.add_filter('code', task.get_value('title_code'))
         task_tit = tsearch.get_sobject()
-        notes.add_behavior(my.get_launch_note_behavior(task_tit.get_search_key(),name)) 
+        notes.add_behavior(my.get_launch_note_behavior(task_tit.get_search_key(), name))
         lil_tbl.add_cell(obt)  
         if task_tit.get_value('no_charge') and task_tit.get_value('redo'):
             lil_tbl.add_row()
@@ -946,10 +953,12 @@ class BigBoardWdg2(BaseRefreshWdg):
             dbl4 = dbl.add_cell('Priority: %s' % task.get_value('priority'))
             dbl4.add_attr('align', 'left')
             prioid = 'prio_%s' % count
+
         tripl = Table()
         tripl.add_attr('width', '100%')
         tripl.add_attr('height', '100%')
         tripl.add_row()
+
         tallboy = Table()
         tallboy.add_row()
         ctc1 = tallboy.add_cell(client_thumbnail_clippings)
@@ -966,8 +975,9 @@ class BigBoardWdg2(BaseRefreshWdg):
         ctc.add_attr('valign', 'top')
         ctc.add_attr('align', 'left')
         ctc.add_attr('width', '25px')
+
         dc = tripl.add_cell(dbl)
-        dc.add_attr('align','left')
+        dc.add_attr('align', 'left')
         titl = table.add_cell(tripl)
         if count == 1:
             titl.add_attr('class', 'bottom_content')
@@ -978,9 +988,9 @@ class BigBoardWdg2(BaseRefreshWdg):
             if sg != task.get_value('assigned_login_group'):
                 black = table.add_cell(' ')
                 if count == 1:
-                    black.add_attr('class','bottom_content')
-                    black.add_attr('group',sg)
-                black.add_attr('width','%s%s' % (my.indi_pct, '%'))
+                    black.add_attr('class', 'bottom_content')
+                    black.add_attr('group', sg)
+                black.add_attr('width', '%s%s' % (my.indi_pct, '%'))
                 black.add_style('background-color: %s;' % bgcol)
             else:
                 tat = Table()
@@ -1095,6 +1105,8 @@ class BigBoardWdg2(BaseRefreshWdg):
         trower.add_style('display: table-row;')
         trower.add_style('background-color: %s;' % bgcol)
 
+        # Looks like dbl is where the order goes on the table. For some reason, it's created as a table within the
+        # bigger table row. It also has its own sub-tables.
         dbl = Table()
         dbl.add_attr('width', '100%')
         dbl.add_attr('height', '100%')
@@ -1110,8 +1122,11 @@ class BigBoardWdg2(BaseRefreshWdg):
             lefted.add_attr('align', 'left')
 
         dbl.add_row()
-        d1 = dbl.add_cell('<b><font style="size: 36px; color: #ff0000;">%s.</font> <u>%s</u></b>' % (count, name))
+
+        # Below line decides the row's number and title
+        d1 = dbl.add_cell('<b><span style="size: 36px; color: #ff0000;">%s.</span> <u>%s</u></b>' % (count, name))
         d1.add_attr('width','100%')
+
         dbl.add_row()
         lil_tbl = Table()
         lil_tbl.add_attr('height', '100%')
@@ -1295,7 +1310,8 @@ class BigBoardWdg2(BaseRefreshWdg):
                     for(var r = 0; r < 1; r++){
                         spt.app_busy.show("Refreshing...");
                         //alert('reloading scroll = ' + scroll);
-                        spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'scroll': scroll});
+                        spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2',
+                            {'auto_refresh': auto, 'scroll': scroll});
                         spt.app_busy.hide();
                     }
                 }
@@ -1618,7 +1634,7 @@ class BigBoardWdg2(BaseRefreshWdg):
     def get_buttons(my, auto_refresh, auto_scroll, kgroups):
         from pyasm.widget import SelectWdg
         btns = Table()
-        btns.add_attr('class','auto_buttons')
+        btns.add_attr('class', 'auto_buttons')
         btns.add_row()
         auto_text = "Set Auto-Refresh"
         if auto_refresh == 'yes':
@@ -1733,7 +1749,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                 bigboarders = tempo
 
         search2 = Search("twog/indie_bigboard")
-        search2.add_filter('indie_bigboard',True)
+        search2.add_filter('indie_bigboard', True)
         search2.add_order_by("indie_priority")
         bigboarders2 = search2.get_sobjects()
 
@@ -1741,7 +1757,7 @@ class BigBoardWdg2(BaseRefreshWdg):
             task_code = b2.get_value('task_code')
             ts = Search("sthpw/task")
             ts.add_filter('code',task_code)
-            ts.add_filter('search_type','twog/proj?project=twog')
+            ts.add_filter('search_type', 'twog/proj?project=twog')
             b2_task = ts.get_sobject()
             alg = b2_task.get_value('assigned_login_group')
             if kgroups[0] == 'ALL' or kgroups[0] in alg:
@@ -1880,7 +1896,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         button_top = table.add_row()
         table.add_cell(btns)
         toprow = table.add_row()
-        toprow.add_attr('class','trow_nomove')
+        toprow.add_attr('class', 'trow_nomove')
         table.add_cell(my.trow_top())
 
         t2div = DivWdg()
@@ -1899,6 +1915,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         t2.add_style('border-color: #444444;')
         t2.add_style('color: #000000;')
         t2.add_style('font-family: Helvetica;')
+
         # Need to alternate row colors starting at fcfcfc, then going to ffffff
         if my.seen_groups not in [None,'',[]]:
             new_ordering = sorted(bigbox_prios, key=itemgetter('priority')) 
