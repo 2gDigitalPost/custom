@@ -1154,6 +1154,8 @@ class BigBoardWdg2(BaseRefreshWdg):
             lil_tbl.add_cell("&nbsp;&nbsp;<i>Platform:</i> %s" % platform_thumbnail_clippings)
 
         lil_tbl.add_row()
+
+        # TODO: Rename 'obt'
         obt = Table()
         obt.add_attr('cellpadding', '5')
         obt.add_attr('height', '100%')
@@ -1161,42 +1163,67 @@ class BigBoardWdg2(BaseRefreshWdg):
         obt.add_style('font-size: 14px;')
         obt.add_row()
 
-        # This next section handles how Deliver By and Due Date appear
-        delb = obt.add_cell('<font color="%s"><b>Deliver By: %s</b></font>' % (ed_color, better_lookin_ed))
-        delb.add_attr('colspan', '2')
-        delb.add_attr('nowrap', 'nowrap')
-        delb.add_style('text-shadow: 1px 1px #000000;')
+        # This next section handles how Deliver By appears
+        # TODO: Rename 'better_lookin_ed' and 'ed_color'
+        deliver_by_cell = obt.add_cell('Deliver By: %s' % better_lookin_ed)
+        deliver_by_cell.add_attr('colspan', '2')
+        deliver_by_cell.add_attr('nowrap', 'nowrap')
+        deliver_by_cell.add_style('text-shadow: 1px 1px #000000;')
+        deliver_by_cell.add_style('font-weight: bold')
+        deliver_by_cell.add_style('color: %s;' % ed_color)
+
         obt.add_row()
-        delb = obt.add_cell('<font color="%s"><b>Due Date:&nbsp;&nbsp;&nbsp; %s</b></font>' % (dd_color, better_lookin_dd))
-        delb.add_attr('colspan', '2')
-        delb.add_attr('nowrap', 'nowrap')
-        delb.add_style('text-shadow: 1px 1px #000000;')
+
+        # This is the section for Due Date
+        # TODO: Rename 'better_lookin_dd' and 'dd_color'
+        # TODO: Remove non breaking spaces and replace with CSS (or better table format)
+        due_date_cell = obt.add_cell('Due Date:&nbsp;&nbsp;&nbsp; %s' % better_lookin_dd)
+        due_date_cell.add_attr('colspan', '2')
+        due_date_cell.add_attr('nowrap', 'nowrap')
+        due_date_cell.add_style('text-shadow: 1px 1px #000000;')
+        due_date_cell.add_style('font-weight: bold')
+        due_date_cell.add_style('color: %s' % dd_color)
+
+        # #FF00F0 is a pinkish color used for several external rejection messages
+        external_rejection_color = '#FF00F0'
 
         if title.get_value('is_external_rejection') == 'true':
             obt.add_row()
-            delb = obt.add_cell('<font color="#FF00F0"><b>Received External Rejection</b></font>') 
-            delb.add_attr('colspan', '2')
-            delb.add_attr('nowrap', 'nowrap')
-            delb.add_style('text-shadow: 1px 1px #000000;')
-            delb.add_style('font-size: 18px;')
-        if ext_status not in [None, '']:
+            external_rejection_cell = obt.add_cell('Received External Rejection')
+            external_rejection_cell.add_attr('colspan', '2')
+            external_rejection_cell.add_attr('nowrap', 'nowrap')
+            external_rejection_cell.add_style('text-shadow: 1px 1px #000000;')
+            external_rejection_cell.add_style('font-size: 18px;')
+            external_rejection_cell.add_style('font-weight: bold;')
+            external_rejection_cell.add_style('color: %s' % external_rejection_color)
+
+        if ext_status:
             obt.add_row()
-            lefted = obt.add_cell('<font color="#FF00F0"><b>External Rejection Status: %s</b></font>' % ext_status)
-            lefted.add_attr('align', 'left')
-            lefted.add_attr('nowrap', 'nowrap')
-            lefted.add_style('text-shadow: 1px 1px #000000;')
-        if ext_assigned not in [None, '']:
+            external_rejection_status_cell = obt.add_cell('External Rejection Status: %s' % ext_status)
+            external_rejection_status_cell.add_attr('align', 'left')
+            external_rejection_status_cell.add_attr('nowrap', 'nowrap')
+            external_rejection_status_cell.add_style('text-shadow: 1px 1px #000000;')
+            external_rejection_status_cell.add_style('font-weight: bold;')
+            external_rejection_status_cell.add_style('color: %s' % external_rejection_color)
+
+        if ext_assigned:
             obt.add_row()
-            lefted = obt.add_cell('<font color="#FF00F0"><b>Assigned: %s</b></font>' % ext_assigned)
-            lefted.add_attr('align', 'left')
-            lefted.add_attr('nowrap', 'nowrap')
-            lefted.add_style('text-shadow: 1px 1px #000000;')
-        if ext_assigned_corrective not in [None, '']:
+            assigned_cell = obt.add_cell('Assigned: %s' % ext_assigned)
+            assigned_cell.add_attr('align', 'left')
+            assigned_cell.add_attr('nowrap', 'nowrap')
+            assigned_cell.add_style('text-shadow: 1px 1px #000000;')
+            assigned_cell.add_style('font-weight: bold;')
+            assigned_cell.add_style('color: %s' % external_rejection_color)
+
+        if ext_assigned_corrective:
             obt.add_row()
-            lefted = obt.add_cell('<font color="#FF00F0"><b>Corrective Action Assigned: %s</b></font>' % ext_assigned_corrective)
-            lefted.add_attr('align', 'left')
-            lefted.add_attr('nowrap', 'nowrap')
-            lefted.add_style('text-shadow: 1px 1px #000000;')
+            corrective_action_assigned_cell = obt.add_cell('Corrective Action Assigned: %s' % ext_assigned_corrective)
+            corrective_action_assigned_cell.add_attr('align', 'left')
+            corrective_action_assigned_cell.add_attr('nowrap', 'nowrap')
+            corrective_action_assigned_cell.add_style('text-shadow: 1px 1px #000000;')
+            corrective_action_assigned_cell.add_style('font-weight: bold;')
+            corrective_action_assigned_cell.add_style('color: %s' % external_rejection_color)
+
         ob = OrderBuilderLauncherWdg(code=title.get_value('order_code'))
         obt.add_attr('width', '260px')
         obt.add_cell(ob)
