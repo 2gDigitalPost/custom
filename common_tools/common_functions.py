@@ -7,6 +7,7 @@ what will be put in here for the most part.
 """
 
 import datetime
+from pyasm.common import SPTDate
 
 
 def get_current_timestamp():
@@ -65,3 +66,13 @@ def abbreviate_text(string, max_len):
         return abbreviated_string + '...'
     else:
         return string
+
+
+def fix_date(date):
+    # TODO: Move this function to a separate file
+    # This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
+    return_date = ''
+    date_obj = SPTDate.convert_to_local(date)
+    if date_obj not in [None, '']:
+        return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
+    return return_date

@@ -6,10 +6,20 @@ from pyasm.web import Table, DivWdg
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
 from pyasm.search import Search
-from pyasm.common import Environment
+from pyasm.common import Environment, SPTDate
 from tactic_client_lib import TacticServerStub
 from common_tools.common_functions import title_case, get_current_timestamp, abbreviate_text
 import hotlist_functions
+
+
+def fix_date(date):
+    # TODO: Move this function to a separate file
+    # This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
+    return_date = ''
+    date_obj = SPTDate.convert_to_local(date)
+    if date_obj not in [None, '']:
+        return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
+    return return_date
 
 
 class IndieBBSelectWdg(BaseTableElementWdg):
@@ -741,7 +751,6 @@ class BigBoardWdg2(BaseRefreshWdg):
         my.timestamp = get_current_timestamp()
         my.date = my.timestamp.split(' ')[0]
         my.real_date = datetime.datetime.strptime(my.date, '%Y-%m-%d')
-        my.all_groups = []
         my.big_user = False
         users_s = Search('sthpw/login')
         users_s.add_filter('location','internal')
@@ -766,16 +775,21 @@ class BigBoardWdg2(BaseRefreshWdg):
         table.add_class('spt_group_row')
         table.add_row()
 
-        tcol = table.add_cell('&nbsp;&nbsp;&nbsp;<b>Title</b>')
-        tcol.add_attr('class', 'topper')
-        tcol.add_attr('group', 'title')
-        tpct = (my.indi_pct * 2)
-        tcol.add_attr('width', '%s%s' % (tpct, '%'))
-        for sg in my.seen_groups:
-            sgcol = table.add_cell('&nbsp;&nbsp;&nbsp;<b>%s</b>' % title_case(sg))
-            sgcol.add_attr('width', '%s%s' % ((my.indi_pct), '%'))
-            sgcol.add_attr('class', 'topper')
-            sgcol.add_attr('group', sg)
+        # Set up the title column (it is always shown)
+        title_column = table.add_cell('&nbsp;&nbsp;&nbsp;<b>Title</b>')
+        title_column.add_attr('class', 'topper')
+        title_column.add_attr('group', 'title')
+        # TODO: Not sure what the below line does
+        title_width_percent = (my.indi_pct * 2)
+        title_column.add_attr('width', '%s%s' % (title_width_percent, '%'))
+
+        # Add all the rest of the columns
+        for seen_group in my.seen_groups:
+            seen_group_column = table.add_cell('&nbsp;&nbsp;&nbsp;<b>%s</b>' % title_case(seen_group))
+            seen_group_column.add_attr('width', '%s%s' % ((my.indi_pct), '%'))
+            seen_group_column.add_attr('class', 'topper')
+            seen_group_column.add_attr('group', seen_group)
+
         t2 = Table()
         t2.add_attr('width', '100%')
         t2.add_style('font-size: 16px;')
@@ -804,15 +818,6 @@ class BigBoardWdg2(BaseRefreshWdg):
                 }
          ''' % (sk, name)}
         return behavior
-
-    def fix_date(my, date):
-        # This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-        from pyasm.common import SPTDate
-        return_date = ''
-        date_obj = SPTDate.convert_to_local(date)
-        if date_obj not in [None,'']:
-            return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-        return return_date
 
     def get_dates_and_colors(my, date, date_str):
         date_time = date.split(' ')
@@ -870,7 +875,7 @@ class BigBoardWdg2(BaseRefreshWdg):
     def wrow(my, task, expected_delivery_date, count, client_thumbnail_clippings, platform_thumbnail_clippings, in_tbl, bgcol):
         from order_builder.order_builder import OrderBuilderLauncherWdg
         from order_builder.taskobjlauncher import TaskObjLauncherWdg
-        expected_delivery_date = my.fix_date(expected_delivery_date)
+        expected_delivery_date = fix_date(expected_delivery_date)
         code = task.get_value('code')
         name = task.get_value('title')
         episode = task.get_value('episode')
@@ -1005,7 +1010,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                 status = task.get_value('status')
                 process = task.get_value('process')
                 assigned = my.username_lookup[task.get_value('assigned')]
-                due_date = my.fix_date(task.get_value('bid_end_date')).split(' ')[0]
+                due_date = fix_date(task.get_value('bid_end_date')).split(' ')[0]
                 tat.add_row()
                 inspect_button = TaskObjLauncherWdg(code=wo_code, name=process)
                 inspect = tat.add_cell(inspect_button)
@@ -1040,7 +1045,7 @@ class BigBoardWdg2(BaseRefreshWdg):
     def trow(my, title, expected_delivery_date, count, client_thumbnail_clippings, platform_thumbnail_clippings, in_tbl, bgcol, ext_sk, curr_group_prio, ext_status=None, ext_assigned=None, ext_assigned_corrective=None):
         from order_builder.order_builder import OrderBuilderLauncherWdg
         from order_builder.taskobjlauncher import TaskObjLauncherWdg
-        due_date = my.fix_date(title.get_value('due_date'))
+        due_date = fix_date(title.get_value('due_date'))
         code = title.get_value('code')
         code_str = code
         name = title.get_value('title')
@@ -1155,15 +1160,18 @@ class BigBoardWdg2(BaseRefreshWdg):
         obt.add_style('color: #000000;')
         obt.add_style('font-size: 14px;')
         obt.add_row()
-        delb = obt.add_cell('<font color="%s"><b>Deliver By: %s</b></font>' % (ed_color, better_lookin_ed)) 
+
+        # This next section handles how Deliver By and Due Date appear
+        delb = obt.add_cell('<font color="%s"><b>Deliver By: %s</b></font>' % (ed_color, better_lookin_ed))
         delb.add_attr('colspan', '2')
         delb.add_attr('nowrap', 'nowrap')
         delb.add_style('text-shadow: 1px 1px #000000;')
         obt.add_row()
-        delb = obt.add_cell('<font color="%s"><b>Due Date:&nbsp;&nbsp;&nbsp; %s</b></font>' % (dd_color, better_lookin_dd)) 
+        delb = obt.add_cell('<font color="%s"><b>Due Date:&nbsp;&nbsp;&nbsp; %s</b></font>' % (dd_color, better_lookin_dd))
         delb.add_attr('colspan', '2')
         delb.add_attr('nowrap', 'nowrap')
         delb.add_style('text-shadow: 1px 1px #000000;')
+
         if title.get_value('is_external_rejection') == 'true':
             obt.add_row()
             delb = obt.add_cell('<font color="#FF00F0"><b>Received External Rejection</b></font>') 
@@ -1262,7 +1270,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                     status = t.get_value('status')
                     process = t.get_value('process')
                     assigned = my.username_lookup[t.get_value('assigned')]
-                    due_date = my.fix_date(t.get_value('bid_end_date')).split(' ')[0]
+                    due_date = fix_date(t.get_value('bid_end_date')).split(' ')[0]
                     tittat = tat.add_row()
                     tittat.add_attr('title', wo_code)
                     tittat.add_attr('name', wo_code)
@@ -1632,7 +1640,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         return behavior
 
     def get_buttons(my, auto_refresh, auto_scroll, kgroups):
-        from pyasm.widget import SelectWdg
+        # TODO: Rewrite this entire function...
         btns = Table()
         btns.add_attr('class', 'auto_buttons')
         btns.add_row()
@@ -1686,23 +1694,19 @@ class BigBoardWdg2(BaseRefreshWdg):
             kgroups = my.kwargs.get('groups').split(',')
         search = Search("sthpw/login_group")
         search.add_where("\"login_group\" not in ('client','default','user')")
-        all_groups1 = search.get_sobjects()
-        my.all_groups = []
-        for ag1 in my.all_groups:
-            ag = ag1.get_value('login_group')
-            if 'supervisor' not in ag:
-                my.all_groups.append(ag)
 
         thumbnail_clippings = {}
 
         divvy2 = DivWdg()
         divvy2.add_behavior(my.get_scroll_by_row())
+
         table = Table()
         table.add_attr('class', 'bigboard')
         table.add_attr('width', '100%')
         table.add_attr('bgcolor', '#fcfcfc')
         table.add_style('color: #000000;')
         table.add_style('font-family: Helvetica;')
+
         inorder = []
         bigbox = {}
         bigbox_prios = []
@@ -1713,16 +1717,18 @@ class BigBoardWdg2(BaseRefreshWdg):
         search.add_order_by("expected_delivery_date")
         bigboarders = search.get_sobjects()
 
-        extr_s = Search("twog/external_rejection")
-        extr_s.add_where("\"status\" not in ('Closed','Waiting for Source')")
-        extr_s.add_order_by("priority")
-        extr_s.add_order_by("expected_delivery_date")
-        extrs = extr_s.get_sobjects()
+        external_rejection_search = Search("twog/external_rejection")
+        external_rejection_search.add_where("\"status\" not in ('Closed','Waiting for Source')")
+        external_rejection_search.add_order_by("priority")
+        external_rejection_search.add_order_by("expected_delivery_date")
+        external_rejections = external_rejection_search.get_sobjects()
         ext_2tit_dict = {}
         tit_2ext_dict = {}
-        if len(extrs) > 0:
+
+        # TODO: What is all this for?
+        if len(external_rejections) > 0:
             tempo = []
-            for m in extrs:
+            for m in external_rejections:
                 mtitle_s = Search("twog/title")
                 mtitle_s.add_filter('code',m.get_value('title_code'))
                 mtitle = mtitle_s.get_sobject()
@@ -1790,6 +1796,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         # TODO: Figure out what "bigkids" and "bk" are supposed to be. Now I want Burger King for lunch...
         bigkids4 = tq.get_sobjects()
         bkcounter = 0
+
         for bk in bigkids4:
             titcode = bk.get_value('title_code')
             ord = bk.get_value('order_in_pipe')
@@ -1801,24 +1808,22 @@ class BigBoardWdg2(BaseRefreshWdg):
             except:
                 tit_to_task[titcode] = {ord_name: bk}        
                 pass
-            bkcounter = bkcounter + 1
+            bkcounter += 1
+
         gorder = ['machine room', 'media vault', 'onboarding', 'compression', 'edit',
                   'audio', 'localization', 'qc', 'streamz', 'vault', 'edeliveries']
         bbc = 0
+
         for bb in bigboarders:
             code = bb.get_value('code') 
             as_ext = False
-            real_title = None
-            real_ext = None
             if 'EXTERNAL_REJECTION' in code:
                 as_ext = True
                 real_title = ext_2tit_dict[code]
-                real_ext = bb
                 code = real_title.get_code()
             else:
                 real_title = bb
 
-            tobs = None
             if code in tit_to_task.keys():
                 tobs = tit_to_task[code]
             else:
@@ -1892,13 +1897,18 @@ class BigBoardWdg2(BaseRefreshWdg):
         sg_len = len(my.seen_groups)
         col_len = sg_len + 2
         my.indi_pct = float(100/col_len)
-        btns = my.get_buttons(auto_refresh, auto_scroll, kgroups) 
-        button_top = table.add_row()
+
+        # This is where the buttons for auto-refresh, auto-scroll, and go to top get set.
+        # TODO: Rewrite this to accept True and False params rather than 'yes' or 'no'
+        btns = my.get_buttons(auto_refresh, auto_scroll, kgroups)
         table.add_cell(btns)
+
+        # TODO: Rewrite table head and body to be part of same table
         toprow = table.add_row()
         toprow.add_attr('class', 'trow_nomove')
         table.add_cell(my.trow_top())
 
+        # Table body starts here
         t2div = DivWdg()
         t2div.add_attr('id', 'title_body')
         t2div.add_attr('width', '100%')
@@ -1917,7 +1927,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         t2.add_style('font-family: Helvetica;')
 
         # Need to alternate row colors starting at fcfcfc, then going to ffffff
-        if my.seen_groups not in [None,'',[]]:
+        if my.seen_groups:
             new_ordering = sorted(bigbox_prios, key=itemgetter('priority')) 
             count = 1
             grouping_prio = -1
@@ -1946,9 +1956,9 @@ class BigBoardWdg2(BaseRefreshWdg):
                         grouping_prio = curr_group_prio
                         grouping_row = t2.add_row()
                         grouping_cell = t2.add_cell(grouping_prio)
-                        grouping_cell.add_attr('colspan',len(my.seen_groups) + 1)
-                        grouping_row.add_attr('current_priority',grouping_prio)
-                        grouping_row.add_attr('state','opened')
+                        grouping_cell.add_attr('colspan', len(my.seen_groups) + 1)
+                        grouping_row.add_attr('current_priority', grouping_prio)
+                        grouping_row.add_attr('state', 'opened')
                         grouping_row.add_style('background-color: #dce3ee;')
                         grouping_row.add_behavior(my.toggle_groupings())
                         
@@ -1962,7 +1972,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                     # TODO: Check if thumbnail_clippings even does anything, pretty sure it doesn't
                     if client_code not in thumbnail_clippings.keys():
                         img_path = hotlist_functions.get_client_img(client_code)
-                        if img_path not in [None,'']:
+                        if img_path not in [None, '']:
                             img_str = '<img src="%s" alt="%s" title="%s" style="width: 32px; height: 32px;"/>' % (img_path, client_name, client_name)
                             thumbnail_clippings[client_code] = img_str
                             client_thumbnail_clippings = img_str
@@ -1975,11 +1985,10 @@ class BigBoardWdg2(BaseRefreshWdg):
                         platform = '0'
 
                     # Looks like this is where the platform icon and text is decided
-                    # TODO: Fix so that either icon or text shows up, not both
                     if platform not in thumbnail_clippings.keys():
                         img_path = hotlist_functions.get_platform_img(platform)
 
-                        if img_path not in [None,'']:
+                        if img_path not in [None, '']:
                             img_str = '<img src="%s" alt="%s" title="%s" style="width: 32px; height: 32px;"/>' % (img_path, platform, platform)
                         else:
                             img_str = platform
@@ -2004,7 +2013,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                         if ext_assigned_corrective == '--Select--':
                             ext_assigned_corrective = None
                     t2 = my.trow(bb, expected_delivery_date, count, client_thumbnail_clippings, platform_thumbnail_clippings, t2, bgcol, ext_sk, curr_group_prio, ext_status, ext_assigned, ext_assigned_corrective)
-                    count = count + 1
+                    count += 1
                 else:
                     bb = bigbox[code]
                     curr_group_prio = bb.get_value('indie_priority')
@@ -2030,7 +2039,7 @@ class BigBoardWdg2(BaseRefreshWdg):
 
                     if platform not in thumbnail_clippings.keys():
                         img_path = hotlist_functions.get_platform_img(platform)
-                        if img_path not in [None,'']:
+                        if img_path not in [None, '']:
                             img_str = '<img src="%s" style="width: 32px; height: 32px;"/>' % img_path
                             thumbnail_clippings[platform] = img_str      
                             platform_thumbnail_clippings = img_str
@@ -2044,7 +2053,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                         task_order = task_order[0]
                         expected_delivery_date = task_order.get_value('expected_delivery_date')
                     t2 = my.wrow(bb, expected_delivery_date, count, client_thumbnail_clippings, platform_thumbnail_clippings, t2, bgcol)
-                    count = count + 1
+                    count += 1
         t2.add_behavior( {
                 'type': 'load',
                 'cbjs_action': '''
@@ -2084,3 +2093,5 @@ class BigBoardWdg2(BaseRefreshWdg):
         divvy2.add(table)
         divvy.add(divvy2)
         return divvy
+
+
