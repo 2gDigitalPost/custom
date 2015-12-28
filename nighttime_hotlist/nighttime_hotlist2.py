@@ -880,7 +880,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         name = task.get_value('title')
         episode = task.get_value('episode')
 
-        if episode not in [None,'']:
+        if episode:
             name += ' Episode ' + episode
 
         better_lookin_dd, dd_color = my.get_dates_and_colors(expected_delivery_date, 'NO DELIVERY DATE')
@@ -905,9 +905,9 @@ class BigBoardWdg2(BaseRefreshWdg):
         dbl.add_row()
 
         # Line below looks like what determines each row's number and title, but changing it did nothing
-        # TODO: Find out what below line does
-        d1 = dbl.add_cell('<b><span style="size: 36px; color: #ff0000;">%s.</span> <u>%s</u></b>' % (count, name))
-        d1.add_attr('width', '100%')
+        row_title_cell = dbl.add_cell('<span style="size: 36px; color: #ff0000;">%s.</span> <u>%s</u>' % (count, name))
+        row_title_cell.add_attr('width', '100%')
+        row_title_cell.add_style('font-weight: bold;')
 
         dbl.add_row()
         lil_tbl = Table()
@@ -922,10 +922,14 @@ class BigBoardWdg2(BaseRefreshWdg):
         obt.add_attr('cellpadding', '5')
         obt.set_style('color: #000000; font-size: 14px;')
         obt.add_row()
-        delb = obt.add_cell('<font color="%s"><b>Deliver By: %s</b></font>' % (dd_color, better_lookin_dd)) 
-        delb.add_attr('colspan', '2')
-        delb.add_attr('nowrap', 'nowrap')
-        delb.add_style('text-shadow: 1px 1px #000000;')
+
+        deliver_by_cell = obt.add_cell('Deliver By: %s' % better_lookin_dd)
+        deliver_by_cell.add_attr('colspan', '2')
+        deliver_by_cell.add_attr('nowrap', 'nowrap')
+        deliver_by_cell.add_style('text-shadow: 1px 1px #000000;')
+        deliver_by_cell.add_style('font-weight: bold;')
+        deliver_by_cell.add_style('color: %s' % dd_color)
+
         ob = OrderBuilderLauncherWdg(code=task.get_value('order_code'))
         obt.add_attr('width', '260px')
         obt.add_cell(ob)
@@ -935,12 +939,18 @@ class BigBoardWdg2(BaseRefreshWdg):
         tsearch.add_filter('code', task.get_value('title_code'))
         task_tit = tsearch.get_sobject()
         notes.add_behavior(my.get_launch_note_behavior(task_tit.get_search_key(), name))
-        lil_tbl.add_cell(obt)  
+        lil_tbl.add_cell(obt)
+
         if task_tit.get_value('no_charge') and task_tit.get_value('redo'):
             lil_tbl.add_row()
-            lil_tbl.add_cell('<font color="#FF0000"><b>REDO - NO CHARGE</b></font>')
+            redo_no_charge_cell = lil_tbl.add_cell('REDO - NO CHARGE')
+            redo_no_charge_cell.add_style('font-weight: bold;')
+            redo_no_charge_cell.add_style('color: #FF0000;')
+
+        # TODO: Find out if 'd2' actually does anything
         d2 = dbl.add_cell(lil_tbl)
         d2.add_attr('width', '100%')
+
         if my.big_user:
             dbl.add_row()
             offbutt = IndieBBSelectWdg(search_key=task.get_search_key(),title_code=task.get_value('title_code'),lookup_code=task.get_value('lookup_code'),indie_bigboard=task.get_value('indie_bigboard'))
@@ -950,14 +960,12 @@ class BigBoardWdg2(BaseRefreshWdg):
             dblpr.add_attr('align', 'left')
             prioid = 'prio_%s' % count
             dbltxt = dbl.add_cell('<input type="text" value="%s" row_type="task" task_sk="%s" current_count="%s" current_priority="%s" class="count_order" external_rejection="false" id="%s"/>' % (count, task.get_search_key(), count, task.get_value('indie_priority'), prioid))
-            dbltxt.add_attr('align','left')
+            dbltxt.add_attr('align', 'left')
             dbltxt.add_behavior(my.show_change(prioid))
-            prioid = 'prio_%s' % count
         else: 
             dbl.add_row()
             dbl4 = dbl.add_cell('Priority: %s' % task.get_value('priority'))
             dbl4.add_attr('align', 'left')
-            prioid = 'prio_%s' % count
 
         tripl = Table()
         tripl.add_attr('width', '100%')
@@ -1078,12 +1086,12 @@ class BigBoardWdg2(BaseRefreshWdg):
             title_block_bgcol = '#b55252'
 
         # If order is marked for redo, change background color
-        if title.get_value('redo') not in [None,False]:
+        if title.get_value('redo') not in [None, False]:
             title_block_bgcol = '#ffcc00'
 
             redo_title = ''
             redo_order = ''
-            if title.get_value('redo_of_title_code') not in [None,'']:
+            if title.get_value('redo_of_title_code') not in [None, '']:
                 redo_title = title.get_value('redo_of_title_code')
                 tsearch = Search('twog/title')
                 tsearch.add_filter('code', redo_title)
@@ -1092,7 +1100,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                     redo_order = redone_title.get_value('order_code')
             else:        
                 ext_search = Search('twog/external_rejection')
-                ext_search.add_filter('replacement_title_code',code)
+                ext_search.add_filter('replacement_title_code', code)
                 ext_search.add_order_by('timestamp desc')
                 old_ext = ext_search.get_sobject()
                 if old_ext:
@@ -1123,26 +1131,30 @@ class BigBoardWdg2(BaseRefreshWdg):
 
         if requires_mastering:
             dbl.add_row()
-            lefted = dbl.add_cell('<font color="#FF0000"><b>Requires QC Mastering</b></font>')
-            lefted.add_attr('align', 'left')
+            qc_mastering_cell = dbl.add_cell('Requires QC Mastering')
+            qc_mastering_cell.add_attr('align', 'left')
+            qc_mastering_cell.add_style('font-weight: bold')
+            qc_mastering_cell.add_style('color: #FF0000')
 
         dbl.add_row()
 
         # Below line decides the row's number and title
-        d1 = dbl.add_cell('<b><span style="size: 36px; color: #ff0000;">%s.</span> <u>%s</u></b>' % (count, name))
-        d1.add_attr('width','100%')
+        row_title_cell = dbl.add_cell('<span style="size: 36px; color: #ff0000;">%s.</span> <u>%s</u>' % (count, name))
+        row_title_cell.add_attr('width', '100%')
+        row_title_cell.add_style('font-weight: bold')
 
         dbl.add_row()
+
         lil_tbl = Table()
         lil_tbl.add_attr('height', '100%')
         lil_tbl.set_style('color: #000000; font-size: 12px;')
         lil_tbl.add_style('background-color: %s;' % bgcol)
         lil_tbl.add_row()
-        
+
         lil_tbl.add_cell(code_str)
         if len(code_str) > 12:
             lil_tbl.add_row()
-            
+
         if client_thumbnail_clippings == '':
             lil_tbl.add_cell("&nbsp;&nbsp;<b>Client: %s</b>" % title.get_value('client_name'))
         else:
@@ -1222,55 +1234,68 @@ class BigBoardWdg2(BaseRefreshWdg):
             corrective_action_assigned_cell.add_attr('nowrap', 'nowrap')
             corrective_action_assigned_cell.add_style('text-shadow: 1px 1px #000000;')
             corrective_action_assigned_cell.add_style('font-weight: bold;')
-            corrective_action_assigned_cell.add_style('color: %s' % external_rejection_color)
+            corrective_action_assigned_cell.add_style('color: %s;' % external_rejection_color)
 
         ob = OrderBuilderLauncherWdg(code=title.get_value('order_code'))
         obt.add_attr('width', '260px')
         obt.add_cell(ob)
         notes = obt.add_cell('<img src="/context/icons/silk/note_add.png"/>')
         notes.add_style('cursor: pointer;')
-        notes.add_behavior(my.get_launch_note_behavior(title.get_search_key(),name)) 
-        lil_tbl.add_cell(obt)  
+        notes.add_behavior(my.get_launch_note_behavior(title.get_search_key(), name))
+        lil_tbl.add_cell(obt)
+
         if title.get_value('no_charge') and title.get_value('redo'):
             lil_tbl.add_row()
-            lil_tbl.add_cell('<font color="#FF0000"><b>REDO - NO CHARGE</b></font>')
+            redo_no_charge_cell = lil_tbl.add_cell('REDO - NO CHARGE')
+            redo_no_charge_cell.add_style('font-weight: bold;')
+            redo_no_charge_cell.add_style('color: #FF0000;')
+
+        # TODO: Find out if 'd2' actually does anything
         d2 = dbl.add_cell(lil_tbl)
         d2.add_attr('width', '100%')
+
+        # I *think* this section adds the priority changer for admin users...
         if my.big_user:
             dbl.add_row()
+
             smtbl = Table()
             smtbl.add_attr('height', '100%')
             smtbl.add_style('font-size: 16px;')
             smtbl.add_style('color: #000000;')
             smtbl.add_row()
+
             offbutt = BigBoardSelectWdg2(search_type='twog/title', code=title.get_value('code'), in_bigboard='Yes')
+
             dblbb = dbl.add_cell(offbutt)
-            dblbb.add_attr('width','20px')
+            dblbb.add_attr('width', '20px')
+
             dblpr = smtbl.add_cell('Set At #: ')
-            dblpr.add_attr('align','left')
+            dblpr.add_attr('align', 'left')
+
             prioid = 'prio_%s' % count
             ami_extr = 'false'
             row_priority = title.get_value('priority')
-            if ext_sk not in [None,'']:
+            if ext_sk not in [None, '']:
                 ami_extr = 'true'
                 row_priority = curr_group_prio
             dbltxt = smtbl.add_cell('<input type="text" value="%s" row_type="title" title_sk="%s" current_count="%s" current_priority="%s" class="count_order" id="%s" external_rejection="%s" ext_sk="%s" style="background-color: #FFFFFF;"/>' % (count, title.get_search_key(), count, row_priority, prioid, ami_extr, ext_sk))
-            dbltxt.add_attr('align','left')
+            dbltxt.add_attr('align', 'left')
             dbltxt.add_behavior(my.show_change(prioid))
             dbl.add_cell(smtbl)
+
         tripl = Table()
         tripl.add_attr('width', '100%')
         tripl.add_attr('height', '100%')
         tripl.add_row()
 
         dc = tripl.add_cell(dbl)
-        dc.add_attr('align','left')
+        dc.add_attr('align', 'left')
         titl = table.add_cell(tripl)
         if count == 1:
             titl.add_attr('class', 'bottom_content')
             titl.add_attr('group', 'title')
-        titl.add_attr('valign','top')
-        titl.add_attr('width','%s%s' % (tpct, '%'))
+        titl.add_attr('valign', 'top')
+        titl.add_attr('width', '%s%s' % (tpct, '%'))
         group_keys = my.bigdict[code]['groups'].keys()
         for sg in my.seen_groups:
             if sg not in group_keys:
@@ -1278,7 +1303,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                 if count == 1:
                     black.add_attr('class', 'bottom_content')
                     black.add_attr('group', sg)
-                black.add_attr('width','%s%s' % (my.indi_pct, '%'))
+                black.add_attr('width', '%s%s' % (my.indi_pct, '%'))
                 black.add_style('background-color: %s;' % bgcol)
             else:
                 tat = Table()
@@ -1305,7 +1330,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                     inspect = tat.add_cell(inspect_button)
 
                     pro = tat.add_cell(abbreviate_text(process, 7))
-                    pro.add_attr('nowrap','nowrap')
+                    pro.add_attr('nowrap', 'nowrap')
                     pro.add_attr('title', wo_code)
                     pro.add_attr('name', wo_code)
                     pro.add_style('background-color: %s;' % my.stat_colors[status])
@@ -1330,7 +1355,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                 tatcell1.add_style('background-color: %s;' % bgcol)
         return table
 
-    def get_onload(my):            
+    def get_onload(my):
         return r'''
             mytimer = function(timelen){
                 setTimeout('refresh_bigboard()', timelen); // uncomment me
@@ -1908,17 +1933,18 @@ class BigBoardWdg2(BaseRefreshWdg):
                     inorder.append(code)
                     bigbox[code] = bb
                     bigbox_prios.append({'code': code, 'priority': bb.get_value('priority')}) 
-            bbc = bbc + 1
+            bbc += 1
 
         tmparr = my.seen_groups
         my.seen_groups = []
+
         for g in gorder:
             if g in tmparr:
                 my.seen_groups.append(g)
         for guy in tmparr:
             if guy not in gorder:
                 my.seen_groups.append(guy)
-   
+
         if len(kgroups) > 0 and kgroups[0] != 'ALL':
             my.seen_groups = kgroups
         sg_len = len(my.seen_groups)
@@ -2056,7 +2082,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                     client_code = bb.get_value('client_code')
                     if client_code not in thumbnail_clippings.keys():
                         img_path = hotlist_functions.get_client_img(client_code)
-                        if img_path not in [None,'']:
+                        if img_path not in [None, '']:
                             img_str = '<img src="%s" style="width: 32px; height: 32px;"/>' % img_path
                             thumbnail_clippings[client_code] = img_str      
                             client_thumbnail_clippings = img_str
@@ -2113,12 +2139,14 @@ class BigBoardWdg2(BaseRefreshWdg):
         t2div.add(t2)
         table.add_row()
         table.add_cell(t2div)
-        table.add_row() 
-        btns = my.get_buttons(auto_refresh, auto_scroll, kgroups) 
+        table.add_row()
+
+        btns = my.get_buttons(auto_refresh, auto_scroll, kgroups)
+
         table.add_row()
         table.add_cell(btns)
+
         divvy2.add(table)
         divvy.add(divvy2)
+
         return divvy
-
-
