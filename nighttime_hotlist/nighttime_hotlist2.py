@@ -818,68 +818,6 @@ class BigBoardWdg2(BaseRefreshWdg):
          ''' % (sk, name)}
         return behavior
 
-    def get_dates_and_colors(my, date, date_str):
-        date_time = date.split(' ')
-        sdate = date_time[0]
-        stime = ''
-
-        if len(date_time) > 2:
-            stime = date_time[2]
-            if stime in [None, '', '00:00:00', '00:00']:
-                stime = ''
-        elif len(date_time) > 1:
-            stime = date_time[1]
-            if stime in [None, '', '00:00:00', '00:00']:
-                stime = ''
-
-        stime_s = stime.split(':')
-
-        if len(stime_s) > 2:
-            stime = '%s:%s' % (stime_s[0], stime_s[1])
-
-        better_lookin_date = date_str
-        color = '#FFFFFF'
-
-        if sdate not in [None, '']:
-            this_date = datetime.datetime.strptime(sdate, '%Y-%m-%d')
-
-            if this_date == my.real_date:
-                # Due today, yellow
-                color = "#E0B600"
-            elif this_date < my.real_date:
-                # Past due, red
-                color = "#FF0000"
-            else:
-                # Due in the future
-                color = "#66CD00"
-
-            tdds = sdate.split('-')
-            tyear = ''
-            tmonth = ''
-            tday = ''
-            if len(tdds) == 3:
-                tyear = tdds[0]
-                tmonth = tdds[1]
-                tday = tdds[2]
-            better_lookin_date = '%s/%s/%s' % (tmonth, tday, tyear)
-            if better_lookin_date == '//':
-                better_lookin_date = date_str 
-        if stime not in [None, '']:
-            stime_s = stime.split(':')
-            hour = stime_s[0]
-            am_pm = 'AM'
-            hour_str = hour
-            if hour == '00':
-                hour_str = '12'
-            elif int(hour) < 12:
-                am_pm = 'AM'
-            else:
-                hour_str = str(int(hour) - 12)
-                am_pm = 'PM'
-            stime = '%s:%s %s' % (hour_str, stime_s[1], am_pm)
-            better_lookin_date = '%s &nbsp;&nbsp;&nbsp;%s' % (better_lookin_date, stime)
-        return (better_lookin_date, color)
-
     def wrow(my, task, expected_delivery_date, count, client_thumbnail_clippings, platform_thumbnail_clippings, in_tbl, bgcol):
         from order_builder.order_builder import OrderBuilderLauncherWdg
         from order_builder.taskobjlauncher import TaskObjLauncherWdg
@@ -891,7 +829,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         if episode:
             name += ' Episode ' + episode
 
-        better_lookin_dd, dd_color = my.get_dates_and_colors(expected_delivery_date, 'NO DELIVERY DATE')
+        better_lookin_dd, dd_color = hotlist_functions.get_dates_and_colors(expected_delivery_date, 'NO DELIVERY DATE', my.real_date)
         tpct = my.indi_pct * 2
         table = in_tbl
         trower = table.add_row()
@@ -1007,12 +945,12 @@ class BigBoardWdg2(BaseRefreshWdg):
 
         titl.add_attr('valign', 'top')
         titl.add_attr('width', '%s%s' % (tpct, '%'))
-        for sg in my.seen_groups:
-            if sg != task.get_value('assigned_login_group'):
+        for seen_group in my.seen_groups:
+            if seen_group != task.get_value('assigned_login_group'):
                 black = table.add_cell(' ')
                 if count == 1:
                     black.add_attr('class', 'bottom_content')
-                    black.add_attr('group', sg)
+                    black.add_attr('group', seen_group)
                 black.add_attr('width', '%s%s' % (my.indi_pct, '%'))
                 black.add_style('background-color: %s;' % bgcol)
             else:
@@ -1054,7 +992,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                 tatcell1 = table.add_cell(tat) 
                 if count == 1:
                     tatcell1.add_attr('class', 'bottom_content')
-                    tatcell1.add_attr('group', sg)
+                    tatcell1.add_attr('group', seen_group)
                 tatcell1.add_attr('valign', 'top')
                 tatcell1.add_attr('width', '%s%s' % (my.indi_pct, '%'))
                 tatcell1.add_style('background-color: #0000F0;')
@@ -1076,8 +1014,9 @@ class BigBoardWdg2(BaseRefreshWdg):
         if title.get_value('requires_mastering_qc'):
             requires_mastering = True
 
-        better_lookin_ed, ed_color = my.get_dates_and_colors(expected_delivery_date, 'NO DELIVERY DATE')
-        better_lookin_dd, dd_color = my.get_dates_and_colors(due_date, 'NO DUE DATE')
+        better_lookin_ed, ed_color = hotlist_functions.get_dates_and_colors(expected_delivery_date, 'NO DELIVERY DATE',
+                                                                            my.real_date)
+        better_lookin_dd, dd_color = hotlist_functions.get_dates_and_colors(due_date, 'NO DUE DATE', my.real_date)
         tpct = my.indi_pct * 2
         table = in_tbl
 
