@@ -11867,6 +11867,13 @@ class OBScripts(BaseRefreshWdg):
         return behavior
 
     def get_set_mastering(my, title_code, order_sk):
+        """
+        Toggles the QC Mastering requirement on an order
+
+        :param title_code:
+        :param order_sk:
+        :return:
+        """
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
                           var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');

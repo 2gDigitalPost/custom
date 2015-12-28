@@ -141,7 +141,6 @@ class BigBoardSingleWOSelectWdg2(BaseTableElementWdg):
         my.server = None
 
     def get_stub(my):
-        from tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
 
     def get_launch_behavior(my, search_key, title_code, lookup_code):
@@ -204,12 +203,12 @@ class BigBoardSingleWOSelectWdg2(BaseTableElementWdg):
         title_code = my.kwargs.get('title_code')
         lookup_code = my.kwargs.get('lookup_code')
         if 'bigboard' in my.kwargs.keys():
-            if my.kwargs.get('bigboard') in [True,'true','t','T',1]:
+            if my.kwargs.get('bigboard') in [True, 'true', 't', 'T', 1]:
                 is_on = True
         else:
             my.get_stub()
             task = my.server.eval("@SOBJECT(sthpw/task['code','%s'])" % task_code)[0]
-            if task.get('bigboard') in [True,'true','t','T',1]:
+            if task.get('bigboard') in [True, 'true', 't', 'T', 1]:
                 is_on = True
 
         widget = DivWdg()
@@ -231,6 +230,7 @@ class BigBoardSingleWOSelectWdg2(BaseTableElementWdg):
         return widget
 
 
+# TODO: BigBoardViewWdg2 appears to do nothing, and is probably safe to remove
 class BigBoardViewWdg2(BaseTableElementWdg):
 
     def init(my):
@@ -258,7 +258,6 @@ class BigBoardSelectWdg2(BaseTableElementWdg):
         my.server = None
 
     def get_stub(my):
-        from tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
     
     def get_launch_behavior(my, title_name, in_bigboard):
@@ -337,7 +336,7 @@ class BigBoardSelectWdg2(BaseTableElementWdg):
             my.get_stub()
             search_type = str(my.kwargs.get('search_type'))
             code = str(my.kwargs.get('code'))
-            sobject = my.server.eval(expression_lookup[search_type].replace('REPLACE_ME',code))
+            sobject = my.server.eval(expression_lookup[search_type].replace('REPLACE_ME', code))
             if sobject:
                 sobject = sobject[0]
                 code = sobject.get('code')
@@ -351,11 +350,11 @@ class BigBoardSelectWdg2(BaseTableElementWdg):
                 not_title = True
                 my.get_stub()
                 if 'WORK_ORDER' in code:
-                    sobject = my.server.eval(expression_lookup['twog/work_order'].replace('REPLACE_ME',code))
+                    sobject = my.server.eval(expression_lookup['twog/work_order'].replace('REPLACE_ME', code))
                 elif 'EQUIPMENT_USED' in code:
-                    sobject = my.server.eval(expression_lookup['twog/equipment_used'].replace('REPLACE_ME',code))
+                    sobject = my.server.eval(expression_lookup['twog/equipment_used'].replace('REPLACE_ME', code))
                 elif 'PROJ' in code:
-                    sobject = my.server.eval(expression_lookup['twog/proj'].replace('REPLACE_ME',code))
+                    sobject = my.server.eval(expression_lookup['twog/proj'].replace('REPLACE_ME', code))
                 try:
                     if sobject:
                         sobject = sobject[0]
@@ -369,8 +368,8 @@ class BigBoardSelectWdg2(BaseTableElementWdg):
         if not bad_code:
             in_bigboard = 'Nope'
             if 'in_bigboard' in my.kwargs.keys():
-                if my.kwargs.get('in_bigboard') in ['Yes','yes','true','True']:
-                    in_bigboard = 'Yep' 
+                if my.kwargs.get('in_bigboard') in ['Yes', 'yes', 'true', 'True']:
+                    in_bigboard = 'Yep'
             img = '/context/icons/silk/rosette_grey.png'
             state = 'unchecked'
             bigboard = ''
@@ -384,7 +383,7 @@ class BigBoardSelectWdg2(BaseTableElementWdg):
                 bigboard = sobject.get('bigboard')
                 title_name = sobject.get('title')
                 episode = sobject.get('episode')
-            if episode not in [None,'']:
+            if episode not in [None, '']:
                 title_name = '%s Episode: %s' % (title_name, episode) 
             if bigboard == True:
                 img = '/context/icons/silk/rosette.png'
@@ -393,7 +392,7 @@ class BigBoardSelectWdg2(BaseTableElementWdg):
             cell1 =  table.add_cell('<img border="0" style="vertical-align: middle" title="" src="%s">' % img)
             cell1.add_attr('id', 'title_bigboard_%s' % code)
             cell1.add_attr('sk', sob_sk)
-            cell1.add_attr('state',state)
+            cell1.add_attr('state', state)
             launch_behavior = my.get_launch_behavior(title_name, in_bigboard)
             cell1.add_style('cursor: pointer;')
             cell1.add_behavior(launch_behavior)
@@ -500,8 +499,8 @@ class BigBoardWOSelect4MultiTitlesWdg2(BaseRefreshWdg):
         where_str = my.make_where_str(tc_split)
         search = Search("sthpw/task")
         search.add_filter('status', 'Completed', op="!=")
-        search.add_filter('active','1')
-        search.add_filter('search_type','twog/proj?project=twog')
+        search.add_filter('active', '1')
+        search.add_filter('search_type', 'twog/proj?project=twog')
         search.add_where("\"title_code\" in %s" % where_str)
         search.add_order_by("process")
         tasks = search.get_sobjects()
@@ -527,24 +526,24 @@ class BigBoardWOSelect4MultiTitlesWdg2(BaseRefreshWdg):
                 table.add_row()
                 checkbox = CheckboxWdg('bigboard_wo_select_by_process')
                 checkbox.set_value(False) 
-                checkbox.add_attr('sks',processes[process])
-                checkbox.add_attr('process',process)
+                checkbox.add_attr('sks', processes[process])
+                checkbox.add_attr('process', process)
                 table.add_cell(checkbox)
                 t1 = table.add_cell(process)
-                t1.add_attr('nowrap','nowrap')
+                t1.add_attr('nowrap', 'nowrap')
         cover_table = Table()
-        cover_table.add_attr('class','bigboard_wo_selector_multi')
+        cover_table.add_attr('class', 'bigboard_wo_selector_multi')
         cover_table.add_row()
         cover_cell = cover_table.add_cell(table)
         cover_table.add_row()
         buttont = Table()
         buttont.add_row()
         c1 = buttont.add_cell(' ')
-        c1.add_attr('width','40%')
+        c1.add_attr('width', '40%')
         button = buttont.add_cell('<input type="button" value="BigBoard Selected Work Orders"/>')
         button.add_behavior(my.get_bigboardem_behavior()) 
         c2 = buttont.add_cell(' ')
-        c2.add_attr('width','40%')
+        c2.add_attr('width', '40%')
         cover_table.add_cell(buttont)
         return cover_table
 
@@ -625,10 +624,10 @@ class BigBoardWOSelectWdg2(BaseRefreshWdg):
         my.sk = str(my.kwargs.get('sk'))
         code = my.sk.split('code=')[1]
         search = Search("sthpw/task")
-        search.add_filter('title_code',code)
+        search.add_filter('title_code', code)
         search.add_filter('status', 'Completed', op="!=")
-        search.add_filter('active','1')
-        search.add_filter('search_type','twog/proj?project=twog')
+        search.add_filter('active', '1')
+        search.add_filter('search_type', 'twog/proj?project=twog')
         tasks = search.get_sobjects()
         
         table = Table()
@@ -661,11 +660,11 @@ class BigBoardWOSelectWdg2(BaseRefreshWdg):
         buttont = Table()
         buttont.add_row()
         c1 = buttont.add_cell(' ')
-        c1.add_attr('width','40%')
+        c1.add_attr('width', '40%')
         button = buttont.add_cell('<input type="button" value="BigBoard Selected Work Orders"/>')
         button.add_behavior(my.get_bigboardem_behavior(my.sk)) 
         c2 = buttont.add_cell(' ')
-        c2.add_attr('width','40%')
+        c2.add_attr('width', '40%')
         cover_table.add_cell(buttont)
         return cover_table
 
@@ -823,28 +822,37 @@ class BigBoardWdg2(BaseRefreshWdg):
         date_time = date.split(' ')
         sdate = date_time[0]
         stime = ''
+
         if len(date_time) > 2:
             stime = date_time[2]
-            if stime in [None,'','00:00:00','00:00']:
+            if stime in [None, '', '00:00:00', '00:00']:
                 stime = ''
         elif len(date_time) > 1:
             stime = date_time[1]
-            if stime in [None,'','00:00:00','00:00']:
+            if stime in [None, '', '00:00:00', '00:00']:
                 stime = ''
+
         stime_s = stime.split(':')
+
         if len(stime_s) > 2:
-            stime = '%s:%s' % (stime_s[0],stime_s[1])
-        this_date = ''
+            stime = '%s:%s' % (stime_s[0], stime_s[1])
+
         better_lookin_date = date_str
         color = '#FFFFFF'
-        if sdate not in [None,'']:
+
+        if sdate not in [None, '']:
             this_date = datetime.datetime.strptime(sdate, '%Y-%m-%d')
+
             if this_date == my.real_date:
+                # Due today, yellow
                 color = "#E0B600"
             elif this_date < my.real_date:
+                # Past due, red
                 color = "#FF0000"
             else:
+                # Due in the future
                 color = "#66CD00"
+
             tdds = sdate.split('-')
             tyear = ''
             tmonth = ''
@@ -856,7 +864,7 @@ class BigBoardWdg2(BaseRefreshWdg):
             better_lookin_date = '%s/%s/%s' % (tmonth, tday, tyear)
             if better_lookin_date == '//':
                 better_lookin_date = date_str 
-        if stime not in [None,'']:
+        if stime not in [None, '']:
             stime_s = stime.split(':')
             hour = stime_s[0]
             am_pm = 'AM'
@@ -870,7 +878,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                 am_pm = 'PM'
             stime = '%s:%s %s' % (hour_str, stime_s[1], am_pm)
             better_lookin_date = '%s &nbsp;&nbsp;&nbsp;%s' % (better_lookin_date, stime)
-        return [better_lookin_date, color]
+        return (better_lookin_date, color)
 
     def wrow(my, task, expected_delivery_date, count, client_thumbnail_clippings, platform_thumbnail_clippings, in_tbl, bgcol):
         from order_builder.order_builder import OrderBuilderLauncherWdg
@@ -992,9 +1000,11 @@ class BigBoardWdg2(BaseRefreshWdg):
         dc = tripl.add_cell(dbl)
         dc.add_attr('align', 'left')
         titl = table.add_cell(tripl)
+
         if count == 1:
             titl.add_attr('class', 'bottom_content')
             titl.add_attr('group', 'title')
+
         titl.add_attr('valign', 'top')
         titl.add_attr('width', '%s%s' % (tpct, '%'))
         for sg in my.seen_groups:
@@ -1043,10 +1053,10 @@ class BigBoardWdg2(BaseRefreshWdg):
                 dcell.add_style('color: #000000;')
                 tatcell1 = table.add_cell(tat) 
                 if count == 1:
-                    tatcell1.add_attr('class','bottom_content')
-                    tatcell1.add_attr('group',sg)
-                tatcell1.add_attr('valign','top')
-                tatcell1.add_attr('width','%s%s' % (my.indi_pct, '%'))
+                    tatcell1.add_attr('class', 'bottom_content')
+                    tatcell1.add_attr('group', sg)
+                tatcell1.add_attr('valign', 'top')
+                tatcell1.add_attr('width', '%s%s' % (my.indi_pct, '%'))
                 tatcell1.add_style('background-color: #0000F0;')
         return table
 
@@ -1062,10 +1072,8 @@ class BigBoardWdg2(BaseRefreshWdg):
         if episode:
             name += ' Episode ' + episode
 
-        # TODO: find if title.get_value('requires_mastering_qc') can be anything other than True and False
-        # (and if so, fix it)
         requires_mastering = False
-        if title.get_value('requires_mastering_qc') not in ['False','false','0',None,False]:
+        if title.get_value('requires_mastering_qc'):
             requires_mastering = True
 
         better_lookin_ed, ed_color = my.get_dates_and_colors(expected_delivery_date, 'NO DELIVERY DATE')
@@ -1075,19 +1083,19 @@ class BigBoardWdg2(BaseRefreshWdg):
 
         # TODO: Set the background color in an if/else sort of block, rather than this.
         # Default background color
-        title_block_bgcol = '#d7d7d7'
+        title_block_bgcol = '#D7D7D7'
 
         # If the order requires 'mastering', change background color
         if requires_mastering:
-            title_block_bgcol = '#c8a2c8'
+            title_block_bgcol = '#C8A2C8'
 
         # If the order was externally rejected by client, change background color
         if title.get_value('is_external_rejection') == 'true':
-            title_block_bgcol = '#b55252'
+            title_block_bgcol = '#B55252'
 
         # If order is marked for redo, change background color
         if title.get_value('redo') not in [None, False]:
-            title_block_bgcol = '#ffcc00'
+            title_block_bgcol = '#FFCC00'
 
             redo_title = ''
             redo_order = ''
@@ -1297,6 +1305,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         titl.add_attr('valign', 'top')
         titl.add_attr('width', '%s%s' % (tpct, '%'))
         group_keys = my.bigdict[code]['groups'].keys()
+
         for sg in my.seen_groups:
             if sg not in group_keys:
                 black = table.add_cell(' ')
@@ -1719,7 +1728,7 @@ class BigBoardWdg2(BaseRefreshWdg):
             saveit.add_behavior(my.save_priorities())
         return btns
 
-    def get_display(my):   
+    def get_display(my):
         from operator import itemgetter
 
         my.big_user = False
@@ -1814,7 +1823,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         for b2 in bigboarders2:
             task_code = b2.get_value('task_code')
             ts = Search("sthpw/task")
-            ts.add_filter('code',task_code)
+            ts.add_filter('code', task_code)
             ts.add_filter('search_type', 'twog/proj?project=twog')
             b2_task = ts.get_sobject()
             alg = b2_task.get_value('assigned_login_group')
@@ -1833,7 +1842,7 @@ class BigBoardWdg2(BaseRefreshWdg):
             if in_str == '':
                 in_str = "('%s'" % code
             else:
-                in_str = "%s,'%s'"% (in_str, code)
+                in_str = "%s,'%s'" % (in_str, code)
         in_str = "%s)" % in_str
 
         tq = Search("sthpw/task")
@@ -1924,10 +1933,10 @@ class BigBoardWdg2(BaseRefreshWdg):
                     inorder.append(code)
                     bigbox[code] = real_title
                     ext_priority = bb.get_value('priority')
-                    if ext_priority in [None,'']:
+                    if ext_priority in [None, '']:
                         ext_priority = 0
                     bigbox_prios.append({'code': code, 'priority': ext_priority, 'is_ext': 'true'}) 
-            elif bb.get_value('requires_mastering_qc') not in ['False','false','0',None,False]:
+            elif bb.get_value('requires_mastering_qc') not in ['False', 'false', '0', None, False]:
                 my.bigdict[code] = {'title_obj': real_title, 'groups': {}}
                 if code not in inorder:
                     inorder.append(code)
@@ -2074,9 +2083,9 @@ class BigBoardWdg2(BaseRefreshWdg):
                         grouping_prio = curr_group_prio
                         grouping_row = t2.add_row()
                         grouping_cell = t2.add_cell(grouping_prio)
-                        grouping_cell.add_attr('colspan',len(my.seen_groups) + 1)
-                        grouping_row.add_attr('current_priority',grouping_prio)
-                        grouping_row.add_attr('state','opened')
+                        grouping_cell.add_attr('colspan', len(my.seen_groups) + 1)
+                        grouping_row.add_attr('current_priority', grouping_prio)
+                        grouping_row.add_attr('state', 'opened')
                         grouping_row.add_style('background-color: #dce3ee;')
                         grouping_row.add_behavior(my.toggle_groupings())
                     client_code = bb.get_value('client_code')
@@ -2099,7 +2108,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                     else:
                         platform_thumbnail_clippings = thumbnail_clippings[platform]
                     search = Search("twog/order")
-                    search.add_filter('code',bb.get_value('order_code'))
+                    search.add_filter('code', bb.get_value('order_code'))
                     task_order = search.get_sobjects()
                     expected_delivery_date = bb.get_value('bid_end_date')
                     if task_order:
@@ -2107,7 +2116,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                         expected_delivery_date = task_order.get_value('expected_delivery_date')
                     t2 = my.wrow(bb, expected_delivery_date, count, client_thumbnail_clippings, platform_thumbnail_clippings, t2, bgcol)
                     count += 1
-        t2.add_behavior( {
+        t2.add_behavior({
                 'type': 'load',
                 'cbjs_action': '''
                 realign_timer = function(timelen){
