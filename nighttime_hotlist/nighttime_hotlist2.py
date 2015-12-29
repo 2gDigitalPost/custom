@@ -8,7 +8,6 @@ from pyasm.search import Search
 from pyasm.common import Environment, SPTDate
 from tactic_client_lib import TacticServerStub
 from common_tools.common_functions import title_case, get_current_timestamp, abbreviate_text
-from order_builder.order_builder import OrderBuilderLauncherWdg
 from order_builder.taskobjlauncher import TaskObjLauncherWdg
 import hotlist_functions
 
@@ -823,6 +822,18 @@ class BigBoardWdg2(BaseRefreshWdg):
         """
         Not sure if this function ever gets called or not. Until I find out, I'm leaving it alone.
 
+        ***UPDATE***
+        When I tried moving the import statement in this function to the top of the module, the "Source"
+        page broke. Apparently the order_builder.py module calls this file, and this file calls order_builder as
+        well. My initial feeling is that this is causing a circular import or something like that.
+
+        The fact that this was never encountered before lends further credence to my theory that this function is
+        never actually called. Calling the function might cause something to break, so the fact that this bug has
+        gone unnoticed seems to indicate that this function is never called.
+
+        Noted on 12-29-2015 by Tyler Standridge.
+        ************
+
         :param task:
         :param expected_delivery_date:
         :param count:
@@ -834,6 +845,8 @@ class BigBoardWdg2(BaseRefreshWdg):
         :param bgcol: Background color for the table row
         :return:
         """
+        from order_builder.order_builder import OrderBuilderLauncherWdg
+
         expected_delivery_date = fix_date(expected_delivery_date)
         code = task.get_value('code')
         name = task.get_value('title')
@@ -1348,32 +1361,41 @@ class BigBoardWdg2(BaseRefreshWdg):
 
         return table
 
-    def get_buttons(my, auto_refresh, auto_scroll, kgroups):
+    def get_buttons(my, auto_refresh, auto_scroll):
         # TODO: Rewrite this entire function...
         btns = Table()
         btns.add_attr('class', 'auto_buttons')
         btns.add_row()
-        auto_text = "Set Auto-Refresh"
+
         if auto_refresh == 'yes':
-            auto_text = "Unset Auto-Refresh"
+            auto_text = 'Unset Auto-Refresh'
+        else:
+            auto_text = 'Set Auto-Refresh'
+
         auto = btns.add_cell('<input type="button" value="%s"/>' % auto_text)
         auto.add_attr('id', 'auto_refresh')
         auto.add_attr('name', 'auto_refresh')
         auto.add_attr('auto', auto_refresh)
         auto.add_behavior(hotlist_functions.get_reload())
-        scroll_text = "Set Auto-Scroll"
+
         if auto_scroll == 'yes':
-            scroll_text = "Unset Auto-Scroll"
+            scroll_text = 'Unset Auto-Scroll'
+        else:
+            scroll_text = 'Set Auto-Scroll'
+
         scroll = btns.add_cell('<input type="button" value="%s"/>' % scroll_text)
         scroll.add_attr('id', 'scroll_el')
         scroll.add_attr('name', 'scroll_el')
         scroll.add_attr('scroll', auto_scroll)
         scroll.add_behavior(hotlist_functions.set_scroll())
+
         to_top = btns.add_cell('<input type="button" value="Go To Top"/>')
         to_top.add_behavior(hotlist_functions.bring_to_top())
+
         if my.big_user:
             saveit = btns.add_cell('<input type="button" value="Save Priorities"/>')
             saveit.add_behavior(hotlist_functions.save_priorities())
+
         return btns
 
     def get_display(my):
@@ -1617,7 +1639,7 @@ class BigBoardWdg2(BaseRefreshWdg):
 
         # This is where the buttons for auto-refresh, auto-scroll, and go to top get set.
         # TODO: Rewrite this to accept True and False params rather than 'yes' or 'no'
-        btns = my.get_buttons(auto_refresh, auto_scroll, kgroups)
+        btns = my.get_buttons(auto_refresh, auto_scroll)
         table.add_cell(btns)
 
         # TODO: Rewrite table head and body to be part of same table
@@ -1808,7 +1830,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         table.add_row()
 
         # Buttons on the bottom of the table
-        btns = my.get_buttons(auto_refresh, auto_scroll, kgroups)
+        btns = my.get_buttons(auto_refresh, auto_scroll)
 
         table.add_row()
         table.add_cell(btns)
