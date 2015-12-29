@@ -827,10 +827,6 @@ class BigBoardWdg2(BaseRefreshWdg):
         page broke. Apparently the order_builder.py module calls this file, and this file calls order_builder as
         well. My initial feeling is that this is causing a circular import or something like that.
 
-        The fact that this was never encountered before lends further credence to my theory that this function is
-        never actually called. Calling the function might cause something to break, so the fact that this bug has
-        gone unnoticed seems to indicate that this function is never called.
-
         Noted on 12-29-2015 by Tyler Standridge.
         ************
 
@@ -1056,6 +1052,9 @@ class BigBoardWdg2(BaseRefreshWdg):
         :param ext_assigned_corrective:
         :return: The entire table (need to change this to be just the row)
         """
+
+        from order_builder.order_builder import OrderBuilderLauncherWdg
+
         due_date = fix_date(title.get_value('due_date'))
         code = title.get_value('code')
         code_str = code
