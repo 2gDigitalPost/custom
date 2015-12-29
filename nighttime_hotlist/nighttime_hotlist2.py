@@ -1,7 +1,6 @@
 __all__ = ["IndieBBSelectWdg","BigBoardSingleWOSelectWdg2","BigBoardViewWdg2","BigBoardSelectWdg2","BigBoardWOSelectWdg2","BigBoardWOSelect4MultiTitlesWdg2","BigBoardWdg2"]
 
-import tacticenv
-import time, datetime
+import datetime
 from pyasm.web import Table, DivWdg
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
@@ -9,6 +8,8 @@ from pyasm.search import Search
 from pyasm.common import Environment, SPTDate
 from tactic_client_lib import TacticServerStub
 from common_tools.common_functions import title_case, get_current_timestamp, abbreviate_text
+from order_builder.order_builder import OrderBuilderLauncherWdg
+from order_builder.taskobjlauncher import TaskObjLauncherWdg
 import hotlist_functions
 
 
@@ -107,12 +108,12 @@ class IndieBBSelectWdg(BaseTableElementWdg):
         title_code = my.kwargs.get('title_code')
         lookup_code = my.kwargs.get('lookup_code')
         if 'indie_bigboard' in my.kwargs.keys():
-            if my.kwargs.get('indie_bigboard') in [True,'true','t','T',1]:
+            if my.kwargs.get('indie_bigboard') in [True, 'true', 't', 'T', 1]:
                 is_on = True
         else:
             my.get_stub()
             task = my.server.eval("@SOBJECT(sthpw/task['code','%s'])" % task_code)[0]
-            if task.get('indie_bigboard') in [True,'true','t','T',1]:
+            if task.get('indie_bigboard') in [True, 'true', 't', 'T', 1]:
                 is_on = True
 
         widget = DivWdg()
@@ -126,7 +127,7 @@ class IndieBBSelectWdg(BaseTableElementWdg):
         table.add_row()
         cell1 = table.add_cell('<img border="0" style="vertical-align: middle" title="" src="%s">' % img)
         cell1.add_attr('search_key', search_key)
-        cell1.add_attr('state',state)
+        cell1.add_attr('state', state)
         launch_behavior = my.get_launch_behavior(search_key, title_code, lookup_code)
         cell1.add_style('cursor: pointer;')
         cell1.add_behavior(launch_behavior)
@@ -222,7 +223,7 @@ class BigBoardSingleWOSelectWdg2(BaseTableElementWdg):
         table.add_row()
         cell1 = table.add_cell('<img border="0" style="vertical-align: middle" title="" src="%s">' % img)
         cell1.add_attr('search_key', search_key)
-        cell1.add_attr('state',state)
+        cell1.add_attr('state', state)
         launch_behavior = my.get_launch_behavior(search_key, title_code, lookup_code)
         cell1.add_style('cursor: pointer;')
         cell1.add_behavior(launch_behavior)
@@ -237,16 +238,9 @@ class BigBoardViewWdg2(BaseTableElementWdg):
         nothing = 'true'
 
     def get_display(my):
-        sobject = my.get_current_sobject()
-        code = sobject.get_code()
         widget = DivWdg()
         table = Table()
-        bigboard = sobject.get_value('bigboard')
-        img = '/context/icons/silk/rosette_grey.png'
-        if bigboard == True:
-            img = '/context/icons/silk/rosette.png'
         table.add_row()
-        cell1 =  table.add_cell('<img border="0" style="vertical-align: middle" title="" src="%s">' % img)
         widget.add(table)
         return widget
 
@@ -259,7 +253,7 @@ class BigBoardSelectWdg2(BaseTableElementWdg):
 
     def get_stub(my):
         my.server = TacticServerStub.get()
-    
+
     def get_launch_behavior(my, title_name, in_bigboard):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{ 
@@ -325,7 +319,12 @@ class BigBoardSelectWdg2(BaseTableElementWdg):
         return behavior
 
     def get_display(my):
-        expression_lookup = {'twog/title': "@SOBJECT(twog/title['code','REPLACE_ME'])", 'twog/proj': "@SOBJECT(twog/proj['code','REPLACE_ME'].twog/title)", 'twog/work_order': "@SOBJECT(twog/work_order['code','REPLACE_ME'].twog/proj.twog/title)", 'twog/equipment_used': "@SOBJECT(twog/equipment_used['code','REPLACE_ME'].twog/work_order.twog/proj.twog/title)"}
+        expression_lookup = {
+            'twog/title': "@SOBJECT(twog/title['code','REPLACE_ME'])",
+            'twog/proj': "@SOBJECT(twog/proj['code','REPLACE_ME'].twog/title)",
+            'twog/work_order': "@SOBJECT(twog/work_order['code','REPLACE_ME'].twog/proj.twog/title)",
+            'twog/equipment_used': "@SOBJECT(twog/equipment_used['code','REPLACE_ME'].twog/work_order.twog/proj.twog/title)"
+        }
         search_type = 'twog/title'
         code = ''
         order_name = ''
@@ -366,6 +365,7 @@ class BigBoardSelectWdg2(BaseTableElementWdg):
         widget = DivWdg()
         table = Table()
         if not bad_code:
+            # TODO: Change in_bigboard from 'Nope' and 'Yep' to False/True (I can't believe I had to just write that...)
             in_bigboard = 'Nope'
             if 'in_bigboard' in my.kwargs.keys():
                 if my.kwargs.get('in_bigboard') in ['Yes', 'yes', 'true', 'True']:
@@ -385,11 +385,11 @@ class BigBoardSelectWdg2(BaseTableElementWdg):
                 episode = sobject.get('episode')
             if episode not in [None, '']:
                 title_name = '%s Episode: %s' % (title_name, episode) 
-            if bigboard == True:
+            if bigboard is True:
                 img = '/context/icons/silk/rosette.png'
                 state = 'checked'
             table.add_row()
-            cell1 =  table.add_cell('<img border="0" style="vertical-align: middle" title="" src="%s">' % img)
+            cell1 = table.add_cell('<img border="0" style="vertical-align: middle" title="" src="%s">' % img)
             cell1.add_attr('id', 'title_bigboard_%s' % code)
             cell1.add_attr('sk', sob_sk)
             cell1.add_attr('state', state)
@@ -642,18 +642,18 @@ class BigBoardWOSelectWdg2(BaseRefreshWdg):
                     checkbox.set_value(True) 
                 else:
                     checkbox.set_value(False)
-                checkbox.add_attr('sk',task.get_search_key())
+                checkbox.add_attr('sk', task.get_search_key())
                 table.add_cell(checkbox)
                 assigned_login_group = task.get_value('assigned_login_group')
                 assigned = task.get_value('assigned')
-                if assigned_login_group in [None,'']:
+                if assigned_login_group in [None, '']:
                     assigned_login_group = 'No Group?'
-                if assigned in [None,'']:
+                if assigned in [None, '']:
                     assigned = 'Unassigned'
                 t1 = table.add_cell('[%s]: %s, %s, %s, %s' % (task.get_value('lookup_code'), task.get_value('process'), assigned_login_group, assigned, task.get_value('status')))
-                t1.add_attr('nowrap','nowrap')
+                t1.add_attr('nowrap', 'nowrap')
         cover_table = Table()
-        cover_table.add_attr('class','bigboard_wo_selector_%s' % my.sk)
+        cover_table.add_attr('class', 'bigboard_wo_selector_%s' % my.sk)
         cover_table.add_row()
         cover_cell = cover_table.add_cell(table)
         cover_table.add_row()
@@ -752,7 +752,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         my.real_date = datetime.datetime.strptime(my.date, '%Y-%m-%d')
         my.big_user = False
         users_s = Search('sthpw/login')
-        users_s.add_filter('location','internal')
+        users_s.add_filter('location', 'internal')
         users = users_s.get_sobjects()
         my.username_lookup = {'': '', None: '', 'NOTHING': ''}
         for user in users:
@@ -775,6 +775,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         table.add_row()
 
         # Set up the title column (it is always shown)
+        # TODO: Get rid of non-breaking spaces
         title_column = table.add_cell('&nbsp;&nbsp;&nbsp;<b>Title</b>')
         title_column.add_attr('class', 'topper')
         title_column.add_attr('group', 'title')
@@ -802,7 +803,7 @@ class BigBoardWdg2(BaseRefreshWdg):
        
         return t2
 
-    def get_launch_note_behavior(my, sk, name):
+    def get_launch_note_behavior(my,  sk, name):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
                           var sk = '%s';
@@ -819,8 +820,20 @@ class BigBoardWdg2(BaseRefreshWdg):
         return behavior
 
     def wrow(my, task, expected_delivery_date, count, client_thumbnail_clippings, platform_thumbnail_clippings, in_tbl, bgcol):
-        from order_builder.order_builder import OrderBuilderLauncherWdg
-        from order_builder.taskobjlauncher import TaskObjLauncherWdg
+        """
+        Not sure if this function ever gets called or not. Until I find out, I'm leaving it alone.
+
+        :param task:
+        :param expected_delivery_date:
+        :param count:
+        :param client_thumbnail_clippings:
+        :param platform_thumbnail_clippings:
+        :param in_tbl: The table itself so far. This needs to be removed. Passing the entire table to the function
+                       and appending the row to that table is really stupid. The function should just return a row,
+                       which is appended to the table outside the function.
+        :param bgcol: Background color for the table row
+        :return:
+        """
         expected_delivery_date = fix_date(expected_delivery_date)
         code = task.get_value('code')
         name = task.get_value('title')
@@ -829,7 +842,9 @@ class BigBoardWdg2(BaseRefreshWdg):
         if episode:
             name += ' Episode ' + episode
 
-        better_lookin_dd, dd_color = hotlist_functions.get_dates_and_colors(expected_delivery_date, 'NO DELIVERY DATE', my.real_date)
+        better_lookin_dd, dd_color = hotlist_functions.get_dates_and_colors(expected_delivery_date,
+                                                                            'NO DELIVERY DATE',
+                                                                            my.real_date)
         tpct = my.indi_pct * 2
         table = in_tbl
         trower = table.add_row()
@@ -856,6 +871,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         row_title_cell.add_style('font-weight: bold;')
 
         dbl.add_row()
+
         lil_tbl = Table()
         lil_tbl.add_attr('cellpadding', '5')
         lil_tbl.set_style('color: #000000; font-size: 14px;')
@@ -864,6 +880,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         lil_tbl.add_cell("<i>Platform: %s</i>" % task.get_value('platform'))
         lil_tbl.add_cell("<b>Client: %s</b>" % task.get_value('client_name'))
         lil_tbl.add_row()
+
         obt = Table()
         obt.add_attr('cellpadding', '5')
         obt.set_style('color: #000000; font-size: 14px;')
@@ -899,7 +916,10 @@ class BigBoardWdg2(BaseRefreshWdg):
 
         if my.big_user:
             dbl.add_row()
-            offbutt = IndieBBSelectWdg(search_key=task.get_search_key(),title_code=task.get_value('title_code'),lookup_code=task.get_value('lookup_code'),indie_bigboard=task.get_value('indie_bigboard'))
+            offbutt = IndieBBSelectWdg(search_key=task.get_search_key(),
+                                       title_code=task.get_value('title_code'),
+                                       lookup_code=task.get_value('lookup_code'),
+                                       indie_bigboard=task.get_value('indie_bigboard'))
             dblbb = dbl.add_cell(offbutt)
             dblbb.add_attr('width', '20px')
             dblpr = dbl.add_cell('Set At #: ')
@@ -907,7 +927,7 @@ class BigBoardWdg2(BaseRefreshWdg):
             prioid = 'prio_%s' % count
             dbltxt = dbl.add_cell('<input type="text" value="%s" row_type="task" task_sk="%s" current_count="%s" current_priority="%s" class="count_order" external_rejection="false" id="%s"/>' % (count, task.get_search_key(), count, task.get_value('indie_priority'), prioid))
             dbltxt.add_attr('align', 'left')
-            dbltxt.add_behavior(my.show_change(prioid))
+            dbltxt.add_behavior(hotlist_functions.show_change(prioid))
         else: 
             dbl.add_row()
             dbl4 = dbl.add_cell('Priority: %s' % task.get_value('priority'))
@@ -999,8 +1019,30 @@ class BigBoardWdg2(BaseRefreshWdg):
         return table
 
     def trow(my, title, expected_delivery_date, count, client_thumbnail_clippings, platform_thumbnail_clippings, in_tbl, bgcol, ext_sk, curr_group_prio, ext_status=None, ext_assigned=None, ext_assigned_corrective=None):
-        from order_builder.order_builder import OrderBuilderLauncherWdg
-        from order_builder.taskobjlauncher import TaskObjLauncherWdg
+        """
+        More information coming soon. I don't fully understand how this function does what it does, but apparently
+        it costructs the table and returns it.
+
+        The function is far from pure, since it takes the table as an argument and then returns that table in an
+        altered form. It would be much better if it didn't take the table at all, and just returned the created row
+        instead.
+
+        :param title: The title the row is working with. Refers to a title object in Tactic.
+        :param expected_delivery_date: The expected delivery date as displayed on the row (not sure in what format).
+        :param count:
+        :param client_thumbnail_clippings:
+        :param platform_thumbnail_clippings:
+        :param in_tbl: The table itself so far. This needs to be removed. Passing the entire table to the function
+                       and appending the row to that table is really stupid. The function should just return a row,
+                       which is appended to the table outside the function.
+        :param bgcol: Background color for the table row
+        :param ext_sk:
+        :param curr_group_prio:
+        :param ext_status:
+        :param ext_assigned:
+        :param ext_assigned_corrective:
+        :return: The entire table (need to change this to be just the row)
+        """
         due_date = fix_date(title.get_value('due_date'))
         code = title.get_value('code')
         code_str = code
@@ -1014,10 +1056,12 @@ class BigBoardWdg2(BaseRefreshWdg):
         if title.get_value('requires_mastering_qc'):
             requires_mastering = True
 
-        better_lookin_ed, ed_color = hotlist_functions.get_dates_and_colors(expected_delivery_date, 'NO DELIVERY DATE',
-                                                                            my.real_date)
-        better_lookin_dd, dd_color = hotlist_functions.get_dates_and_colors(due_date, 'NO DUE DATE', my.real_date)
+        formatted_delivery_date, ed_color = hotlist_functions.get_dates_and_colors(expected_delivery_date,
+                                                                                   'NO DELIVERY DATE',
+                                                                                   my.real_date)
+        formatted_due_date, dd_color = hotlist_functions.get_dates_and_colors(due_date, 'NO DUE DATE', my.real_date)
         tpct = my.indi_pct * 2
+
         table = in_tbl
 
         # TODO: Set the background color in an if/else sort of block, rather than this.
@@ -1114,7 +1158,7 @@ class BigBoardWdg2(BaseRefreshWdg):
 
         lil_tbl.add_row()
 
-        # TODO: Rename 'obt'
+        # TODO: Rename 'obt' (not even sure what that means)
         obt = Table()
         obt.add_attr('cellpadding', '5')
         obt.add_attr('height', '100%')
@@ -1123,8 +1167,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         obt.add_row()
 
         # This next section handles how Deliver By appears
-        # TODO: Rename 'better_lookin_ed' and 'ed_color'
-        deliver_by_cell = obt.add_cell('Deliver By: %s' % better_lookin_ed)
+        deliver_by_cell = obt.add_cell('Deliver By: %s' % formatted_delivery_date)
         deliver_by_cell.add_attr('colspan', '2')
         deliver_by_cell.add_attr('nowrap', 'nowrap')
         deliver_by_cell.add_style('text-shadow: 1px 1px #000000;')
@@ -1134,9 +1177,8 @@ class BigBoardWdg2(BaseRefreshWdg):
         obt.add_row()
 
         # This is the section for Due Date
-        # TODO: Rename 'better_lookin_dd' and 'dd_color'
         # TODO: Remove non breaking spaces and replace with CSS (or better table format)
-        due_date_cell = obt.add_cell('Due Date:&nbsp;&nbsp;&nbsp; %s' % better_lookin_dd)
+        due_date_cell = obt.add_cell('Due Date:&nbsp;&nbsp;&nbsp; %s' % formatted_due_date)
         due_date_cell.add_attr('colspan', '2')
         due_date_cell.add_attr('nowrap', 'nowrap')
         due_date_cell.add_style('text-shadow: 1px 1px #000000;')
@@ -1227,7 +1269,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                 row_priority = curr_group_prio
             dbltxt = smtbl.add_cell('<input type="text" value="%s" row_type="title" title_sk="%s" current_count="%s" current_priority="%s" class="count_order" id="%s" external_rejection="%s" ext_sk="%s" style="background-color: #FFFFFF;"/>' % (count, title.get_search_key(), count, row_priority, prioid, ami_extr, ext_sk))
             dbltxt.add_attr('align', 'left')
-            dbltxt.add_behavior(my.show_change(prioid))
+            dbltxt.add_behavior(hotlist_functions.show_change(prioid))
             dbl.add_cell(smtbl)
 
         tripl = Table()
@@ -1238,9 +1280,11 @@ class BigBoardWdg2(BaseRefreshWdg):
         dc = tripl.add_cell(dbl)
         dc.add_attr('align', 'left')
         titl = table.add_cell(tripl)
+
         if count == 1:
             titl.add_attr('class', 'bottom_content')
             titl.add_attr('group', 'title')
+
         titl.add_attr('valign', 'top')
         titl.add_attr('width', '%s%s' % (tpct, '%'))
         group_keys = my.bigdict[code]['groups'].keys()
@@ -1275,7 +1319,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                     tittat.add_attr('title', wo_code)
                     tittat.add_attr('name', wo_code)
                     inspect_button = TaskObjLauncherWdg(code=wo_code, name=process)
-                    inspect = tat.add_cell(inspect_button)
+                    tat.add_cell(inspect_button)
 
                     pro = tat.add_cell(abbreviate_text(process, 7))
                     pro.add_attr('nowrap', 'nowrap')
@@ -1301,343 +1345,8 @@ class BigBoardWdg2(BaseRefreshWdg):
                 tatcell1.add_attr('valign', 'top')
                 tatcell1.add_attr('width', '%s%s' % (my.indi_pct, '%'))
                 tatcell1.add_style('background-color: %s;' % bgcol)
+
         return table
-
-    def get_onload(my):
-        return r'''
-            mytimer = function(timelen){
-                setTimeout('refresh_bigboard()', timelen); // uncomment me
-            }
-            refresh_bigboard = function(){
-                board_els = document.getElementsByClassName('bigboard');     
-                auto_el = document.getElementById('auto_refresh');
-                auto = auto_el.getAttribute('auto');
-                scroll_el = document.getElementById('scroll_el');
-                scroll = scroll_el.getAttribute('scroll');
-                if(auto == 'yes'){
-                    for(var r = 0; r < 1; r++){
-                        spt.app_busy.show("Refreshing...");
-                        //alert('reloading scroll = ' + scroll);
-                        spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2',
-                            {'auto_refresh': auto, 'scroll': scroll});
-                        spt.app_busy.hide();
-                    }
-                }
-                //mytimer(120000);
-            }
-            mytimer(120000);
-        '''
-
-    def get_scroll_by_row(my):
-        behavior = {'type': 'load', 'cbjs_action': '''     
-            try{ 
-                hctime = 500;
-                timer2 = function(timelen, next_count, up_or_down, element, origtime){
-                    send_str = 'do_scroll(' + next_count + ', ' + up_or_down + ', ' + timelen + ', ' + origtime + ')';  
-                    if(element != ''){
-                        //element.scrollIntoView();
-                        if(element.getAttribute('viz') == 'true'){
-                            element.setAttribute('viz','false');
-                            element.style.display = 'none';
-                        }else{
-                            element.setAttribute('viz','true');
-                            element.style.display = 'table-row';
-                        }
-                    }
-                    setTimeout(send_str, timelen);
-                }
-                do_scroll = function(next_count, up_or_down, timelen, origtime){
-                    buttons = document.getElementsByClassName('auto_buttons')[0];
-                    scroll_el = buttons.getElementById('scroll_el');
-                    scroll = scroll_el.getAttribute('scroll');
-                    if(scroll == 'yes'){
-                        element = '';
-                        trs = document.getElementsByClassName('trow');
-                        trslen = trs.length;
-                        preup = up_or_down;
-                        if((trslen - 9 < next_count && up_or_down == 1) || (next_count == 1 && up_or_down == -1)){
-                            up_or_down = up_or_down * -1;
-                        } 
-                        if(preup == up_or_down){
-                            next_count = next_count + up_or_down;
-                        }
-                        for(var r = 0; r < trslen - 1; r++){
-                            if(trs[r].getAttribute('num') == next_count){
-                                element = trs[r];
-                            }
-                        }
-                        nexttime = 0;
-                        if(next_count == 1 || next_count == trslen - 8){
-                            nexttime = origtime * 8;
-                        }else{
-                            nexttime = origtime;
-                        }
-                        timer2(nexttime, next_count, up_or_down, element, origtime);
-                    }
-                }
-                timer2(hctime, 0, 1, '', hctime); 
-            }catch(err){
-                      spt.app_busy.hide();
-                      spt.alert(spt.exception.handler(err));
-            }
-         '''}
-        return behavior
-
-    def save_priorities(my):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-            function do_proj_prios(title_code, new_priority){
-                    //This is for assigning the projects the same priority
-                    var server = TacticServerStub.get();
-                    projects = server.eval("@SOBJECT(twog/proj['title_code','" + title_code + "'])");
-                    for(var w = 0; w < projects.length; w++){
-                       wts_expr = "@SOBJECT(twog/work_order['proj_code','" + projects[w].code + "'].WT:sthpw/task['bigboard','True']['status','!=','Completed'])"
-                       wts = server.eval(wts_expr);
-                       if(wts.length > 0){
-                           server.update(projects[w].__search_key__, {'priority': new_priority});
-                       }
-                    }
-            }
-            try{ 
-                var server = TacticServerStub.get();
-                var buttons_el = spt.api.get_parent(bvr.src_el, '.auto_buttons');
-                auto_el = buttons_el.getElementById('auto_refresh');
-                auto = auto_el.getAttribute('auto');
-                scroll_el = buttons_el.getElementById('scroll_el');
-                scroll = scroll_el.getAttribute('scroll');
-                tbs = document.getElementsByClassName('count_order');
-                all_dict = {};
-                big_r = 0; 
-                big_val = 0;
-                for(var r = 0; r < tbs.length; r++){
-                    val = tbs[r].value;
-                    old_val = tbs[r].getAttribute('current_count');
-                    current_prio = tbs[r].getAttribute('current_priority');
-                    t_sk = '';
-                    t_code = '';
-                    indie_sk = '';
-                    row_type = tbs[r].getAttribute('row_type');
-                    if(row_type == 'title'){
-                        t_sk = tbs[r].getAttribute('title_sk');
-                        t_code = t_sk.split('code=')[1];
-                        ami_ext = tbs[r].getAttribute('external_rejection')
-                        extr = false;
-                        if(ami_ext == 'true'){
-                            extr = true;
-                            t_sk = tbs[r].getAttribute('ext_sk');
-                        }
-                    }else{
-                        t_sk = tbs[r].getAttribute('task_sk');
-                        t_code = t_sk.split('code=')[1];
-                        indie_sk = '';
-                        indie = server.eval("@SOBJECT(twog/indie_priority['task_code','" + t_code + "']['@ORDER_BY','timestamp desc'])");
-                        if(indie.length > 0){
-                            indie_sk = indie[0].__search_key__;
-                        }
-                    }
-                    changed = false;
-                    if(old_val != val){
-                       changed = true;
-                    }
-                    all_dict[old_val] = {'current_count': old_val, 'current_priority': current_prio, 'sk': t_sk, 'row_type': row_type, 'changed': changed, 'new_count': val, 'indie_sk': indie_sk, 'code': t_code};
-                    big_r = r;
-                    big_val = old_val;
-                }
-                for(var r = 1; r < tbs.length + 1; r++){
-                    if(all_dict[r]['changed']){
-                        new_count = Number(all_dict[r]['new_count']);
-                        row_type = all_dict[r]['row_type'];
-                        pre_prio = 0;
-                        post_prio = 500;
-                        if(new_count != 1){
-                            pre_prio = Number(all_dict[new_count - 1]['current_priority']);
-                        }
-                        if(new_count != tbs.length + 1){
-                            post_prio = Number(all_dict[new_count + 1]['current_priority']);
-                        }
-                        new_priority = (pre_prio + post_prio)/2;
-                        if(row_type == 'title'){
-                            server.update(all_dict[r]['sk'], {'priority': new_priority});
-                            //do_proj_prios(all_dict[r]['code']);
-                        }else{
-                            server.update(all_dict[r]['sk'], {'indie_priority': new_priority});
-                            server.update(all_dict[r]['indie_sk'], {'indie_priority': new_priority});
-                        }
-                    }
-                }
-                                
-                board_els = document.getElementsByClassName('bigboard');     
-                for(var r = 0; r < 1; r++){
-                    spt.app_busy.show("Refreshing...");
-                    spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': 'ALL'});
-                    spt.app_busy.hide();
-                }
-            }
-            catch(err){
-                      spt.app_busy.hide();
-                      spt.alert(spt.exception.handler(err));
-            }
-         '''}
-        return behavior
-
-    def show_change(my, ider):
-        behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''        
-                try{
-                    var ider = '%s';
-                    moi = document.getElementById(ider);
-                    moi.style.backgroundColor = "#FF0000";
-                    if(moi.value != moi.getAttribute('current_count')){
-                        if(isNaN(moi.value)){
-                            moi.value = moi.getAttribute('current_count');
-                            moi.style.backgroundColor = "#ffffff";
-                        }
-                    }
-            }
-            catch(err){
-                      spt.app_busy.hide();
-                      spt.alert(spt.exception.handler(err));
-            }
-         ''' % ider}
-        return behavior
-
-    def set_scroll(my):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-            try{ 
-                var buttons_el = spt.api.get_parent(bvr.src_el, '.auto_buttons');
-                auto_el = buttons_el.getElementById('auto_refresh');
-                auto = auto_el.getAttribute('auto');
-                scroll_el = buttons_el.getElementById('scroll_el');
-                scroll = scroll_el.getAttribute('scroll');
-                //group_el = buttons_el.getElementById('group_select');
-                //group = group_el.value;
-                if(scroll == 'no'){
-                    bvr.src_el.innerHTML = '<input type="button" value="Unset Auto-Scroll"/>';
-                    bvr.src_el.setAttribute('scroll','yes');
-                    scroll = 'yes';
-                }else{
-                    bvr.src_el.innerHTML = '<input type="button" value="Set Auto-Scroll"/>';
-                    bvr.src_el.setAttribute('scroll','no');
-                    scroll = 'no';
-                }
-                board_els = document.getElementsByClassName('bigboard');     
-                for(var r = 0; r < 1; r++){
-                    spt.app_busy.show("Refreshing...");
-                    //spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': group});
-                    spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': 'ALL'});
-                    spt.app_busy.hide();
-                }
-            }
-            catch(err){
-                      spt.app_busy.hide();
-                      spt.alert(spt.exception.handler(err));
-            }
-         '''}
-        return behavior
-
-    def get_reload(my):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-            try{ 
-                var buttons_el = spt.api.get_parent(bvr.src_el, '.auto_buttons');
-                auto = bvr.src_el.get('auto');
-                scroll_el = buttons_el.getElementById('scroll_el');
-                scroll = scroll_el.getAttribute('scroll');
-                //group_el = buttons_el.getElementById('group_select');
-                //group = group_el.value;
-                if(auto == 'no'){
-                    bvr.src_el.innerHTML = '<input type="button" value="Unset Auto-Refresh"/>';
-                    bvr.src_el.setAttribute('auto','yes');
-                    auto = 'yes';
-                }else{
-                    bvr.src_el.innerHTML = '<input type="button" value="Set Auto-Refresh"/>';
-                    bvr.src_el.setAttribute('auto','no');
-                    auto = 'no';
-                }
-                board_els = document.getElementsByClassName('bigboard');     
-                for(var r = 0; r < 1; r++){
-                    spt.app_busy.show("Refreshing...");
-                    //spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': group});
-                    spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': 'ALL'});
-                    spt.app_busy.hide();
-                }
-            }
-            catch(err){
-                      spt.app_busy.hide();
-                      spt.alert(spt.exception.handler(err));
-            }
-         '''}
-        return behavior
-
-    def change_group(my):
-        behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''        
-                try{
-                var buttons_el = spt.api.get_parent(bvr.src_el, '.auto_buttons');
-                auto = bvr.src_el.get('auto');
-                scroll_el = buttons_el.getElementById('scroll_el');
-                scroll = scroll_el.getAttribute('scroll');
-                //group_el = buttons_el.getElementById('group_select');
-                //group = group_el.value;
-                group = 'ALL';
-                board_els = document.getElementsByClassName('bigboard');     
-                for(var r = 0; r < 1; r++){
-                    spt.app_busy.show("Refreshing...");
-                    spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': group});
-                    spt.app_busy.hide();
-                }
-            }
-            catch(err){
-                      spt.app_busy.hide();
-                      spt.alert(spt.exception.handler(err));
-            }
-         '''}
-        return behavior
-
-    def bring_to_top(my):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-                try{
-                    body = document.getElementById('title_body');
-                    body.scrollTop = 0;
-            }
-            catch(err){
-                      spt.app_busy.hide();
-                      spt.alert(spt.exception.handler(err));
-            }
-         '''}
-        return behavior
-
-    def toggle_groupings(my):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-                try{
-                    prio = bvr.src_el.getAttribute('current_priority');
-                    state = bvr.src_el.getAttribute('state');
-                    if(state == 'opened'){
-                        bvr.src_el.setAttribute('state','closed');
-                        state = 'closed';
-                    }else{
-                        bvr.src_el.setAttribute('state','opened');
-                        state = 'opened';
-                    }
-                    
-                    top_el = document.getElementById('title_body');
-                    rows = top_el.getElementsByClassName('trow');
-                    for(var r = 0; r < rows.length; r++){ 
-                        if(rows[r].getAttribute('current_priority') == prio){
-                            if(state == 'closed'){
-                                //rows[r].setAttribute('viz','false');
-                                rows[r].style.display = 'none';
-                            }else{
-                                //rows[r].setAttribute('viz','true');
-                                rows[r].style.display = 'table-row';
-                            }
-                        }
-                    }
-                    
-                    
-            }
-            catch(err){
-                      spt.app_busy.hide();
-                      spt.alert(spt.exception.handler(err));
-            }
-         '''}
-        return behavior
 
     def get_buttons(my, auto_refresh, auto_scroll, kgroups):
         # TODO: Rewrite this entire function...
@@ -1651,7 +1360,7 @@ class BigBoardWdg2(BaseRefreshWdg):
         auto.add_attr('id', 'auto_refresh')
         auto.add_attr('name', 'auto_refresh')
         auto.add_attr('auto', auto_refresh)
-        auto.add_behavior(my.get_reload())
+        auto.add_behavior(hotlist_functions.get_reload())
         scroll_text = "Set Auto-Scroll"
         if auto_scroll == 'yes':
             scroll_text = "Unset Auto-Scroll"
@@ -1659,18 +1368,17 @@ class BigBoardWdg2(BaseRefreshWdg):
         scroll.add_attr('id', 'scroll_el')
         scroll.add_attr('name', 'scroll_el')
         scroll.add_attr('scroll', auto_scroll)
-        scroll.add_behavior(my.set_scroll())
+        scroll.add_behavior(hotlist_functions.set_scroll())
         to_top = btns.add_cell('<input type="button" value="Go To Top"/>')
-        to_top.add_behavior(my.bring_to_top())
+        to_top.add_behavior(hotlist_functions.bring_to_top())
         if my.big_user:
             saveit = btns.add_cell('<input type="button" value="Save Priorities"/>')
-            saveit.add_behavior(my.save_priorities())
+            saveit.add_behavior(hotlist_functions.save_priorities())
         return btns
 
     def get_display(my):
         from operator import itemgetter
 
-        my.big_user = False
         search = Search("twog/global_resource")
         search.add_filter('name', 'Usernames Allowed Hot Today Changes')
         allowed = search.get_sobjects()
@@ -1682,23 +1390,30 @@ class BigBoardWdg2(BaseRefreshWdg):
         auto_refresh = 'no'
         auto_scroll = 'no'
         kgroups = ['ALL']
+
         if 'auto_refresh' in my.kwargs.keys():
             auto_refresh = my.kwargs.get('auto_refresh')
+
         if 'auto_scroll' in my.kwargs.keys():
             auto_scroll = my.kwargs.get('auto_scroll')
+
+        # The whole view sits in this DivWdg
         divvy = DivWdg()
+
         if auto_refresh == 'yes':
-            beh = {'type': 'load', 'cbjs_action': my.get_onload()}
-            divvy.add_behavior(beh)
+            auto_refresh_behavior = {'type': 'load', 'cbjs_action': hotlist_functions.get_onload()}
+            divvy.add_behavior(auto_refresh_behavior)
+
         if 'groups' in my.kwargs.keys():
             kgroups = my.kwargs.get('groups').split(',')
+
         search = Search("sthpw/login_group")
         search.add_where("\"login_group\" not in ('client','default','user')")
 
         thumbnail_clippings = {}
 
         divvy2 = DivWdg()
-        divvy2.add_behavior(my.get_scroll_by_row())
+        divvy2.add_behavior(hotlist_functions.get_scroll_by_row())
 
         table = Table()
         table.add_attr('class', 'bigboard')
@@ -1895,6 +1610,7 @@ class BigBoardWdg2(BaseRefreshWdg):
 
         if len(kgroups) > 0 and kgroups[0] != 'ALL':
             my.seen_groups = kgroups
+
         sg_len = len(my.seen_groups)
         col_len = sg_len + 2
         my.indi_pct = float(100/col_len)
@@ -1910,15 +1626,6 @@ class BigBoardWdg2(BaseRefreshWdg):
         table.add_cell(my.trow_top())
 
         # Table body starts here
-        t2div = DivWdg()
-        t2div.add_attr('id', 'title_body')
-        t2div.add_attr('width', '100%')
-        t2div.add_attr('bgcolor', '#fcfcfc')
-        t2div.add_style('color: #000000;')
-        t2div.add_style('font-family: Helvetica;')
-        t2div.add_style('overflow-y: scroll;')
-        t2div.add_style('height: 900px;')
-
         t2 = Table()
         t2.add_attr('width', '100%')
         t2.add_attr('bgcolor', '#fcfcfc')
@@ -1940,7 +1647,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                     is_ext = True
                     external_r = tit_2ext_dict[bp.get('code')]
                     ext_prio = external_r.get_value('priority')
-                    if ext_prio in [None,'']:
+                    if ext_prio in [None, '']:
                         ext_prio = 0
                 code = bp.get('code')
                 client_thumbnail_clippings = ''
@@ -1961,7 +1668,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                         grouping_row.add_attr('current_priority', grouping_prio)
                         grouping_row.add_attr('state', 'opened')
                         grouping_row.add_style('background-color: #dce3ee;')
-                        grouping_row.add_behavior(my.toggle_groupings())
+                        grouping_row.add_behavior(hotlist_functions.toggle_groupings())
                         
                     client_code = bb.get_value('client_code')
                     client_name = bb.get_value('client_name')
@@ -1999,13 +1706,13 @@ class BigBoardWdg2(BaseRefreshWdg):
                     else:
                         platform_thumbnail_clippings = thumbnail_clippings[platform]
                     expected_delivery_date = bb.get_value('expected_delivery_date')
-                    ext_status = None
+                    external_status = None
                     ext_sk = None
                     ext_assigned = None
                     ext_assigned_corrective = None
                     if is_ext:
                         expected_delivery_date = external_r.get_value('expected_delivery_date')
-                        ext_status = external_r.get_value('status')
+                        external_status = external_r.get_value('status')
                         ext_sk = external_r.get_search_key()
                         ext_assigned = external_r.get_value('assigned')
                         ext_assigned_corrective = external_r.get_value('corrective_action_assigned')
@@ -2013,9 +1720,10 @@ class BigBoardWdg2(BaseRefreshWdg):
                             ext_assigned = None
                         if ext_assigned_corrective == '--Select--':
                             ext_assigned_corrective = None
-                    t2 = my.trow(bb, expected_delivery_date, count, client_thumbnail_clippings, platform_thumbnail_clippings, t2, bgcol, ext_sk, curr_group_prio, ext_status, ext_assigned, ext_assigned_corrective)
+                    t2 = my.trow(bb, expected_delivery_date, count, client_thumbnail_clippings, platform_thumbnail_clippings, t2, bgcol, ext_sk, curr_group_prio, external_status, ext_assigned, ext_assigned_corrective)
                     count += 1
                 else:
+                    # TODO: Does this ever get called? Haven't seen a non-title in the hot today list so far...
                     bb = bigbox[code]
                     curr_group_prio = bb.get_value('indie_priority')
                     if curr_group_prio != grouping_prio:
@@ -2026,7 +1734,7 @@ class BigBoardWdg2(BaseRefreshWdg):
                         grouping_row.add_attr('current_priority', grouping_prio)
                         grouping_row.add_attr('state', 'opened')
                         grouping_row.add_style('background-color: #dce3ee;')
-                        grouping_row.add_behavior(my.toggle_groupings())
+                        grouping_row.add_behavior(hotlist_functions.toggle_groupings())
                     client_code = bb.get_value('client_code')
                     if client_code not in thumbnail_clippings.keys():
                         img_path = hotlist_functions.get_client_img(client_code)
@@ -2084,11 +1792,22 @@ class BigBoardWdg2(BaseRefreshWdg):
 
                 '''
         })
+
+        t2div = DivWdg()
+        t2div.add_attr('id', 'title_body')
+        t2div.add_attr('width', '100%')
+        t2div.add_attr('bgcolor', '#fcfcfc')
+        t2div.add_style('color: #000000;')
+        t2div.add_style('font-family: Helvetica;')
+        t2div.add_style('overflow-y: scroll;')
+        t2div.add_style('height: 900px;')
+
         t2div.add(t2)
         table.add_row()
         table.add_cell(t2div)
         table.add_row()
 
+        # Buttons on the bottom of the table
         btns = my.get_buttons(auto_refresh, auto_scroll, kgroups)
 
         table.add_row()
