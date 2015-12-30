@@ -47,13 +47,17 @@ class HotTodayWdg(BaseRefreshWdg):
 
     def set_header(self, table, groups):
         header_row = table.add_row()
+        header_row.add_style('background-color', '#E0E0E0')
 
         for group in groups:
-            table.add_header(title_case(group), row=header_row)
+            group_cell = table.add_header(title_case(group), row=header_row)
+            group_cell.add_style('padding', '10px')
+            group_cell.add_style('background-color', '#F2F2F2')
+            group_cell.add_style('border', '1px solid #E0E0E0')
 
         table.add_row()
 
-    def get_row(self, title, table, counter, number_of_columns):
+    def set_row(self, title, table, counter, number_of_columns):
         from order_builder.order_builder import OrderBuilderLauncherWdg
 
         name = title.get_value('title')
@@ -167,9 +171,11 @@ class HotTodayWdg(BaseRefreshWdg):
         # TODO: Is there a better way to set the CSS? Docs aren't too clear on that.
         title_cell = table.add_cell(title_table)
         title_cell.add_style('background-color', title_cell_background_color)
+        title_cell.add_style('border', '1px solid #EEE')
 
         for column in xrange(number_of_columns):
-            table.add_cell()
+            row_cell = table.add_cell()
+            row_cell.add_style('border', '1px solid #EEE')
 
         table.add_row()
 
@@ -178,8 +184,10 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_attr('class', 'bigboard')
         table.add_attr('width', '100%')
         table.add_attr('bgcolor', '#fcfcfc')
-        table.add_style('color: #BBBBBB;')
-        table.add_style('font-family: Helvetica;')
+        table.add_style('font-size', '12px')
+        table.add_style('font-family', 'Helvetica')
+        #table.add_style('border', '1px solid #E0E0E0')
+        table.add_border(style='solid', color='#F2F2F2', size='1px')
 
         # TODO: Get which headers to display
         header_groups = ['title', 'machine room', 'compression', 'localization', 'qc', 'vault', 'edeliveries',
@@ -197,7 +205,7 @@ class HotTodayWdg(BaseRefreshWdg):
         search_for_hot_items.add_order_by('expected_delivery_date')
         hot_items = search_for_hot_items.get_sobjects()
 
-        for counter, hot_item in enumerate(hot_items):
-            self.get_row(hot_item, table, counter, number_of_columns)
+        for counter, hot_item in enumerate(hot_items, 1):
+            self.set_row(hot_item, table, counter, number_of_columns)
 
         return table
