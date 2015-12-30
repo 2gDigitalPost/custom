@@ -130,8 +130,45 @@ def get_dates_and_colors(date, date_str, due_date):
 
 
 def get_delivery_date_status(delivery_date):
+    """
+    Checks the status of a delivery date against today's date.
+
+    If the delivery date is after today's date, return the string 'on_time'
+    If the delivery date is today, return the string 'due_today'
+    Otherwise, return 'late'
+
+    :param delivery_date: A datetime.datetime object
+    :return: String ('on_time', 'due_today', 'late')
+    """
     todays_date = datetime.datetime.today()
 
+    if todays_date < delivery_date:
+        return 'on_time'
+    elif todays_date == delivery_date:
+        return 'due_today'
+    else:
+        return 'late'
+
+
+def get_delivery_date_status_color(status):
+    """
+    Take a delivery date status (from the above function get_delivery_date_status) and return a color to display in
+    RGB hexadecimal format.
+
+    'on_time': '#66DC00' (Green)
+    'due_today': '#E0B600 (Yellow)
+    'late': '#FF0000' (Red)
+
+    :param status: String ('on_time', 'due_today', 'late')
+    :return: String (RGB hexadecimal)
+    """
+
+    if status == 'on_time':
+        return '#66DC00'
+    elif status == 'due_today':
+        return '#E0B600'
+    else:
+        return '#FF0000'
 
 # The following functions are Javascript behaviors that the hot list uses
 
