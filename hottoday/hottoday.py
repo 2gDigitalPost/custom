@@ -6,40 +6,6 @@ from pyasm.search import Search
 from hottoday_utils import get_date_status, get_date_status_color, get_client_img, get_platform_img
 
 
-def trow_top():
-    indi_pct = 20
-
-    table = Table()
-    table.add_attr('width', '100%')
-    table.add_attr('height', '40px')
-    table.add_attr('border', '1')
-    table.add_style('font-size: 12px;')
-    table.add_style('font-family: Helvetica;')
-    table.add_style('color: #000000;')
-    table.add_style('background-color: #f2f2f2;')
-    table.add_style('border-color: #BBBBBB')
-    table.add_class('spt_group_row')
-    table.add_row()
-
-    # Set up the title column (it is always shown)
-    # TODO: Get rid of non-breaking spaces
-    title_column = table.add_cell('&nbsp;&nbsp;&nbsp;<b>Title</b>')
-    title_column.add_attr('class', 'topper')
-    title_column.add_attr('group', 'title')
-    # TODO: Not sure what the below line does
-    title_width_percent = (indi_pct * 2)
-    title_column.add_attr('width', '%s%s' % (title_width_percent, '%'))
-
-    # Add all the rest of the columns
-    for seen_group in ['machine room', 'compression', 'localization', 'qc', 'vault', 'edeliveries', 'scheduling']:
-        seen_group_column = table.add_cell('&nbsp;&nbsp;&nbsp;<b>%s</b>' % title_case(seen_group))
-        seen_group_column.add_attr('width', '%s%s' % ((indi_pct), '%'))
-        seen_group_column.add_attr('class', 'topper')
-        seen_group_column.add_attr('group', seen_group)
-
-    return table
-
-
 class HotTodayWdg(BaseRefreshWdg):
     """
     My attempt at rewriting the Hot Today table.
@@ -110,8 +76,6 @@ class HotTodayWdg(BaseRefreshWdg):
         code_row.add_style('font-size', '12px')
 
         # Find the client image
-        # TODO: Actually find the image instead of the hard coded example
-
         client_image_src = get_client_img(client_code)
 
         if client_image_src:
@@ -122,7 +86,7 @@ class HotTodayWdg(BaseRefreshWdg):
         client_data = '<b>Client:</b> {0}'.format(client_image)
 
         # Find the platform image
-        # TODO: Actually find the image instead of the hard coded example
+        # TODO: Platform image find is not working. Fix it.
 
         # platform_image_src = get_platform_img(platform)
         platform_image_src = ''
@@ -186,7 +150,6 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_attr('bgcolor', '#fcfcfc')
         table.add_style('font-size', '12px')
         table.add_style('font-family', 'Helvetica')
-        #table.add_style('border', '1px solid #E0E0E0')
         table.add_border(style='solid', color='#F2F2F2', size='1px')
 
         # TODO: Get which headers to display
