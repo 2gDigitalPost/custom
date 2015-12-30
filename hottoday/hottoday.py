@@ -3,7 +3,7 @@ from pyasm.web import Table
 from tactic.ui.common import BaseRefreshWdg
 from common_tools.common_functions import title_case
 from pyasm.search import Search
-from hottoday_utils import get_delivery_date_status, get_delivery_date_status_color
+from hottoday_utils import get_date_status, get_date_status_color, get_client_img, get_platform_img
 
 
 def trow_top():
@@ -49,7 +49,7 @@ class HotTodayWdg(BaseRefreshWdg):
         header_row = table.add_row()
 
         for group in groups:
-            table.add_header(group, row=header_row)
+            table.add_header(title_case(group), row=header_row)
 
         table.add_row()
 
@@ -60,9 +60,10 @@ class HotTodayWdg(BaseRefreshWdg):
         code = title.get_value('code')
         episode = title.get_value('episode')
         client = title.get_value('client_name')
+        client_code = title.get_value('client_code')
         platform = title.get_value('platform')
         due_date = datetime.datetime.strptime(title.get_value('due_date'), '%Y-%m-%d %H:%M:%S')
-        expected_delivery_date = title.get_value('expected_delivery_date')
+        expected_delivery_date = datetime.datetime.strptime(title.get_value('expected_delivery_date'), '%Y-%m-%d %H:%M:%S')
         requires_mastering_qc = title.get_value('requires_mastering_qc', False)
         is_external_rejection = title.get_value('is_external_rejection', False)
         is_redo = title.get_value('redo', False)
@@ -90,9 +91,6 @@ class HotTodayWdg(BaseRefreshWdg):
         else:
             title_cell_background_color = '#D7D7D7'
 
-        delivery_date_status = get_delivery_date_status(due_date)
-        delivery_date_status_color = get_delivery_date_status_color(delivery_date_status)
-
         # Put together the title cell for the table. It includes the name, delivery date, status, and other info
         title_table = Table()
 
@@ -100,10 +98,8 @@ class HotTodayWdg(BaseRefreshWdg):
         name_data = '<span style="color: #FF0000">{0}.</span> <u>{1}</u>'.format(counter, name)
         name_row = title_table.add_row()
         name_row.add_style('font-size', '14px')
+        name_row.add_style('font-weight', 'bold')
         title_table.add_cell(data=name_data, row=name_row, css='title-row')
-        # name_cell = title_table.add_cell(data=name, row=name_row)
-        # name_cell.add_style('font-size', '14px')
-        # name_cell.add_style('text-decoration', 'underline')
 
         # Second row: Title's code (TITLE#####), Client, and Platform
         code_row = title_table.add_row()
@@ -111,15 +107,28 @@ class HotTodayWdg(BaseRefreshWdg):
 
         # Find the client image
         # TODO: Actually find the image instead of the hard coded example
-        client_image_src = 'http://tactic03.2gdigital.com/assets/twog/client/CLIENT00007/MISC/wb2_MISC_v001.png'
-        client_image = '<img src="{0}" title="{1}" alt="{1}" style="width: 32px; height: 32px;">'.format(client_image_src, client)
-        client_data = '<b>Client:</b>{0}'.format(client_image)
+
+        client_image_src = get_client_img(client_code)
+
+        if client_image_src:
+            client_image = '<img src="{0}" title="{1}" alt="{1}" style="width: 32px; height: 32px;">'.format(client_image_src, client)
+        else:
+            client_image = '<b>{0}</b>'.format(client)
+
+        client_data = '<b>Client:</b> {0}'.format(client_image)
 
         # Find the platform image
         # TODO: Actually find the image instead of the hard coded example
-        platform_image_src = 'http://tactic03.2gdigital.com/assets/twog/platform/PLATFORM00029/MISC/netflix3_MISC_v002.png'
-        platform_image = '<img src="{0}" title="{1}" alt="{1}" style="width: 32px; height: 32px;">'.format(platform_image_src, platform)
-        platform_data = '<i>Platform:</i>{0}'.format(platform_image)
+
+        # platform_image_src = get_platform_img(platform)
+        platform_image_src = ''
+
+        if platform_image_src:
+            platform_image = '<img src="{0}" title="{1}" alt="{1}" style="width: 32px; height: 32px;">'.format(platform_image_src, platform)
+        else:
+            platform_image = '<i>{0}</i>'.format(platform)
+
+        platform_data = '<i>Platform: </i>{0}'.format(platform_image)
 
         title_table.add_cell(data=code, row=code_row)
         title_table.add_cell(data=client_data, row=code_row)
@@ -127,11 +136,33 @@ class HotTodayWdg(BaseRefreshWdg):
 
         # Third row: Deliver By Date
         deliver_by_row = title_table.add_row()
-        title_table.add_cell(data=expected_delivery_date, row=deliver_by_row)
+
+        delivery_date_status = get_date_status(expected_delivery_date)
+        delivery_date_status_color = get_date_status_color(delivery_date_status)
+
+        deliver_by_row.add_style('color', delivery_date_status_color)
+        deliver_by_row.add_style('font-size', '14px')
+        deliver_by_row.add_style('font-weight', 'bold')
+        deliver_by_row.add_style('text-shadow', '1px 1px #000000')
+
+        delivery_date_data = 'Deliver By: {0}'.format(expected_delivery_date)
+
+        title_table.add_cell(data=delivery_date_data, row=deliver_by_row)
 
         # Fourth Row: Due Date
         due_date_row = title_table.add_row()
-        title_table.add_cell(data=due_date, row=due_date_row)
+
+        due_date_status = get_date_status(due_date)
+        due_date_status_color = get_date_status_color(due_date_status)
+
+        due_date_row.add_style('color', due_date_status_color)
+        due_date_row.add_style('font-size', '14px')
+        due_date_row.add_style('font-weight', 'bold')
+        due_date_row.add_style('text-shadow', '1px 1px #000000')
+
+        due_date_data = 'Due Date: {0}'.format(due_date)
+
+        title_table.add_cell(data=due_date_data, row=due_date_row)
 
         # TODO: Is there a better way to set the CSS? Docs aren't too clear on that.
         title_cell = table.add_cell(title_table)

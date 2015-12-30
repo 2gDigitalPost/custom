@@ -129,7 +129,7 @@ def get_dates_and_colors(date, date_str, due_date):
     return (better_lookin_date, color)
 
 
-def get_delivery_date_status(delivery_date):
+def get_date_status(delivery_date):
     """
     Checks the status of a delivery date against today's date.
 
@@ -150,7 +150,7 @@ def get_delivery_date_status(delivery_date):
         return 'late'
 
 
-def get_delivery_date_status_color(status):
+def get_date_status_color(status):
     """
     Take a delivery date status (from the above function get_delivery_date_status) and return a color to display in
     RGB hexadecimal format.
