@@ -45,7 +45,15 @@ class HotTodayWdg(BaseRefreshWdg):
     My attempt at rewriting the Hot Today table.
     """
 
-    def get_row(self, title, table):
+    def set_header(self, table, groups):
+        header_row = table.add_row()
+
+        for group in groups:
+            table.add_header(group, row=header_row)
+
+        table.add_row()
+
+    def get_row(self, title, table, counter, number_of_columns):
         from order_builder.order_builder import OrderBuilderLauncherWdg
 
         name = title.get_value('title')
@@ -88,26 +96,51 @@ class HotTodayWdg(BaseRefreshWdg):
         # Put together the title cell for the table. It includes the name, delivery date, status, and other info
         title_table = Table()
 
+        # First row: Number (counter) and name
+        name_data = '<span style="color: #FF0000">{0}.</span> <u>{1}</u>'.format(counter, name)
         name_row = title_table.add_row()
-        title_table.add_cell(data=name, row=name_row)
+        name_row.add_style('font-size', '14px')
+        title_table.add_cell(data=name_data, row=name_row, css='title-row')
+        # name_cell = title_table.add_cell(data=name, row=name_row)
+        # name_cell.add_style('font-size', '14px')
+        # name_cell.add_style('text-decoration', 'underline')
 
+        # Second row: Title's code (TITLE#####), Client, and Platform
         code_row = title_table.add_row()
+        code_row.add_style('font-size', '12px')
+
+        # Find the client image
+        # TODO: Actually find the image instead of the hard coded example
+        client_image_src = 'http://tactic03.2gdigital.com/assets/twog/client/CLIENT00007/MISC/wb2_MISC_v001.png'
+        client_image = '<img src="{0}" title="{1}" alt="{1}" style="width: 32px; height: 32px;">'.format(client_image_src, client)
+        client_data = '<b>Client:</b>{0}'.format(client_image)
+
+        # Find the platform image
+        # TODO: Actually find the image instead of the hard coded example
+        platform_image_src = 'http://tactic03.2gdigital.com/assets/twog/platform/PLATFORM00029/MISC/netflix3_MISC_v002.png'
+        platform_image = '<img src="{0}" title="{1}" alt="{1}" style="width: 32px; height: 32px;">'.format(platform_image_src, platform)
+        platform_data = '<i>Platform:</i>{0}'.format(platform_image)
+
         title_table.add_cell(data=code, row=code_row)
-        title_table.add_cell(data=client, row=code_row)
-        title_table.add_cell(data=platform, row=code_row)
+        title_table.add_cell(data=client_data, row=code_row)
+        title_table.add_cell(data=platform_data, row=code_row)
 
-        status_row = title_table.add_row()
-        title_table.add_cell(data=delivery_date_status, row=status_row)
-
+        # Third row: Deliver By Date
         deliver_by_row = title_table.add_row()
         title_table.add_cell(data=expected_delivery_date, row=deliver_by_row)
 
+        # Fourth Row: Due Date
         due_date_row = title_table.add_row()
         title_table.add_cell(data=due_date, row=due_date_row)
 
         # TODO: Is there a better way to set the CSS? Docs aren't too clear on that.
         title_cell = table.add_cell(title_table)
         title_cell.add_style('background-color', title_cell_background_color)
+
+        for column in xrange(number_of_columns):
+            table.add_cell()
+
+        table.add_row()
 
     def get_display(self):
         table = Table()
@@ -117,9 +150,14 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_style('color: #BBBBBB;')
         table.add_style('font-family: Helvetica;')
 
-        table.add_cell(trow_top())
+        # TODO: Get which headers to display
+        header_groups = ['title', 'machine room', 'compression', 'localization', 'qc', 'vault', 'edeliveries',
+                         'scheduling']
 
-        table.add_tbody()
+        # Minus one because title is calculated separately
+        number_of_columns = len(header_groups) - 1
+
+        self.set_header(table, header_groups)
 
         search_for_hot_items = Search('twog/title')
         search_for_hot_items.add_filter('bigboard', True)
@@ -128,7 +166,7 @@ class HotTodayWdg(BaseRefreshWdg):
         search_for_hot_items.add_order_by('expected_delivery_date')
         hot_items = search_for_hot_items.get_sobjects()
 
-        for hot_item in hot_items:
-            self.get_row(hot_item, table)
+        for counter, hot_item in enumerate(hot_items):
+            self.get_row(hot_item, table, counter, number_of_columns)
 
         return table
