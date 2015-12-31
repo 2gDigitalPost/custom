@@ -1,5 +1,5 @@
 import datetime
-from pyasm.web import Table
+from pyasm.web import DivWdg, Table
 from tactic.ui.common import BaseRefreshWdg
 from common_tools.common_functions import title_case
 from pyasm.search import Search
@@ -12,6 +12,13 @@ class HotTodayWdg(BaseRefreshWdg):
     """
 
     def set_header(self, table, groups):
+        """
+        Construct the header for the Hot Today table, then add it to the table.
+
+        :param table:
+        :param groups:
+        :return: None
+        """
         header_row = table.add_row()
         header_row.add_style('background-color', '#E0E0E0')
 
@@ -24,6 +31,15 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_row()
 
     def set_row(self, title, table, counter, number_of_columns):
+        """
+        Construct a row in the Hot Today list and add it to the table.
+
+        :param title:
+        :param table:
+        :param counter:
+        :param number_of_columns:
+        :return: None
+        """
         from order_builder.order_builder import OrderBuilderLauncherWdg
 
         name = title.get_value('title')
@@ -64,11 +80,22 @@ class HotTodayWdg(BaseRefreshWdg):
         # Put together the title cell for the table. It includes the name, delivery date, status, and other info
         title_table = Table()
 
+        # If the order requires QC Mastering, add that above the first row
+        if requires_mastering_qc:
+            mastering_qc_row = title_table.add_row()
+            mastering_qc_row.add_style('color', 'red')
+            mastering_qc_row.add_style('font-size', '14px')
+            mastering_qc_row.add_style('font-weight', 'bold')
+
+            title_table.add_cell(data='Requires QC Mastering', row=mastering_qc_row)
+
         # First row: Number (counter) and name
-        name_data = '<span style="color: #FF0000">{0}.</span> <u>{1}</u>'.format(counter, name)
         name_row = title_table.add_row()
         name_row.add_style('font-size', '14px')
         name_row.add_style('font-weight', 'bold')
+
+        name_data = '<span style="color: #FF0000">{0}.</span> <u>{1}</u>'.format(counter, name)
+
         title_table.add_cell(data=name_data, row=name_row, css='title-row')
 
         # Second row: Title's code (TITLE#####), Client, and Platform
@@ -86,7 +113,7 @@ class HotTodayWdg(BaseRefreshWdg):
         client_data = '<b>Client:</b> {0}'.format(client_image)
 
         # Find the platform image
-        # TODO: Platform image find is not working. Fix it.
+        # FIXME: Platform image find is not working.
 
         # platform_image_src = get_platform_img(platform)
         platform_image_src = ''
@@ -132,14 +159,22 @@ class HotTodayWdg(BaseRefreshWdg):
 
         title_table.add_cell(data=due_date_data, row=due_date_row)
 
-        # TODO: Is there a better way to set the CSS? Docs aren't too clear on that.
         title_cell = table.add_cell(title_table)
         title_cell.add_style('background-color', title_cell_background_color)
         title_cell.add_style('border', '1px solid #EEE')
+        title_cell.add_style('padding', '4px')
+        title_cell.add_style('width', '400px')
 
         for column in xrange(number_of_columns):
+            # TODO: Actually insert the relevant data
             row_cell = table.add_cell()
             row_cell.add_style('border', '1px solid #EEE')
+
+        table.add_row()
+
+    def set_priority_row(self, table, priority):
+        priority_row = table.add_cell(priority)
+        priority_row.add_style('background-color', '#DCE3EE')
 
         table.add_row()
 
@@ -152,7 +187,7 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_style('font-family', 'Helvetica')
         table.add_border(style='solid', color='#F2F2F2', size='1px')
 
-        # TODO: Get which headers to display
+        # TODO: Get which headers to display dynamically
         header_groups = ['title', 'machine room', 'compression', 'localization', 'qc', 'vault', 'edeliveries',
                          'scheduling']
 
@@ -168,7 +203,23 @@ class HotTodayWdg(BaseRefreshWdg):
         search_for_hot_items.add_order_by('expected_delivery_date')
         hot_items = search_for_hot_items.get_sobjects()
 
+        # Current priority will be updated each time a title has a different priority from the last value
+        current_priority = 0
+
         for counter, hot_item in enumerate(hot_items, 1):
+            hot_item_priority = float(hot_item.get_value('priority'))
+
+            if current_priority < hot_item_priority:
+                self.set_priority_row(table, hot_item_priority)
+                current_priority = hot_item_priority
+
             self.set_row(hot_item, table, counter, number_of_columns)
 
-        return table
+        # Put the table in a DivWdg, makes it fit better with the Tactic side bar
+        hotlist_div = DivWdg()
+        hotlist_div.add_style('overflow-y', 'scroll')
+        hotlist_div.add_style('height', '900px')
+
+        hotlist_div.add(table)
+
+        return hotlist_div
