@@ -60,7 +60,7 @@ def get_client_img(client_code):
     return img_path
 
 
-def get_date_status(delivery_date):
+def get_date_status(delivery_datetime):
     """
     Checks the status of a delivery date against today's date.
 
@@ -71,7 +71,8 @@ def get_date_status(delivery_date):
     :param delivery_date: A datetime.datetime object
     :return: String ('on_time', 'due_today', 'late')
     """
-    todays_date = datetime.datetime.today()
+    todays_date = datetime.date.today()
+    delivery_date = delivery_datetime.date()
 
     if todays_date < delivery_date:
         return 'on_time'
