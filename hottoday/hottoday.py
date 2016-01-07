@@ -1,15 +1,37 @@
 import datetime
 from pyasm.web import DivWdg, Table
 from tactic.ui.common import BaseRefreshWdg
-from common_tools.common_functions import title_case
+from common_tools.common_functions import title_case, abbreviate_text
 from pyasm.search import Search
 from hottoday_utils import get_date_status, get_date_status_color, get_client_img, get_platform_img
+from order_builder.taskobjlauncher import TaskObjLauncherWdg
 
 
 class HotTodayWdg(BaseRefreshWdg):
     """
     My attempt at rewriting the Hot Today table.
     """
+
+    TASK_COLOR_DICT = {
+        'pending': '#D7D7D7',
+        'ready': 'B2CEE8',
+        'in progress': 'F5F3A4',
+        'on hold': '#E8B2B8',
+        'client response': '#DDD5B8',
+        'completed': '#B7E0A5',
+        'need buddy check': '#E3701A',
+        'internal rejection': '#FF0000',
+        'external rejection': '#FF0000',
+        'failed qc': '#FF0000',
+        'rejected': '#FF0000',
+        'fix needed': '#C466A1',
+        'dr in progress': '#D6E0A4',
+        'amberfin01 in progress': '#D8F1A8',
+        'amberfin02 in progress': '#F3D291',
+        'baton in progress': '#C6E0A4',
+        'export in progress': '#796999',
+        'buddy check in progress': '#1AADE3'
+    }
 
     def set_header(self, table, groups):
         """
@@ -22,7 +44,10 @@ class HotTodayWdg(BaseRefreshWdg):
         header_row = table.add_row()
         header_row.add_style('background-color', '#E0E0E0')
 
-        for group in groups:
+        # Add the title cell, it won't be included in the groups list since it should always be there by default
+        groups_with_title = ['title'] + groups
+
+        for group in groups_with_title:
             group_cell = table.add_header(title_case(group), row=header_row)
             group_cell.add_style('padding', '10px')
             group_cell.add_style('background-color', '#F2F2F2')
@@ -30,7 +55,7 @@ class HotTodayWdg(BaseRefreshWdg):
 
         table.add_row()
 
-    def set_row(self, title, table, counter, number_of_columns):
+    def set_row(self, title, table, counter, header_groups, tasks):
         """
         Construct a row in the Hot Today list and add it to the table.
 
@@ -38,6 +63,7 @@ class HotTodayWdg(BaseRefreshWdg):
         :param table:
         :param counter:
         :param number_of_columns:
+        :param tasks:
         :return: None
         """
         from order_builder.order_builder import OrderBuilderLauncherWdg
@@ -165,10 +191,41 @@ class HotTodayWdg(BaseRefreshWdg):
         title_cell.add_style('padding', '4px')
         title_cell.add_style('width', '400px')
 
-        for column in xrange(number_of_columns):
-            # TODO: Actually insert the relevant data
-            row_cell = table.add_cell()
-            row_cell.add_style('border', '1px solid #EEE')
+        # Now add the cells for each column. Add the data in each column as necessary, or just add a blank cell
+        # if no data exists.
+        for column in header_groups:
+            column_tasks = [task for task in tasks if task.get_value('assigned_login_group') == column]
+            if column_tasks:
+                # Fill the cell with the tasks on this title
+                task_table = Table()
+                task_table.add_style('width', '100%')
+                task_table.add_style('font-size', '10px')
+
+                for task in column_tasks:
+                    current_task_row = task_table.add_row()
+                    current_task_row.add_style('background-color', self.TASK_COLOR_DICT.get(task.get_value('status').lower(), '#000000'))
+                    current_task_row.add_style('padding', '3px')
+                    current_task_row.add_style('min-height', '20px')
+                    current_task_row.add_style('border-top-left-radius', '10px')
+                    current_task_row.add_style('border-bottom-left-radius', '10px')
+
+                    inspect_button = TaskObjLauncherWdg(code=task.get_value('lookup_code'), name=task.get_value('process'))
+                    task_table.add_cell(data=inspect_button, row=current_task_row)
+
+                    # Each task in the row will have the following properties to be displayed
+                    cell_names = ['process', 'status', 'assigned', 'bid_end_date']
+
+                    # Add each property from left to right in the current task row. Abbreviate the text to make it
+                    # fit better
+                    for cell_name in cell_names:
+                        task_table.add_cell(data=abbreviate_text(task.get_value(cell_name), 7), row=current_task_row)
+
+                row_cell = table.add_cell(task_table)
+                row_cell.add_style('border', '1px solid #EEE')
+                row_cell.add_style('vertical-align', 'top')
+            else:
+                row_cell = table.add_cell()
+                row_cell.add_style('border', '1px solid #EEE')
 
         table.add_row()
 
@@ -177,6 +234,44 @@ class HotTodayWdg(BaseRefreshWdg):
         priority_row.add_style('background-color', '#DCE3EE')
 
         table.add_row()
+
+    def get_tasks(self, hot_items):
+        kgroups = ['ALL']
+
+        in_str = ''
+        for bb in hot_items:
+            code = bb.get_value('code')
+            if in_str == '':
+                in_str = "('%s'" % code
+            else:
+                in_str = "%s,'%s'" % (in_str, code)
+        in_str = "%s)" % in_str
+
+        tq = Search("sthpw/task")
+        tq.add_filter('bigboard', True)
+        tq.add_filter('active', '1')
+        tq.add_filter('search_type', 'twog/proj?project=twog')
+        tq.add_filter('status', 'Completed', op="!=")
+        if kgroups[0] != 'ALL':
+            tq.add_where("\"assigned_login_group\" in ('%s','%s')" % (kgroups[0], kgroups[0]))
+        tq.add_where("\"title_code\" in %s" % in_str)
+
+        task_search_results = tq.get_sobjects()
+        # print(task_search_results)
+        # print(dir(task_search_results[0]))
+
+        return task_search_results
+
+    def get_work_orders(self, hot_items):
+
+        work_order_search = Search("twog/work_order")
+        work_order_search.add_where("\"title_code\" in ('TITLE48607', 'TITLE49715', 'TITLE49673')")
+        work_orders = work_order_search.get_sobjects()
+
+        print(work_orders)
+        print([work_order.get_value('title_code') for work_order in work_orders])
+
+        return work_orders
 
     def get_display(self):
         table = Table()
@@ -188,11 +283,9 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_border(style='solid', color='#F2F2F2', size='1px')
 
         # TODO: Get which headers to display dynamically
-        header_groups = ['title', 'machine room', 'compression', 'localization', 'qc', 'vault', 'edeliveries',
+        # 'title' is also in the headers, but since that always displays we'll leave it out here
+        header_groups = ['machine room', 'compression', 'localization', 'qc', 'vault', 'edeliveries',
                          'scheduling']
-
-        # Minus one because title is calculated separately
-        number_of_columns = len(header_groups) - 1
 
         self.set_header(table, header_groups)
 
@@ -203,17 +296,32 @@ class HotTodayWdg(BaseRefreshWdg):
         search_for_hot_items.add_order_by('expected_delivery_date')
         hot_items = search_for_hot_items.get_sobjects()
 
+        tasks = self.get_tasks(hot_items)
+        # print([task.get_value('status') for task in tasks])
+        # print([task.get_value('process') for task in tasks])
+        # print([task.get_value('lookup_code') for task in tasks])
+
+        self.get_work_orders(hot_items)
+
         # Current priority will be updated each time a title has a different priority from the last value
         current_priority = 0
+        title_counter = 1
 
-        for counter, hot_item in enumerate(hot_items, 1):
+        for hot_item in hot_items:
             hot_item_priority = float(hot_item.get_value('priority'))
 
-            if current_priority < hot_item_priority:
-                self.set_priority_row(table, hot_item_priority)
-                current_priority = hot_item_priority
+            # Get the tasks that correspond to a title by comparing the task's title_code to the title's code
+            item_tasks = [task for task in tasks if task.get_value('title_code') == hot_item.get_value('code')]
 
-            self.set_row(hot_item, table, counter, number_of_columns)
+            if item_tasks:
+
+                if current_priority < hot_item_priority:
+                    self.set_priority_row(table, hot_item_priority)
+                    current_priority = hot_item_priority
+
+                self.set_row(hot_item, table, title_counter, header_groups, item_tasks)
+
+                title_counter += 1
 
         # Put the table in a DivWdg, makes it fit better with the Tactic side bar
         hotlist_div = DivWdg()
