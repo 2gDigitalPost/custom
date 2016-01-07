@@ -1,9 +1,11 @@
 import datetime
+
 from pyasm.web import DivWdg, Table
 from tactic.ui.common import BaseRefreshWdg
 from common_tools.common_functions import title_case, abbreviate_text
 from pyasm.search import Search
-from hottoday_utils import get_date_status, get_date_status_color, get_client_img, get_platform_img
+from hottoday_utils import get_date_status, get_date_status_color, get_client_img, get_launch_note_behavior
+from order_builder import OrderBuilderLauncherWdg
 from order_builder.taskobjlauncher import TaskObjLauncherWdg
 
 
@@ -184,6 +186,18 @@ class HotTodayWdg(BaseRefreshWdg):
 
         title_table.add_cell(data=due_date_data, row=due_date_row)
 
+        # Last Row: Order Builder and Notes Widgets
+        editing_row = title_table.add_row()
+
+        order_builder = OrderBuilderLauncherWdg(code=title.get_value('order_code'))
+
+        title_table.add_cell(data=order_builder, row=editing_row)
+
+        notes = title_table.add_cell('<img src="/context/icons/silk/note_add.png"/>')
+        notes.add_style('cursor: pointer;')
+        notes.add_behavior(get_launch_note_behavior(title.get_search_key(), name))
+
+        # Add the title table to the table row
         title_cell = table.add_cell(title_table)
         title_cell.add_style('background-color', title_cell_background_color)
         title_cell.add_style('border', '1px solid #EEE')

@@ -102,7 +102,25 @@ def get_date_status_color(status):
     else:
         return '#FF0000'
 
+
 # The following functions are Javascript behaviors that the hot list uses
+
+def get_launch_note_behavior(sk, name):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      var sk = '%s';
+                      var name = '%s';
+                      kwargs =  {'search_key': sk, 'append_process': 'Client Services,Redelivery/Rejection Request,Redelivery/Rejection Completed', 'chronological': true};
+                      spt.panel.load_popup('Notes for ' + name, 'tactic.ui.widget.DiscussionWdg', kwargs);
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (sk, name)}
+    return behavior
+
 
 def get_onload():
     return r'''
