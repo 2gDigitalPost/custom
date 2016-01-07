@@ -62,11 +62,10 @@ class HotTodayWdg(BaseRefreshWdg):
         :param title:
         :param table:
         :param counter:
-        :param number_of_columns:
+        :param header_groups:
         :param tasks:
         :return: None
         """
-        from order_builder.order_builder import OrderBuilderLauncherWdg
 
         name = title.get_value('title')
         code = title.get_value('code')
@@ -237,16 +236,15 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_row()
 
     def get_tasks(self, hot_items):
+        # TODO: Figure out what 'kgroups' is supposed to be and how it's determined
         kgroups = ['ALL']
 
-        in_str = ''
-        for bb in hot_items:
-            code = bb.get_value('code')
-            if in_str == '':
-                in_str = "('%s'" % code
-            else:
-                in_str = "%s,'%s'" % (in_str, code)
-        in_str = "%s)" % in_str
+        title_codes = []
+
+        for item in hot_items:
+            title_codes.append("'{0}'".format(item.get_value('code')))
+
+        title_codes_string = ','.join(title_codes)
 
         tq = Search("sthpw/task")
         tq.add_filter('bigboard', True)
@@ -254,8 +252,8 @@ class HotTodayWdg(BaseRefreshWdg):
         tq.add_filter('search_type', 'twog/proj?project=twog')
         tq.add_filter('status', 'Completed', op="!=")
         if kgroups[0] != 'ALL':
-            tq.add_where("\"assigned_login_group\" in ('%s','%s')" % (kgroups[0], kgroups[0]))
-        tq.add_where("\"title_code\" in %s" % in_str)
+            tq.add_where("\"assigned_login_group\" in ('{0}','{0}')".format((kgroups[0])))
+        tq.add_where('\"title_code\" in ({0})'.format(title_codes_string))
 
         task_search_results = tq.get_sobjects()
 
@@ -280,8 +278,7 @@ class HotTodayWdg(BaseRefreshWdg):
 
         # TODO: Get which headers to display dynamically
         # 'title' is also in the headers, but since that always displays we'll leave it out here
-        header_groups = ['machine room', 'compression', 'localization', 'qc', 'vault', 'edeliveries',
-                         'scheduling']
+        header_groups = ['machine room', 'compression', 'localization', 'qc', 'vault', 'edeliveries', 'scheduling']
 
         self.set_header(table, header_groups)
 
