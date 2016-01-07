@@ -270,8 +270,8 @@ class HotTodayWdg(BaseRefreshWdg):
     def get_display(self):
         table = Table()
         table.add_attr('class', 'bigboard')
-        table.add_attr('width', '100%')
-        table.add_attr('bgcolor', '#fcfcfc')
+        table.add_style('width', '100%')
+        table.add_style('background-color', '#FCFCFC')
         table.add_style('font-size', '12px')
         table.add_style('font-family', 'Helvetica')
         table.add_border(style='solid', color='#F2F2F2', size='1px')
