@@ -156,35 +156,11 @@ class HotTodayWdg(BaseRefreshWdg):
         title_table.add_cell(data=client_data, row=code_row)
         title_table.add_cell(data=platform_data, row=code_row)
 
-        # Third row: Deliver By Date
-        deliver_by_row = title_table.add_row()
-
-        delivery_date_status = get_date_status(expected_delivery_date)
-        delivery_date_status_color = get_date_status_color(delivery_date_status)
-
-        deliver_by_row.add_style('color', delivery_date_status_color)
-        deliver_by_row.add_style('font-size', '14px')
-        deliver_by_row.add_style('font-weight', 'bold')
-        deliver_by_row.add_style('text-shadow', '1px 1px #000000')
-
-        delivery_date_data = 'Deliver By: {0}'.format(expected_delivery_date)
-
-        title_table.add_cell(data=delivery_date_data, row=deliver_by_row)
+        # Third Row: Deliver By Date
+        self.set_date_row(title_table, expected_delivery_date, 'Deliver By')
 
         # Fourth Row: Due Date
-        due_date_row = title_table.add_row()
-
-        due_date_status = get_date_status(due_date)
-        due_date_status_color = get_date_status_color(due_date_status)
-
-        due_date_row.add_style('color', due_date_status_color)
-        due_date_row.add_style('font-size', '14px')
-        due_date_row.add_style('font-weight', 'bold')
-        due_date_row.add_style('text-shadow', '1px 1px #000000')
-
-        due_date_data = 'Due Date: {0}'.format(due_date)
-
-        title_table.add_cell(data=due_date_data, row=due_date_row)
+        self.set_date_row(title_table, due_date, 'Due Date')
 
         # Last Row: Order Builder and Notes Widgets
         editing_row = title_table.add_row()
@@ -242,6 +218,30 @@ class HotTodayWdg(BaseRefreshWdg):
                 row_cell.add_style('border', '1px solid #EEE')
 
         table.add_row()
+
+    def set_date_row(self, table, date, row_text):
+        """
+        Given a table, set up a row to display the Deliver By or Due Date data. The rows are basically set up the
+        same way, only the dates given and the text to display differ.
+
+        :param table: The table to set the rows on.
+        :param date: Datetime in the format '%Y-%m-%d %H:%M:%S' (other formats might work, but that's untested)
+        :param row_text: String ('Deliver By'/'Due Date')
+        :return:
+        """
+        date_row = table.add_row()
+
+        date_status = get_date_status(date)
+        date_status_color = get_date_status_color(date_status)
+
+        date_row.add_style('color', date_status_color)
+        date_row.add_style('font-size', '14px')
+        date_row.add_style('font-weight', 'bold')
+        date_row.add_style('text-shadow', '1px 1px #000000')
+
+        delivery_date_data = '{0}: {1}'.format(row_text, date)
+
+        table.add_cell(data=delivery_date_data, row=date_row)
 
     def set_priority_row(self, table, priority):
         priority_row = table.add_cell(priority)
