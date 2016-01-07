@@ -208,6 +208,7 @@ class HotTodayWdg(BaseRefreshWdg):
                     current_task_row.add_style('min-height', '20px')
                     current_task_row.add_style('border-top-left-radius', '10px')
                     current_task_row.add_style('border-bottom-left-radius', '10px')
+                    current_task_row.add_attr('title', task.get_value('lookup_code'))
 
                     inspect_button = TaskObjLauncherWdg(code=task.get_value('lookup_code'), name=task.get_value('process'))
                     task_table.add_cell(data=inspect_button, row=current_task_row)
@@ -257,8 +258,6 @@ class HotTodayWdg(BaseRefreshWdg):
         tq.add_where("\"title_code\" in %s" % in_str)
 
         task_search_results = tq.get_sobjects()
-        # print(task_search_results)
-        # print(dir(task_search_results[0]))
 
         return task_search_results
 
@@ -267,9 +266,6 @@ class HotTodayWdg(BaseRefreshWdg):
         work_order_search = Search("twog/work_order")
         work_order_search.add_where("\"title_code\" in ('TITLE48607', 'TITLE49715', 'TITLE49673')")
         work_orders = work_order_search.get_sobjects()
-
-        print(work_orders)
-        print([work_order.get_value('title_code') for work_order in work_orders])
 
         return work_orders
 
@@ -297,11 +293,6 @@ class HotTodayWdg(BaseRefreshWdg):
         hot_items = search_for_hot_items.get_sobjects()
 
         tasks = self.get_tasks(hot_items)
-        # print([task.get_value('status') for task in tasks])
-        # print([task.get_value('process') for task in tasks])
-        # print([task.get_value('lookup_code') for task in tasks])
-
-        self.get_work_orders(hot_items)
 
         # Current priority will be updated each time a title has a different priority from the last value
         current_priority = 0
