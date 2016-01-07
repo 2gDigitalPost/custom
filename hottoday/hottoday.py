@@ -106,6 +106,7 @@ class HotTodayWdg(BaseRefreshWdg):
 
         # Put together the title cell for the table. It includes the name, delivery date, status, and other info
         title_table = Table()
+        title_table.add_style('width', '100%')
 
         # If the order requires QC Mastering, add that above the first row
         if requires_mastering_qc:
@@ -152,9 +153,13 @@ class HotTodayWdg(BaseRefreshWdg):
 
         platform_data = '<i>Platform: </i>{0}'.format(platform_image)
 
-        title_table.add_cell(data=code, row=code_row)
-        title_table.add_cell(data=client_data, row=code_row)
-        title_table.add_cell(data=platform_data, row=code_row)
+        code_cell = title_table.add_cell(data=code, row=code_row)
+        client_cell = title_table.add_cell(data=client_data, row=code_row)
+        platform_cell = title_table.add_cell(data=platform_data, row=code_row)
+        code_cell.add_style('padding-right', '3px')
+        client_cell.add_style('padding-left', '3px')
+        client_cell.add_style('padding-right', '3px')
+        platform_cell.add_style('padding-left', '3px')
 
         # Third Row: Deliver By Date
         self.set_date_row(title_table, expected_delivery_date, 'Deliver By')
@@ -272,14 +277,6 @@ class HotTodayWdg(BaseRefreshWdg):
         task_search_results = tq.get_sobjects()
 
         return task_search_results
-
-    def get_work_orders(self, hot_items):
-
-        work_order_search = Search("twog/work_order")
-        work_order_search.add_where("\"title_code\" in ('TITLE48607', 'TITLE49715', 'TITLE49673')")
-        work_orders = work_order_search.get_sobjects()
-
-        return work_orders
 
     def get_display(self):
         table = Table()
