@@ -2,7 +2,6 @@ from custom_piper import *
 from custom_pipeline_canvas_wdg import *
 from order_builder import *
 from order_checker import *
-#from order_classification_info import *
 from movement_maker import *
 from movement_printer2 import *
 from source_cloner import *
@@ -12,3 +11,4 @@ from work_order_printer import *
 from source_security_wdg import *
 from error_viewer import *
 from platform_tools import *
+from task_edit_widget import *

@@ -5,6 +5,8 @@ from pyasm.search import Search
 from pyasm.web import Table, DivWdg
 from tactic.ui.common import BaseRefreshWdg
 
+# TODO: This file appears to do nothing and is likely safe to delete
+
 class ClassificationChangeInfoWdg(BaseRefreshWdg):
     def init(my):
         my.order_sks = []
