@@ -39,12 +39,15 @@ class HotTodayWdg(BaseRefreshWdg):
         """
         Construct the header for the Hot Today table, then add it to the table.
 
-        :param table:
-        :param groups:
+        :param table: The table to add the header to
+        :param groups: The columns for the header
         :return: None
         """
         header_row = table.add_row()
         header_row.add_style('background-color', '#E0E0E0')
+        header_row.add_style('position', 'sticky')
+        header_row.add_style('width', '100%')
+        header_row.add_style('z-index', '0')
 
         # Add the title cell, it won't be included in the groups list since it should always be there by default
         groups_with_title = ['title'] + groups
@@ -249,12 +252,27 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_cell(data=delivery_date_data, row=date_row)
 
     def set_priority_row(self, table, priority):
+        """
+        Set the row showing the priority of the titles. This appears above a title row, and simply displays a decimal
+        number corresponding to the following titles' priority.
+
+        :param table: The "Hot Today" table
+        :param priority: The priority of the following items (decimal)
+        :return: None
+        """
         priority_row = table.add_cell(priority)
         priority_row.add_style('background-color', '#DCE3EE')
 
         table.add_row()
 
     def get_tasks(self, hot_items):
+        """
+        Given a list of 'titles', return all the tasks associated with those titles. Return only those marked as
+        'active' and that are not marked as 'completed'.
+
+        :param hot_items: A list of titles from 'twog/title'
+        :return: List of tasks
+        """
         # TODO: Figure out what 'kgroups' is supposed to be and how it's determined
         kgroups = ['ALL']
 
@@ -287,12 +305,17 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_style('font-family', 'Helvetica')
         table.add_border(style='solid', color='#F2F2F2', size='1px')
 
+        # Make the header sticky!
+        table.add_style('position', 'relative')
+        table.add_style('z-index', '0')
+
         # TODO: Get which headers to display dynamically
         # 'title' is also in the headers, but since that always displays we'll leave it out here
         header_groups = ['machine room', 'compression', 'localization', 'qc', 'vault', 'edeliveries', 'scheduling']
 
         self.set_header(table, header_groups)
 
+        # Search for titles that are marked as 'hot'
         search_for_hot_items = Search('twog/title')
         search_for_hot_items.add_filter('bigboard', True)
         search_for_hot_items.add_filter('status', 'Completed', op='!=')
