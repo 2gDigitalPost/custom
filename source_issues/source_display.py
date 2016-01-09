@@ -8,10 +8,17 @@ class SourceTypeIconWdg(BaseTableElementWdg):
 
     def init(my):
         nothing = 'true'
-        my.lookups = {'File': '/context/images/media-file.png', 'CD': '/context/images/media-cd.png', 'DVD': '/context/images/media-dvd.png', 'Hard Drive': '/context/images/media-hard-drive.png', 'Blu-ray': '/context/images/media-blu-ray.png', 'Tape': '/context/images/media-tape.png'}
+        my.lookups = {
+            'File': '/context/images/media-file.png',
+            'CD': '/context/images/media-cd.png',
+            'DVD': '/context/images/media-dvd.png',
+            'Hard Drive': '/context/images/media-hard-drive.png',
+            'Blu-ray': '/context/images/media-blu-ray.png',
+            'Tape': '/context/images/media-tape.png',
+            'Other': ''
+        }
 
     def get_display(my):
-        code = ''
         widget = DivWdg()
         table = Table()
         if 'code' in my.kwargs.keys():
