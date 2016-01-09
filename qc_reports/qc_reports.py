@@ -1257,7 +1257,7 @@ class PrintQCReportWdg(Command):
         from client.tactic_client_lib import TacticServerStub
         from pyasm.common import Environment
         super(PrintQCReportWdg, my).__init__(**kwargs)
-        my.html = str(kwargs.get('html'))
+        my.html = unicode(kwargs.get('html'))
         my.preppend_file_name = str(kwargs.get('preppend_file_name'))
         my.type = str(kwargs.get('type'))
 
