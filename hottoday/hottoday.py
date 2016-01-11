@@ -4,7 +4,7 @@ from pyasm.web import DivWdg, Table
 from tactic.ui.common import BaseRefreshWdg
 from common_tools.common_functions import title_case, abbreviate_text
 from pyasm.search import Search
-from hottoday_utils import get_date_status, get_date_status_color, get_client_img, get_platform_img,\
+from hottoday_utils import get_date_status, get_client_img, get_platform_img,\
     get_launch_note_behavior, save_priorities, bring_to_top, set_scroll, get_reload
 from order_builder import OrderBuilderLauncherWdg
 from order_builder.taskobjlauncher import TaskObjLauncherWdg
@@ -34,6 +34,12 @@ class HotTodayWdg(BaseRefreshWdg):
         'baton in progress': '#C6E0A4',
         'export in progress': '#796999',
         'buddy check in progress': '#1AADE3'
+    }
+
+    DATE_STATUS_COLOR = {
+        'on_time': '#66DC00',
+        'due_today': '#E0B600',
+        'late': '#FF0000'
     }
 
     @staticmethod
@@ -231,8 +237,7 @@ class HotTodayWdg(BaseRefreshWdg):
 
         table.add_row()
 
-    @staticmethod
-    def set_date_row(table, date, row_text):
+    def set_date_row(self, table, date, row_text):
         """
         Given a table, set up a row to display the Deliver By or Due Date data. The rows are basically set up the
         same way, only the dates given and the text to display differ.
@@ -245,7 +250,7 @@ class HotTodayWdg(BaseRefreshWdg):
         date_row = table.add_row()
 
         date_status = get_date_status(date)
-        date_status_color = get_date_status_color(date_status)
+        date_status_color = self.DATE_STATUS_COLOR.get(date_status, '#000000')
 
         date_row.add_style('color', date_status_color)
         date_row.add_style('font-size', '14px')

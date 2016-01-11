@@ -94,27 +94,6 @@ def get_date_status(delivery_datetime):
         return 'late'
 
 
-def get_date_status_color(status):
-    """
-    Take a delivery date status (from the above function get_delivery_date_status) and return a color to display in
-    RGB hexadecimal format.
-
-    'on_time': '#66DC00' (Green)
-    'due_today': '#E0B600 (Yellow)
-    'late': '#FF0000' (Red)
-
-    :param status: String ('on_time', 'due_today', 'late')
-    :return: String (RGB hexadecimal)
-    """
-
-    if status == 'on_time':
-        return '#66DC00'
-    elif status == 'due_today':
-        return '#E0B600'
-    else:
-        return '#FF0000'
-
-
 # The following functions are Javascript behaviors that the hot list uses
 
 def get_launch_note_behavior(sk, name):
