@@ -13,51 +13,63 @@ from pyasm.search import Search
 
 
 def get_platform_img(platform):
-    # TODO: Looks nearly identical to get_client_img, possibly merge the two into one function
     img_path = ''
     platform_search = Search("twog/platform")
     platform_search.add_filter('name', platform)
-    platform = platform_search.get_sobject()
-    platform_id = platform.get_id()
-    snaps_s = Search("sthpw/snapshot")
-    snaps_s.add_filter('search_id', platform_id)
-    snaps_s.add_filter('search_type', 'twog/platform?project=twog')
-    snaps_s.add_filter('is_current', '1')
-    snaps_s.add_filter('version', '0', op='>')
-    snaps_s.add_where("\"context\" in ('publish','icon','MISC')")
-    snaps_s.add_order_by('timestamp desc')
-    snaps = snaps_s.get_sobjects()
-    if len(snaps) > 0:
-        server = TacticServerStub.get()
-        snap = snaps[0]
-        img_path = server.get_path_from_snapshot(snap.get_code(), mode="web")
-        if img_path not in [None, '']:
-            img_path = 'http://' + server.get_server_name() + img_path
-    return img_path
+    platform_search_object = platform_search.get_sobject()
+
+    if platform_search_object:
+        platform_id = platform_search_object.get_id()
+
+        snaps_s = Search("sthpw/snapshot")
+        snaps_s.add_filter('search_id', platform_id)
+        snaps_s.add_filter('search_type', 'twog/platform?project=twog')
+        snaps_s.add_filter('is_current', '1')
+        snaps_s.add_filter('version', '0', op='>')
+        snaps_s.add_where("\"context\" in ('publish','icon','MISC')")
+        snaps_s.add_order_by('timestamp desc')
+        snaps = snaps_s.get_sobjects()
+
+        if len(snaps) > 0:
+            server = TacticServerStub.get()
+            snap = snaps[0]
+            img_path = server.get_path_from_snapshot(snap.get_code(), mode="web")
+
+            if img_path:
+                img_path = 'http://' + server.get_server_name() + img_path
+        return img_path
+    else:
+        return None
 
 
 def get_client_img(client_code):
-    # TODO: Looks nearly identical to get_platform_img, possibly merge the two into one function
     img_path = ''
     client_search = Search("twog/client")
     client_search.add_filter('code', client_code)
-    client = client_search.get_sobject()
-    client_id = client.get_id()
-    snaps_s = Search("sthpw/snapshot")
-    snaps_s.add_filter('search_id', client_id)
-    snaps_s.add_filter('search_type', 'twog/client?project=twog')
-    snaps_s.add_filter('is_current', '1')
-    snaps_s.add_filter('version', '0', op='>')
-    snaps_s.add_where("\"context\" in ('publish','icon','MISC')")
-    snaps_s.add_order_by('timestamp desc')
-    snaps = snaps_s.get_sobjects()
-    if len(snaps) > 0:
-        server = TacticServerStub.get()
-        snap = snaps[0]
-        img_path = server.get_path_from_snapshot(snap.get_code(), mode="web")
-        if img_path not in [None, '']:
-            img_path = 'http://' + server.get_server_name() + img_path
-    return img_path
+    client_search_object = client_search.get_sobject()
+
+    if client_search_object:
+        client_id = client_search_object.get_id()
+
+        snaps_s = Search("sthpw/snapshot")
+        snaps_s.add_filter('search_id', client_id)
+        snaps_s.add_filter('search_type', 'twog/client?project=twog')
+        snaps_s.add_filter('is_current', '1')
+        snaps_s.add_filter('version', '0', op='>')
+        snaps_s.add_where("\"context\" in ('publish','icon','MISC')")
+        snaps_s.add_order_by('timestamp desc')
+        snaps = snaps_s.get_sobjects()
+
+        if len(snaps) > 0:
+            server = TacticServerStub.get()
+            snap = snaps[0]
+            img_path = server.get_path_from_snapshot(snap.get_code(), mode="web")
+
+            if img_path:
+                img_path = 'http://' + server.get_server_name() + img_path
+        return img_path
+    else:
+        return None
 
 
 def get_date_status(delivery_datetime):
@@ -68,7 +80,7 @@ def get_date_status(delivery_datetime):
     If the delivery date is today, return the string 'due_today'
     Otherwise, return 'late'
 
-    :param delivery_date: A datetime.datetime object
+    :param delivery_datetime: A datetime.datetime object
     :return: String ('on_time', 'due_today', 'late')
     """
     todays_date = datetime.date.today()

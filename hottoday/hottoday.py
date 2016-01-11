@@ -4,7 +4,8 @@ from pyasm.web import DivWdg, Table
 from tactic.ui.common import BaseRefreshWdg
 from common_tools.common_functions import title_case, abbreviate_text
 from pyasm.search import Search
-from hottoday_utils import get_date_status, get_date_status_color, get_client_img, get_launch_note_behavior
+from hottoday_utils import get_date_status, get_date_status_color, get_client_img, get_platform_img,\
+    get_launch_note_behavior
 from order_builder import OrderBuilderLauncherWdg
 from order_builder.taskobjlauncher import TaskObjLauncherWdg
 
@@ -35,7 +36,8 @@ class HotTodayWdg(BaseRefreshWdg):
         'buddy check in progress': '#1AADE3'
     }
 
-    def set_header(self, table, groups):
+    @staticmethod
+    def set_header(table, groups):
         """
         Construct the header for the Hot Today table, then add it to the table.
 
@@ -79,7 +81,8 @@ class HotTodayWdg(BaseRefreshWdg):
         client_code = title.get_value('client_code')
         platform = title.get_value('platform')
         due_date = datetime.datetime.strptime(title.get_value('due_date'), '%Y-%m-%d %H:%M:%S')
-        expected_delivery_date = datetime.datetime.strptime(title.get_value('expected_delivery_date'), '%Y-%m-%d %H:%M:%S')
+        expected_delivery_date = datetime.datetime.strptime(title.get_value('expected_delivery_date'),
+                                                            '%Y-%m-%d %H:%M:%S')
         requires_mastering_qc = title.get_value('requires_mastering_qc', False)
         is_external_rejection = title.get_value('is_external_rejection', False)
         is_redo = title.get_value('redo', False)
@@ -137,20 +140,19 @@ class HotTodayWdg(BaseRefreshWdg):
         client_image_src = get_client_img(client_code)
 
         if client_image_src:
-            client_image = '<img src="{0}" title="{1}" alt="{1}" style="width: 32px; height: 32px;">'.format(client_image_src, client)
+            client_image = '<img src="{0}" title="{1}" alt="{1}" style="width: 32px; height: 32px;">'.format(
+                    client_image_src, client)
         else:
             client_image = '<b>{0}</b>'.format(client)
 
         client_data = '<b>Client:</b> {0}'.format(client_image)
 
         # Find the platform image
-        # FIXME: Platform image find is not working.
-
-        # platform_image_src = get_platform_img(platform)
-        platform_image_src = ''
+        platform_image_src = get_platform_img(platform)
 
         if platform_image_src:
-            platform_image = '<img src="{0}" title="{1}" alt="{1}" style="width: 32px; height: 32px;">'.format(platform_image_src, platform)
+            platform_image = '<img src="{0}" title="{1}" alt="{1}" style="width: 32px; height: 32px;">'.format(
+                    platform_image_src, platform)
         else:
             platform_image = '<i>{0}</i>'.format(platform)
 
@@ -200,14 +202,16 @@ class HotTodayWdg(BaseRefreshWdg):
 
                 for task in column_tasks:
                     current_task_row = task_table.add_row()
-                    current_task_row.add_style('background-color', self.TASK_COLOR_DICT.get(task.get_value('status').lower(), '#000000'))
+                    current_task_row.add_style('background-color',
+                                               self.TASK_COLOR_DICT.get(task.get_value('status').lower(), '#000000'))
                     current_task_row.add_style('padding', '3px')
                     current_task_row.add_style('min-height', '20px')
                     current_task_row.add_style('border-top-left-radius', '10px')
                     current_task_row.add_style('border-bottom-left-radius', '10px')
                     current_task_row.add_attr('title', task.get_value('lookup_code'))
 
-                    inspect_button = TaskObjLauncherWdg(code=task.get_value('lookup_code'), name=task.get_value('process'))
+                    inspect_button = TaskObjLauncherWdg(code=task.get_value('lookup_code'),
+                                                        name=task.get_value('process'))
                     task_table.add_cell(data=inspect_button, row=current_task_row)
 
                     # Each task in the row will have the following properties to be displayed
@@ -227,7 +231,8 @@ class HotTodayWdg(BaseRefreshWdg):
 
         table.add_row()
 
-    def set_date_row(self, table, date, row_text):
+    @staticmethod
+    def set_date_row(table, date, row_text):
         """
         Given a table, set up a row to display the Deliver By or Due Date data. The rows are basically set up the
         same way, only the dates given and the text to display differ.
@@ -251,7 +256,8 @@ class HotTodayWdg(BaseRefreshWdg):
 
         table.add_cell(data=delivery_date_data, row=date_row)
 
-    def set_priority_row(self, table, priority):
+    @staticmethod
+    def set_priority_row(table, priority):
         """
         Set the row showing the priority of the titles. This appears above a title row, and simply displays a decimal
         number corresponding to the following titles' priority.
@@ -265,7 +271,8 @@ class HotTodayWdg(BaseRefreshWdg):
 
         table.add_row()
 
-    def get_tasks(self, hot_items):
+    @staticmethod
+    def get_tasks(hot_items):
         """
         Given a list of 'titles', return all the tasks associated with those titles. Return only those marked as
         'active' and that are not marked as 'completed'.
