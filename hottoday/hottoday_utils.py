@@ -430,50 +430,50 @@ def change_group():
 
 def bring_to_top():
     behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-            try{
-                body = document.getElementById('title_body');
-                body.scrollTop = 0;
-        }
-        catch(err){
-                  spt.app_busy.hide();
-                  spt.alert(spt.exception.handler(err));
-        }
-     '''}
+try {
+    body = document.getElementById('hotlist_div');
+    body.scrollTop = 0;
+}
+catch(err) {
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+    '''}
     return behavior
 
 
 def toggle_groupings():
     behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-            try{
-                prio = bvr.src_el.getAttribute('current_priority');
-                state = bvr.src_el.getAttribute('state');
-                if(state == 'opened'){
-                    bvr.src_el.setAttribute('state','closed');
-                    state = 'closed';
-                }else{
-                    bvr.src_el.setAttribute('state','opened');
-                    state = 'opened';
-                }
+        try {
+            prio = bvr.src_el.getAttribute('current_priority');
+            state = bvr.src_el.getAttribute('state');
+            if(state == 'opened') {
+                bvr.src_el.setAttribute('state','closed');
+                state = 'closed';
+            } else {
+                bvr.src_el.setAttribute('state','opened');
+                state = 'opened';
+            }
 
-                top_el = document.getElementById('title_body');
-                rows = top_el.getElementsByClassName('trow');
-                for(var r = 0; r < rows.length; r++){
-                    if(rows[r].getAttribute('current_priority') == prio){
-                        if(state == 'closed'){
-                            //rows[r].setAttribute('viz','false');
-                            rows[r].style.display = 'none';
-                        }else{
-                            //rows[r].setAttribute('viz','true');
-                            rows[r].style.display = 'table-row';
-                        }
+            top_el = document.getElementById('title_body');
+            rows = top_el.getElementsByClassName('trow');
+            for(var r = 0; r < rows.length; r++) {
+                if(rows[r].getAttribute('current_priority') == prio) {
+                    if(state == 'closed') {
+                        //rows[r].setAttribute('viz','false');
+                        rows[r].style.display = 'none';
+                    } else {
+                        //rows[r].setAttribute('viz','true');
+                        rows[r].style.display = 'table-row';
                     }
                 }
+            }
 
 
         }
         catch(err){
-                  spt.app_busy.hide();
-                  spt.alert(spt.exception.handler(err));
+            spt.app_busy.hide();
+            spt.alert(spt.exception.handler(err));
         }
-     '''}
+    '''}
     return behavior

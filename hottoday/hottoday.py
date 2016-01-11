@@ -5,7 +5,7 @@ from tactic.ui.common import BaseRefreshWdg
 from common_tools.common_functions import title_case, abbreviate_text
 from pyasm.search import Search
 from hottoday_utils import get_date_status, get_date_status_color, get_client_img, get_platform_img,\
-    get_launch_note_behavior
+    get_launch_note_behavior, save_priorities, bring_to_top, set_scroll, get_reload
 from order_builder import OrderBuilderLauncherWdg
 from order_builder.taskobjlauncher import TaskObjLauncherWdg
 
@@ -303,6 +303,44 @@ class HotTodayWdg(BaseRefreshWdg):
 
         return task_search_results
 
+    @staticmethod
+    def get_buttons(auto_refresh, auto_scroll):
+        # TODO: Rewrite this entire function...
+        btns = Table()
+        btns.add_attr('class', 'auto_buttons')
+        btns.add_row()
+
+        if auto_refresh:
+            auto_text = 'Unset Auto-Refresh'
+        else:
+            auto_text = 'Set Auto-Refresh'
+
+        auto = btns.add_cell('<input type="button" value="%s"/>' % auto_text)
+        auto.add_attr('id', 'auto_refresh')
+        auto.add_attr('name', 'auto_refresh')
+        auto.add_attr('auto', auto_refresh)
+        auto.add_behavior(get_reload())
+
+        if auto_scroll:
+            scroll_text = 'Unset Auto-Scroll'
+        else:
+            scroll_text = 'Set Auto-Scroll'
+
+        scroll = btns.add_cell('<input type="button" value="%s"/>' % scroll_text)
+        scroll.add_attr('id', 'scroll_el')
+        scroll.add_attr('name', 'scroll_el')
+        scroll.add_attr('scroll', auto_scroll)
+        scroll.add_behavior(set_scroll())
+
+        to_top = btns.add_cell('<input type="button" value="Go To Top"/>')
+        to_top.add_behavior(bring_to_top())
+
+        # if my.big_user:
+        #     saveit = btns.add_cell('<input type="button" value="Save Priorities"/>')
+        #     saveit.add_behavior(save_priorities())
+
+        return btns
+
     def get_display(self):
         table = Table()
         table.add_attr('class', 'bigboard')
@@ -311,10 +349,6 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_style('font-size', '12px')
         table.add_style('font-family', 'Helvetica')
         table.add_border(style='solid', color='#F2F2F2', size='1px')
-
-        # Make the header sticky!
-        table.add_style('position', 'relative')
-        table.add_style('z-index', '0')
 
         # TODO: Get which headers to display dynamically
         # 'title' is also in the headers, but since that always displays we'll leave it out here
@@ -354,9 +388,15 @@ class HotTodayWdg(BaseRefreshWdg):
 
         # Put the table in a DivWdg, makes it fit better with the Tactic side bar
         hotlist_div = DivWdg()
+        hotlist_div.add_attr('id', 'hotlist_div')
         hotlist_div.add_style('overflow-y', 'scroll')
         hotlist_div.add_style('height', '900px')
 
         hotlist_div.add(table)
 
-        return hotlist_div
+        # Add an 'outer' div that holds the hotlist div, with the buttons below.
+        outer_div = DivWdg()
+        outer_div.add(hotlist_div)
+        outer_div.add(self.get_buttons(False, False))
+
+        return outer_div
