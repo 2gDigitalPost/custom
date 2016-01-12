@@ -195,21 +195,21 @@ def get_scroll_by_row():
     return behavior
 
 
-def save_priorities():
+def save_priorities_old():
     behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-        function do_proj_prios(title_code, new_priority){
-                //This is for assigning the projects the same priority
-                var server = TacticServerStub.get();
-                projects = server.eval("@SOBJECT(twog/proj['title_code','" + title_code + "'])");
-                for(var w = 0; w < projects.length; w++){
-                   wts_expr = "@SOBJECT(twog/work_order['proj_code','" + projects[w].code + "'].WT:sthpw/task['bigboard','True']['status','!=','Completed'])"
-                   wts = server.eval(wts_expr);
-                   if(wts.length > 0){
-                       server.update(projects[w].__search_key__, {'priority': new_priority});
-                   }
+        function do_proj_prios(title_code, new_priority) {
+            //This is for assigning the projects the same priority
+            var server = TacticServerStub.get();
+            projects = server.eval("@SOBJECT(twog/proj['title_code','" + title_code + "'])");
+            for (var w = 0; w < projects.length; w++) {
+                wts_expr = "@SOBJECT(twog/work_order['proj_code','" + projects[w].code + "'].WT:sthpw/task['bigboard','True']['status','!=','Completed'])"
+                wts = server.eval(wts_expr);
+                if (wts.length > 0) {
+                    server.update(projects[w].__search_key__, {'priority': new_priority});
                 }
+            }
         }
-        try{
+        try {
             var server = TacticServerStub.get();
             var buttons_el = spt.api.get_parent(bvr.src_el, '.auto_buttons');
             auto_el = buttons_el.getElementById('auto_refresh');
@@ -220,7 +220,7 @@ def save_priorities():
             all_dict = {};
             big_r = 0;
             big_val = 0;
-            for(var r = 0; r < tbs.length; r++){
+            for (var r = 0; r < tbs.length; r++) {
                 val = tbs[r].value;
                 old_val = tbs[r].getAttribute('current_count');
                 current_prio = tbs[r].getAttribute('current_priority');
@@ -228,49 +228,49 @@ def save_priorities():
                 t_code = '';
                 indie_sk = '';
                 row_type = tbs[r].getAttribute('row_type');
-                if(row_type == 'title'){
+                if (row_type == 'title') {
                     t_sk = tbs[r].getAttribute('title_sk');
                     t_code = t_sk.split('code=')[1];
                     ami_ext = tbs[r].getAttribute('external_rejection')
                     extr = false;
-                    if(ami_ext == 'true'){
+                    if (ami_ext == 'true') {
                         extr = true;
                         t_sk = tbs[r].getAttribute('ext_sk');
                     }
-                }else{
+                } else {
                     t_sk = tbs[r].getAttribute('task_sk');
                     t_code = t_sk.split('code=')[1];
                     indie_sk = '';
                     indie = server.eval("@SOBJECT(twog/indie_priority['task_code','" + t_code + "']['@ORDER_BY','timestamp desc'])");
-                    if(indie.length > 0){
+                    if (indie.length > 0) {
                         indie_sk = indie[0].__search_key__;
                     }
                 }
                 changed = false;
-                if(old_val != val){
+                if (old_val != val) {
                    changed = true;
                 }
                 all_dict[old_val] = {'current_count': old_val, 'current_priority': current_prio, 'sk': t_sk, 'row_type': row_type, 'changed': changed, 'new_count': val, 'indie_sk': indie_sk, 'code': t_code};
                 big_r = r;
                 big_val = old_val;
             }
-            for(var r = 1; r < tbs.length + 1; r++){
-                if(all_dict[r]['changed']){
+            for (var r = 1; r < tbs.length + 1; r++) {
+                if (all_dict[r]['changed']) {
                     new_count = Number(all_dict[r]['new_count']);
                     row_type = all_dict[r]['row_type'];
                     pre_prio = 0;
                     post_prio = 500;
-                    if(new_count != 1){
+                    if (new_count != 1) {
                         pre_prio = Number(all_dict[new_count - 1]['current_priority']);
                     }
-                    if(new_count != tbs.length + 1){
+                    if (new_count != tbs.length + 1) {
                         post_prio = Number(all_dict[new_count + 1]['current_priority']);
                     }
-                    new_priority = (pre_prio + post_prio)/2;
-                    if(row_type == 'title'){
+                    new_priority = (pre_prio + post_prio) / 2;
+                    if (row_type == 'title') {
                         server.update(all_dict[r]['sk'], {'priority': new_priority});
                         //do_proj_prios(all_dict[r]['code']);
-                    }else{
+                    } else {
                         server.update(all_dict[r]['sk'], {'indie_priority': new_priority});
                         server.update(all_dict[r]['indie_sk'], {'indie_priority': new_priority});
                     }
@@ -278,13 +278,110 @@ def save_priorities():
             }
 
             board_els = document.getElementsByClassName('bigboard');
-            for(var r = 0; r < 1; r++){
+            for (var r = 0; r < 1; r++) {
                 spt.app_busy.show("Refreshing...");
                 spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': 'ALL'});
                 spt.app_busy.hide();
             }
         }
-        catch(err){
+        catch(err) {
+                  spt.app_busy.hide();
+                  spt.alert(spt.exception.handler(err));
+        }
+     '''}
+    return behavior
+
+
+def save_priorities():
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+        function do_proj_prios(title_code, new_priority) {
+            //This is for assigning the projects the same priority
+            var server = TacticServerStub.get();
+            projects = server.eval("@SOBJECT(twog/proj['title_code','" + title_code + "'])");
+            for (var w = 0; w < projects.length; w++) {
+                wts_expr = "@SOBJECT(twog/work_order['proj_code','" + projects[w].code + "'].WT:sthpw/task['bigboard','True']['status','!=','Completed'])"
+                wts = server.eval(wts_expr);
+                if (wts.length > 0) {
+                    server.update(projects[w].__search_key__, {'priority': new_priority});
+                }
+            }
+        }
+        try {
+            var server = TacticServerStub.get();
+            var buttons_el = spt.api.get_parent(bvr.src_el, '.auto_buttons');
+            auto_el = buttons_el.getElementById('auto_refresh');
+            auto = auto_el.getAttribute('auto');
+            scroll_el = buttons_el.getElementById('scroll_el');
+            scroll = scroll_el.getAttribute('scroll');
+            tbs = document.getElementsByClassName('count_order');
+            all_dict = {};
+            big_r = 0;
+            big_val = 0;
+            for (var r = 0; r < tbs.length; r++) {
+                val = tbs[r].value;
+                old_val = tbs[r].getAttribute('current_count');
+                current_prio = tbs[r].getAttribute('current_priority');
+                t_sk = '';
+                t_code = '';
+                indie_sk = '';
+                row_type = tbs[r].getAttribute('row_type');
+                if (row_type == 'title') {
+                    t_sk = tbs[r].getAttribute('title_sk');
+                    t_code = t_sk.split('code=')[1];
+                    ami_ext = tbs[r].getAttribute('external_rejection')
+                    extr = false;
+                    if (ami_ext == 'true') {
+                        extr = true;
+                        t_sk = tbs[r].getAttribute('ext_sk');
+                    }
+                } else {
+                    t_sk = tbs[r].getAttribute('task_sk');
+                    t_code = t_sk.split('code=')[1];
+                    indie_sk = '';
+                    indie = server.eval("@SOBJECT(twog/indie_priority['task_code','" + t_code + "']['@ORDER_BY','timestamp desc'])");
+                    if (indie.length > 0) {
+                        indie_sk = indie[0].__search_key__;
+                    }
+                }
+                changed = false;
+                if (old_val != val) {
+                   changed = true;
+                }
+                all_dict[old_val] = {'current_count': old_val, 'current_priority': current_prio, 'sk': t_sk, 'row_type': row_type, 'changed': changed, 'new_count': val, 'indie_sk': indie_sk, 'code': t_code};
+                big_r = r;
+                big_val = old_val;
+            }
+            for (var r = 1; r < tbs.length + 1; r++) {
+                if (all_dict[r]['changed']) {
+                    new_count = Number(all_dict[r]['new_count']);
+                    row_type = all_dict[r]['row_type'];
+                    pre_prio = 0;
+                    post_prio = 500;
+                    if (new_count != 1) {
+                        pre_prio = Number(all_dict[new_count - 1]['current_priority']);
+                    }
+                    if (new_count != tbs.length + 1) {
+                        post_prio = Number(all_dict[new_count + 1]['current_priority']);
+                    }
+                    new_priority = (pre_prio + post_prio) / 2;
+                    if (row_type == 'title') {
+                        server.update(all_dict[r]['sk'], {'priority': new_priority});
+                        //do_proj_prios(all_dict[r]['code']);
+                    } else {
+                        server.update(all_dict[r]['sk'], {'indie_priority': new_priority});
+                        server.update(all_dict[r]['indie_sk'], {'indie_priority': new_priority});
+                    }
+                }
+            }
+
+            board_els = document.getElementsByClassName('bigboard');
+            for (var r = 0; r < 1; r++) {
+                spt.app_busy.show("Refreshing...");
+                spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': 'ALL'});
+                spt.app_busy.hide();
+            }
+        }
+        catch(err) {
                   spt.app_busy.hide();
                   spt.alert(spt.exception.handler(err));
         }
