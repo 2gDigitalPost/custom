@@ -4,7 +4,6 @@ from pyasm.web import DivWdg, Table
 from pyasm.search import Search
 from pyasm.common import Environment
 from tactic.ui.common import BaseRefreshWdg, BaseTableElementWdg
-from tactic_client_lib import TacticServerStub
 from common_tools.common_functions import title_case, abbreviate_text
 from hottoday_utils import get_date_status, get_client_img, get_platform_img, get_launch_note_behavior,\
     bring_to_top, set_scroll, get_reload, show_change, save_priorities
@@ -12,160 +11,87 @@ from order_builder import OrderBuilderLauncherWdg
 from order_builder.taskobjlauncher import TaskObjLauncherWdg
 
 
+class HotTodayRibbonWdg(BaseTableElementWdg):
+    """
+    This is the little red ribbon widget that appears in the bottom left corner of the title's row. It only shows
+    up for users that can change priority and hot today status. Clicking on it will prompt the user to confirm
+    that they want to remove the item from the Hot List. If they confirm, the item is removed from the table,
+    its status as a hot item is removed, and the table is refreshed.
+    """
 
-class BigBoardSelectWdg2(BaseTableElementWdg):
-
-    def init(my):
+    def init(self):
         nothing = 'true'
-        my.server = None
+        self.title_name = self.kwargs.get('title_name')
+        self.code = self.kwargs.get('code')
+        self.bigboard = self.kwargs.get('bigboard')
+        self.search_key = self.kwargs.get('search_key')
 
-    def get_stub(my):
-        my.server = TacticServerStub.get()
-
-    def get_launch_behavior(my, title_name, in_bigboard):
+    @staticmethod
+    def get_launch_behavior():
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var server = TacticServerStub.get();
-                          var title_name = "%s";
-                          var in_bigboard = "%s";
-                          var my_sk = bvr.src_el.get('sk');
-                          var state = bvr.src_el.get('state');
-                          var class_name = 'nighttime_hotlist.nighttime_hotlist2.BigBoardWOSelectWdg2';
-                          var checked = '/context/icons/silk/rosette.png';
-                          var unchecked = '/context/icons/silk/rosette_grey.png';
-                          nothing_else = false;
-                          changed = false
-                          if(state == 'checked'){
-                              img = unchecked;
-                              if(in_bigboard != 'Yep'){
-                                  if(confirm("Do you really want to take this off the Hot Today list?")){
-                                      server.update(my_sk, {'bigboard': 'false'});
-                                      bvr.src_el.setAttribute('state', 'unchecked');
-                                      changed = true;
-                                  }
-                              }else{
-                                  if(confirm("Do you really want to take this off the Hot Today list?")){
-                                      server.update(my_sk, {'bigboard': 'false'});
-                                      changed = true;
-                                      var buttons_el = document.getElementsByClassName('auto_buttons')[0];
-                                      auto_el = buttons_el.getElementById('auto_refresh');
-                                      auto = auto_el.getAttribute('auto');
-                                      scroll_el = buttons_el.getElementById('scroll_el');
-                                      scroll = scroll_el.getAttribute('scroll');
-                                      //group_el = buttons_el.getElementById('group_select');
-                                      //group = group_el.value;
-                                      group = 'ALL';
-                                      board_els = document.getElementsByClassName('bigboard');
-                                      nothing_else = true;
-                                      spt.app_busy.show("Refreshing...");
-                                      spt.api.load_panel(board_els[0], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': group});
-                                      spt.app_busy.hide();
-                                  }
-                              }
-                          }else{
-                              img = checked;
-                              server.update(my_sk, {'bigboard': 'true'});
-                              bvr.src_el.setAttribute('state', 'checked');
-                              kwargs = {
-                                           'sk': my_sk
-                                   };
-                              spt.panel.load_popup('Select Big Board Work Orders for ' + title_name, class_name, kwargs);
-                              changed = true;
-                          }
-                          if(!nothing_else && changed){
-                              var inner = bvr.src_el.innerHTML;
-                              in1 = inner.split('src="')[0];
-                              in1 = in1 + 'src="' + img + '"/>';
-                              bvr.src_el.innerHTML = in1;
-                          }
+            try {
+                var server = TacticServerStub.get();
+
+                var my_sk = bvr.src_el.get('sk');
+
+                var nothing_else = false;
+                var changed = false;
+
+                var unchecked_image = '/context/icons/silk/rosette_grey.png';
+
+                if (confirm("Do you really want to take this off the Hot Today list?")) {
+                    server.update(my_sk, {'bigboard': 'false'});
+                    changed = true;
+                    var buttons_el = document.getElementsByClassName('auto_buttons')[0];
+                    auto_el = buttons_el.getElementById('auto_refresh');
+                    auto = auto_el.getAttribute('auto');
+                    scroll_el = buttons_el.getElementById('scroll_el');
+                    scroll = scroll_el.getAttribute('scroll');
+
+                    board_table = document.getElementById('bigboard');
+                    nothing_else = true;
+                    spt.app_busy.show("Refreshing...");
+                    spt.api.load_panel(board_table, 'hottoday.HotTodayWdg');
+                    spt.app_busy.hide();
                 }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
+
+                if (!nothing_else && changed) {
+                    var inner = bvr.src_el.innerHTML;
+                    in1 = inner.split('src="')[0];
+                    in1 = in1 + 'src="' + unchecked_image + '"/>';
+                    bvr.src_el.innerHTML = in1;
                 }
-         ''' % (title_name, in_bigboard)}
+            }
+            catch(err) {
+                spt.app_busy.hide();
+                spt.alert(spt.exception.handler(err));
+            }
+        '''
+        }
         return behavior
 
-    def get_display(my):
-        expression_lookup = {
-            'twog/title': "@SOBJECT(twog/title['code','REPLACE_ME'])",
-            'twog/proj': "@SOBJECT(twog/proj['code','REPLACE_ME'].twog/title)",
-            'twog/work_order': "@SOBJECT(twog/work_order['code','REPLACE_ME'].twog/proj.twog/title)",
-            'twog/equipment_used': "@SOBJECT(twog/equipment_used['code','REPLACE_ME'].twog/work_order.twog/proj.twog/title)"
-        }
-        search_type = 'twog/title'
-        code = ''
-        order_name = ''
-        sob_sk = ''
-        not_title = True
-        bad_code = False
-        if 'search_type' in my.kwargs.keys():
-            my.get_stub()
-            search_type = str(my.kwargs.get('search_type'))
-            code = str(my.kwargs.get('code'))
-            sobject = my.server.eval(expression_lookup[search_type].replace('REPLACE_ME', code))
-            if sobject:
-                sobject = sobject[0]
-                code = sobject.get('code')
-                sob_sk = sobject.get('__search_key__')
-        else:
-            sobject = my.get_current_sobject()
-            sob_sk = sobject.get_search_key()
-            code = sobject.get_code()
-            not_title = False
-            if 'TITLE' not in code:
-                not_title = True
-                my.get_stub()
-                if 'WORK_ORDER' in code:
-                    sobject = my.server.eval(expression_lookup['twog/work_order'].replace('REPLACE_ME', code))
-                elif 'EQUIPMENT_USED' in code:
-                    sobject = my.server.eval(expression_lookup['twog/equipment_used'].replace('REPLACE_ME', code))
-                elif 'PROJ' in code:
-                    sobject = my.server.eval(expression_lookup['twog/proj'].replace('REPLACE_ME', code))
-                try:
-                    if sobject:
-                        sobject = sobject[0]
-                        code = sobject.get('code')
-                        sob_sk = sobject.get('__search_key__')
-                except:
-                    bad_code = True
-                    pass
-        widget = DivWdg()
+    def get_display(self):
+        # TODO: Rewrite the display so that it doesn't return an entire table
         table = Table()
-        if not bad_code:
-            # TODO: Change in_bigboard from 'Nope' and 'Yep' to False/True (I can't believe I had to just write that...)
-            in_bigboard = 'Nope'
-            if 'in_bigboard' in my.kwargs.keys():
-                if my.kwargs.get('in_bigboard') in ['Yes', 'yes', 'true', 'True']:
-                    in_bigboard = 'Yep'
-            img = '/context/icons/silk/rosette_grey.png'
+
+        if self.bigboard is True:
+            ribbon_image = '/context/icons/silk/rosette.png'
+            state = 'checked'
+        else:
+            ribbon_image = '/context/icons/silk/rosette_grey.png'
             state = 'unchecked'
-            bigboard = ''
-            title_name = ''
-            episode = ''
-            if not not_title:
-                bigboard = sobject.get_value('bigboard')
-                title_name = sobject.get_value('title')
-                episode = sobject.get_value('episode')
-            else:
-                bigboard = sobject.get('bigboard')
-                title_name = sobject.get('title')
-                episode = sobject.get('episode')
-            if episode not in [None, '']:
-                title_name = '%s Episode: %s' % (title_name, episode)
-            if bigboard is True:
-                img = '/context/icons/silk/rosette.png'
-                state = 'checked'
-            table.add_row()
-            cell1 = table.add_cell('<img border="0" style="vertical-align: middle" title="" src="%s">' % img)
-            cell1.add_attr('id', 'title_bigboard_%s' % code)
-            cell1.add_attr('sk', sob_sk)
-            cell1.add_attr('state', state)
-            launch_behavior = my.get_launch_behavior(title_name, in_bigboard)
-            cell1.add_style('cursor: pointer;')
-            cell1.add_behavior(launch_behavior)
-        widget.add(table)
-        return widget
+
+        table.add_row()
+        ribbon_cell = table.add_cell('<img border="0" style="vertical-align: middle" title="" src="{0}">'.format(ribbon_image))
+        ribbon_cell.add_attr('id', 'title_bigboard_%s' % self.code)
+        ribbon_cell.add_attr('sk', self.search_key)
+        ribbon_cell.add_attr('state', state)
+        ribbon_cell.add_style('cursor: pointer;')
+
+        launch_behavior = self.get_launch_behavior()
+        ribbon_cell.add_behavior(launch_behavior)
+
+        return table
 
 
 class HotTodayWdg(BaseRefreshWdg):
@@ -235,6 +161,7 @@ class HotTodayWdg(BaseRefreshWdg):
         :param counter:
         :param header_groups:
         :param tasks:
+        :param current_priority:
         :param is_admin_user: Boolean
         :return: None
         """
@@ -352,7 +279,8 @@ class HotTodayWdg(BaseRefreshWdg):
             priority_row = title_table.add_row()
             priority_row.add_style('font-size', '16px')
 
-            offbutt = BigBoardSelectWdg2(search_type='twog/title', code=title.get_value('code'), in_bigboard='Yes')
+            offbutt = HotTodayRibbonWdg(title_name=name, code=code, bigboard=title.get_value('bigboard'),
+                                       search_key=title.get_search_key())
 
             dblbb = title_table.add_cell(data=offbutt, row=priority_row)
             dblbb.add_attr('width', '20px')
@@ -362,10 +290,11 @@ class HotTodayWdg(BaseRefreshWdg):
 
             prioid = 'prio_{0}'.format(counter)
 
+            # TODO: Figure out what ext_sk is supposed to be
             ext_sk = True
 
-            # ami_extr = 'false'
-            # row_priority = title.get_value('priority')
+            ami_extr = 'false'
+            row_priority = title.get_value('priority')
 
             if ext_sk:
                 ami_extr = 'true'
@@ -534,7 +463,7 @@ class HotTodayWdg(BaseRefreshWdg):
 
     def get_display(self):
         table = Table()
-        table.add_attr('class', 'bigboard')
+        table.add_attr('id', 'bigboard')
         table.add_style('width', '100%')
         table.add_style('background-color', '#FCFCFC')
         table.add_style('font-size', '12px')
