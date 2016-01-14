@@ -6,7 +6,7 @@ from pyasm.common import Environment
 from tactic.ui.common import BaseRefreshWdg, BaseTableElementWdg
 from common_tools.common_functions import title_case, abbreviate_text
 from hottoday_utils import get_date_status, get_client_img, get_platform_img, get_launch_note_behavior,\
-    bring_to_top, set_scroll, get_reload, show_change, save_priorities
+    bring_to_top, show_change, save_priorities
 from order_builder import OrderBuilderLauncherWdg
 from order_builder.taskobjlauncher import TaskObjLauncherWdg
 
@@ -42,17 +42,14 @@ class HotTodayRibbonWdg(BaseTableElementWdg):
                 if (confirm("Do you really want to take this off the Hot Today list?")) {
                     server.update(my_sk, {'bigboard': 'false'});
                     changed = true;
-                    var buttons_el = document.getElementsByClassName('auto_buttons')[0];
-                    auto_el = buttons_el.getElementById('auto_refresh');
-                    auto = auto_el.getAttribute('auto');
-                    scroll_el = buttons_el.getElementById('scroll_el');
-                    scroll = scroll_el.getAttribute('scroll');
 
-                    board_table = document.getElementById('bigboard');
                     nothing_else = true;
-                    spt.app_busy.show("Refreshing...");
-                    spt.api.load_panel(board_table, 'hottoday.HotTodayWdg');
-                    spt.app_busy.hide();
+                    //spt.app_busy.show("Refreshing...");
+                    //var board_table = bvr.src_el.getParent('#bigboard');
+                    //var board_table = document.getElementById('hotlist_div');
+                    var board_table = bvr.src_el.getParent('#hotlist_div');
+                    spt.api.refresh_panel(board_table);
+                    //spt.app_busy.hide();
                 }
 
                 if (!nothing_else && changed) {
@@ -67,14 +64,14 @@ class HotTodayRibbonWdg(BaseTableElementWdg):
                 spt.alert(spt.exception.handler(err));
             }
         '''
-        }
+                    }
         return behavior
 
     def get_display(self):
         # TODO: Rewrite the display so that it doesn't return an entire table
         table = Table()
 
-        if self.bigboard is True:
+        if self.bigboard:
             ribbon_image = '/context/icons/silk/rosette.png'
             state = 'checked'
         else:
@@ -83,7 +80,7 @@ class HotTodayRibbonWdg(BaseTableElementWdg):
 
         table.add_row()
         ribbon_cell = table.add_cell('<img border="0" style="vertical-align: middle" title="" src="{0}">'.format(ribbon_image))
-        ribbon_cell.add_attr('id', 'title_bigboard_%s' % self.code)
+        ribbon_cell.add_attr('id', 'title_bigboard_{0}'.format(self.code))
         ribbon_cell.add_attr('sk', self.search_key)
         ribbon_cell.add_attr('state', state)
         ribbon_cell.add_style('cursor: pointer;')
@@ -125,6 +122,17 @@ class HotTodayWdg(BaseRefreshWdg):
         'due_today': '#E0B600',
         'late': '#FF0000'
     }
+
+    @staticmethod
+    def get_header_groups(tasks):
+        header_groups = []
+
+        for task in tasks:
+            group = task.get_value('assigned_login_group')
+            if group not in header_groups:
+                header_groups.append(group)
+
+        return header_groups
 
     @staticmethod
     def set_header(table, groups):
@@ -190,7 +198,6 @@ class HotTodayWdg(BaseRefreshWdg):
             elif is_external_rejection == 'false':
                 is_external_rejection = False
 
-        # TODO: maybe move the block below to a function? It takes up space unnecessarily. Decide later.
         # Set the row's background color. Different statuses require different colors. The statuses are not necessarily
         # mutually exclusive, but they are ordered by priority.
         if is_external_rejection:
@@ -280,7 +287,7 @@ class HotTodayWdg(BaseRefreshWdg):
             priority_row.add_style('font-size', '16px')
 
             offbutt = HotTodayRibbonWdg(title_name=name, code=code, bigboard=title.get_value('bigboard'),
-                                       search_key=title.get_search_key())
+                                        search_key=title.get_search_key())
 
             dblbb = title_table.add_cell(data=offbutt, row=priority_row)
             dblbb.add_attr('width', '20px')
@@ -290,17 +297,17 @@ class HotTodayWdg(BaseRefreshWdg):
 
             prioid = 'prio_{0}'.format(counter)
 
-            # TODO: Figure out what ext_sk is supposed to be
-            ext_sk = True
+            # TODO: Figure out how to get the external rejection search key and what it's used for
+            external_rejection_search_key = ''
 
             ami_extr = 'false'
             row_priority = title.get_value('priority')
 
-            if ext_sk:
+            if external_rejection_search_key:
                 ami_extr = 'true'
                 row_priority = current_priority
 
-            dbltxt = title_table.add_cell(data='<input type="text" value="{0}" row_type="title" title_sk="{1}" current_count="{0}" current_priority="{2}" class="count_order" id="{3}" external_rejection="{4}" ext_sk="{5}" style="background-color: #FFFFFF;"/>'.format(counter, title.get_search_key(), row_priority, prioid, ami_extr, ext_sk), row=priority_row)
+            dbltxt = title_table.add_cell(data='<input type="text" value="{0}" row_type="title" title_sk="{1}" current_count="{0}" current_priority="{2}" class="count_order" id="{3}" external_rejection="{4}" ext_sk="{5}" style="background-color: #FFFFFF;"/>'.format(counter, title.get_search_key(), row_priority, prioid, ami_extr, external_rejection_search_key), row=priority_row)
             dbltxt.add_attr('align', 'left')
             dbltxt.add_behavior(show_change(prioid))
 
@@ -424,33 +431,11 @@ class HotTodayWdg(BaseRefreshWdg):
         return task_search_results
 
     @staticmethod
-    def get_buttons(auto_refresh, auto_scroll, is_admin_user):
+    def get_buttons(is_admin_user):
         # TODO: Rewrite this entire function...
         btns = Table()
         btns.add_attr('class', 'auto_buttons')
         btns.add_row()
-
-        if auto_refresh:
-            auto_text = 'Unset Auto-Refresh'
-        else:
-            auto_text = 'Set Auto-Refresh'
-
-        auto = btns.add_cell('<input type="button" value="%s"/>' % auto_text)
-        auto.add_attr('id', 'auto_refresh')
-        auto.add_attr('name', 'auto_refresh')
-        auto.add_attr('auto', auto_refresh)
-        auto.add_behavior(get_reload())
-
-        if auto_scroll:
-            scroll_text = 'Unset Auto-Scroll'
-        else:
-            scroll_text = 'Set Auto-Scroll'
-
-        scroll = btns.add_cell('<input type="button" value="%s"/>' % scroll_text)
-        scroll.add_attr('id', 'scroll_el')
-        scroll.add_attr('name', 'scroll_el')
-        scroll.add_attr('scroll', auto_scroll)
-        scroll.add_behavior(set_scroll())
 
         to_top = btns.add_cell('<input type="button" value="Go To Top"/>')
         to_top.add_behavior(bring_to_top())
@@ -469,12 +454,6 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_style('font-size', '12px')
         table.add_style('font-family', 'Helvetica')
         table.add_border(style='solid', color='#F2F2F2', size='1px')
-
-        # TODO: Get which headers to display dynamically
-        # 'title' is also in the headers, but since that always displays we'll leave it out here
-        header_groups = ['machine room', 'compression', 'localization', 'qc', 'vault', 'edeliveries', 'scheduling']
-
-        self.set_header(table, header_groups)
 
         # Search for titles that are marked as 'hot'
         search_for_hot_items = Search('twog/title')
@@ -507,6 +486,10 @@ class HotTodayWdg(BaseRefreshWdg):
             if Environment.get_login().get_login() in admin_users:
                 is_admin_user = True
 
+        # 'title' is also in the headers, but since that always displays we'll leave it out here
+        header_groups = self.get_header_groups(tasks)
+        self.set_header(table, header_groups)
+
         for hot_item in hot_items:
             hot_item_priority = float(hot_item.get_value('priority'))
 
@@ -534,6 +517,6 @@ class HotTodayWdg(BaseRefreshWdg):
         # Add an 'outer' div that holds the hotlist div, with the buttons below.
         outer_div = DivWdg()
         outer_div.add(hotlist_div)
-        outer_div.add(self.get_buttons(False, False, is_admin_user))
+        outer_div.add(self.get_buttons(is_admin_user))
 
         return outer_div

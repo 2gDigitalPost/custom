@@ -212,34 +212,31 @@ def save_priorities():
         try {
             var server = TacticServerStub.get();
             var buttons_el = spt.api.get_parent(bvr.src_el, '.auto_buttons');
-            auto_el = buttons_el.getElementById('auto_refresh');
-            auto = auto_el.getAttribute('auto');
-            scroll_el = buttons_el.getElementById('scroll_el');
-            scroll = scroll_el.getAttribute('scroll');
 
             var priority_inputs = document.getElementsByClassName('count_order');
-            all_dict = {};
+            var all_dict = {};
 
             for (var r = 0; r < priority_inputs.length; r++) {
                 var val = priority_inputs[r].value;
                 var old_val = priority_inputs[r].getAttribute('current_count');
-                current_priority = priority_inputs[r].getAttribute('current_priority');
-                t_sk = '';
-                t_code = '';
-                indie_search_key = '';
-                row_type = priority_inputs[r].getAttribute('row_type');
+                var current_priority = priority_inputs[r].getAttribute('current_priority');
+                var title_search_key = '';
+                var title_code = '';
+                var indie_search_key = '';
+                var row_type = priority_inputs[r].getAttribute('row_type');
                 if (row_type == 'title') {
-                    t_sk = priority_inputs[r].getAttribute('title_sk');
-                    t_code = t_sk.split('code=')[1];
-                    ami_ext = priority_inputs[r].getAttribute('external_rejection')
+                    title_search_key = priority_inputs[r].getAttribute('title_sk');
+                    title_code = title_search_key.split('code=')[1];
+
+                    var ami_ext = priority_inputs[r].getAttribute('external_rejection')
                     if (ami_ext == 'true') {
-                        t_sk = priority_inputs[r].getAttribute('ext_sk');
+                        title_search_key = priority_inputs[r].getAttribute('ext_sk');
                     }
                 } else {
-                    t_sk = priority_inputs[r].getAttribute('task_sk');
-                    t_code = t_sk.split('code=')[1];
-                    indie_search_key = '';
-                    indie = server.eval("@SOBJECT(twog/indie_priority['task_code','" + t_code + "']['@ORDER_BY','timestamp desc'])");
+                    title_search_key = priority_inputs[r].getAttribute('task_sk');
+                    title_code = title_search_key.split('code=')[1];
+
+                    var indie = server.eval("@SOBJECT(twog/indie_priority['task_code','" + title_code + "']['@ORDER_BY','timestamp desc'])");
                     if (indie.length > 0) {
                         indie_search_key = indie[0].__search_key__;
                     }
@@ -253,12 +250,12 @@ def save_priorities():
                 all_dict[old_val] = {
                     'current_count': old_val,
                     'current_priority': current_priority,
-                    'sk': t_sk,
+                    'search_key': title_search_key,
                     'row_type': row_type,
                     'changed': changed,
                     'new_count': val,
                     'indie_search_key': indie_search_key,
-                    'code': t_code
+                    'code': title_code
                 };
 
             }
@@ -276,25 +273,25 @@ def save_priorities():
                     }
                     new_priority = (pre_prio + post_prio) / 2;
                     if (row_type == 'title') {
-                        server.update(all_dict[r]['sk'], {'priority': new_priority});
+                        server.update(all_dict[r]['search_key'], {'priority': new_priority});
                     } else {
-                        server.update(all_dict[r]['sk'], {'indie_priority': new_priority});
+                        server.update(all_dict[r]['search_key'], {'indie_priority': new_priority});
                         server.update(all_dict[r]['indie_search_key'], {'indie_priority': new_priority});
                     }
                 }
             }
 
             // Get the board table by its ID
-            var board_table = document.getElementById('bigboard');
+            var board_table = document.getElementById('hotlist_div');
 
             // Refresh the view
             spt.app_busy.show("Refreshing...");
-            spt.api.load_panel(board_table, 'hottoday.HotTodayWdg', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': 'ALL'});
+            spt.api.load_panel(board_table, 'hottoday.HotTodayWdg');
             spt.app_busy.hide();
         }
         catch(err) {
-                  spt.app_busy.hide();
-                  spt.alert(spt.exception.handler(err));
+            spt.app_busy.hide();
+            spt.alert(spt.exception.handler(err));
         }
      '''}
     return behavior
