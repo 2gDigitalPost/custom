@@ -164,12 +164,12 @@ class HotTodayWdg(BaseRefreshWdg):
         """
         Construct a row in the Hot Today list and add it to the table.
 
-        :param title:
-        :param table:
-        :param counter:
-        :param header_groups:
-        :param tasks:
-        :param current_priority:
+        :param title: The title object
+        :param table: The entire table that the row is being added to
+        :param counter: Integer that displays next to the Title's name
+        :param header_groups: List of each column in the table
+        :param tasks: List of task objects
+        :param current_priority: Decimal
         :param is_admin_user: Boolean
         :return: None
         """
@@ -407,9 +407,6 @@ class HotTodayWdg(BaseRefreshWdg):
         :param hot_items: A list of titles from 'twog/title'
         :return: List of tasks
         """
-        # TODO: Figure out what 'kgroups' is supposed to be and how it's determined
-        kgroups = ['ALL']
-
         title_codes = []
 
         for item in hot_items:
@@ -417,22 +414,20 @@ class HotTodayWdg(BaseRefreshWdg):
 
         title_codes_string = ','.join(title_codes)
 
-        tq = Search("sthpw/task")
-        tq.add_filter('bigboard', True)
-        tq.add_filter('active', '1')
-        tq.add_filter('search_type', 'twog/proj?project=twog')
-        tq.add_filter('status', 'Completed', op="!=")
-        if kgroups[0] != 'ALL':
-            tq.add_where("\"assigned_login_group\" in ('{0}','{0}')".format((kgroups[0])))
-        tq.add_where('\"title_code\" in ({0})'.format(title_codes_string))
+        task_search = Search("sthpw/task")
+        task_search.add_filter('bigboard', True)
+        task_search.add_filter('active', '1')
+        task_search.add_filter('search_type', 'twog/proj?project=twog')
+        task_search.add_filter('status', 'Completed', op="!=")
 
-        task_search_results = tq.get_sobjects()
+        task_search.add_where('\"title_code\" in ({0})'.format(title_codes_string))
+
+        task_search_results = task_search.get_sobjects()
 
         return task_search_results
 
     @staticmethod
     def get_buttons(is_admin_user):
-        # TODO: Rewrite this entire function...
         btns = Table()
         btns.add_attr('class', 'auto_buttons')
         btns.add_row()
