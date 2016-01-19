@@ -8,7 +8,7 @@ from pyasm.common import Environment, Common, TacticException, jsonloads
 from pyasm.widget import WidgetConfigView
 from pyasm.biz import Pipeline, Project
 from pyasm.web import DivWdg, WebContainer, Table, SpanWdg, HtmlElement
-from pyasm.search import Search, SearchType, SearchKey, SObject
+from pyasm.search import Search, SearchType, SearchKey, SObject, WidgetDbConfig
 from tactic.ui.panel import FastTableLayoutWdg
 
 from pyasm.widget import ProdIconButtonWdg, IconWdg, TextWdg, CheckboxWdg, HiddenWdg, SelectWdg

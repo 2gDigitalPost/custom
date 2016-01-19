@@ -299,20 +299,20 @@ def save_priorities():
 
 def show_change(ider):
     behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
-            try{
-                var ider = '%s';
-                moi = document.getElementById(ider);
-                moi.style.backgroundColor = "#FF0000";
-                if(moi.value != moi.getAttribute('current_count')){
-                    if(isNaN(moi.value)){
-                        moi.value = moi.getAttribute('current_count');
-                        moi.style.backgroundColor = "#ffffff";
-                    }
+        try{
+            var ider = '%s';
+            moi = document.getElementById(ider);
+            moi.style.backgroundColor = "#FF0000";
+            if(moi.value != moi.getAttribute('current_count')){
+                if(isNaN(moi.value)){
+                    moi.value = moi.getAttribute('current_count');
+                    moi.style.backgroundColor = "#ffffff";
                 }
+            }
         }
         catch(err){
-                  spt.app_busy.hide();
-                  spt.alert(spt.exception.handler(err));
+            spt.app_busy.hide();
+            spt.alert(spt.exception.handler(err));
         }
      ''' % ider}
     return behavior
@@ -346,8 +346,8 @@ def set_scroll():
             }
         }
         catch(err){
-                  spt.app_busy.hide();
-                  spt.alert(spt.exception.handler(err));
+            spt.app_busy.hide();
+            spt.alert(spt.exception.handler(err));
         }
      '''}
     return behavior
@@ -380,8 +380,8 @@ def get_reload():
             }
         }
         catch(err){
-                  spt.app_busy.hide();
-                  spt.alert(spt.exception.handler(err));
+            spt.app_busy.hide();
+            spt.alert(spt.exception.handler(err));
         }
      '''}
     return behavior
@@ -389,7 +389,7 @@ def get_reload():
 
 def change_group():
     behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
-            try{
+        try{
             var buttons_el = spt.api.get_parent(bvr.src_el, '.auto_buttons');
             auto = bvr.src_el.get('auto');
             scroll_el = buttons_el.getElementById('scroll_el');
@@ -405,8 +405,8 @@ def change_group():
             }
         }
         catch(err){
-                  spt.app_busy.hide();
-                  spt.alert(spt.exception.handler(err));
+            spt.app_busy.hide();
+            spt.alert(spt.exception.handler(err));
         }
      '''}
     return behavior

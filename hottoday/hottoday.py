@@ -85,8 +85,7 @@ class HotTodayRibbonWdg(BaseTableElementWdg):
         ribbon_cell.add_attr('state', state)
         ribbon_cell.add_style('cursor: pointer;')
 
-        launch_behavior = self.get_launch_behavior()
-        ribbon_cell.add_behavior(launch_behavior)
+        ribbon_cell.add_behavior(self.get_launch_behavior())
 
         return table
 
@@ -125,12 +124,17 @@ class HotTodayWdg(BaseRefreshWdg):
 
     @staticmethod
     def get_header_groups(tasks):
+        group_order = ['machine room', 'media vault', 'onboarding', 'compression', 'edit',
+                  'audio', 'localization', 'qc', 'streamz', 'vault', 'edeliveries']
         header_groups = []
 
         for task in tasks:
             group = task.get_value('assigned_login_group')
             if group not in header_groups:
                 header_groups.append(group)
+
+        # TODO: Refactor the line below, surely a cleaner way to get the groups in order
+        header_groups = [group for group in group_order if group in header_groups]
 
         return header_groups
 
@@ -144,15 +148,20 @@ class HotTodayWdg(BaseRefreshWdg):
         :return: None
         """
         header_row = table.add_row()
+
         header_row.add_style('background-color', '#E0E0E0')
-        header_row.add_style('position', 'sticky')
         header_row.add_style('width', '100%')
-        header_row.add_style('z-index', '0')
 
         # Add the title cell, it won't be included in the groups list since it should always be there by default
         groups_with_title = ['title'] + groups
 
-        for group in groups_with_title:
+        title_cell = table.add_header(title_case('title'), row=header_row)
+        title_cell.add_style('padding', '10px')
+        title_cell.add_style('width', '400px')
+        title_cell.add_style('background-color', '#F2F2F2')
+        title_cell.add_style('border', '1px solid #E0E0E0')
+
+        for group in groups:
             group_cell = table.add_header(title_case(group), row=header_row)
             group_cell.add_style('padding', '10px')
             group_cell.add_style('background-color', '#F2F2F2')
@@ -442,6 +451,7 @@ class HotTodayWdg(BaseRefreshWdg):
         return btns
 
     def get_display(self):
+
         table = Table()
         table.add_attr('id', 'bigboard')
         table.add_style('width', '100%')
