@@ -6,7 +6,7 @@ from pyasm.common import Environment
 from tactic.ui.common import BaseRefreshWdg, BaseTableElementWdg
 from common_tools.common_functions import title_case, abbreviate_text
 from hottoday_utils import get_date_status, get_client_img, get_platform_img, get_launch_note_behavior,\
-    bring_to_top, show_change, save_priorities
+    bring_to_top, show_change, save_priorities, get_scrollbar_width
 from order_builder import OrderBuilderLauncherWdg
 from order_builder.taskobjlauncher import TaskObjLauncherWdg
 
@@ -151,13 +151,12 @@ class HotTodayWdg(BaseRefreshWdg):
 
         header_row.add_style('background-color', '#E0E0E0')
         header_row.add_style('width', '100%')
+        header_row.add_style('display', 'table')
 
         # Add the title cell, it won't be included in the groups list since it should always be there by default
-        groups_with_title = ['title'] + groups
-
         title_cell = table.add_header(title_case('title'), row=header_row)
         title_cell.add_style('padding', '10px')
-        title_cell.add_style('width', '400px')
+        title_cell.add_style('width', '24%')
         title_cell.add_style('background-color', '#F2F2F2')
         title_cell.add_style('border', '1px solid #E0E0E0')
 
@@ -166,8 +165,7 @@ class HotTodayWdg(BaseRefreshWdg):
             group_cell.add_style('padding', '10px')
             group_cell.add_style('background-color', '#F2F2F2')
             group_cell.add_style('border', '1px solid #E0E0E0')
-
-        table.add_row()
+            group_cell.add_style('width', '{0}%'.format(76.0 / len(groups)))
 
     def set_row(self, title, table, counter, header_groups, tasks, current_priority, is_admin_user):
         """
@@ -320,12 +318,15 @@ class HotTodayWdg(BaseRefreshWdg):
             dbltxt.add_attr('align', 'left')
             dbltxt.add_behavior(show_change(prioid))
 
+        current_row = table.add_row()
+        current_row.add_style('width', '100%')
+
         # Add the title table to the table row
-        title_cell = table.add_cell(title_table)
+        title_cell = table.add_cell(title_table, row=current_row)
         title_cell.add_style('background-color', title_cell_background_color)
         title_cell.add_style('border', '1px solid #EEE')
         title_cell.add_style('padding', '4px')
-        title_cell.add_style('width', '400px')
+        title_cell.add_style('width', '24%')
 
         # Now add the cells for each column. Add the data in each column as necessary, or just add a blank cell
         # if no data exists.
@@ -362,11 +363,11 @@ class HotTodayWdg(BaseRefreshWdg):
                 row_cell = table.add_cell(task_table)
                 row_cell.add_style('border', '1px solid #EEE')
                 row_cell.add_style('vertical-align', 'top')
+                row_cell.add_style('width', '{0}%'.format(76.0 / len(header_groups)))
             else:
                 row_cell = table.add_cell()
                 row_cell.add_style('border', '1px solid #EEE')
-
-        table.add_row()
+                row_cell.add_style('width', '{0}%'.format(76.0 / len(header_groups)))
 
     def set_date_row(self, table, date, row_text):
         """
@@ -402,10 +403,11 @@ class HotTodayWdg(BaseRefreshWdg):
         :param priority: The priority of the following items (decimal)
         :return: None
         """
-        priority_row = table.add_cell(priority)
-        priority_row.add_style('background-color', '#DCE3EE')
+        current_row = table.add_row()
+        current_row.add_style('width', '100%')
 
-        table.add_row()
+        priority_row = table.add_cell(priority, row=current_row)
+        priority_row.add_style('background-color', '#DCE3EE')
 
     @staticmethod
     def get_tasks(hot_items):
@@ -451,7 +453,6 @@ class HotTodayWdg(BaseRefreshWdg):
         return btns
 
     def get_display(self):
-
         table = Table()
         table.add_attr('id', 'bigboard')
         table.add_style('width', '100%')
@@ -459,6 +460,12 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_style('font-size', '12px')
         table.add_style('font-family', 'Helvetica')
         table.add_border(style='solid', color='#F2F2F2', size='1px')
+
+        # Because Tactic doesn't allow for the <thead> element (that I know of), the table header has to be split
+        # into it's own <tbody>. Highly inelegant, but I don't have a choice.
+        header_body = table.add_tbody()
+        header_body.add_style('display', 'block')
+        header_body.add_attr('id', 'thead-section')
 
         # Search for titles that are marked as 'hot'
         search_for_hot_items = Search('twog/title')
@@ -495,6 +502,14 @@ class HotTodayWdg(BaseRefreshWdg):
         header_groups = self.get_header_groups(tasks)
         self.set_header(table, header_groups)
 
+        hotlist_body = table.add_tbody()
+        hotlist_body.add_style('display', 'block')
+        hotlist_body.add_style('overflow-x', 'hidden')
+        hotlist_body.add_style('overflow-y', 'scroll')
+        hotlist_body.add_style('height', '850px')
+        hotlist_body.add_style('width', '100%')
+        hotlist_body.add_attr('id', 'hotlist-body')
+
         for hot_item in hot_items:
             hot_item_priority = float(hot_item.get_value('priority'))
 
@@ -514,8 +529,8 @@ class HotTodayWdg(BaseRefreshWdg):
         # Put the table in a DivWdg, makes it fit better with the Tactic side bar
         hotlist_div = DivWdg()
         hotlist_div.add_attr('id', 'hotlist_div')
-        hotlist_div.add_style('overflow-y', 'scroll')
         hotlist_div.add_style('height', '900px')
+        hotlist_div.add_attr('overflow', 'hidden')
 
         hotlist_div.add(table)
 
@@ -523,5 +538,8 @@ class HotTodayWdg(BaseRefreshWdg):
         outer_div = DivWdg()
         outer_div.add(hotlist_div)
         outer_div.add(self.get_buttons(is_admin_user))
+        outer_div.add_behavior(get_scrollbar_width())
 
         return outer_div
+
+

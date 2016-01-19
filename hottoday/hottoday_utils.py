@@ -238,7 +238,7 @@ def show_change(ider):
 def bring_to_top():
     behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
         try {
-            body = document.getElementById('hotlist_div');
+            body = document.getElementById('hotlist-body');
             body.scrollTop = 0;
         }
         catch(err) {
@@ -248,3 +248,35 @@ def bring_to_top():
             '''
                 }
     return behavior
+
+
+def get_scrollbar_width():
+    return {'type': 'load', 'cbjs_action':
+            '''
+function getScrollbarWidth() {
+    var outer = document.createElement("div");
+    outer.style.visibility = "hidden";
+    outer.style.width = "100px";
+    document.body.appendChild(outer);
+
+    var widthNoScroll = outer.offsetWidth;
+    // force scrollbars
+    outer.style.overflow = "scroll";
+
+    // add innerdiv
+    var inner = document.createElement("div");
+    inner.style.width = "100%";
+    outer.appendChild(inner);
+
+    var widthWithScroll = inner.offsetWidth;
+
+    // remove divs
+    outer.parentNode.removeChild(outer);
+
+    return widthNoScroll - widthWithScroll;
+}
+
+var thead = document.getElementById('thead-section');
+thead.style.padding = "0px " + getScrollbarWidth() + "px 0px 0px";
+            '''
+            }
