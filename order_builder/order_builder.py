@@ -1,6 +1,6 @@
-__all__ = ["OrderBuilderLauncherWdg","TitleSelectorWdg","TitleDuePrioBBWdg","TitleCloneSelectorWdg","TitleDeletorWdg","TitleProjStatusTriggerWdg","OrderBuilder","QuickEditWdg","ErrorEntryLauncherWdg","ErrorEntryWdg","BuilderTools","OrderTable","TitleRow","AddWorkOrderWdg","AddProjWdg","GlobalReplacerWdg","EditHackPipe","HackPipeConnectWdg","TitleSourceInspectorWdg","DeliverableCountWdg","DeliverableWdg","IntermediateEditWdg","DeliverableEditWdg","PreReqCountWdg","PreReqWdg","WorkOrderSourcesRow","WorkOrderSourceAddWdg","SourcesRow","TwogEasyCheckinWdg","OutsideBarcodesListWdg","NewSourceWdg","SourceEditWdg","ProjRow","ProjDueDateChanger","WorkOrderRow","OutFilesWdg","SourcePortalWdg","IntermediatePassinAddWdg","DeliverablePassinAddWdg","DeliverableAddWdg","IntermediateFileAddWdg","EquipmentUsedRow","TitleAdderWdg","EquipmentUsedAdderWdg","EquipmentUsedMultiAdderWdg","TaskEditWdg","OperatorErrorDescriptPopupWdg","ExternalRejectionReasonWdg","Barcoder","TitleRedoWdg","MultiManualAdderWdg","OBScripts"]
+__all__ = ["OrderBuilderLauncherWdg","TitleSelectorWdg","TitleDuePrioBBWdg","TitleCloneSelectorWdg","TitleDeletorWdg","TitleProjStatusTriggerWdg","OrderBuilder","QuickEditWdg","ErrorEntryLauncherWdg","ErrorEntryWdg","BuilderTools","OrderTable","TitleRow","AddWorkOrderWdg","AddProjWdg","GlobalReplacerWdg","EditHackPipe","HackPipeConnectWdg","TitleSourceInspectorWdg","DeliverableCountWdg","DeliverableWdg","IntermediateEditWdg","DeliverableEditWdg","PreReqCountWdg","PreReqWdg","WorkOrderSourcesRow","WorkOrderSourceAddWdg","SourcesRow","TwogEasyCheckinWdg","OutsideBarcodesListWdg","NewSourceWdg","SourceEditWdg","ProjRow","ProjDueDateChanger","WorkOrderRow","OutFilesWdg","SourcePortalWdg","IntermediatePassinAddWdg","DeliverablePassinAddWdg","DeliverableAddWdg","IntermediateFileAddWdg","EquipmentUsedRow","TitleAdderWdg","EquipmentUsedAdderWdg","EquipmentUsedMultiAdderWdg","OperatorErrorDescriptPopupWdg","ExternalRejectionReasonWdg","Barcoder","TitleRedoWdg","MultiManualAdderWdg","OBScripts"]
+
 import tacticenv
-#import time
 from pyasm.common import Environment
 from pyasm.biz import *
 from pyasm.web import Table, DivWdg
@@ -20,6 +20,7 @@ from nighttime_hotlist.nighttime_hotlist import IndieBigBoardSelectWdg, BigBoard
 from alternative_elements.customcheckbox import *
 
 from common_tools.full_instructions import FullInstructionsLauncherWdg
+from task_edit_widget import TaskEditWdg
 
 class OrderBuilderLauncherWdg(BaseTableElementWdg):
     #This is the button that launches the TitleSelectorWdg
