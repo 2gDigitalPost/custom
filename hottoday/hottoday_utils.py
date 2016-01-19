@@ -98,100 +98,17 @@ def get_date_status(delivery_datetime):
 
 def get_launch_note_behavior(sk, name):
     behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                    try{
-                      var sk = '%s';
-                      var name = '%s';
-                      kwargs =  {'search_key': sk, 'append_process': 'Client Services,Redelivery/Rejection Request,Redelivery/Rejection Completed', 'chronological': true};
-                      spt.panel.load_popup('Notes for ' + name, 'tactic.ui.widget.DiscussionWdg', kwargs);
-            }
-            catch(err){
-                      spt.app_busy.hide();
-                      spt.alert(spt.exception.handler(err));
-                      //alert(err);
-            }
-     ''' % (sk, name)}
-    return behavior
-
-
-def get_onload():
-    return r'''
-        mytimer = function(timelen){
-            setTimeout('refresh_bigboard()', timelen); // uncomment me
-        }
-        refresh_bigboard = function(){
-            board_els = document.getElementsByClassName('bigboard');
-            auto_el = document.getElementById('auto_refresh');
-            auto = auto_el.getAttribute('auto');
-            scroll_el = document.getElementById('scroll_el');
-            scroll = scroll_el.getAttribute('scroll');
-            if(auto == 'yes'){
-                for(var r = 0; r < 1; r++){
-                    spt.app_busy.show("Refreshing...");
-                    //alert('reloading scroll = ' + scroll);
-                    spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2',
-                        {'auto_refresh': auto, 'scroll': scroll});
-                    spt.app_busy.hide();
-                }
-            }
-            //mytimer(120000);
-        }
-        mytimer(120000);
-    '''
-
-
-def get_scroll_by_row():
-    behavior = {'type': 'load', 'cbjs_action': '''
         try{
-            hctime = 500;
-            timer2 = function(timelen, next_count, up_or_down, element, origtime){
-                send_str = 'do_scroll(' + next_count + ', ' + up_or_down + ', ' + timelen + ', ' + origtime + ')';
-                if(element != ''){
-                    //element.scrollIntoView();
-                    if(element.getAttribute('viz') == 'true'){
-                        element.setAttribute('viz','false');
-                        element.style.display = 'none';
-                    }else{
-                        element.setAttribute('viz','true');
-                        element.style.display = 'table-row';
-                    }
-                }
-                setTimeout(send_str, timelen);
-            }
-            do_scroll = function(next_count, up_or_down, timelen, origtime){
-                buttons = document.getElementsByClassName('auto_buttons')[0];
-                scroll_el = buttons.getElementById('scroll_el');
-                scroll = scroll_el.getAttribute('scroll');
-                if(scroll == 'yes'){
-                    element = '';
-                    trs = document.getElementsByClassName('trow');
-                    trslen = trs.length;
-                    preup = up_or_down;
-                    if((trslen - 9 < next_count && up_or_down == 1) || (next_count == 1 && up_or_down == -1)){
-                        up_or_down = up_or_down * -1;
-                    }
-                    if(preup == up_or_down){
-                        next_count = next_count + up_or_down;
-                    }
-                    for(var r = 0; r < trslen - 1; r++){
-                        if(trs[r].getAttribute('num') == next_count){
-                            element = trs[r];
-                        }
-                    }
-                    nexttime = 0;
-                    if(next_count == 1 || next_count == trslen - 8){
-                        nexttime = origtime * 8;
-                    }else{
-                        nexttime = origtime;
-                    }
-                    timer2(nexttime, next_count, up_or_down, element, origtime);
-                }
-            }
-            timer2(hctime, 0, 1, '', hctime);
-        }catch(err){
-                  spt.app_busy.hide();
-                  spt.alert(spt.exception.handler(err));
+            var sk = '%s';
+            var name = '%s';
+            kwargs =  {'search_key': sk, 'append_process': 'Client Services,Redelivery/Rejection Request,Redelivery/Rejection Completed', 'chronological': true};
+            spt.panel.load_popup('Notes for ' + name, 'tactic.ui.widget.DiscussionWdg', kwargs);
         }
-     '''}
+        catch(err){
+            spt.app_busy.hide();
+            spt.alert(spt.exception.handler(err));
+        }
+     ''' % (sk, name)}
     return behavior
 
 
@@ -299,18 +216,18 @@ def save_priorities():
 
 def show_change(ider):
     behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
-        try{
+        try {
             var ider = '%s';
             moi = document.getElementById(ider);
             moi.style.backgroundColor = "#FF0000";
-            if(moi.value != moi.getAttribute('current_count')){
-                if(isNaN(moi.value)){
+            if (moi.value != moi.getAttribute('current_count')) {
+                if (isNaN(moi.value)) {
                     moi.value = moi.getAttribute('current_count');
                     moi.style.backgroundColor = "#ffffff";
                 }
             }
         }
-        catch(err){
+        catch(err) {
             spt.app_busy.hide();
             spt.alert(spt.exception.handler(err));
         }
@@ -318,146 +235,16 @@ def show_change(ider):
     return behavior
 
 
-def set_scroll():
-    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-        try{
-            var buttons_el = spt.api.get_parent(bvr.src_el, '.auto_buttons');
-            auto_el = buttons_el.getElementById('auto_refresh');
-            auto = auto_el.getAttribute('auto');
-            scroll_el = buttons_el.getElementById('scroll_el');
-            scroll = scroll_el.getAttribute('scroll');
-            //group_el = buttons_el.getElementById('group_select');
-            //group = group_el.value;
-            if(scroll == 'no'){
-                bvr.src_el.innerHTML = '<input type="button" value="Unset Auto-Scroll"/>';
-                bvr.src_el.setAttribute('scroll','yes');
-                scroll = 'yes';
-            }else{
-                bvr.src_el.innerHTML = '<input type="button" value="Set Auto-Scroll"/>';
-                bvr.src_el.setAttribute('scroll','no');
-                scroll = 'no';
-            }
-            board_els = document.getElementsByClassName('bigboard');
-            for(var r = 0; r < 1; r++){
-                spt.app_busy.show("Refreshing...");
-                //spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': group});
-                spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': 'ALL'});
-                spt.app_busy.hide();
-            }
-        }
-        catch(err){
-            spt.app_busy.hide();
-            spt.alert(spt.exception.handler(err));
-        }
-     '''}
-    return behavior
-
-
-def get_reload():
-    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-        try{
-            var buttons_el = spt.api.get_parent(bvr.src_el, '.auto_buttons');
-            auto = bvr.src_el.get('auto');
-            scroll_el = buttons_el.getElementById('scroll_el');
-            scroll = scroll_el.getAttribute('scroll');
-            //group_el = buttons_el.getElementById('group_select');
-            //group = group_el.value;
-            if(auto == 'no'){
-                bvr.src_el.innerHTML = '<input type="button" value="Unset Auto-Refresh"/>';
-                bvr.src_el.setAttribute('auto','yes');
-                auto = 'yes';
-            }else{
-                bvr.src_el.innerHTML = '<input type="button" value="Set Auto-Refresh"/>';
-                bvr.src_el.setAttribute('auto','no');
-                auto = 'no';
-            }
-            board_els = document.getElementsByClassName('bigboard');
-            for(var r = 0; r < 1; r++){
-                spt.app_busy.show("Refreshing...");
-                //spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': group});
-                spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': 'ALL'});
-                spt.app_busy.hide();
-            }
-        }
-        catch(err){
-            spt.app_busy.hide();
-            spt.alert(spt.exception.handler(err));
-        }
-     '''}
-    return behavior
-
-
-def change_group():
-    behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
-        try{
-            var buttons_el = spt.api.get_parent(bvr.src_el, '.auto_buttons');
-            auto = bvr.src_el.get('auto');
-            scroll_el = buttons_el.getElementById('scroll_el');
-            scroll = scroll_el.getAttribute('scroll');
-            //group_el = buttons_el.getElementById('group_select');
-            //group = group_el.value;
-            group = 'ALL';
-            board_els = document.getElementsByClassName('bigboard');
-            for(var r = 0; r < 1; r++){
-                spt.app_busy.show("Refreshing...");
-                spt.api.load_panel(board_els[r], 'nighttime_hotlist.BigBoardWdg2', {'auto_refresh': auto, 'auto_scroll': scroll, 'groups': group});
-                spt.app_busy.hide();
-            }
-        }
-        catch(err){
-            spt.app_busy.hide();
-            spt.alert(spt.exception.handler(err));
-        }
-     '''}
-    return behavior
-
-
 def bring_to_top():
     behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-try {
-    body = document.getElementById('hotlist_div');
-    body.scrollTop = 0;
-}
-catch(err) {
-    spt.app_busy.hide();
-    spt.alert(spt.exception.handler(err));
-}
-    '''}
-    return behavior
-
-
-def toggle_groupings():
-    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
         try {
-            prio = bvr.src_el.getAttribute('current_priority');
-            state = bvr.src_el.getAttribute('state');
-            if(state == 'opened') {
-                bvr.src_el.setAttribute('state','closed');
-                state = 'closed';
-            } else {
-                bvr.src_el.setAttribute('state','opened');
-                state = 'opened';
-            }
-
-            top_el = document.getElementById('title_body');
-            rows = top_el.getElementsByClassName('trow');
-            for(var r = 0; r < rows.length; r++) {
-                if(rows[r].getAttribute('current_priority') == prio) {
-                    if(state == 'closed') {
-                        //rows[r].setAttribute('viz','false');
-                        rows[r].style.display = 'none';
-                    } else {
-                        //rows[r].setAttribute('viz','true');
-                        rows[r].style.display = 'table-row';
-                    }
-                }
-            }
-
-
+            body = document.getElementById('hotlist_div');
+            body.scrollTop = 0;
         }
-        catch(err){
+        catch(err) {
             spt.app_busy.hide();
             spt.alert(spt.exception.handler(err));
         }
-    '''}
+            '''
+                }
     return behavior
