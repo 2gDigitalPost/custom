@@ -516,7 +516,10 @@ class HotTodayWdg(BaseRefreshWdg):
             # Get the tasks that correspond to a title by comparing the task's title_code to the title's code
             item_tasks = [task for task in tasks if task.get_value('title_code') == hot_item.get_value('code')]
 
-            if item_tasks:
+            # If an item requires QC Mastering, it should go on the hot board, regardless of if it has tasks or not
+            requires_mastering_qc = hot_item.get_value('requires_mastering_qc', False)
+
+            if item_tasks or requires_mastering_qc:
 
                 if current_priority < hot_item_priority:
                     self.set_priority_row(table, hot_item_priority)
