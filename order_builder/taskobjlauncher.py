@@ -1,13 +1,17 @@
-__all__ = ["TaskObjLauncherWdg","TaskInspectWdg","InstructionsWdg","TitleViewWdg","OBSourceLikeNoEditWdg","TwogEasyCheckinWdg2","InspectScripts"]
-import tacticenv
-from pyasm.common import Environment
-from pyasm.biz import *
+__all__ = ["TaskObjLauncherWdg","TaskInspectWdg","InstructionsWdg","TitleViewWdg","OBSourceLikeNoEditWdg","TwogEasyCheckinWdg2"]
+
+from client.tactic_client_lib import TacticServerStub
 from pyasm.web import Table, DivWdg
+from pyasm.common import Environment
+from pyasm.prod.biz import ProdSetting
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
 from tactic.ui.panel import EditWdg
-from pyasm.widget import SelectWdg, IconWdg, TextWdg, CheckboxWdg
+from pyasm.widget import SelectWdg, CheckboxWdg
 from tactic.ui.widget import DiscussionWdg
+
+from work_hours.work_hours_display import WorkHoursDisplayWdg
+from operator_view import IncompleteWOWdg
 
 class TaskObjLauncherWdg(BaseTableElementWdg):
 
@@ -36,7 +40,6 @@ class TaskObjLauncherWdg(BaseTableElementWdg):
         return behavior
 
     def get_display(my):
-        code = ''
         name = ''
         if 'code' in my.kwargs.keys():
             code = str(my.kwargs.get('code'))
@@ -55,7 +58,6 @@ class TaskObjLauncherWdg(BaseTableElementWdg):
                 name = sobject.get_value('name')
             if sobject.has_value('lookup_code'):
                 if 'STATUS_LOG' in code:
-                    from tactic_client_lib import TacticServerStub
                     my.server = TacticServerStub.get()
                     name = my.server.eval("@GET(sthpw/task['lookup_code','%s'].process)" % sobject.get_value('lookup_code')) 
                     if name:
@@ -65,9 +67,10 @@ class TaskObjLauncherWdg(BaseTableElementWdg):
                 else:
                     name = sobject.get_value('process')
                 code = sobject.get_value('lookup_code')
+
         widget = DivWdg()
         table = Table()
-        #table.add_attr('width', '50px')
+
         table.add_row()
         cell1 = table.add_cell('<img border="0" style="vertical-align: middle" title="Inspect" name="Inspect" src="/context/icons/silk/information.png">')
         cell1.add_attr('code', code)
@@ -82,8 +85,7 @@ class TaskObjLauncherWdg(BaseTableElementWdg):
 class TaskInspectWdg(BaseRefreshWdg):
 
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
+
         my.group_list = Environment.get_group_names()
         login = Environment.get_login()
         my.user = login.get_login()
@@ -104,7 +106,7 @@ class TaskInspectWdg(BaseRefreshWdg):
         base = '/volumes'
         rel_paths = my.server.get_all_paths_from_snapshot(snapshot_code, mode='relative')
         ctx_expr = "@GET(sthpw/snapshot['code','%s'].context)" % snapshot_code
-        ctx = my.server.eval(ctx_expr)[0]; 
+        ctx = my.server.eval(ctx_expr)[0]
         if len(rel_paths) > 0:
             rel_path = rel_paths[0]
             splits = rel_path.split('/')
@@ -116,8 +118,7 @@ class TaskInspectWdg(BaseRefreshWdg):
         return what_to_ret
 
     def get_display(my):   
-        from work_hours.work_hours_display import WorkHoursDisplayWdg
-        from operator_view import IncompleteWOWdg
+
         if 'sk' in my.kwargs.keys():
             my.sk = str(my.kwargs.get('sk'))
             my.code = my.sk.split('code=')[1]
@@ -129,7 +130,7 @@ class TaskInspectWdg(BaseRefreshWdg):
             elif 'PROJ' in my.code: 
                 my.st = 'twog/proj'
             my.sk = my.server.build_search_key(my.st, my.code)
-        obs = InspectScripts()
+
         work_order = None
         proj = None
         name = ''
@@ -143,7 +144,7 @@ class TaskInspectWdg(BaseRefreshWdg):
             proj = my.server.eval("@SOBJECT(twog/proj['code','%s'])" % my.code)[0]
             name = proj.get('process')
             st_name = "Project"
-        ins = InspectScripts()
+
         title = my.server.eval("@SOBJECT(twog/title['code','%s'])" % proj.get('title_code'))[0]
         order = my.server.eval("@SOBJECT(twog/order['code','%s'])" % title.get('order_code'))[0]
         table = Table()
@@ -152,17 +153,17 @@ class TaskInspectWdg(BaseRefreshWdg):
         links_table.add_row()
         order_link = links_table.add_cell('<b><u>%s: %s</u></b>' % (order.get('name'), order.get('po_number')))
         order_link.add_style('cursor: pointer;')
-        order_link.add_behavior(ins.get_launch_info_wdg(order.get('__search_key__'), order.get('name')))
+        order_link.add_behavior(get_launch_info_wdg(order.get('__search_key__'), order.get('name')))
         links_table.add_cell('->')
         title_link = links_table.add_cell('<b><u>%s: %s</u></b>' % (title.get('title'), title.get('episode')))
         title_link.add_style('cursor: pointer;')
-        title_link.add_behavior(ins.get_launch_title_info_wdg(title.get('__search_key__'), title.get('title')))
+        title_link.add_behavior(get_launch_title_info_wdg(title.get('__search_key__'), title.get('title')))
         links_table.add_cell('->')
-        proj_link = None
+
         if my.st == 'twog/work_order':
             proj_link = links_table.add_cell('<b><u>%s</u></b>' % proj.get('process'))
             proj_link.add_style('cursor: pointer;')
-            proj_link.add_behavior(ins.get_launch_info_wdg(proj.get('__search_key__'), proj.get('process')))
+            proj_link.add_behavior(get_launch_info_wdg(proj.get('__search_key__'), proj.get('process')))
             links_table.add_cell('->')
             wo_no_link = links_table.add_cell('<b>%s</b>' % work_order.get('process'))
         else:
@@ -213,7 +214,7 @@ class TaskInspectWdg(BaseRefreshWdg):
                 source_look = src_tbl.add_cell('<u>Title: %s, Type: %s</u>' % (s.get('title'), s.get('source_type')))
                 source_look.add_attr('nowrap','nowrap')
                 source_look.add_style('cursor: pointer;')
-                source_look.add_behavior(obs.get_open_sob_behavior(s.get('code'),'twog/source','view'))
+                source_look.add_behavior(get_open_sob_behavior(s.get('code'), 'twog/source', 'view'))
                 if s.get('code') in src_snaps.keys():
                     for entry in src_snaps[s.get('code')]:
                         src_tbl.add_row()
@@ -293,8 +294,6 @@ class TaskInspectWdg(BaseRefreshWdg):
 class InstructionsWdg(BaseTableElementWdg):
 
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
         my.server = TacticServerStub.get()
     
     def get_display(my):   
@@ -313,8 +312,6 @@ class InstructionsWdg(BaseTableElementWdg):
 class TitleViewWdg(BaseTableElementWdg):
 
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
         my.server = TacticServerStub.get()
         my.sk = ''
         my.code = ''
@@ -324,7 +321,7 @@ class TitleViewWdg(BaseTableElementWdg):
         my.sk = str(my.kwargs.get('search_key'))
         my.code = str(my.kwargs.get('code'))
         my.name = str(my.kwargs.get('name'))
-        obs = InspectScripts()
+
         src_tbl = Table()
         togs = my.server.eval("@SOBJECT(twog/title_origin['title_code','%s'])" % my.code)
         sources = []
@@ -340,7 +337,7 @@ class TitleViewWdg(BaseTableElementWdg):
             source_look = src_tbl.add_cell('<u>Title: %s, Type: %s</u>' % (src.get('title'), src.get('source_type')))
             source_look.add_attr('nowrap','nowrap')
             source_look.add_style('cursor: pointer;')
-            source_look.add_behavior(obs.get_open_sob_behavior(src.get('code'),'twog/source','view'))
+            source_look.add_behavior(get_open_sob_behavior(src.get('code'), 'twog/source', 'view'))
         view_edit_wdg = EditWdg(element_name='general',mode='view',search_type='twog/title',code=my.code,title="Info for %s" % my.name,view='edit',widget_key='edit_layout',search_key=my.sk)
         delivs_tbl = Table()
         delivs = my.server.eval("@SOBJECT(twog/deliverable['title_code','%s'])" % my.code)
@@ -355,14 +352,15 @@ class TitleViewWdg(BaseTableElementWdg):
             launch_look = delivs_tbl.add_cell('<u>Name: %s, Type: %s To: %s</u>' % (d.get('name'),d.get('source_type'), d.get('deliver_to'))) 
             launch_look.add_attr('nowrap','nowrap')
             launch_look.add_style('cursor: pointer;')
-            launch_look.add_behavior(obs.get_open_sob_behavior(d.get('code'),'twog/deliverable','view'))
+            launch_look.add_behavior(get_open_sob_behavior(d.get('code'), 'twog/deliverable', 'view'))
             checkbox = CheckboxWdg('satisfied_%s' % d.get('code'))
-            #checkbox.set_persistence()
+
             if d.get('satisfied') == True:
                 checkbox.set_value(True)
             else:
                 checkbox.set_value(False)
-            checkbox.add_behavior(obs.get_change_deliverable_satisfied_behavior(d.get('code'), d.get('satisfied')))
+
+            checkbox.add_behavior(get_change_deliverable_satisfied_behavior(d.get('code'), d.get('satisfied')))
             satisfied_cell = delivs_tbl.add_cell(checkbox)
             satisfied_cell.add_attr('align','center')
         table = Table()
@@ -381,8 +379,6 @@ class TitleViewWdg(BaseTableElementWdg):
 class OBSourceLikeNoEditWdg(BaseRefreshWdg): 
 
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
         my.server = TacticServerStub.get()
         my.sob_code = ''
         my.st = ''
@@ -396,7 +392,6 @@ class OBSourceLikeNoEditWdg(BaseRefreshWdg):
         my.open_type = str(my.kwargs.get('open_type'))
         my.name = str(my.kwargs.get('name'))
         sk = my.server.build_search_key(my.st, my.sob_code)
-        obs = InspectScripts()
         edit_wdg = EditWdg(element_name='general', mode=my.open_type, search_type=my.st, code=my.sob_code, title=my.name, view='edit', widget_key='edit_layout')
         table = Table()
         table.add_attr('class','sob_edit_top')
@@ -420,18 +415,15 @@ class OBSourceLikeNoEditWdg(BaseRefreshWdg):
 
 class TwogEasyCheckinWdg2(BaseRefreshWdg):
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
         my.code = ''
         my.sk = ''
         my.source_contexts = []
 
-    def get_display(my):   
-        from pyasm.prod.biz import ProdSetting
+    def get_display(my):
         my.code = str(my.kwargs.get('code'))
         my.sk = str(my.kwargs.get('sk'))
         my.source_contexts = ProdSetting.get_value_by_key('source_contexts').split('|')
-        obs = InspectScripts()
+
         table = Table()
         table.add_attr('class','twog_easy_checkin')
         table.add_attr('width','100%s' % '%')
@@ -458,164 +450,163 @@ class TwogEasyCheckinWdg2(BaseRefreshWdg):
         button = mini1.add_cell('<input type="button" value="Browse"/>')
         button.add_attr('align','right')
         button.add_style('cursor: pointer;')
-        button.add_behavior(obs.get_easy_checkin_browse_behavior())
+        button.add_behavior(get_easy_checkin_browse_behavior())
         big_button = mini1.add_cell('<input type="button" value="Check In" class="easy_checkin_commit" disabled/>')
         big_button.add_style('cursor: pointer;')
-        big_button.add_behavior(obs.get_easy_checkin_commit_behavior(my.sk))
+        big_button.add_behavior(get_easy_checkin_commit_behavior(my.sk))
         table.add_cell(mini1)
         return table
 
-class InspectScripts(BaseRefreshWdg):
-    def init(my):
-        from client.tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
-        my.server = TacticServerStub.get()
 
-    def get_easy_checkin_commit_behavior(my, sob_sk):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-                        try{
-                           var server = TacticServerStub.get();
-                           var sob_sk = '%s';
-                           var sob_top_el = document.getElementsByClassName('sob_edit_top')[0];
-                           var file_selected_cell = sob_top_el.getElementsByClassName('file_holder')[0];
-                           var file_selected = file_selected_cell.innerHTML;
-                           var selects = sob_top_el.getElementsByTagName('select');
-                           var ctx_select = '';
-                           for(var r = 0; r < selects.length; r++){
-                               if(selects[r].name == 'sob_process_select'){
-                                   ctx_select = selects[r];
-                               }
-                           } 
-                           var ctx = ctx_select.value;
-                           server.simple_checkin(deliverable_sk, ctx, file_selected, {'mode': 'inplace'});
-                           var history = sob_top_el.getElementsByClassName('history_sob_cell')[0];
-                           //alert(history);
-			   spt.api.load_panel(history, 'tactic.ui.widget.SObjectCheckinHistoryWdg', {search_key: deliverable_sk}); 
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sob_sk)}
-        return behavior
-
-    def get_easy_checkin_browse_behavior(my):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-                        try{
-                           var server = TacticServerStub.get();
-                           var applet = spt.Applet.get();
-                           var base_dirs = server.get_base_dirs();
-                           var base_sandbox = base_dirs.win32_sandbox_dir;
-                           var sob_top_el = document.getElementsByClassName('twog_easy_checkin')[0];
-                           var potential_files = applet.open_file_browser(base_sandbox);
-                           var main_file = potential_files[0];
-                           var file_selected_cell = sob_top_el.getElementsByClassName('file_holder')[0];
-                           file_selected_cell.innerHTML = main_file;
-                           var commit_button = sob_top_el.getElementsByClassName('easy_checkin_commit')[0];
-                           commit_button.disabled = false;
-
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         '''}
-        return behavior
-
-    def get_launch_info_wdg(my, ob_sk, name):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-                        try{
-                          var ob_sk = '%s';
-                          var name = '%s';
-                          var ob_st = ob_sk.split('?')[0];
-                          var ob_code = ob_sk.split('code=')[1];
-                          kwargs = {element_name: 'general',
-                                    mode: 'view', 
-                                    search_type: ob_st, 
-                                    code: ob_code, 
-                                    title: 'View info for ' + name, 
-                                    view: 'edit', 
-                                    widget_key: 'edit_layout', 
-                                    search_key: ob_sk 
-
-                          };
-                          spt.panel.load_popup('Info for ' + name, 'tactic.ui.panel.EditWdg', kwargs);
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (ob_sk, name)
-        }
-        return behavior
-    
-    def get_launch_title_info_wdg(my, ob_sk, name):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-                        try{
-                          var ob_sk = '%s';
-                          var name = '%s';
-                          var ob_st = ob_sk.split('?')[0];
-                          var ob_code = ob_sk.split('code=')[1];
-                          kwargs = {
-                                    code: ob_code, 
-                                    name: name, 
-                                    search_key: ob_sk 
-
-                          };
-                          spt.panel.load_popup('Info for ' + name, 'order_builder.TitleViewWdg', kwargs);
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (ob_sk, name)
-        }
-        return behavior
-
-    def get_change_deliverable_satisfied_behavior(my, deliverable_code, current_state):
-        behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''        
-                        try{
-                          var server = TacticServerStub.get();
-                          deliverable_code = '%s';
-                          state = '%s';
-                          new_val = '';
-                          if(state == 'False'){
-                              new_val = 'True';
-                          }else{
-                              new_val = 'False';
-                          }
-                          server.update(server.build_search_key('twog/deliverable', deliverable_code), {'satisfied': new_val});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (deliverable_code, current_state)}
-        return behavior
+def get_open_sob_behavior(sob_code, st, open_type):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      var server = TacticServerStub.get();
+                      sob_code = '%s';
+                      st = '%s';
+                      open_type = '%s';
+                      name = 'Deliverable Portal'
+                      if(st == 'twog/source'){
+                          name = 'Source Portal'
+                      }
+                      spt.panel.load_popup(name, 'order_builder.OBSourceLikeNoEditWdg', {'sob_code': sob_code, 'st': st, 'open_type': open_type, 'name': name});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (sob_code, st, open_type)}
+    return behavior
 
 
-    def get_open_sob_behavior(my, sob_code, st, open_type):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-                        try{
-                          var server = TacticServerStub.get();
-                          sob_code = '%s';
-                          st = '%s';
-                          open_type = '%s';
-                          name = 'Deliverable Portal'
-                          if(st == 'twog/source'){
-                              name = 'Source Portal'
-                          } 
-                          spt.panel.load_popup(name, 'order_builder.OBSourceLikeNoEditWdg', {'sob_code': sob_code, 'st': st, 'open_type': open_type, 'name': name});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sob_code, st, open_type)}
-        return behavior
+def get_easy_checkin_commit_behavior(sob_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                       var server = TacticServerStub.get();
+                       var sob_sk = '%s';
+                       var sob_top_el = document.getElementsByClassName('sob_edit_top')[0];
+                       var file_selected_cell = sob_top_el.getElementsByClassName('file_holder')[0];
+                       var file_selected = file_selected_cell.innerHTML;
+                       var selects = sob_top_el.getElementsByTagName('select');
+                       var ctx_select = '';
+                       for(var r = 0; r < selects.length; r++){
+                           if(selects[r].name == 'sob_process_select'){
+                               ctx_select = selects[r];
+                           }
+                       }
+                       var ctx = ctx_select.value;
+                       server.simple_checkin(deliverable_sk, ctx, file_selected, {'mode': 'inplace'});
+                       var history = sob_top_el.getElementsByClassName('history_sob_cell')[0];
+                       //alert(history);
+           spt.api.load_panel(history, 'tactic.ui.widget.SObjectCheckinHistoryWdg', {search_key: deliverable_sk});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (sob_sk)}
+    return behavior
+
+
+def get_easy_checkin_browse_behavior():
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                       var server = TacticServerStub.get();
+                       var applet = spt.Applet.get();
+                       var base_dirs = server.get_base_dirs();
+                       var base_sandbox = base_dirs.win32_sandbox_dir;
+                       var sob_top_el = document.getElementsByClassName('twog_easy_checkin')[0];
+                       var potential_files = applet.open_file_browser(base_sandbox);
+                       var main_file = potential_files[0];
+                       var file_selected_cell = sob_top_el.getElementsByClassName('file_holder')[0];
+                       file_selected_cell.innerHTML = main_file;
+                       var commit_button = sob_top_el.getElementsByClassName('easy_checkin_commit')[0];
+                       commit_button.disabled = false;
+
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     '''}
+    return behavior
+
+
+def get_launch_info_wdg(ob_sk, name):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      var ob_sk = '%s';
+                      var name = '%s';
+                      var ob_st = ob_sk.split('?')[0];
+                      var ob_code = ob_sk.split('code=')[1];
+                      kwargs = {element_name: 'general',
+                                mode: 'view',
+                                search_type: ob_st,
+                                code: ob_code,
+                                title: 'View info for ' + name,
+                                view: 'edit',
+                                widget_key: 'edit_layout',
+                                search_key: ob_sk
+
+                      };
+                      spt.panel.load_popup('Info for ' + name, 'tactic.ui.panel.EditWdg', kwargs);
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (ob_sk, name)
+    }
+    return behavior
+
+
+def get_launch_title_info_wdg(ob_sk, name):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      var ob_sk = '%s';
+                      var name = '%s';
+                      var ob_st = ob_sk.split('?')[0];
+                      var ob_code = ob_sk.split('code=')[1];
+                      kwargs = {
+                                code: ob_code,
+                                name: name, 
+                                search_key: ob_sk
+
+                      };
+                      spt.panel.load_popup('Info for ' + name, 'order_builder.TitleViewWdg', kwargs);
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (ob_sk, name)
+    }
+    return behavior
+
+
+def get_change_deliverable_satisfied_behavior(deliverable_code, current_state):
+    behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
+                    try{
+                      var server = TacticServerStub.get();
+                      deliverable_code = '%s';
+                      state = '%s';
+                      new_val = '';
+                      if(state == 'False'){
+                          new_val = 'True';
+                      }else{
+                          new_val = 'False';
+                      }
+                      server.update(server.build_search_key('twog/deliverable', deliverable_code), {'satisfied': new_val});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (deliverable_code, current_state)}
+    return behavior
