@@ -69,7 +69,6 @@ def abbreviate_text(string, max_len):
 
 
 def fix_date(date):
-    # TODO: Move this function to a separate file
     # This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
     return_date = ''
     date_obj = SPTDate.convert_to_local(date)

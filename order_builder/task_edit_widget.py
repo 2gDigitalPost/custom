@@ -7,6 +7,7 @@ from tactic.ui.common import BaseRefreshWdg
 from tactic.ui.widget import CalendarInputWdg
 
 from order_builder_utils import get_save_task_info_behavior
+from common_tools.common_functions import fix_date
 
 
 class TaskEditWdg(BaseRefreshWdg):
@@ -77,15 +78,6 @@ class TaskEditWdg(BaseRefreshWdg):
                     task_select.append_option('Completed', 'Completed')
 
         return task_select
-
-    def fix_date(self, date):
-        #This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-        from pyasm.common import SPTDate
-        return_date = ''
-        date_obj = SPTDate.convert_to_local(date)
-        if date_obj not in [None,'']:
-            return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-        return return_date
 
     def get_display(self):
         pyclass_dict = {
@@ -169,14 +161,14 @@ class TaskEditWdg(BaseRefreshWdg):
                 bid_start.set_option('display_format', 'MM/DD/YYYY HH:MM')
                 bid_start.set_option('time_input_default', '5:00 PM')
                 if task.get_value('bid_start_date') not in ['', None]:
-                    bid_start.set_option('default', self.fix_date(task.get_value('bid_start_date')))
+                    bid_start.set_option('default', fix_date(task.get_value('bid_start_date')))
                 bid_end = CalendarInputWdg(name='task_bid_end')  # 4.2
                 bid_end.set_option('show_time', 'true')
                 bid_end.set_option('show_activator', 'true')
                 bid_end.set_option('display_format', 'MM/DD/YYYY HH:MM')
                 bid_end.set_option('time_input_default', '5:00 PM')
                 if task.get_value('bid_end_date') not in ['', None]:
-                    bid_end.set_option('default', self.fix_date(task.get_value('bid_end_date')))
+                    bid_end.set_option('default', fix_date(task.get_value('bid_end_date')))
                 table.add_row()
                 bs = table.add_cell('Bid Start: ')
                 bs.add_attr('nowrap', 'nowrap')
@@ -187,12 +179,12 @@ class TaskEditWdg(BaseRefreshWdg):
                 table.add_row()
                 acs = table.add_cell('Actual Start: ')
                 acs.add_attr('nowrap', 'nowrap')
-                acsv = self.fix_date(task.get_value('actual_start_date'))
+                acsv = fix_date(task.get_value('actual_start_date'))
                 if acsv in ['', None]:
                     acsv = 'Has not begun'
                 table.add_cell(acsv)
                 ace = table.add_cell('Actual End: ')
-                acev = self.fix_date(task.get_value('actual_end_date'))
+                acev = fix_date(task.get_value('actual_end_date'))
                 if acev in ['', None]:
                     acev = 'Has not ended'
                 ace.add_attr('nowrap', 'nowrap')
