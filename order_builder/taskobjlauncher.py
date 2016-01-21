@@ -85,7 +85,6 @@ class TaskObjLauncherWdg(BaseTableElementWdg):
 class TaskInspectWdg(BaseRefreshWdg):
 
     def init(my):
-
         my.group_list = Environment.get_group_names()
         login = Environment.get_login()
         my.user = login.get_login()
@@ -99,8 +98,7 @@ class TaskInspectWdg(BaseRefreshWdg):
                 my.is_scheduler = True
         if my.user == 'admin':
             my.is_scheduler = True
-               
-    
+
     def get_snapshot_file_link(my,snapshot_code):
         what_to_ret = ''
         base = '/volumes'
@@ -117,8 +115,7 @@ class TaskInspectWdg(BaseRefreshWdg):
             what_to_ret = '<a href="%s" title="%s" name="%s">%s: %s</a>' % (full,full,full, ctx, file_only)
         return what_to_ret
 
-    def get_display(my):   
-
+    def get_display(my):
         if 'sk' in my.kwargs.keys():
             my.sk = str(my.kwargs.get('sk'))
             my.code = my.sk.split('code=')[1]
@@ -133,16 +130,13 @@ class TaskInspectWdg(BaseRefreshWdg):
 
         work_order = None
         proj = None
-        name = ''
         st_name = ''
         if my.st == 'twog/work_order':
             work_order = my.server.eval("@SOBJECT(twog/work_order['code','%s'])" % my.code)[0]
-            name = work_order.get('process')
             proj = my.server.eval("@SOBJECT(twog/proj['code','%s'])" % work_order.get('proj_code'))[0]
             st_name = "Work Order"
         elif my.st == 'twog/proj':
             proj = my.server.eval("@SOBJECT(twog/proj['code','%s'])" % my.code)[0]
-            name = proj.get('process')
             st_name = "Project"
 
         title = my.server.eval("@SOBJECT(twog/title['code','%s'])" % proj.get('title_code'))[0]
@@ -180,7 +174,7 @@ class TaskInspectWdg(BaseRefreshWdg):
             input_processes.append(wo_process)
             input_tasks = my.server.query('sthpw/task', filters=[('search_type', wo_task.get('search_type')), ('search_id', wo_task.get('search_id')),('process',input_processes)])
             lead_in_files = []
-            #print "INPUT TASKS = %s" % input_tasks
+
             for t in input_tasks:
                 lookup_code = t.get('lookup_code')
                 prev_wo = my.server.eval("@SOBJECT(twog/work_order['code','%s'])" % lookup_code)
@@ -350,7 +344,7 @@ class TitleViewWdg(BaseTableElementWdg):
         for d in delivs:
             delivs_tbl.add_row()
             launch_look = delivs_tbl.add_cell('<u>Name: %s, Type: %s To: %s</u>' % (d.get('name'),d.get('source_type'), d.get('deliver_to'))) 
-            launch_look.add_attr('nowrap','nowrap')
+            launch_look.add_attr('nowrap', 'nowrap')
             launch_look.add_style('cursor: pointer;')
             launch_look.add_behavior(get_open_sob_behavior(d.get('code'), 'twog/deliverable', 'view'))
             checkbox = CheckboxWdg('satisfied_%s' % d.get('code'))
@@ -362,16 +356,16 @@ class TitleViewWdg(BaseTableElementWdg):
 
             checkbox.add_behavior(get_change_deliverable_satisfied_behavior(d.get('code'), d.get('satisfied')))
             satisfied_cell = delivs_tbl.add_cell(checkbox)
-            satisfied_cell.add_attr('align','center')
+            satisfied_cell.add_attr('align', 'center')
         table = Table()
         table.add_row()
         stbl = table.add_cell(src_tbl)
-        stbl.add_attr('align','center')
+        stbl.add_attr('align', 'center')
         table.add_row()
         table.add_cell(' ')
         table.add_row()
         dtbl = table.add_cell(delivs_tbl)
-        dtbl.add_attr('align','center')
+        dtbl.add_attr('align', 'center')
         table.add_row()
         table.add_cell(view_edit_wdg)
         return table
@@ -392,24 +386,25 @@ class OBSourceLikeNoEditWdg(BaseRefreshWdg):
         my.open_type = str(my.kwargs.get('open_type'))
         my.name = str(my.kwargs.get('name'))
         sk = my.server.build_search_key(my.st, my.sob_code)
-        edit_wdg = EditWdg(element_name='general', mode=my.open_type, search_type=my.st, code=my.sob_code, title=my.name, view='edit', widget_key='edit_layout')
+        edit_wdg = EditWdg(element_name='general', mode=my.open_type, search_type=my.st, code=my.sob_code,
+                           title=my.name, view='edit', widget_key='edit_layout')
         table = Table()
-        table.add_attr('class','sob_edit_top')
+        table.add_attr('class', 'sob_edit_top')
         table.add_row()
         edit_sob_cell = table.add_cell(edit_wdg)
-        edit_sob_cell.add_attr('valign','top')
+        edit_sob_cell.add_attr('valign', 'top')
         table.add_row()
         
         history = SObjectCheckinHistoryWdg(search_key=sk)
         history_cell = table.add_cell(history)
-        history_cell.add_attr('class','history_sob_cell')
+        history_cell.add_attr('class', 'history_sob_cell')
         table.add_row()
 
         checkin = TwogEasyCheckinWdg2(sk=sk,code=my.sob_code)
         checkin_cell = table.add_cell(checkin)
-        checkin_cell.add_attr('class','checkin_sob_cell')
-        checkin_cell.add_attr('width','100%s' % '%')
-        checkin_cell.add_attr('align','center')
+        checkin_cell.add_attr('class', 'checkin_sob_cell')
+        checkin_cell.add_attr('width', '100%')
+        checkin_cell.add_attr('align', 'center')
 
         return table
 
@@ -425,13 +420,13 @@ class TwogEasyCheckinWdg2(BaseRefreshWdg):
         my.source_contexts = ProdSetting.get_value_by_key('source_contexts').split('|')
 
         table = Table()
-        table.add_attr('class','twog_easy_checkin')
-        table.add_attr('width','100%s' % '%')
+        table.add_attr('class', 'twog_easy_checkin')
+        table.add_attr('width', '100%')
         table.add_row()
         title_bar = table.add_cell('<b><u>Checkin New File</u></b>')
-        title_bar.add_attr('align','center')
-        title_bar.add_attr('colspan','4')
-        title_bar.add_style('font-size: 110%ss' % '%')
+        title_bar.add_attr('align', 'center')
+        title_bar.add_attr('colspan', '4')
+        title_bar.add_style('font-size', '110%ss' % '%')
         processes_sel = SelectWdg('sob_process_select')
         for ctx in my.source_contexts:
             processes_sel.append_option(ctx,ctx)
@@ -444,11 +439,11 @@ class TwogEasyCheckinWdg2(BaseRefreshWdg):
         mini1 = Table()
         mini1.add_row()
         file_holder = mini1.add_cell(' ')
-        file_holder.add_attr('width','100%s' % '%')
-        file_holder.add_attr('align','center')
-        file_holder.add_attr('class','file_holder')
+        file_holder.add_attr('width', '100%')
+        file_holder.add_attr('align', 'center')
+        file_holder.add_attr('class', 'file_holder')
         button = mini1.add_cell('<input type="button" value="Browse"/>')
-        button.add_attr('align','right')
+        button.add_attr('align', 'right')
         button.add_style('cursor: pointer;')
         button.add_behavior(get_easy_checkin_browse_behavior())
         big_button = mini1.add_cell('<input type="button" value="Check In" class="easy_checkin_commit" disabled/>')
@@ -573,7 +568,7 @@ def get_launch_title_info_wdg(ob_sk, name):
                       var ob_code = ob_sk.split('code=')[1];
                       kwargs = {
                                 code: ob_code,
-                                name: name, 
+                                name: name,
                                 search_key: ob_sk
 
                       };
