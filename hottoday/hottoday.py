@@ -470,10 +470,11 @@ class HotTodayWdg(BaseRefreshWdg):
         # Search for titles that are marked as 'hot'
         search_for_hot_items = Search('twog/title')
         search_for_hot_items.add_filter('bigboard', True)
-        search_for_hot_items.add_filter('status', 'Completed', op='!=')
         search_for_hot_items.add_order_by('priority')
         search_for_hot_items.add_order_by('expected_delivery_date')
         hot_items = search_for_hot_items.get_sobjects()
+
+        hot_items = [hot_item for hot_item in hot_items if hot_item.get_value('status') != 'Completed']
 
         tasks = self.get_tasks(hot_items)
 
