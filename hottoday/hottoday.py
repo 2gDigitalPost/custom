@@ -320,6 +320,7 @@ class HotTodayWdg(BaseRefreshWdg):
 
         current_row = table.add_row()
         current_row.add_style('width', '100%')
+        current_row.add_style('height', 'auto')
 
         # Add the title table to the table row
         title_cell = table.add_cell(title_table, row=current_row)
@@ -405,6 +406,7 @@ class HotTodayWdg(BaseRefreshWdg):
         """
         current_row = table.add_row()
         current_row.add_style('width', '100%')
+        current_row.add_style('height', 'auto')
 
         priority_row = table.add_cell(priority, row=current_row)
         priority_row.add_style('background-color', '#DCE3EE')
