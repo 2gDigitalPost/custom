@@ -64,7 +64,8 @@ class ElementEvalWdg(BaseTableElementWdg):
         my.key_tbl.add_cell('&nbsp;L-C&nbsp;')
         my.key_tbl.add_cell('&nbsp;L-R&nbsp;')
 
-    def get_save_bvr(my, wo_code, ell_code):
+    @staticmethod
+    def get_save_bvr(wo_code, ell_code):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         function loop_dict(dictionary){
                             //var keys = [];
@@ -273,7 +274,8 @@ class ElementEvalWdg(BaseTableElementWdg):
          ''' % (wo_code, ell_code)}
         return behavior
 
-    def get_clone_report(my, wo_code, el_code):
+    @staticmethod
+    def get_clone_report(wo_code, el_code):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
                           var work_order_code = '%s';
@@ -292,7 +294,8 @@ class ElementEvalWdg(BaseTableElementWdg):
          ''' % (wo_code, el_code)}
         return behavior
 
-    def get_print_bvr(my, wo_code, el_code, type):
+    @staticmethod
+    def get_print_bvr(wo_code, el_code, type):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         function replaceAll(find, replace, str) {
                           find = find.replace('[','\\\[').replace(']','\\\]').replace('+','\\\+');
@@ -446,7 +449,8 @@ class ElementEvalWdg(BaseTableElementWdg):
          ''' % (wo_code, el_code, type, '%')}
         return behavior
 
-    def get_click_row(my, wo_code, el_code):
+    @staticmethod
+    def get_click_row(wo_code, el_code):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
                           var work_order_code = '%s';
@@ -464,7 +468,8 @@ class ElementEvalWdg(BaseTableElementWdg):
          ''' % (wo_code, el_code)}
         return behavior
 
-    def get_add_dots(my):
+    @staticmethod
+    def get_add_dots():
         behavior = {'css_class': 'clickme', 'type': 'keyup', 'cbjs_action': '''
                 try{
                     var entered = bvr.src_el.value;
@@ -485,7 +490,8 @@ class ElementEvalWdg(BaseTableElementWdg):
          '''}
         return behavior
 
-    def get_delete_report(my, wo_code, el_code):
+    @staticmethod
+    def get_delete_report(wo_code, el_code):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
                           var work_order_code = '%s';
@@ -509,7 +515,8 @@ class ElementEvalWdg(BaseTableElementWdg):
          ''' % (wo_code, el_code)}
         return behavior
 
-    def get_change_channels(my, wo_code, ell_code):
+    @staticmethod
+    def get_change_channels(wo_code, ell_code):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
                           entered = prompt("How many audio channels do you want in this report?");
@@ -538,7 +545,8 @@ class ElementEvalWdg(BaseTableElementWdg):
          ''' % (wo_code, ell_code)}
         return behavior
 
-    def launch_tc_shifter(my, wo_code, ell_code):
+    @staticmethod
+    def launch_tc_shifter(wo_code, ell_code):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
                           wo_code = '%s';
@@ -559,6 +567,7 @@ class ElementEvalWdg(BaseTableElementWdg):
 
     @staticmethod
     def kill_nothing(val):
+        # TODO: Find out what this is for, if anything
         if val == 'NOTHINGXsXNOTHING':
             val = ''
         return val
