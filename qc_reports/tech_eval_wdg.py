@@ -7,6 +7,8 @@ from tactic.ui.widget import CalendarInputWdg
 from pyasm.common import Environment
 from pyasm.web import Table, DivWdg
 
+from common_tools.common_functions import fix_date
+
 
 class TechEvalWdg(BaseTableElementWdg):
 
@@ -163,15 +165,6 @@ class TechEvalWdg(BaseTableElementWdg):
          ''' % (wo_code, el_code)}
         return behavior
 
-    def fix_date(my, date):
-        #This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-        from pyasm.common import SPTDate
-        return_date = ''
-        date_obj = SPTDate.convert_to_local(date)
-        if date_obj not in [None,'']:
-            return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-        return return_date
-
     def get_display(my):
         login = Environment.get_login()
         this_user = login.get_login()
@@ -299,7 +292,7 @@ class TechEvalWdg(BaseTableElementWdg):
                 click_row.add_behavior(my.get_click_row(t.get('work_order_code'), t.get('code')))
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (t.get('wo_name'), t.get('work_order_code')))
                 others.add_cell('<b>OPERATOR:</b> %s' % t.get('operator'))
-                others.add_cell('<b>DATETIME:</b> %s' % my.fix_date(t.get('date')))
+                others.add_cell('<b>DATETIME:</b> %s' % fix_date(t.get('date')))
                 colsct = colsct + 1
         if len(wo_evals) > 0:
             wrrr = others.add_row()
@@ -313,7 +306,7 @@ class TechEvalWdg(BaseTableElementWdg):
                 click_row.add_behavior(my.get_click_row(w.get('work_order_code'), w.get('code')))
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (w.get('wo_name'), w.get('work_order_code')))
                 others.add_cell('<b>OPERATOR:</b> %s' % w.get('operator'))
-                others.add_cell('<b>DATETIME:</b> %s' % my.fix_date(w.get('date')))
+                others.add_cell('<b>DATETIME:</b> %s' % fix_date(w.get('date')))
                 colsct = colsct + 1
 
         widget.add_attr('class','big_ol_tech_wdg_%s' % code)
@@ -373,7 +366,7 @@ class TechEvalWdg(BaseTableElementWdg):
         qcd.set_option('width', '120px')
         qcd.set_option('id', 'timestamp')
         if tech.get('timestamp') not in [None,'']:
-            qcd.set_option('default', my.fix_date(tech.get('timestamp')))
+            qcd.set_option('default', fix_date(tech.get('timestamp')))
         qcd.get_top().add_attr('id','timestamp')
         qcd.set_persist_on_submit()
 
@@ -386,7 +379,7 @@ class TechEvalWdg(BaseTableElementWdg):
         lbld.set_option('width', '120px')
         lbld.set_option('id', 'label_date')
         if tech.get('label_date') not in [None,'']:
-            lbld.set_option('default', my.fix_date(tech.get('label_date')))
+            lbld.set_option('default', fix_date(tech.get('label_date')))
         lbld.get_top().add_attr('id','label_date')
         lbld.set_persist_on_submit()
 

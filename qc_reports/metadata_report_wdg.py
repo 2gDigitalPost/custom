@@ -8,6 +8,8 @@ from pyasm.common import Environment
 from pyasm.web import Table, DivWdg
 from pyasm.widget import SelectWdg, CheckboxWdg
 
+from common_tools.common_functions import fix_date
+
 class MetaDataReportWdg(BaseTableElementWdg):
 
     def init(my):
@@ -394,15 +396,6 @@ class MetaDataReportWdg(BaseTableElementWdg):
             ctr += 1
         return tbl
 
-    def fix_date(my, date):
-        #This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-        from pyasm.common import SPTDate
-        return_date = ''
-        date_obj = SPTDate.convert_to_local(date)
-        if date_obj not in [None,'']:
-            return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-        return return_date
-
     def get_display(my):
         my.get_stub()
         my.fill_languages()
@@ -625,7 +618,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (t.get('wo_name'), t.get('work_order_code')))
                 others.add_cell('<b>OPERATOR:</b> %s' % t.get('qc_operator'))
                 others.add_cell('<b>CONCLUSION:</b> %s' % t.get('conclusion'))
-                others.add_cell('<b>DATETIME:</b> %s' % my.fix_date(t.get('qc_date')))
+                others.add_cell('<b>DATETIME:</b> %s' % fix_date(t.get('qc_date')))
                 colsct = colsct + 1
         if len(wo_reports) > 0:
             wrrr = others.add_row()
@@ -640,7 +633,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (w.get('wo_name'), w.get('work_order_code')))
                 others.add_cell('<b>OPERATOR:</b> %s' % w.get('qc_operator'))
                 others.add_cell('<b>CONCLUSION:</b> %s' % w.get('conclusion'))
-                others.add_cell('<b>DATETIME:</b> %s' % my.fix_date(w.get('qc_date')))
+                others.add_cell('<b>DATETIME:</b> %s' % fix_date(w.get('qc_date')))
                 colsct = colsct + 1
 
 
@@ -700,7 +693,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
         qcd.set_option('width', '320px')
         qcd.set_option('id', 'qc_date')
         if metadata.get('qc_date') not in [None,'']:
-            qcd.set_option('default', my.fix_date(metadata.get('qc_date')))
+            qcd.set_option('default', fix_date(metadata.get('qc_date')))
         qcd.get_top().add_attr('id','qc_date')
         qcd.set_persist_on_submit()
 
