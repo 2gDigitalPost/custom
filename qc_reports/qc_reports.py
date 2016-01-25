@@ -3211,7 +3211,7 @@ class ElementEvalWdg(BaseTableElementWdg):
             if 'qc' in g or 'edeliveries' in g or 'admin' in g:
                 show_save = True
 
-        this_timestamp = str(datetime.datetime.now()).split('.')[0]
+        this_timestamp = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         code = my.kwargs.get('code')
 
         channels = 21
@@ -3273,7 +3273,8 @@ class ElementEvalWdg(BaseTableElementWdg):
             'black_silence_2': '',
             'video_mod_disclaimer': '',
             'start_of_program': '',
-            'end_of_program': '','roll_up_f': '',
+            'end_of_program': '',
+            'roll_up_f': '',
             'bars_tone_f': '',
             'black_silence_1_f': '',
             'slate_silence_f': '',
@@ -3381,7 +3382,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                 click_row = others.add_row()
                 click_row.add_attr('element_code', t.get('code'))
                 click_row.add_attr('work_order_code', t.get('work_order_code'))
-                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct%2])
+                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct % 2])
                 click_row.add_behavior(my.get_click_row(t.get('work_order_code'), t.get('code')))
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (t.get('wo_name'), t.get('work_order_code')))
                 others.add_cell('<b>LANGUAGE:</b> %s' % (t.get('language')))
@@ -3398,7 +3399,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                 click_row = others.add_row()
                 click_row.add_attr('element_code', w.get('code'))
                 click_row.add_attr('work_order_code', w.get('work_order_code'))
-                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct%2])
+                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct % 2])
                 click_row.add_behavior(my.get_click_row(w.get('work_order_code'), w.get('code')))
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (w.get('wo_name'), w.get('work_order_code')))
                 others.add_cell('<b>LANGUAGE:</b> %s' % (w.get('language')))
@@ -3463,8 +3464,8 @@ class ElementEvalWdg(BaseTableElementWdg):
         bay_sel.add_attr('id', 'bay')
         bay_sel.add_style('width: 135px;')
         bay_sel.append_option('--Select--', '')
-        for i in range(1,13):
-            bay_sel.append_option('Bay %s' % i,'Bay %s' % i)
+        for i in range(1, 13):
+            bay_sel.append_option('Bay %s' % i, 'Bay %s' % i)
         if my.element.get('bay') not in [None, '']:
             bay_sel.set_value(my.element.get('bay'))
 
@@ -3523,7 +3524,9 @@ class ElementEvalWdg(BaseTableElementWdg):
         majtbl.add_cell('MACHINE #')
         majtbl.add_row()
 
+        # Add the input box for 'DATE' with the current timestamp
         majtbl.add_cell(my.txtbox('timestamp', width='137px'))
+
         if my.element.get('operator') not in [None, '']:
             that_login = server.eval("@SOBJECT(sthpw/login['login','%s'])" % my.element.get('operator'))
             if that_login:
@@ -3539,58 +3542,68 @@ class ElementEvalWdg(BaseTableElementWdg):
 
         mm3 = majtbl.add_cell(machine_sel)
         mm3.add_attr('class', 'select_cell')
-        tittbl = Table()
-        tittbl.add_row()
-        tittbl.add_cell('TITLE:')
-        tittbl.add_cell(my.txtbox('title', width='400px'))
-        tittbl.add_cell('&nbsp;&nbsp;&nbsp;FORMAT:')
-        mm4 = tittbl.add_cell(format_sel)
-        mm4.add_attr('class', 'select_cell')
-        tittbl.add_row()
-        tittbl.add_cell('SEASON:')
-        tittbl.add_cell(my.txtbox('season', width='400px'))
-        tittbl.add_cell('&nbsp;&nbsp;&nbsp;STANDARD:')
-        mm5 = tittbl.add_cell(standard_sel)
-        mm5.add_attr('class', 'select_cell')
-        tittbl.add_row()
-        tittbl.add_cell('EPISODE:')
-        tittbl.add_cell(my.txtbox('episode', width='400px'))
-        ffr = tittbl.add_cell('&nbsp;&nbsp;&nbsp;FRAME RATE:')
+
+        title_table = Table()
+        title_table.add_row()
+        title_table.add_cell('TITLE:')
+        title_table.add_cell(my.txtbox('title', width='400px'))
+        title_table.add_cell('&nbsp;&nbsp;&nbsp;FORMAT:')
+
+        format_select_cell = title_table.add_cell(format_sel)
+        format_select_cell.add_attr('class', 'select_cell')
+
+        title_table.add_row()
+        title_table.add_cell('SEASON:')
+        title_table.add_cell(my.txtbox('season', width='400px'))
+        title_table.add_cell('&nbsp;&nbsp;&nbsp;STANDARD:')
+
+        standard_select_cell = title_table.add_cell(standard_sel)
+        standard_select_cell.add_attr('class', 'select_cell')
+
+        title_table.add_row()
+        title_table.add_cell('EPISODE:')
+        title_table.add_cell(my.txtbox('episode', width='400px'))
+
+        ffr = title_table.add_cell('&nbsp;&nbsp;&nbsp;FRAME RATE:')
         ffr.add_attr('nowrap', 'nowrap')
-        mm6 = tittbl.add_cell(frame_rate_sel)
-        mm6.add_attr('class', 'select_cell')
-        tittbl.add_row()
-        tittbl.add_cell('VERSION:')
-        tittbl.add_cell(my.txtbox('version', width='400px'))
-        tittbl.add_cell('&nbsp;&nbsp;&nbsp;PO #:')
-        tittbl.add_cell(my.txtbox('po_number', width='151px'))
-        tittbl.add_row()
-        mm7 = tittbl.add_cell('FILE NAME:')
-        mm7.add_attr('nowrap', 'nowrap')
-        mm8 = tittbl.add_cell(my.txtbox('file_name', width='635px'))
-        mm8.add_attr('colspan', '3')
+
+        framerate_select_cell = title_table.add_cell(frame_rate_sel)
+        framerate_select_cell.add_attr('class', 'select_cell')
+
+        title_table.add_row()
+        title_table.add_cell('VERSION:')
+        title_table.add_cell(my.txtbox('version', width='400px'))
+        title_table.add_cell('&nbsp;&nbsp;&nbsp;PO #:')
+        title_table.add_cell(my.txtbox('po_number', width='151px'))
+        title_table.add_row()
+
+        file_name_label = title_table.add_cell('FILE NAME:')
+        file_name_label.add_attr('nowrap', 'nowrap')
+
+        file_name_input = title_table.add_cell(my.txtbox('file_name', width='635px'))
+        file_name_input.add_attr('colspan', '3')
 
         tt2 = Table()
         tt2.add_attr('width', '85%')
         tt2.add_row()
-        tt2.add_cell(tittbl)
+        tt2.add_cell(title_table)
 
         pgf = Table()
         pgf.add_attr('class', 'pgf')
 
         head = Table()
-        head.set_style('background-color: #4a4a4a; width: 100%s;' % '%')
+        head.set_style('background-color: #4a4a4a; width: 100%; color: #FFFFFF')
         head.add_row()
 
-        pgc = head.add_cell('<font color="#FFFFFF"><b>PROGRAM FORMAT</b></font>')
+        pgc = head.add_cell('<b>PROGRAM FORMAT</b>')
         pgc.add_attr('width', '500px')
         pgc.add_attr('align', 'left')
 
-        spcs0 = head.add_cell('<font color="#FFFFFF"><b>F</b></font>')
+        spcs0 = head.add_cell('<b>F</b>')
         spcs0.add_attr('align', 'left')
         spcs0.add_attr('width', '25px')
 
-        pgc2 = head.add_cell('<font color="#FFFFFF"><b>VIDEO MEASUREMENTS</b></font>')
+        pgc2 = head.add_cell('<b>VIDEO MEASUREMENTS</b>')
         pgc2.add_attr('align', 'left')
 
         pg1 = pgf.add_cell(head)
@@ -3635,8 +3648,8 @@ class ElementEvalWdg(BaseTableElementWdg):
         pf.add_cell(my.txtbox('black_silence_2_f', width='20px'))
         pf.add_row()
         pf7 = pf.add_cell('Start of Program')
-        pf7.add_attr('nowrap','nowrap')
-        pf.add_cell(my.txtbox('start_of_program', width='399px',js='yes'))
+        pf7.add_attr('nowrap', 'nowrap')
+        pf.add_cell(my.txtbox('start_of_program', width='399px', js='yes'))
         pf.add_cell(my.txtbox('start_of_program_f', width='20px'))
         pf.add_row()
         pf8 = pf.add_cell('End of Program')
@@ -3689,13 +3702,13 @@ class ElementEvalWdg(BaseTableElementWdg):
         pgf.add_cell(vm)
 
         epro = Table()
-        epro.add_attr('class','epro')
+        epro.add_attr('class', 'epro')
 
         head2 = Table()
-        head2.set_style('background-color: #4a4a4a; width: 100%;')
+        head2.set_style('background-color: #4a4a4a; width: 100%; color: #FFFFFF')
         head2.add_row()
 
-        pgc2 = head2.add_cell('<font color="#FFFFFF"><b>ELEMENT PROFILE</b></font>')
+        pgc2 = head2.add_cell('<b>ELEMENT PROFILE</b>')
         pgc2.add_attr('align', 'left')
         pg1 = epro.add_cell(head2)
         pg1.add_attr('width', '100%')
@@ -3835,12 +3848,13 @@ class ElementEvalWdg(BaseTableElementWdg):
         table.add_cell(epro)
         table.add_row()
 
-        aud2 = table.add_cell('<font color="#FFFFFF"><b>AUDIO CONFIGURATION - click to change number of channels</b></font>')
+        aud2 = table.add_cell('<b>AUDIO CONFIGURATION - click to change number of channels</b>')
         aud2.add_attr('align', 'left')
         aud2.add_attr('id', 'audio_row')
         aud2.add_style('background-color: #4a4a4a;')
+        aud2.add_style('color', '#FFFFFF')
         aud2.add_style('cursor: pointer;')
-        aud2.add_style('width: 100%s;' % '%')
+        aud2.add_style('width: 100%;')
         aud2.add_behavior(my.get_change_channels(code, my.element.get('code')))
 
         table.add_row()
@@ -3889,7 +3903,7 @@ class ElementEvalWdg(BaseTableElementWdg):
             s4.add_behavior(my.get_delete_report(code, my.element.get('code')))
 
         ttbl = Table()
-        ttbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
+        ttbl.add_style('background-color: #528B8B; width: 100%;')
         ttbl.add_row()
 
         tt1 = ttbl.add_cell(others)
