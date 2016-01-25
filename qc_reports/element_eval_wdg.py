@@ -557,18 +557,19 @@ class ElementEvalWdg(BaseTableElementWdg):
          ''' % (wo_code,ell_code)}
         return behavior
 
-    def kill_nothing(my, val):
+    @staticmethod
+    def kill_nothing(val):
         if val == 'NOTHINGXsXNOTHING':
             val = ''
         return val
 
-    def txtbox(my, name, width='200px', js='no'):
+    def txtbox(my, name, width='200px', js=False):
         txt = TextWdg(name)
         txt.add_attr('id', name)
         txt.add_style('width: {0};'.format(width))
         txt.set_value(my.element.get(name))
 
-        if js in ['Yes', 'yes']:
+        if js:
             txt.add_behavior(my.get_add_dots())
 
         return txt
@@ -708,6 +709,7 @@ class ElementEvalWdg(BaseTableElementWdg):
             'vendor_id': '',
             'file_name': ''
         }
+
         my.element_lines = [
             {
                 'code': '',
@@ -735,6 +737,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                 'source_code': ''
             }
         ]
+
         if 'element_code' in my.kwargs.keys():
             element_code = str(my.kwargs.get('element_code'))
             my.element = server.eval("@SOBJECT(twog/element_eval['code','%s'])" % element_code)[0]
@@ -746,6 +749,7 @@ class ElementEvalWdg(BaseTableElementWdg):
         others.add_style('background-color: #528B8B; width: 100%;')
         cols = ['#537072', '#518A1A']
         colsct = 0
+
         if len(title_pevals) > 0:
             trrr = others.add_row()
             trrr.add_style('background-color: #50EDA1;')
@@ -992,41 +996,41 @@ class ElementEvalWdg(BaseTableElementWdg):
         pf1 = pf.add_cell('Roll-up (blank)')
         pf1.add_attr('nowrap', 'nowrap')
 
-        pf.add_cell(my.txtbox('roll_up', width='399px', js='yes'))
+        pf.add_cell(my.txtbox('roll_up', width='399px', js=True))
         pf.add_cell(my.txtbox('roll_up_f', width='20px'))
 
         pf.add_row()
         pf2 = pf.add_cell('Bars/Tone')
         pf2.add_attr('nowrap', 'nowrap')
-        pf.add_cell(my.txtbox('bars_tone', width='399px', js='yes'))
+        pf.add_cell(my.txtbox('bars_tone', width='399px', js=True))
         pf.add_cell(my.txtbox('bars_tone_f', width='20px'))
         pf.add_row()
 
         pf3 = pf.add_cell('Black/Silence')
         pf3.add_attr('nowrap', 'nowrap')
 
-        pf.add_cell(my.txtbox('black_silence_1', width='399px', js='yes'))
+        pf.add_cell(my.txtbox('black_silence_1', width='399px', js=True))
         pf.add_cell(my.txtbox('black_silence_1_f', width='20px'))
         pf.add_row()
 
         pf4 = pf.add_cell('Slate/Silence')
         pf4.add_attr('nowrap', 'nowrap')
-        pf.add_cell(my.txtbox('slate_silence', width='399px', js='yes'))
+        pf.add_cell(my.txtbox('slate_silence', width='399px', js=True))
         pf.add_cell(my.txtbox('slate_silence_f', width='20px'))
         pf.add_row()
         pf5 = pf.add_cell('Black/Silence')
         pf5.add_attr('nowrap', 'nowrap')
-        pf.add_cell(my.txtbox('black_silence_2', width='399px', js='yes'))
+        pf.add_cell(my.txtbox('black_silence_2', width='399px', js=True))
         pf.add_cell(my.txtbox('black_silence_2_f', width='20px'))
         pf.add_row()
         pf7 = pf.add_cell('Start of Program')
         pf7.add_attr('nowrap', 'nowrap')
-        pf.add_cell(my.txtbox('start_of_program', width='399px', js='yes'))
+        pf.add_cell(my.txtbox('start_of_program', width='399px', js=True))
         pf.add_cell(my.txtbox('start_of_program_f', width='20px'))
         pf.add_row()
         pf8 = pf.add_cell('End of Program')
         pf8.add_attr('nowrap', 'nowrap')
-        pf.add_cell(my.txtbox('end_of_program', width='399px', js='yes'))
+        pf.add_cell(my.txtbox('end_of_program', width='399px', js=True))
         pf.add_cell(my.txtbox('end_of_program_f', width='20px'))
 
         vm = Table()
@@ -1091,7 +1095,7 @@ class ElementEvalWdg(BaseTableElementWdg):
         ef.add_row()
         ef1 = ef.add_cell('Total Runtime')
         ef1.add_attr('nowrap', 'nowrap')
-        ef.add_cell(my.txtbox('total_runtime', width="400px", js='yes'))
+        ef.add_cell(my.txtbox('total_runtime', width="400px", js=True))
         ef.add_row()
         ef2 = ef.add_cell('TV/Feature/Trailer')
         ef2.add_attr('nowrap', 'nowrap')
@@ -1249,7 +1253,7 @@ class ElementEvalWdg(BaseTableElementWdg):
         p1 = printtbl.add_cell(' ')
         p1.add_style('width: 40%;')
         p2 = printtbl.add_cell('<u><b>Print This Report</b></u>')
-        p2.add_attr('nowrap','nowrap')
+        p2.add_attr('nowrap', 'nowrap')
         p2.add_style('cursor: pointer;')
         p2.add_behavior(my.get_print_bvr(code, my.element.get('code'), 'element'))
         p3 = printtbl.add_cell(' ')
@@ -1268,7 +1272,7 @@ class ElementEvalWdg(BaseTableElementWdg):
         s3.add_style('width: 40%;')
         if my.element.get('code') not in [None, '']:
             cloner = stbl.add_cell('<input type="button" value="Clone"/>')
-            cloner.add_attr('align','center')
+            cloner.add_attr('align', 'center')
             cloner.add_behavior(my.get_clone_report(code, my.element.get('code')))
 
             s4 = stbl.add_cell('<input type="button" value="Delete This Report"/>')
