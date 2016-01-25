@@ -2,6 +2,7 @@ import datetime
 
 from tactic_client_lib import TacticServerStub
 from tactic.ui.common import BaseTableElementWdg
+from tactic.ui.widget import CalendarInputWdg
 
 from pyasm.common import Environment
 from pyasm.web import Table, DivWdg
@@ -572,10 +573,10 @@ class ElementEvalWdg(BaseTableElementWdg):
             val = ''
         return val
 
-    def txtbox(my, name, width='200px', js=False):
+    def txtbox(my, name, width=200, js=False):
         txt = TextWdg(name)
         txt.add_attr('id', name)
-        txt.add_style('width: {0};'.format(width))
+        txt.add_style('width: {0}px;'.format(width))
         txt.set_value(my.element.get(name))
 
         if js:
@@ -910,7 +911,7 @@ class ElementEvalWdg(BaseTableElementWdg):
         majtbl.add_row()
 
         # Add the input box for 'DATE' with the current timestamp
-        majtbl.add_cell(my.txtbox('timestamp', width='137px'))
+        majtbl.add_cell(my.txtbox('timestamp', width=137))
 
         if my.element.get('operator') not in [None, '']:
             that_login = server.eval("@SOBJECT(sthpw/login['login','%s'])" % my.element.get('operator'))
@@ -918,7 +919,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                 that_login = that_login[0]
                 that_login_name = '%s %s' % (that_login.get('first_name'), that_login.get('last_name'))
                 my.element['operator'] = that_login_name
-        majtbl.add_cell(my.txtbox('operator', width='150px'))
+        majtbl.add_cell(my.txtbox('operator', width=150))
         mm1 = majtbl.add_cell(style_sel)
         mm1.add_attr('class', 'select_cell')
 
@@ -931,7 +932,7 @@ class ElementEvalWdg(BaseTableElementWdg):
         title_table = Table()
         title_table.add_row()
         title_table.add_cell('TITLE:')
-        title_table.add_cell(my.txtbox('title', width='400px'))
+        title_table.add_cell(my.txtbox('title', width=400))
         title_table.add_cell('&nbsp;&nbsp;&nbsp;FORMAT:')
 
         format_select_cell = title_table.add_cell(format_sel)
@@ -939,7 +940,7 @@ class ElementEvalWdg(BaseTableElementWdg):
 
         title_table.add_row()
         title_table.add_cell('SEASON:')
-        title_table.add_cell(my.txtbox('season', width='400px'))
+        title_table.add_cell(my.txtbox('season', width=400))
         title_table.add_cell('&nbsp;&nbsp;&nbsp;STANDARD:')
 
         standard_select_cell = title_table.add_cell(standard_sel)
@@ -947,7 +948,7 @@ class ElementEvalWdg(BaseTableElementWdg):
 
         title_table.add_row()
         title_table.add_cell('EPISODE:')
-        title_table.add_cell(my.txtbox('episode', width='400px'))
+        title_table.add_cell(my.txtbox('episode', width=400))
 
         ffr = title_table.add_cell('&nbsp;&nbsp;&nbsp;FRAME RATE:')
         ffr.add_attr('nowrap', 'nowrap')
@@ -957,15 +958,15 @@ class ElementEvalWdg(BaseTableElementWdg):
 
         title_table.add_row()
         title_table.add_cell('VERSION:')
-        title_table.add_cell(my.txtbox('version', width='400px'))
+        title_table.add_cell(my.txtbox('version', width=400))
         title_table.add_cell('&nbsp;&nbsp;&nbsp;PO #:')
-        title_table.add_cell(my.txtbox('po_number', width='151px'))
+        title_table.add_cell(my.txtbox('po_number', width=151))
         title_table.add_row()
 
         file_name_label = title_table.add_cell('FILE NAME:')
         file_name_label.add_attr('nowrap', 'nowrap')
 
-        file_name_input = title_table.add_cell(my.txtbox('file_name', width='635px'))
+        file_name_input = title_table.add_cell(my.txtbox('file_name', width=635))
         file_name_input.add_attr('colspan', '3')
 
         tt2 = Table()
@@ -1005,42 +1006,42 @@ class ElementEvalWdg(BaseTableElementWdg):
         pf1 = pf.add_cell('Roll-up (blank)')
         pf1.add_attr('nowrap', 'nowrap')
 
-        pf.add_cell(my.txtbox('roll_up', width='399px', js=True))
-        pf.add_cell(my.txtbox('roll_up_f', width='20px'))
+        pf.add_cell(my.txtbox('roll_up', width=399, js=True))
+        pf.add_cell(my.txtbox('roll_up_f', width=20))
 
         pf.add_row()
         pf2 = pf.add_cell('Bars/Tone')
         pf2.add_attr('nowrap', 'nowrap')
-        pf.add_cell(my.txtbox('bars_tone', width='399px', js=True))
-        pf.add_cell(my.txtbox('bars_tone_f', width='20px'))
+        pf.add_cell(my.txtbox('bars_tone', width=399, js=True))
+        pf.add_cell(my.txtbox('bars_tone_f', width=20))
         pf.add_row()
 
         pf3 = pf.add_cell('Black/Silence')
         pf3.add_attr('nowrap', 'nowrap')
 
-        pf.add_cell(my.txtbox('black_silence_1', width='399px', js=True))
-        pf.add_cell(my.txtbox('black_silence_1_f', width='20px'))
+        pf.add_cell(my.txtbox('black_silence_1', width=399, js=True))
+        pf.add_cell(my.txtbox('black_silence_1_f', width=20))
         pf.add_row()
 
         pf4 = pf.add_cell('Slate/Silence')
         pf4.add_attr('nowrap', 'nowrap')
-        pf.add_cell(my.txtbox('slate_silence', width='399px', js=True))
-        pf.add_cell(my.txtbox('slate_silence_f', width='20px'))
+        pf.add_cell(my.txtbox('slate_silence', width=399, js=True))
+        pf.add_cell(my.txtbox('slate_silence_f', width=20))
         pf.add_row()
         pf5 = pf.add_cell('Black/Silence')
         pf5.add_attr('nowrap', 'nowrap')
-        pf.add_cell(my.txtbox('black_silence_2', width='399px', js=True))
-        pf.add_cell(my.txtbox('black_silence_2_f', width='20px'))
+        pf.add_cell(my.txtbox('black_silence_2', width=399, js=True))
+        pf.add_cell(my.txtbox('black_silence_2_f', width=20))
         pf.add_row()
         pf7 = pf.add_cell('Start of Program')
         pf7.add_attr('nowrap', 'nowrap')
-        pf.add_cell(my.txtbox('start_of_program', width='399px', js=True))
-        pf.add_cell(my.txtbox('start_of_program_f', width='20px'))
+        pf.add_cell(my.txtbox('start_of_program', width=399, js=True))
+        pf.add_cell(my.txtbox('start_of_program_f', width=20))
         pf.add_row()
         pf8 = pf.add_cell('End of Program')
         pf8.add_attr('nowrap', 'nowrap')
-        pf.add_cell(my.txtbox('end_of_program', width='399px', js=True))
-        pf.add_cell(my.txtbox('end_of_program_f', width='20px'))
+        pf.add_cell(my.txtbox('end_of_program', width=399, js=True))
+        pf.add_cell(my.txtbox('end_of_program_f', width=20))
 
         vm = Table()
         vm.add_attr('border', '1')
@@ -1048,38 +1049,38 @@ class ElementEvalWdg(BaseTableElementWdg):
         vm.add_row()
         vm1 = vm.add_cell('Active Video Begins')
         vm1.add_attr('nowrap', 'nowrap')
-        vm.add_cell(my.txtbox('active_video_begins', width="400px"))
+        vm.add_cell(my.txtbox('active_video_begins', width=400))
 
         vm.add_row()
         vm3 = vm.add_cell('Active Video Ends')
         vm3.add_attr('nowrap', 'nowrap')
-        vm.add_cell(my.txtbox('active_video_ends', width="400px"))
+        vm.add_cell(my.txtbox('active_video_ends', width=400))
 
         vm.add_row()
         vm5 = vm.add_cell('Horizontal Blanking')
         vm5.add_attr('nowrap', 'nowrap')
-        vm.add_cell(my.txtbox('horizontal_blanking', width="400px"))
+        vm.add_cell(my.txtbox('horizontal_blanking', width=400))
         vm.add_row()
 
         vm.add_row()
         vm11 = vm.add_cell('Luminance Peak')
         vm11.add_attr('nowrap', 'nowrap')
-        vm.add_cell(my.txtbox('video_peak', width="400px"))
+        vm.add_cell(my.txtbox('video_peak', width=400))
         vm.add_row()
         vm.add_row()
         vm15 = vm.add_cell('Chroma Peak')
         vm15.add_attr('nowrap', 'nowrap')
-        vm.add_cell(my.txtbox('chroma_peak', width="400px"))
+        vm.add_cell(my.txtbox('chroma_peak', width=400))
         vm.add_row()
 
         tm4 = vm.add_cell('Head Logo')
         tm4.add_attr('nowrap', 'nowrap')
-        vm.add_cell(my.txtbox('head_logo', width="400px"))
+        vm.add_cell(my.txtbox('head_logo', width=400))
 
         vm.add_row()
         tm55 = vm.add_cell('Tail Logo')
         tm55.add_attr('nowrap', 'nowrap')
-        vm.add_cell(my.txtbox('tail_logo', width="400px"))
+        vm.add_cell(my.txtbox('tail_logo', width=400))
 
         pfc1 = pgf.add_cell(pf)
         pfc1.add_attr('valign', 'top')
@@ -1104,11 +1105,11 @@ class ElementEvalWdg(BaseTableElementWdg):
         ef.add_row()
         ef1 = ef.add_cell('Total Runtime')
         ef1.add_attr('nowrap', 'nowrap')
-        ef.add_cell(my.txtbox('total_runtime', width="400px", js=True))
+        ef.add_cell(my.txtbox('total_runtime', width=400, js=True))
         ef.add_row()
         ef2 = ef.add_cell('TV/Feature/Trailer')
         ef2.add_attr('nowrap', 'nowrap')
-        ef.add_cell(my.txtbox('tv_feature_trailer', width="400px"))
+        ef.add_cell(my.txtbox('tv_feature_trailer', width=400))
         ef.add_row()
         ef2 = ef.add_cell('Video Aspect Ratio')
         ef2.add_attr('nowrap', 'nowrap')
@@ -1125,11 +1126,11 @@ class ElementEvalWdg(BaseTableElementWdg):
         ef.add_row()
         ef2 = ef.add_cell('Textless @ Tail')
         ef2.add_attr('nowrap', 'nowrap')
-        ef.add_cell(my.txtbox('textless_at_tail', width="400px"))
+        ef.add_cell(my.txtbox('textless_at_tail', width=400))
         ef.add_row()
         ef2 = ef.add_cell('Notices')
         ef2.add_attr('nowrap', 'nowrap')
-        ef.add_cell(my.txtbox('notices', width="400px"))
+        ef.add_cell(my.txtbox('notices', width=400))
         ef.add_row()
         ef.add_cell('Label')
 
@@ -1153,29 +1154,29 @@ class ElementEvalWdg(BaseTableElementWdg):
         tm.add_row()
         tm2 = tm.add_cell('Language')
         tm2.add_attr('nowrap', 'nowrap')
-        tm.add_cell(my.txtbox('language', width="424px"))
+        tm.add_cell(my.txtbox('language', width=424))
         tm.add_row()
         ef2 = tm.add_cell('(CC)/Subtitles')
         ef2.add_attr('nowrap', 'nowrap')
-        tm.add_cell(my.txtbox('cc_subtitles', width="424px"))
+        tm.add_cell(my.txtbox('cc_subtitles', width=424))
         tm.add_row()
         tm3 = tm.add_cell('VITC')
         tm3.add_attr('nowrap', 'nowrap')
-        tm.add_cell(my.txtbox('vitc', width="424px"))
+        tm.add_cell(my.txtbox('vitc', width=424))
 
         tm.add_row()
         tm3 = tm.add_cell('Source Barcode')
         tm3.add_attr('nowrap', 'nowrap')
-        tm.add_cell(my.txtbox('record_vendor', width="424px"))
+        tm.add_cell(my.txtbox('record_vendor', width=424))
         tm.add_row()
         tm33 = tm.add_cell('Element QC Barcode')
         tm33.add_attr('nowrap', 'nowrap')
-        tm.add_cell(my.txtbox('vendor_id', width="424px"))
+        tm.add_cell(my.txtbox('vendor_id', width=424))
         tm.add_row()
         tm3 = tm.add_cell('Record Date')
         tm3.add_attr('nowrap', 'nowrap')
 
-        from tactic.ui.widget import CalendarInputWdg
+
         rcrd = CalendarInputWdg("record_date")
         rcrd.set_option('show_activator', 'true')
         rcrd.set_option('show_time', 'false')
