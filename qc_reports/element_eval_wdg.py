@@ -257,7 +257,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                                           }
                                       }
                                   }
-                                  var class_name = 'qc_reports.qc_reports.ElementEvalWdg';
+                                  var class_name = 'qc_reports.element_eval_wdg.ElementEvalWdg';
                                   kwargs = {'code': wo_code, 'element_code': new_element_eval.code, 'channels': num_o_channels}
                                   //spt.popup.close(spt.popup.get_popup(bvr.src_el));
                                   //spt.panel.load_popup('Element Evaluation for ' + wo_code, class_name, kwargs);
@@ -434,7 +434,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                           printExternal(url);
                           if(element_code != '' && element_code != null){
                               //close, then reload page
-                              var class_name = 'qc_reports.qc_reports.ElementEvalWdg';
+                              var class_name = 'qc_reports.element_eval_wdg.ElementEvalWdg';
                               kwargs = {'code': wo_code, 'element_code': element_code}
                               spt.tab.add_new('ElementEvalWdg_qc_report_for_' + wo_code,'Element Evaluation for ' + wo_code, class_name, kwargs);
                           }
@@ -451,7 +451,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                         try{
                           var work_order_code = '%s';
                           var element_code = '%s';
-                          var class_name = 'qc_reports.qc_reports.ElementEvalWdg';
+                          var class_name = 'qc_reports.element_eval_wdg.ElementEvalWdg';
                           kwargs = {'code': work_order_code, 'element_code': element_code}
                           //spt.popup.close(spt.popup.get_popup(bvr.src_el));
                           //spt.panel.load_popup('Element Evaluation for ' + work_order_code, class_name, kwargs);
@@ -494,7 +494,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                               if(confirm("Checking again. You really want to delete this report?")){
                                   var server = TacticServerStub.get();
                                   server.retire_sobject(server.build_search_key('twog/element_eval', element_code));
-                                  var class_name = 'qc_reports.qc_reports.ElementEvalWdg';
+                                  var class_name = 'qc_reports.element_eval_wdg.ElementEvalWdg';
                                   kwargs = {'code': work_order_code}
                                   //spt.popup.close(spt.popup.get_popup(bvr.src_el));
                                   //spt.panel.load_popup('Element Evaluation for ' + work_order_code, class_name, kwargs);
