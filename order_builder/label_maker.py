@@ -1,17 +1,18 @@
-__all__ = ["LabelLauncherWdg","LabelWdg"]
-import tacticenv
+__all__ = ["LabelLauncherWdg", "LabelWdg"]
+
 import os, datetime
-from pyasm.biz import *
+
+from client.tactic_client_lib import TacticServerStub
+
 from pyasm.web import Table, DivWdg
 from pyasm.widget import SelectWdg
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
-from tactic.ui.panel import EditWdg
+
 
 class LabelLauncherWdg(BaseTableElementWdg):
 
     def init(my):
-        from tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
 
     def get_launch_behavior(my):
@@ -44,8 +45,8 @@ class LabelLauncherWdg(BaseTableElementWdg):
         table.add_row()
         cell1 = table.add_cell('<img border="0" style="vertical-align: middle" title="" src="/context/icons/silk/printer.png">')
         launch_behavior = my.get_launch_behavior()
-        cell1.add_attr('code',code)
-        cell1.add_attr('title',title)
+        cell1.add_attr('code', code)
+        cell1.add_attr('title', title)
         cell1.add_style('cursor: pointer;')
         cell1.add_behavior(launch_behavior)
         widget.add(table)
@@ -55,22 +56,27 @@ class LabelLauncherWdg(BaseTableElementWdg):
 class LabelWdg(BaseRefreshWdg):
 
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
         my.server = TacticServerStub.get()
-        my.types = ['HDCAM','HDCAM_TV_FOX','HDCAM_FILM_FOX','HDCAM DIGIBETA','DVD','D5']
-        my.template_files = {'HDCAM': '/var/www/html/source_labels/HDCAM_label.html', 'HDCAM_FILM_FOX': '/var/www/html/source_labels/HDCAM_FILM_FOX_label.html', 'HDCAM_TV_FOX': '/var/www/html/source_labels/HDCAM_TV_FOX_label.html', 'HDCAM DIGIBETA': '/var/www/html/source_labels/HDCAM_Digibeta_label.html', 'DVD': '/var/www/html/source_labels/DVD_Label.html', 'D5': '/var/www/html/source_labels/D5_label.html'}
+        my.types = ['HDCAM', 'HDCAM_TV_FOX', 'HDCAM_FILM_FOX', 'HDCAM DIGIBETA', 'DVD', 'D5']
+        my.template_files = {
+            'HDCAM': '/var/www/html/source_labels/HDCAM_label.html',
+            'HDCAM_FILM_FOX': '/var/www/html/source_labels/HDCAM_FILM_FOX_label.html',
+            'HDCAM_TV_FOX': '/var/www/html/source_labels/HDCAM_TV_FOX_label.html',
+            'HDCAM DIGIBETA': '/var/www/html/source_labels/HDCAM_Digibeta_label.html',
+            'DVD': '/var/www/html/source_labels/DVD_Label.html',
+            'D5': '/var/www/html/source_labels/D5_label.html'
+        }
     
     def get_display(my):   
         code = str(my.kwargs.get('code'))
         source = my.server.eval("@SOBJECT(twog/source['code','%s'])" % code)[0]
         client_name = ''
-        if source.get('client_code') not in [None,'']:
+        if source.get('client_code'):
             client_names = my.server.eval("@GET(twog/client['code','%s'].name)" % source.get('client_code'))
             if len(client_names) > 0:
                 client_name = client_names[0]
         whole_title = source.get('title')
-        if source.get('episode') not in [None,'']:
+        if source.get('episode'):
             whole_title = '%s: %s' % (whole_title, source.get('episode')) 
 
         chunk_lines = whole_title
@@ -103,13 +109,13 @@ class LabelWdg(BaseRefreshWdg):
             
         barcode = source.get('barcode')
         captioning = source.get('captioning')
-        if captioning in ['',None]:
+        if captioning:
             captioning = 'N/A'
         subtitles = source.get('subtitles')
-        if subtitles in ['',None]:
+        if subtitles:
             subtitles = 'N/A' 
         table = Table()
-        table.add_attr('class','print_label_wdg')
+        table.add_attr('class', 'print_label_wdg')
         table.add_row()
         select = SelectWdg('label_type')
         for guy in my.types:
@@ -119,7 +125,7 @@ class LabelWdg(BaseRefreshWdg):
         table.add_row()
         date = str(datetime.datetime.now()).split(' ')[0]
         audio_lines = ''
-        audio_layout = [[1,7],[2,8],[3,9],[4,10],[5,11],[6,12]]
+        audio_layout = [[1, 7], [2, 8], [3, 9], [4, 10], [5, 11], [6, 12]]
         for layout in audio_layout:
             this_line = ''
             left = layout[0]
@@ -159,98 +165,98 @@ class LabelWdg(BaseRefreshWdg):
             mtminfo = '''%s<font id="replace">Textless: %s</font><br/>''' % (mtminfo, source.get('textless'))
         if source.get('po_number') not in [None,'']:
             mtminfo = '''%s<font id="replace">PO #: %s</font><br/>''' % (mtminfo, source.get('po_number'))
-        if barcode not in [None,'']:
+        if barcode not in [None, '']:
             for guy in my.types:
                 result = ''
                 f = open(my.template_files[guy], 'r')
                 for line in f:
-        	        if not line.strip():
-        		    continue
-        	        else:
-        		    line = line.rstrip('\r\n')
-                            line =line.replace('[WHOLETITLE]', whole_title)
-                            line =line.replace('[TITLE]',source.get('title'))
-                            line =line.replace('[EPISODE]',source.get('episode'))
-                            line =line.replace('[BARCODE]',barcode)
-                            line =line.replace('[TOTAL_RUN_TIME]',source.get('total_run_time'))
-                            line =line.replace('[TRT]',source.get('total_run_time'))
-                            line =line.replace('[VERSION]',source.get('version'))
-                            line =line.replace('[ASPECT_RATIO]',source.get('aspect_ratio'))
-                            line =line.replace('[COLOR_SPACE]',source.get('color_space'))
-                            line =line.replace('[STRAT2G_PART]',source.get('part'))
-                            if '[AUDIO_CHANNELS' in line:
-                                replacer = ''
-                                full_tag = '[AUDIO_CHANNELS]'
-                                if 'SMALL' in line:
-                                    replacer = '_small'
-                                    full_tag = '[AUDIO_CHANNELS_SMALL]'
-                                if 'LARGE' in line:
-                                    replacer = '_large'
-                                    full_tag = '[AUDIO_CHANNELS_LARGE]'
-                                line = line.replace(full_tag, audio_lines.replace('replace',replacer))
-                            if '[MTMINFOCHUNK_' in line:
-                                replacer = 'medium'
-                                full_tag = '[MTMINFOCHUNK_MEDIUM]'
-                                if 'SMALL' in line:
-                                    replacer = 'small'
-                                    full_tag = '[MTMINFOCHUNK_SMALL]'
-                                elif 'LARGE' in line:
-                                    replacer = 'large'
-                                    full_tag = '[MTMINFOCHUNK_LARGE]'
-                                line = line.replace(full_tag, mtminfo.replace('replace',replacer))
-                            line =line.replace('[AUDIO_CH01]',source.get('audio_ch_1'))
-                            line =line.replace('[AUDIO_CH02]',source.get('audio_ch_2'))
-                            line =line.replace('[AUDIO_CH03]',source.get('audio_ch_3'))
-                            line =line.replace('[AUDIO_CH04]',source.get('audio_ch_4'))
-                            line =line.replace('[AUDIO_CH05]',source.get('audio_ch_5'))
-                            line =line.replace('[AUDIO_CH06]',source.get('audio_ch_6'))
-                            line =line.replace('[AUDIO_CH07]',source.get('audio_ch_7'))
-                            line =line.replace('[AUDIO_CH08]',source.get('audio_ch_8'))
-                            line =line.replace('[AUDIO_CH09]',source.get('audio_ch_9'))
-                            line =line.replace('[AUDIO_CH10]',source.get('audio_ch_10'))
-                            line =line.replace('[AUDIO_CH11]',source.get('audio_ch_11'))
-                            line =line.replace('[AUDIO_CH12]',source.get('audio_ch_12'))
-                            line =line.replace('[CH01]',source.get('audio_ch_1'))
-                            line =line.replace('[CH02]',source.get('audio_ch_2'))
-                            line =line.replace('[CH03]',source.get('audio_ch_3'))
-                            line =line.replace('[CH04]',source.get('audio_ch_4'))
-                            line =line.replace('[CH05]',source.get('audio_ch_5'))
-                            line =line.replace('[CH06]',source.get('audio_ch_6'))
-                            line =line.replace('[CH07]',source.get('audio_ch_7'))
-                            line =line.replace('[CH08]',source.get('audio_ch_8'))
-                            line =line.replace('[CH09]',source.get('audio_ch_9'))
-                            line =line.replace('[CH10]',source.get('audio_ch_10'))
-                            line =line.replace('[CH11]',source.get('audio_ch_11'))
-                            line =line.replace('[CH12]',source.get('audio_ch_12'))
-                            line =line.replace('[STANDARD]',source.get('standard'))
-                            line =line.replace('[CLIENT]',client_name)
-                            line =line.replace('[FRAME_RATE]',source.get('frame_rate'))
-                            line =line.replace('[SOURCE_TYPE]',source.get('source_type'))
-                            line =line.replace('[TYPE]',source.get('source_type'))
-                            line =line.replace('[GENERATION]',source.get('generation'))
-                            line =line.replace('[DESCRIPTION]',source.get('description'))
-                            line =line.replace('[TEXTLESS]',source.get('textless'))
-                            line =line.replace('[PO_NUMBER]',source.get('po_number'))
-                            line =line.replace('[CLIENT_ASSET_ID]',source.get('client_asset_id'))
-                            line =line.replace('[FORMAT]',source.get('format'))
-                            line =line.replace('[CAPTIONING]',captioning)
-                            line =line.replace('[SUBTITLES]',subtitles)
-                            line =line.replace('[ADDITIONAL_LABEL_INFO]',source.get('additional_label_info'))
-                            line =line.replace('[DATE]',str(date))
-                            result = '%s%s' % (result,line)
+                    if not line.strip():
+                        continue
+                    else:
+                        line = line.rstrip('\r\n')
+                        line = line.replace('[WHOLETITLE]', whole_title)
+                        line = line.replace('[TITLE]', source.get('title'))
+                        line = line.replace('[EPISODE]', source.get('episode'))
+                        line = line.replace('[BARCODE]', barcode)
+                        line = line.replace('[TOTAL_RUN_TIME]', source.get('total_run_time'))
+                        line = line.replace('[TRT]', source.get('total_run_time'))
+                        line = line.replace('[VERSION]', source.get('version'))
+                        line = line.replace('[ASPECT_RATIO]', source.get('aspect_ratio'))
+                        line = line.replace('[COLOR_SPACE]', source.get('color_space'))
+                        line = line.replace('[STRAT2G_PART]', source.get('part'))
+                        if '[AUDIO_CHANNELS' in line:
+                            replacer = ''
+                            full_tag = '[AUDIO_CHANNELS]'
+                            if 'SMALL' in line:
+                                replacer = '_small'
+                                full_tag = '[AUDIO_CHANNELS_SMALL]'
+                            if 'LARGE' in line:
+                                replacer = '_large'
+                                full_tag = '[AUDIO_CHANNELS_LARGE]'
+                            line = line.replace(full_tag, audio_lines.replace('replace',replacer))
+                        if '[MTMINFOCHUNK_' in line:
+                            replacer = 'medium'
+                            full_tag = '[MTMINFOCHUNK_MEDIUM]'
+                            if 'SMALL' in line:
+                                replacer = 'small'
+                                full_tag = '[MTMINFOCHUNK_SMALL]'
+                            elif 'LARGE' in line:
+                                replacer = 'large'
+                                full_tag = '[MTMINFOCHUNK_LARGE]'
+                            line = line.replace(full_tag, mtminfo.replace('replace',replacer))
+                        line = line.replace('[AUDIO_CH01]', source.get('audio_ch_1'))
+                        line = line.replace('[AUDIO_CH02]', source.get('audio_ch_2'))
+                        line = line.replace('[AUDIO_CH03]', source.get('audio_ch_3'))
+                        line = line.replace('[AUDIO_CH04]', source.get('audio_ch_4'))
+                        line = line.replace('[AUDIO_CH05]', source.get('audio_ch_5'))
+                        line = line.replace('[AUDIO_CH06]', source.get('audio_ch_6'))
+                        line = line.replace('[AUDIO_CH07]', source.get('audio_ch_7'))
+                        line = line.replace('[AUDIO_CH08]', source.get('audio_ch_8'))
+                        line = line.replace('[AUDIO_CH09]', source.get('audio_ch_9'))
+                        line = line.replace('[AUDIO_CH10]', source.get('audio_ch_10'))
+                        line = line.replace('[AUDIO_CH11]', source.get('audio_ch_11'))
+                        line = line.replace('[AUDIO_CH12]', source.get('audio_ch_12'))
+                        line = line.replace('[CH01]', source.get('audio_ch_1'))
+                        line = line.replace('[CH02]', source.get('audio_ch_2'))
+                        line = line.replace('[CH03]', source.get('audio_ch_3'))
+                        line = line.replace('[CH04]', source.get('audio_ch_4'))
+                        line = line.replace('[CH05]', source.get('audio_ch_5'))
+                        line = line.replace('[CH06]', source.get('audio_ch_6'))
+                        line = line.replace('[CH07]', source.get('audio_ch_7'))
+                        line = line.replace('[CH08]', source.get('audio_ch_8'))
+                        line = line.replace('[CH09]', source.get('audio_ch_9'))
+                        line = line.replace('[CH10]', source.get('audio_ch_10'))
+                        line = line.replace('[CH11]', source.get('audio_ch_11'))
+                        line = line.replace('[CH12]', source.get('audio_ch_12'))
+                        line = line.replace('[STANDARD]', source.get('standard'))
+                        line = line.replace('[CLIENT]', client_name)
+                        line = line.replace('[FRAME_RATE]', source.get('frame_rate'))
+                        line = line.replace('[SOURCE_TYPE]', source.get('source_type'))
+                        line = line.replace('[TYPE]', source.get('source_type'))
+                        line = line.replace('[GENERATION]', source.get('generation'))
+                        line = line.replace('[DESCRIPTION]', source.get('description'))
+                        line = line.replace('[TEXTLESS]', source.get('textless'))
+                        line = line.replace('[PO_NUMBER]', source.get('po_number'))
+                        line = line.replace('[CLIENT_ASSET_ID]', source.get('client_asset_id'))
+                        line = line.replace('[FORMAT]', source.get('format'))
+                        line = line.replace('[CAPTIONING]', captioning)
+                        line = line.replace('[SUBTITLES]', subtitles)
+                        line = line.replace('[ADDITIONAL_LABEL_INFO]', source.get('additional_label_info'))
+                        line = line.replace('[DATE]', str(date))
+                        result = '%s%s' % (result, line)
                 f.close()
                 new_bc_file = '/var/www/html/source_labels/printed_labels/%s_%s.html' % (barcode, guy)
                 if os.path.exists(new_bc_file):
                     os.system('rm -rf %s' % new_bc_file)
-                new_guy = open(new_bc_file, 'w') 
+                new_guy = open(new_bc_file, 'w')
                 new_guy.write(result)
                 new_guy.close()
             t1 = table.add_cell('')
-            t1.add_style('width: 100%s;' % '%')
+            t1.add_style('width', '100%')
             do_it = table.add_cell('<input type="button" value="Get Label Page For %s :(%s)"/>' % (source.get('title'), barcode)) 
             do_it.add_behavior(my.get_open_barcode_label_page(barcode))
             t2 = table.add_cell('')
-            t2.add_style('width: 100%s;' % '%')
+            t2.add_style('width', '100%')
         else:
             table.add_cell('This Source does not have a barcode')
         return table
@@ -279,4 +285,3 @@ class LabelWdg(BaseRefreshWdg):
          ''' % (barcode)
         }
         return behavior
-    
