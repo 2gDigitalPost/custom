@@ -23,7 +23,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                        'VTR264', 'VTR265', 'VTR281', 'VTR282', 'VTR283', 'VTR284', 'VTR285', 'FCP01', 'FCP02', 'FCP03',
                        'FCP04', 'FCP05', 'FCP06', 'FCP07', 'FCP08', 'FCP09', 'FCP10', 'FCP11', 'FCP12', 'Amberfin',
                        'Clipster', 'Stradis']
-        my.styles = ['Technical', 'Spot QC','Mastering']
+        my.styles = ['Technical', 'Spot QC', 'Mastering']
         my.aspect_ratios = ['16x9 1.33',
                             '16x9 1.33 Pan & Scan',
                             '16x9 1.78 Anamorphic',
@@ -46,24 +46,6 @@ class ElementEvalWdg(BaseTableElementWdg):
         my.standards = ['625', '525', '720', '1080 (4:4:4)', '1080', 'PAL', 'NTSC', '-']
         my.element = None
         my.element_lines = None
-        my.key_tbl = Table()
-        my.key_tbl.add_attr('border', '1')
-        my.key_tbl.add_row()
-        long = my.key_tbl.add_cell('SECTOR KEY')
-        long.add_attr('colspan', '3')
-        long.add_attr('align', 'center')
-        my.key_tbl.add_row()
-        my.key_tbl.add_cell('&nbsp;U-L&nbsp;')
-        my.key_tbl.add_cell('&nbsp;U-C&nbsp;')
-        my.key_tbl.add_cell('&nbsp;U-R&nbsp;')
-        my.key_tbl.add_row()
-        my.key_tbl.add_cell('&nbsp;M-L&nbsp;')
-        my.key_tbl.add_cell('&nbsp;M-C&nbsp;')
-        my.key_tbl.add_cell('&nbsp;M-R&nbsp;')
-        my.key_tbl.add_row()
-        my.key_tbl.add_cell('&nbsp;L-L&nbsp;')
-        my.key_tbl.add_cell('&nbsp;L-C&nbsp;')
-        my.key_tbl.add_cell('&nbsp;L-R&nbsp;')
 
     @staticmethod
     def get_save_bvr(wo_code, ell_code):
@@ -563,7 +545,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                           spt.app_busy.hide();
                           spt.alert(spt.exception.handler(err));
                 }
-         ''' % (wo_code,ell_code)}
+         ''' % (wo_code, ell_code)}
         return behavior
 
     @staticmethod
@@ -827,20 +809,22 @@ class ElementEvalWdg(BaseTableElementWdg):
 
             acr.add_cell(acr1)
             acr.add_cell('<b>{0}</b>'.format(mark))
+
         rtbl = Table()
         rtbl.add_row()
-        rtbl.add_cell('&nbsp;&nbsp;&nbsp;&nbsp;')
+
         client_name = my.element.get('client_name').upper()
 
         if not client_name:
             client_name = "ELEMENT EVALUATION"
 
-        big = rtbl.add_cell("<b>{0}</b>".format(client_name))
-        big.add_attr('nowrap', 'nowrap')
-        big.add_attr('align', 'center')
-        big.add_attr('valign', 'center')
-        big.add_style('font-size: 40px;')
-        rtbl.add_cell('&nbsp;&nbsp;&nbsp;&nbsp;')
+        client_name_cell = rtbl.add_cell("<b>{0}</b>".format(client_name))
+        client_name_cell.add_attr('nowrap', 'nowrap')
+        client_name_cell.add_attr('align', 'center')
+        client_name_cell.add_attr('valign', 'center')
+        client_name_cell.add_style('font-size: 40px;')
+        client_name_cell.add_style('padding', '10px')
+
         rtbl.add_cell(acr)
         toptbl = Table()
         toptbl.add_row()
@@ -1176,17 +1160,18 @@ class ElementEvalWdg(BaseTableElementWdg):
         tm3 = tm.add_cell('Record Date')
         tm3.add_attr('nowrap', 'nowrap')
 
-
         rcrd = CalendarInputWdg("record_date")
         rcrd.set_option('show_activator', 'true')
         rcrd.set_option('show_time', 'false')
         rcrd.set_option('width', '380px')
         rcrd.set_option('id', 'record_date')
         rcrd.set_option('display_format', 'MM/DD/YYYY HH:MM')
+
         if my.element.get('record_date') not in [None, '']:
             rcrd.set_option('default', my.element.get('record_date'))
         else:
             rcrd.set_option('default', this_timestamp.split(' ')[0])
+
         rcrd.get_top().add_attr('id', 'record_date')
         rcrd.set_persist_on_submit()
         rcrd_date = tm.add_cell(rcrd)
