@@ -172,15 +172,15 @@ class LabelWdg(BaseRefreshWdg):
         misc_info = []
 
         if source.get('description'):
-            misc_info.append('<span id="replace"><i>{0}</i></span>'.format(source.get('description')))
+            misc_info.append('<span class="replace"><i>{0}</i></span>'.format(source.get('description')))
         if source.get('aspect_ratio'):
-            misc_info.append('<span id="replace">Aspect Ratio: {0}</span>'.format(source.get('aspect_ratio')))
+            misc_info.append('<span class="replace">Aspect Ratio: {0}</span>'.format(source.get('aspect_ratio')))
         if source.get('captioning'):
-            misc_info.append('<span id="replace">Captioning: {0}</span>'.format(source.get('captioning')))
+            misc_info.append('<span class="replace">Captioning: {0}</span>'.format(source.get('captioning')))
         if source.get('textless'):
-            misc_info.append('<span id="replace">Textless: {0}</span>'.format(source.get('textless')))
+            misc_info.append('<span class="replace">Textless: {0}</span>'.format(source.get('textless')))
         if source.get('po_number'):
-            misc_info.append('<span id="replace">PO #: {0}</span>'.format(source.get('po_number')))
+            misc_info.append('<span class="replace">PO #: {0}</span>'.format(source.get('po_number')))
 
         mtminfo = ''
         if source.get('description'):
