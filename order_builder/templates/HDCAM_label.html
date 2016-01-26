@@ -6,10 +6,9 @@
 <style type="text/css">
 @media print {
 	html,body { 
-		moz-margin: 0px;
-		moz-padding: 0px;
-		moz-border: 0px;
-		/*width: 800px;*/
+		-moz-margin: 0;
+		-moz-padding: 0;
+		-moz-border: 0;
 		width: 770px;
 		height: 980px;
 		background-image: url(HDCAM_bg.png);
@@ -17,18 +16,17 @@
 		background-size: contain;
 	}
 }
+
 body {
-	moz-margin: 0;
-	moz-padding: 0;
-	moz-border: 0px;
+	-moz-margin: 0;
+	-moz-padding: 0;
+	-moz-border: 0;
 	width: 770px;
 	height: 980px;
 	background-image: url(HDCAM_bg.png);
 	background-repeat: no-repeat;
-	/*background-size: contain;*/
 }
-#barcode {
-}
+
 #lbl1a {
 	position: absolute;
 	text-align: left;
@@ -41,6 +39,7 @@ body {
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 }
+
 #lbl1b {
 	position: absolute;
 	text-align: left;
@@ -53,6 +52,7 @@ body {
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 }
+
 #lbl2a {
 	position: absolute;
 	text-align: left;
@@ -64,6 +64,7 @@ body {
 	-o-transform: rotate(-180deg);
 	height: 247px;
 }
+
 #lbl2b {
 	position: absolute;
 	text-align: left;
@@ -76,6 +77,7 @@ body {
 	-ms-transform: rotate(-180deg);
 	-o-transform: rotate(-180deg);
 }
+
 #lbl3a {
 	position: absolute;
 	text-align: left;
@@ -84,6 +86,7 @@ body {
 	top: 326px;
 	left: 31px;
 }
+
 #lbl3b {
 	position: absolute;
 	text-align: left;
@@ -92,6 +95,7 @@ body {
 	top: 326px;
 	left: 246px;
 }
+
 #lbl3c {
 	position: absolute;
 	text-align: left;
@@ -100,6 +104,7 @@ body {
 	top: 326px;
 	left: 436px;
 }
+
 #lbl4a {
 	position: absolute;
 	text-align: left;
@@ -112,6 +117,7 @@ body {
 	height: 247px;
 	width: 135px;
 }
+
 #lbl4b {
 	position: absolute;
 	text-align: left;
@@ -124,6 +130,7 @@ body {
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 }
+
 #lbl4c {
 	position: absolute;
 	text-align: left;
@@ -132,6 +139,7 @@ body {
 	top: 471px;
 	left: 1px;
 }
+
 #lbl5a {
 	position: absolute;
 	text-align: left;
@@ -144,6 +152,7 @@ body {
 	height: 247px;
 	width: 135px;
 }
+
 #lbl6a {
 	position: absolute;
 	text-align: left;
@@ -156,6 +165,7 @@ body {
 	height: 247px;
 	width: 135px;
 }
+
 #lbl7a {
 	position: absolute;
 	text-align: left;
@@ -168,6 +178,7 @@ body {
 	height: 247px;
 	width: 135px;
 }
+
 #lbl8a {
 	position: absolute;
 	text-align: left;
@@ -180,6 +191,7 @@ body {
 	height: 240px;
 	width: 120px;
 }
+
 #lbl8b {
 	position: absolute;
 	text-align: left;
@@ -192,6 +204,7 @@ body {
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 }
+
 #lbl9a {
 	position: absolute;
 	text-align: left;
@@ -204,6 +217,7 @@ body {
 	height: 240px;
 	width: 120px;
 }
+
 #lbl9b {
 	position: absolute;
 	text-align: left;
@@ -216,6 +230,7 @@ body {
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 }
+
 #lbl10a {
 	position: absolute;
 	float: left;
@@ -230,6 +245,7 @@ body {
 	height: 240px;
 	width: 120px;
 }
+
 #lbl10b {
 	position: absolute;
 	text-align: left;
@@ -242,200 +258,150 @@ body {
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 }
-#bc {
+
+.barcode {
 	font-family: Arial, sans-serif;
 	font-size: 18px;
-	font-style: bold;	
+	font-weight: bold;
 }
-#tiny {
-	font-family: Helvetica, Futura, Arial, Helvetica, sans-serif;
-	font-size: 6px;
-}
-#small {
+
+.small {
 	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
 	font-size: 8px;
 	text-wrap: normal;		
 }
-#medium {
+
+.medium {
 	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
 	font-size: 9px;
 }
-#semi_large {
-	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
-	font-size: 12px;
-	text-wrap: normal;		
-}
-#large {
+
+.large {
 	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
 	font-size: 14px;
 	text-wrap: normal;		
 }
-#semi_xlarge {
+
+.semi_xlarge {
 	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
 	font-size: 18px;
 }
+
 #xlarge {
 	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
 	font-size: 18px;
 }
+
 #semi_xxlarge {
 	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
 	font-size: 22px;
 }
-#xxlarge {
-	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
-	font-size: 24px;
-}
-#xxxlarge {
-	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
-	font-size: 26px;
-}
-#tinyaddr {
+
+.tinyaddr {
 	font-family: Helvetica, Futura, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 6px;
 }
-#tinyaddrright {
-	float: right;
-	font-family: Helvetica, Futura, Verdana, Arial, Helvetica, sans-serif;
-	font-size: 6px;
-	font-style: bold;		
-}
-#smalladdr {
-	font-family: Helvetica, Futura, Verdana, Arial, Helvetica, sans-serif;
-	font-size: 8px;
-	font-style: bold;		
-}
-#smallgray {
+
+.smallgray {
 	font-family: Helvetica, Futura, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 10px;
 	font-style: italic;
-	font-color: gray;		
+	color: gray;
 }
-#audio {
+
+.audio {
 	width: 280px;
 	height: 20px;
 	font-family: Helvetica, Futura, Arial, Helvetica, sans-serif;
 	font-size: 8px;
-	/*font-style: bold;*/
 }
-#chleft {
-	position: relative;
-	float: left;
-	width: 140px;	
-}
-#chright {
-	position: relative;
-	float: right;
-	width: 140px;	
-}
+
 #audio_small {
 	width: 170px;
 	font-family: Helvetica, Futura, Arial, Helvetica, sans-serif;
 	font-size: 7px;
-	/*font-style: bold;*/
 }
-#chleft_small {
-	position: relative;
-	float: left;
-	width: 85px;	
-}
-#chright_small {
-	position: relative;
-	float: right;
-	width: 85px;	
-}
+
 #audio_large {
 	width: 300px;
 	font-family: Helvetica, Futura, Arial, Helvetica, sans-serif;
 	font-size: 10px;
-	/*font-style: bold;*/
 }
-#chleft_large {
-	position: relative;
-	float: left;
-	width: 150px;	
-}
-#chright_large {
-	position: relative;
-	float: right;
-	width: 150px;	
-}
+
 #logo {
 	width: 175px;
 	font-family: Helvetica, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 6px;
-	font-style: bold;	
+	font-weight: bold;
 }
+
 #logoleft {
 	position: relative;
 	float: left;
 	width: 75px;	
 }
+
 #addr {
 	position: relative;
 	float: right;
 	width: 80px;	
 }
-#addrleft {
-	position: relative;
-	float: left;
-	width: 180px;	
-}
+
 </style>
 </head>
 <body>
 
 <div id="lbl1a">
-	<font id="bc">[BARCODE]</font><br />
+	<span class="barcode">[BARCODE]</span><br />
     <img src="2GLogo_small3_color2.png" width="58" height="42">
-    <font id="tinyaddr">
+    <span class="tinyaddr">
 	2G Digital Post, Inc.<br />
     280 East Magnolia Blvd<br />
     Burbank, Ca 91502<br />
     818.863.8900<br />
-    </font>
-    <font id="small">[DATE]</font><br />                        
-  <font id="medium">Std: [STANDARD]</font><br />
-  <font id="medium">FR: [FRAME_RATE]</font><br />
-    <font id="medium">Part: [STRAT2G_PART]</font><br />
-    <font id="medium">TRT: [TRT]</font><br />
+    </span>
+    <span class="small">[DATE]</span><br />
+  <span class="medium">Std: [STANDARD]</span><br />
+  <span class="medium">FR: [FRAME_RATE]</span><br />
+    <span class="medium">Part: [STRAT2G_PART]</span><br />
+    <span class="medium">TRT: [TRT]</span><br />
 </div>
 
 <div id="lbl1b">
-	<font id="smallgray">[CLIENT]</font><br />
-    <font id="semi_large">[WHOLETITLE]</font><br />                     
-  <font id="small">Version: [VERSION]</font><br />
+	<span class="smallgray">[CLIENT]</span><br />
+    <span class="semi_large">[WHOLETITLE]</span><br />
+  <span class="small">Version: [VERSION]</span><br />
   [MTMINFOCHUNK_SMALL]
     <br />
   <div id="audio_small">
         [AUDIO_CHANNELS_SMALL]
-    </div>
+  </div>
 </div>
 
 <div id="lbl2a">
-	<font id="bc">[BARCODE]</font><br />
+	<span class="barcode">[BARCODE]</span><br />
     <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <font id="tinyaddr">
+    <span class="tinyaddr">
 	2G Digital Post, Inc.<br />
     280 East Magnolia Blvd<br />
     Burbank, Ca 91502<br />
     818.863.8900<br />
-    </font>                    
-    <font id="medium">[DATE]</font><br />
-    <font id="medium">Std: [STANDARD]</font><br />    
-    <font id="medium">FR: [FRAME_RATE]</font><br />    
-    <font id="medium">Part: [STRAT2G_PART]</font><br />
-    <font id="medium">TRT: [TRT]</font><br />
+    </span>
+    <span class="medium">[DATE]</span><br />
+    <span class="medium">Std: [STANDARD]</span><br />
+    <span class="medium">FR: [FRAME_RATE]</span><br />
+    <span class="medium">Part: [STRAT2G_PART]</span><br />
+    <span class="medium">TRT: [TRT]</span><br />
 </div>
 
 <div id="lbl2b">
-	<font id="smallgray">[CLIENT]</font><br />                 
-	<font id="semi_xlarge">[WHOLETITLE]</font><br />
-    <font id="medium">Version: [VERSION]</font><br />
+	<span class="smallgray">[CLIENT]</span><br />
+	<span class="semi_xlarge">[WHOLETITLE]</span><br />
+    <span class="medium">Version: [VERSION]</span><br />
     [MTMINFOCHUNK_MEDIUM]
 	<br />
 	<br />    
-  <div id="audio">
+  <div class="audio">
         [AUDIO_CHANNELS]
     </div>
 </div>
@@ -445,50 +411,50 @@ body {
     	<div id="logoleft">
         	<img src="2GLogo_small3_color2.png" width="74" height="58">
         </div>
-    	<div id="addr"><font id="bc">[BARCODE]</font><br />
-            <font id="tinyaddr">
+    	<div id="addr"><span class="barcode">[BARCODE]</span><br />
+            <span class="tinyaddr">
             2G Digital Post, Inc.<br />
             280 East Magnolia Blvd<br />
             Burbank, Ca 91502<br />
             818.863.8900<br />
-            </font>
+            </span>
        </div>
   </div>                      
 </div>
 
 <div id="lbl3b">
-	<font id="smallgray">[CLIENT]</font><br />                  
-	<font id="semi_xlarge">[WHOLETITLE]</font><br />
+	<span class="smallgray">[CLIENT]</span><br />
+	<span class="semi_xlarge">[WHOLETITLE]</span><br />
 </div>
 
 <div id="lbl3c">                  
-    <font id="medium">Part: [STRAT2G_PART]</font><br />
-    <font id="medium">TRT: [TRT]</font><br />
+    <span class="medium">Part: [STRAT2G_PART]</span><br />
+    <span class="medium">TRT: [TRT]</span><br />
 </div>
 
 <div id="lbl4a">
-	<font id="bc">[BARCODE]</font><br />
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <font id="tinyaddr">
+	<span class="barcode">[BARCODE]</span><br />
+    <img src="2GLogo_small3_color2.png" width="58" height="42"><br/>
+    <span class="tinyaddr">
 	2G Digital Post, Inc.<br />
     280 East Magnolia Blvd<br />
     Burbank, Ca 91502<br />
     818.863.8900<br />
-    </font>
-    <font id="medium">[DATE]</font><br />               
-  <font id="medium">Std: [STANDARD]</font><br />
-  <font id="medium">FR: [FRAME_RATE]</font><br />
-    <font id="medium">Part: [STRAT2G_PART]</font><br />
-    <font id="medium">TRT: [TRT]</font><br />
+    </span>
+    <span class="medium">[DATE]</span><br />
+  <span class="medium">Std: [STANDARD]</span><br />
+  <span class="medium">FR: [FRAME_RATE]</span><br />
+    <span class="medium">Part: [STRAT2G_PART]</span><br />
+    <span class="medium">TRT: [TRT]</span><br />
 </div>
 
 <div id="lbl4b">
-	<font id="smallgray">[CLIENT]</font><br />                 
-	<font id="semi_large">[WHOLETITLE]</font><br />
-    <font id="medium">Version: [VERSION]</font><br />
+	<span class="smallgray">[CLIENT]</span><br />
+	<span class="semi_large">[WHOLETITLE]</span><br />
+    <span class="medium">Version: [VERSION]</span><br />
     [MTMINFOCHUNK_MEDIUM]
-  <br/ >
-  <div id="audio">
+  <br/>
+  <div class="audio">
         [AUDIO_CHANNELS]
     </div>
 </div>
@@ -499,125 +465,125 @@ body {
 </div>
 
 <div id="lbl5a">
-	<font id="bc">[BARCODE]</font><br />
+	<span class="barcode">[BARCODE]</span><br />
     <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <font id="tinyaddr">
+    <span class="tinyaddr">
 	2G Digital Post, Inc.<br />
     280 East Magnolia Blvd<br />
     Burbank, Ca 91502<br />
     818.863.8900<br />
-    </font>                    
-    <font id="large">Std: [STANDARD]</font><br />
-    <font id="large">FR: [FRAME_RATE]</font><br />
-    <font id="large">Part: [STRAT2G_PART]</font><br />
-    <font id="large">TRT: [TRT]</font><br />
+    </span>
+    <span class="large">Std: [STANDARD]</span><br />
+    <span class="large">FR: [FRAME_RATE]</span><br />
+    <span class="large">Part: [STRAT2G_PART]</span><br />
+    <span class="large">TRT: [TRT]</span><br />
 </div>
 
 <div id="lbl6a">
-	<font id="bc">[BARCODE]</font><br />
+	<span class="barcode">[BARCODE]</span><br />
     <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <font id="tinyaddr">
+    <span class="tinyaddr">
 	2G Digital Post, Inc.<br />
     280 East Magnolia Blvd<br />
     Burbank, Ca 91502<br />
     818.863.8900<br />
-    </font>                    
-    <font id="large">Std: [STANDARD]</font><br />
-    <font id="large">FR: [FRAME_RATE]</font><br />
-    <font id="large">Part: [STRAT2G_PART]</font><br />
-    <font id="large">TRT: [TRT]</font><br />
+    </span>
+    <span class="large">Std: [STANDARD]</span><br />
+    <span class="large">FR: [FRAME_RATE]</span><br />
+    <span class="large">Part: [STRAT2G_PART]</span><br />
+    <span class="large">TRT: [TRT]</span><br />
 </div>
 
 <div id="lbl7a">
-	<font id="bc">[BARCODE]</font><br />
+	<span class="barcode">[BARCODE]</span><br />
     <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <font id="tinyaddr">
+    <span class="tinyaddr">
 	2G Digital Post, Inc.<br />
     280 East Magnolia Blvd<br />
     Burbank, Ca 91502<br />
     818.863.8900<br />
-    </font>                    
-    <font id="medium">[DATE]</font><br />
-    <font id="medium">Std: [STANDARD]</font><br />    
-    <font id="medium">FR: [FRAME_RATE]</font><br />    
-    <font id="medium">Part: [STRAT2G_PART]</font><br />
-    <font id="medium">TRT: [TRT]</font><br />
+    </span>
+    <span class="medium">[DATE]</span><br />
+    <span class="medium">Std: [STANDARD]</span><br />
+    <span class="medium">FR: [FRAME_RATE]</span><br />
+    <span class="medium">Part: [STRAT2G_PART]</span><br />
+    <span class="medium">TRT: [TRT]</span><br />
 </div>
 
 <div id="lbl8a">
-	<font id="bc">[BARCODE]</font><br />
+	<span class="barcode">[BARCODE]</span><br />
     <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <font id="tinyaddr">
+    <span class="tinyaddr">
     2G Digital Post, Inc.<br />
     280 East Magnolia Blvd<br />
     Burbank, Ca 91502<br />
     818.863.8900<br />
-    </font>                  
-	<font id="medium">[WHOLETITLE]</font><br />
-    <font id="medium">Std: [STANDARD]</font><br />    
-    <font id="medium">FR: [FRAME_RATE]</font><br />    
-    <font id="medium">Part: [STRAT2G_PART]</font><br />
-    <font id="medium">TRT: [TRT]</font><br />
+    </span>
+	<span class="medium">[WHOLETITLE]</span><br />
+    <span class="medium">Std: [STANDARD]</span><br />
+    <span class="medium">FR: [FRAME_RATE]</span><br />
+    <span class="medium">Part: [STRAT2G_PART]</span><br />
+    <span class="medium">TRT: [TRT]</span><br />
 </div>
 
 <div id="lbl8b">
-	<font id="smallgray">[CLIENT]</font><br />                 
-	<font id="large">[WHOLETITLE]</font><br />
-    <font id="medium">Version: [VERSION]</font><br />
+	<span class="smallgray">[CLIENT]</span><br />
+	<span class="large">[WHOLETITLE]</span><br />
+    <span class="medium">Version: [VERSION]</span><br />
     [MTMINFOCHUNK_MEDIUM]
     <br />   
-  <div id="audio">
+  <div class="audio">
         [AUDIO_CHANNELS]
   </div>
 </div>
 
 <div id="lbl9a">
-	<font id="bc">[BARCODE]</font><br />
+	<span class="barcode">[BARCODE]</span><br />
     <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <font id="tinyaddr">
+    <span class="tinyaddr">
 	2G Digital Post, Inc.<br />
     280 East Magnolia Blvd<br />
     Burbank, Ca 91502<br />
     818.863.8900<br />
-    </font>                    
-	<font id="medium">[WHOLETITLE]</font><br />
-    <font id="medium">Std: [STANDARD]</font><br />
-    <font id="medium">FR: [FRAME_RATE]</font><br />
-    <font id="medium">PART: [STRAT2G_PART]</font><br />
-    <font id="medium">TRT: [TRT]</font><br />
+    </span>
+	<span class="medium">[WHOLETITLE]</span><br />
+    <span class="medium">Std: [STANDARD]</span><br />
+    <span class="medium">FR: [FRAME_RATE]</span><br />
+    <span class="medium">PART: [STRAT2G_PART]</span><br />
+    <span class="medium">TRT: [TRT]</span><br />
 </div>
 
 <div id="lbl9b">
-	<font id="smallgray">[CLIENT]</font><br />                 
-	<font id="large">[WHOLETITLE]</font><br />
-    <font id="medium">Version: [VERSION]</font><br />
+	<span class="smallgray">[CLIENT]</span><br />
+	<span class="large">[WHOLETITLE]</span><br />
+    <span class="medium">Version: [VERSION]</span><br />
     [MTMINFOCHUNK_MEDIUM]
     <br />    
-  <div id="audio">
+  <div class="audio">
         [AUDIO_CHANNELS]
     </div>
 </div>
 
 <div id="lbl10a">
-	<font id="bc">[BARCODE]</font><br />
+	<span class="barcode">[BARCODE]</span><br />
     <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <font id="tinyaddr">
+    <span class="tinyaddr">
 	2G Digital Post, Inc.<br />
     280 East Magnolia Blvd<br />
     Burbank, Ca 91502<br />
     818.863.8900<br />
-    </font>                  
-	<font id="medium">[WHOLETITLE]</font><br />
-    <font id="medium">Std: [STANDARD]</font><br />
-    <font id="medium">FR: [FRAME_RATE]</font><br />
-    <font id="medium">Part: [STRAT2G_PART]</font><br />
-    <font id="medium">TRT: [TRT]</font><br />
+    </span>
+	<span class="medium">[WHOLETITLE]</span><br />
+    <span class="medium">Std: [STANDARD]</span><br />
+    <span class="medium">FR: [FRAME_RATE]</span><br />
+    <span class="medium">Part: [STRAT2G_PART]</span><br />
+    <span class="medium">TRT: [TRT]</span><br />
 </div>
 
 <div id="lbl10b">
-	<font id="smallgray">[CLIENT]</font><br />                 
-	<font id="semi_xxlarge">[WHOLETITLE]</font><br />
-    <font id="xlarge">Version: [VERSION]</font><br />
+	<span class="smallgray">[CLIENT]</span><br />
+	<span id="semi_xxlarge">[WHOLETITLE]</span><br />
+    <span id="xlarge">Version: [VERSION]</span><br />
     [MTMINFOCHUNK_LARGE]
     <br /> 
   <div id="audio_large">
