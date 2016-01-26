@@ -169,9 +169,22 @@ class LabelWdg(BaseRefreshWdg):
             if this_line != '':
                 audio_lines = '%s' % this_line
 
+        misc_info = []
+
+        if source.get('description'):
+            misc_info.append('<span id="replace"><i>{0}</i></span>'.format(source.get('description')))
+        if source.get('aspect_ratio'):
+            misc_info.append('<span id="replace">Aspect Ratio: {0}</span>'.format(source.get('aspect_ratio')))
+        if source.get('captioning'):
+            misc_info.append('<span id="replace">Captioning: {0}</span>'.format(source.get('captioning')))
+        if source.get('textless'):
+            misc_info.append('<span id="replace">Textless: {0}</span>'.format(source.get('textless')))
+        if source.get('po_number'):
+            misc_info.append('<span id="replace">PO #: {0}</span>'.format(source.get('po_number')))
+
         mtminfo = ''
         if source.get('description'):
-            mtminfo = '''%s<span id="replace"><i>%s</i></span></br>''' % (mtminfo, source.get('description'))
+            mtminfo = '''%s<span id="replace"><i>%s</i></span><br/>''' % (mtminfo, source.get('description'))
         if source.get('aspect_ratio'):
             mtminfo = '''%s<span id="replace">Aspect Ratio: %s</span><br/>''' % (mtminfo, source.get('aspect_ratio'))
         if source.get('captioning'):
@@ -196,11 +209,11 @@ class LabelWdg(BaseRefreshWdg):
                         'STRAT2G_PART': source.get('part'),
                         'TRT': source.get('total_run_time'),
                         'CLIENT': client_name,
-                        'MTMINFOCHUNK_SMALL': mtminfo.replace('replace', 'small'),
+                        'MTMINFOCHUNK_SMALL': '<br/>'.join(misc_info).replace('replace', 'small'),
                         'AUDIO_CHANNELS_SMALL': audio_lines.replace('replace', 'small'),
-                        'MTMINFOCHUNK_MEDIUM': mtminfo.replace('replace', 'medium'),
+                        'MTMINFOCHUNK_MEDIUM': '<br/>'.join(misc_info).replace('replace', 'medium'),
                         'AUDIO_CHANNELS': audio_lines.replace('replace', ''),
-                        'MTMINFOCHUNK_LARGE': mtminfo.replace('replace', 'large'),
+                        'MTMINFOCHUNK_LARGE': '<br/>'.join(misc_info).replace('replace', 'large'),
                         'AUDIO_CHANNELS_LARGE': audio_lines.replace('replace', '_large')
                     }
 
@@ -287,8 +300,10 @@ class LabelWdg(BaseRefreshWdg):
                     template_file.close()
 
                 new_bc_file = '/var/www/html/source_labels/printed_labels/%s_%s.html' % (barcode, file_type)
+
                 if os.path.exists(new_bc_file):
                     os.system('rm -rf %s' % new_bc_file)
+
                 new_file = open(new_bc_file, 'w')
                 new_file.write(result)
                 new_file.close()
