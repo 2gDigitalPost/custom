@@ -218,6 +218,32 @@ class LabelWdg(BaseRefreshWdg):
                     }
 
                     result = label_page_template.render(**context)
+                elif file_type == 'DVD':
+                    label_page_template = Template(filename=my.template_files[file_type])
+
+                    context = {
+                        'CLIENT': client_name,
+                        'TITLE': source.get('title'),
+                        'VERSION': source.get('version'),
+                        'TYPE': source.get('source_type'),
+                        'DESCRIPTION': source.get('description'),
+                        'TOTAL_RUN_TIME': source.get('total_run_time'),
+                        'AUDIO_CH01': source.get('audio_ch_1'),
+                        'AUDIO_CH02': source.get('audio_ch_2'),
+                        'AUDIO_CH03': source.get('audio_ch_3'),
+                        'AUDIO_CH04': source.get('audio_ch_4'),
+                        'AUDIO_CH05': source.get('audio_ch_5'),
+                        'AUDIO_CH06': source.get('audio_ch_6'),
+                        'STANDARD': source.get('standard'),
+                        'FRAME_RATE': source.get('frame_rate'),
+                        'SOURCE_TYPE': source.get('source_type'),
+                        'GENERATION': source.get('generation'),
+                        'STRAT2G_PART': source.get('part'),
+                        'DATE': str(date),
+                        'BARCODE': barcode
+                    }
+
+                    result = label_page_template.render(**context)
                 else:
                     result = ''
                     template_file = open(my.template_files[file_type], 'r')
