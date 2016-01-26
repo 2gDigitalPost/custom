@@ -43,15 +43,18 @@ class LabelLauncherWdg(BaseTableElementWdg):
         table = Table()
         table.add_attr('width', '50px')
         table.add_row()
-        cell1 = table.add_cell('<img border="0" style="vertical-align: middle" title="" src="/context/icons/silk/printer.png">')
+        cell1 = table.add_cell(
+                '<img border="0" style="vertical-align: middle" title="" src="/context/icons/silk/printer.png">'
+        )
         launch_behavior = my.get_launch_behavior()
         cell1.add_attr('code', code)
         cell1.add_attr('title', title)
-        cell1.add_style('cursor: pointer;')
+        cell1.add_style('cursor', 'pointer')
         cell1.add_behavior(launch_behavior)
         widget.add(table)
 
         return widget
+
 
 class LabelWdg(BaseRefreshWdg):
 
@@ -71,10 +74,12 @@ class LabelWdg(BaseRefreshWdg):
         code = str(my.kwargs.get('code'))
         source = my.server.eval("@SOBJECT(twog/source['code','%s'])" % code)[0]
         client_name = ''
+
         if source.get('client_code'):
             client_names = my.server.eval("@GET(twog/client['code','%s'].name)" % source.get('client_code'))
             if len(client_names) > 0:
                 client_name = client_names[0]
+
         whole_title = source.get('title')
         if source.get('episode'):
             whole_title = '%s: %s' % (whole_title, source.get('episode')) 
@@ -119,7 +124,7 @@ class LabelWdg(BaseRefreshWdg):
         table.add_row()
         select = SelectWdg('label_type')
         for guy in my.types:
-            select.append_option(guy,guy)  
+            select.append_option(guy, guy)
         selly = table.add_cell(select)
         selly.add_attr('align','center')
         table.add_row()
@@ -155,21 +160,21 @@ class LabelWdg(BaseRefreshWdg):
             if this_line != '':
                 audio_lines = '%s%s' % (audio_lines, this_line)
         mtminfo = ''
-        if source.get('description') not in [None,'']:
-            mtminfo = '''%s<font id="replace"><i>%s</i></font></br>''' % (mtminfo, source.get('description'))
-        if source.get('aspect_ratio') not in [None,'']:
-            mtminfo = '''%s<font id="replace">Aspect Ratio: %s</font><br/>''' % (mtminfo, source.get('aspect_ratio'))
-        if source.get('captioning') not in [None,'']:
-            mtminfo = '''%s<font id="replace">Captioning: %s</font><br/>''' % (mtminfo, source.get('captioning'))
-        if source.get('textless') not in [None,'']:
-            mtminfo = '''%s<font id="replace">Textless: %s</font><br/>''' % (mtminfo, source.get('textless'))
-        if source.get('po_number') not in [None,'']:
-            mtminfo = '''%s<font id="replace">PO #: %s</font><br/>''' % (mtminfo, source.get('po_number'))
-        if barcode not in [None, '']:
+        if source.get('description'):
+            mtminfo = '''%s<span id="replace"><i>%s</i></span></br>''' % (mtminfo, source.get('description'))
+        if source.get('aspect_ratio'):
+            mtminfo = '''%s<span id="replace">Aspect Ratio: %s</span><br/>''' % (mtminfo, source.get('aspect_ratio'))
+        if source.get('captioning'):
+            mtminfo = '''%s<span id="replace">Captioning: %s</span><br/>''' % (mtminfo, source.get('captioning'))
+        if source.get('textless'):
+            mtminfo = '''%s<span id="replace">Textless: %s</span><br/>''' % (mtminfo, source.get('textless'))
+        if source.get('po_number'):
+            mtminfo = '''%s<span id="replace">PO #: %s</span><br/>''' % (mtminfo, source.get('po_number'))
+        if barcode:
             for guy in my.types:
                 result = ''
-                f = open(my.template_files[guy], 'r')
-                for line in f:
+                template_file = open(my.template_files[guy], 'r')
+                for line in template_file:
                     if not line.strip():
                         continue
                     else:
@@ -244,44 +249,57 @@ class LabelWdg(BaseRefreshWdg):
                         line = line.replace('[ADDITIONAL_LABEL_INFO]', source.get('additional_label_info'))
                         line = line.replace('[DATE]', str(date))
                         result = '%s%s' % (result, line)
-                f.close()
+
+                template_file.close()
+
                 new_bc_file = '/var/www/html/source_labels/printed_labels/%s_%s.html' % (barcode, guy)
                 if os.path.exists(new_bc_file):
                     os.system('rm -rf %s' % new_bc_file)
                 new_guy = open(new_bc_file, 'w')
                 new_guy.write(result)
                 new_guy.close()
+
             t1 = table.add_cell('')
             t1.add_style('width', '100%')
-            do_it = table.add_cell('<input type="button" value="Get Label Page For %s :(%s)"/>' % (source.get('title'), barcode)) 
-            do_it.add_behavior(my.get_open_barcode_label_page(barcode))
+
+            input_button_string = '<input type="button" value="Get Label Page For {0} :({1})"/>'.format(
+                source.get('title'), barcode
+            )
+            launch_button = table.add_cell(input_button_string)
+            launch_button.add_behavior(my.get_open_barcode_label_page(barcode))
+
             t2 = table.add_cell('')
             t2.add_style('width', '100%')
         else:
             table.add_cell('This Source does not have a barcode')
+
         return table
 
-    def get_open_barcode_label_page(my, barcode):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-                        try{
-                          var barcode = '%s';
-                          var top_el = spt.api.get_parent(bvr.src_el, '.print_label_wdg');
-                          var sels = top_el.getElementsByTagName('select');
-                          var type_sel = '';
-                          for(var r = 0; r < sels.length; r++){
-                              if(sels[r].name == 'label_type'){
-                                  type_sel = sels[r];
-                              }
-                          } 
-                          var type = type_sel.value;
-                          var url = 'http://tactic01/source_labels/printed_labels/' + barcode + '_' + type + '.html';
-                          new_win = window.open(url,'_blank','toolbar=1,location=1,directories=1,status=1,menubar=1,scrollbars=0,resizable=0'); 
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (barcode)
+    @staticmethod
+    def get_open_barcode_label_page(barcode):
+        behavior = {
+            'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try {
+    var barcode = '%s';
+    var top_el = spt.api.get_parent(bvr.src_el, '.print_label_wdg');
+    var sels = top_el.getElementsByTagName('select');
+    var type_sel = '';
+
+    for(var r = 0; r < sels.length; r++){
+        if(sels[r].name == 'label_type'){
+            type_sel = sels[r];
+        }
+    }
+
+    var type = type_sel.value;
+    var url = '/source_labels/printed_labels/' + barcode + '_' + type + '.html';
+    new_win = window.open(url, '_blank',
+                          'toolbar=1, location=1, directories=1, status=1, menubar=1, scrollbars=0, resizable=0');
+}
+catch(err) {
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+         ''' % barcode
         }
         return behavior
