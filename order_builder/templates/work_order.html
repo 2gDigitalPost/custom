@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>2G Work Order</title>
+<style type="text/css">
+@media screen,print {
+        body { 
+			moz-margin: 0px;
+			moz-padding: 0px;
+			moz-border: 0px;
+			width: 820px;
+			/*height: 1268px;*/
+		}
+}
+body {
+	    width: 820px;
+	    /*height: 1268px;*/
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        font-style: bold;
+}
+#barcode {
+}
+#pageTitle {
+        text-align: center;
+        font-family: Impact, Arial Black, Futura, Arial, sans-serif;
+        font-size: 26px;
+        font-style: bold;
+}
+#wo_header {
+		position: relative;
+		float: left;
+		width: 40%;
+		height: 75px;
+		background-color: #F8F8F8;
+		text-align: left;
+        font-family: Helvetica, Futura, Arial, sans-serif;
+        font-size: 16px;
+        font-style: bold;
+		font-weight: bold;
+		overflow: hidden;
+}
+#wo_text{
+		/*padding: 10px;*/
+		height: 50px;
+		border-bottom: thin;
+		border-bottom-style: solid;
+		border-bottom-color: #9F9F9F;
+}
+#prj_header {
+		position: relative;
+		float: left;
+		width: 40%;
+		height: 75px;
+		background-color: #F7F7F7;
+		text-align: left;
+        font-family: Helvetica, Futura, Arial, sans-serif;
+        font-size: 16px;
+        font-style: bold;
+		font-weight: bold;
+		overflow: hidden;
+}
+#prj_text{
+		/*padding: 10px;*/
+		height: 50px;
+		border-bottom: thin;
+		border-bottom-style: solid;
+		border-bottom-color: #9F9F9F;
+}
+#logo_header {
+		position: relative;
+		float: left;
+		height: 75px;
+		width: 20%
+}
+#title_header {
+        position: relative;
+		float: left;
+        width: 100%;
+		text-align: left;
+		border: solid;
+		border-style: solid;
+		border-color: black;
+        font-family: Helvetica, Futura, Arial, sans-serif;
+        font-size: 16px;
+}
+#label {
+		position: relative;
+		float: left;
+		width: 25%;
+		vertical-align: bottom;
+		font-size: 11px;
+}
+#entry {
+		position: relative;
+		text-align: left;
+		vertical-align: bottom;
+		float: left;
+		width: 74%;
+		font-family: Arial Black, sans-serif;
+        font-size: 20px;
+		overflow: hidden;
+}
+#entry_medium {
+		position: relative;
+		text-align: left;
+		vertical-align: bottom;
+		float: left;
+		width: 66%;
+		font-family: Arial Black, sans-serif;
+        font-size: 16px;
+		overflow: hidden;
+}
+#status_header {
+        position: relative;
+		float: left;
+        width: 100%;
+		text-align: left;
+		border: solid;
+		border-style: solid;
+		border-color: black;
+        font-family: Helvetica, Futura, Arial, sans-serif;
+        font-size: 16px;
+}
+#sources_header {
+		position: relative;
+		float: inherit;
+		text-align: center;
+		width: 100%;
+        height: 20px;
+		background-color: #F7F7F7;
+		border-bottom: thin;
+		border-bottom-style: solid;
+		font-family: Helvetica, Futura, Arial, sans-serif;
+		font-weight: bold;
+		font-size: 18px;
+}
+#sources {
+		position: relative;
+		float: left;
+		width: 100%;
+        height: 150px;
+		border: solid;
+		border-style: solid;
+		border-color: black;
+}
+#source_item {
+		position: relative;
+		float: left;
+		width: 100%;
+        height: 20px;
+		border: thin;
+		border-style: solid;
+		border-color: #9F9F9F;
+		text-align: left;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 12px;	
+}
+#results_header {
+        position: relative;
+		float: inherit;
+        text-align: center;
+		background-color: #F7F7F7;
+		border-bottom: thin;
+		border-bottom-style: solid;
+		font-family: Helvetica, Futura, Arial, sans-serif;
+		font-weight: bold;
+        width: 100%;
+        height: 20px;
+		font-size: 18px;
+}
+#results {
+		position: relative;
+		float: left;
+		width: 100%;
+        height: 150px;
+		border: solid;
+		border-style: solid;
+		border-color: black;
+}
+#result_item {
+		position: relative;
+		float: left;
+		width: 100%;
+        height: 20px;
+		border: thin;
+		border-style: solid;
+		border-color: #9F9F9F;
+		text-align: left;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 12px;	
+}
+#scheduler_operator {
+		position: relative;
+		/*moz-margin: 0px;*/
+		float: left;
+		width: 100%;
+		/*height: 300px;*/
+		border: solid;
+		border-style: solid;
+		border-color: black;
+}
+#scheduler_instructions {
+		position: relative;
+		float: left;
+		width: 100%;
+		/*height: 250px;*/
+		height: 100%;
+		text-align: left;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 14px;
+		background-color: #F7F7F7;
+		border-right: 1px;
+		border-right-style: solid;
+		border-right-color: black;
+}
+#instructions {
+		position: relative;
+		float: left;
+		padding: 5px;
+		font-family: Verdana, Arial, Helvetica, sans-serif;
+		font-size: 12px;
+		background-color: #FFFFFF;
+		text-wrap: important;
+		/*overflow: visible;*/
+}
+#operator_notes {
+		position: relative;
+		float: left;
+		width: 100%;
+		height: 250px;
+		text-align: left;
+		border-top: 1px;
+		border-top-style: solid;
+		border-top-color: black;
+		background-color: #F7F7F7;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 14px;
+}
+#notes {
+		position: relative;
+		float: left;
+		padding: 5px;
+		font-size: 12px;
+		background-color: #FFFFFF;
+		text-wrap: important;
+		/*overflow: visible;*/
+}
+#date_time_footer {
+		position: relative;
+		float: left;
+		width: 100%;
+		height: 40px;
+		text-align: center;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 9px;
+}
+#date_time {
+		position: relative;
+		float: left;
+		width: 50%;
+}
+pre {
+ white-space: pre-wrap;       /* css-3 */
+ white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+ white-space: -pre-wrap;      /* Opera 4-6 */
+ white-space: -o-pre-wrap;    /* Opera 7 */
+ word-wrap: break-word;       /* Internet Explorer 5.5+ */
+ width: 99%;
+}
+
+</style>
+</head>
+<body>
+<div id="pageTitle">2G WORK ORDER</div>
+<div id="wo_header">
+	<div id="wo_text">
+		<div id="label">WO #</div><div id="entry">[WORK_ORDER_CODE]</div>
+        <div id="label">DUE DATE</div><div id="entry_medium">[DUE_DATE]</div>
+    </div>
+</div>
+<div id="logo_header"><center><img src="2G_movements.jpg" width="154" height="53" /></center></div>
+
+<div id="prj_header">
+	<div id="prj_text">
+    	<div id="label">PROJ #</div><div id="entry">[PROJECT_CODE]</div>
+		<div id="label">PO #</div><div id="entry_medium">[PO_NUMBER]</div>
+    </div>
+</div>
+<div id="title_header">
+	<div id="label">TITLE</div><div id="entry">[TITLE]</div>
+	<div id="label">CLIENT</div><div id="entry">[CLIENT]</div>
+	<div id="label">PIPELINE</div><div id="entry_medium">[PIPELINE_CODE]</div>
+</div>
+&nbsp;
+<div id="status_header">
+	<div id="label">STATUS</div><div id="entry">[STATUS]</div>
+</div>
+&nbsp;
+
+<!-- SOURCES/ELEMENTS GO HERE -->
+<div id="sources">
+    <div id="sources_header">
+    	<strong>Source Information</strong><br />
+    </div>
+	<!-- <div id="source_item">[SOURCE_BARCODE] | [SOURCE_TYPE] [SOURCE_FRAME_RATE] [SOURCE_ASPECT_RATIO] [SOURCE_VERSION] [SOURCE_STRAT2G_PART] [SOURCE_TITLE]</div> -->
+        [SOURCES]
+</div>
+
+<br />
+
+<div id="scheduler_operator">
+    <div id="scheduler_instructions">
+        [LOGIN] <strong>Scheduler's Instructions</strong><br />
+        <div id="instructions"><pre>[INSTRUCTIONS]</pre></div>
+    </div>
+    <div id="operator_notes">
+        [ASSIGNED_TO] <strong>Operator Notes</strong><br />
+        <div id="notes"><pre>[NOTES]</pre></div>
+    </div>
+</div>
+<br />
+<div id="date_time_footer">
+	<div id="date_time"><strong>START DATE/TIME</strong></div>
+    <div id="date_time"><strong>END DATE/TIME</strong></div>
+</div>  
+<div id="date_time_footer">
+	<div id="date_time">[START DATE/TIME]</div>
+    <div id="date_time">[END DATE/TIME]</div>
+</div>      
+
+&nbsp;
+<hr />   
+</body>
+</html>

@@ -30,7 +30,6 @@ class LabelLauncherWdg(BaseTableElementWdg):
                 catch(err){
                           spt.app_busy.hide();
                           spt.alert(spt.exception.handler(err));
-                          //alert(err);
                 }
          '''}
         return behavior
@@ -60,17 +59,22 @@ class LabelWdg(BaseRefreshWdg):
 
     def init(my):
         my.server = TacticServerStub.get()
-        my.types = ['HDCAM', 'HDCAM_TV_FOX', 'HDCAM_FILM_FOX', 'HDCAM DIGIBETA', 'DVD', 'D5']
+
+        current_directory = os.path.dirname(__file__)
         my.template_files = {
-            'HDCAM': '/var/www/html/source_labels/HDCAM_label.html',
-            'HDCAM_FILM_FOX': '/var/www/html/source_labels/HDCAM_FILM_FOX_label.html',
-            'HDCAM_TV_FOX': '/var/www/html/source_labels/HDCAM_TV_FOX_label.html',
-            'HDCAM DIGIBETA': '/var/www/html/source_labels/HDCAM_Digibeta_label.html',
-            'DVD': '/var/www/html/source_labels/DVD_Label.html',
-            'D5': '/var/www/html/source_labels/D5_label.html'
+            'HDCAM': os.path.join(current_directory, 'templates/HDCAM_label.html'),
+            'HDCAM_FILM_FOX': os.path.join(current_directory, 'templates/HDCAM_FILM_FOX_label.html'),
+            'HDCAM_TV_FOX': os.path.join(current_directory, 'templates/HDCAM_TV_FOX_label.html'),
+            'HDCAM DIGIBETA': os.path.join(current_directory, 'templates/HDCAM_Digibeta_label.html'),
+            'DVD': os.path.join(current_directory, 'templates/DVD_Label.html'),
+            'D5': os.path.join(current_directory, 'templates/D5_label.html')
         }
+
+        # This is needed to present the keys in template_files in order
+        # Since the platform is using Python 2.6, Ordered dictionaries are not available by default
+        my.template_file_types = ('HDCAM', 'HDCAM_FILM_FOX', 'HDCAM_TV_FOX', 'HDCAM DIGIBETA', 'DVD', 'D5')
     
-    def get_display(my):   
+    def get_display(my):
         code = str(my.kwargs.get('code'))
         source = my.server.eval("@SOBJECT(twog/source['code','%s'])" % code)[0]
         client_name = ''
@@ -113,52 +117,56 @@ class LabelWdg(BaseRefreshWdg):
         whole_title = chunk_lines
             
         barcode = source.get('barcode')
-        captioning = source.get('captioning')
-        if captioning:
-            captioning = 'N/A'
-        subtitles = source.get('subtitles')
-        if subtitles:
-            subtitles = 'N/A' 
+        captioning = source.get('captioning') or 'N/A'
+        subtitles = source.get('subtitles') or 'N/A'
+
         table = Table()
         table.add_attr('class', 'print_label_wdg')
         table.add_row()
         select = SelectWdg('label_type')
-        for guy in my.types:
-            select.append_option(guy, guy)
+
+        for file_type in my.template_file_types:
+            select.append_option(file_type, file_type)
+
         selly = table.add_cell(select)
-        selly.add_attr('align','center')
+        selly.add_attr('align', 'center')
         table.add_row()
         date = str(datetime.datetime.now()).split(' ')[0]
         audio_lines = ''
-        audio_layout = [[1, 7], [2, 8], [3, 9], [4, 10], [5, 11], [6, 12]]
+        audio_layout = ((1, 7), (2, 8), (3, 9), (4, 10), (5, 11), (6, 12))
+
         for layout in audio_layout:
             this_line = ''
             left = layout[0]
             left_str = '%s' % left
             left_line = ''
             found_left = False
+
             if len(left_str) == 1:
                 left_str = '0%s' % left_str
+
             if source.get('audio_ch_%s' % left) not in [None, '']:
                 left_line = '<div id="chleftreplace">CH%s: %s</div>' % (left_str, source.get('audio_ch_%s' % left))
                 found_left = True
+
             right = layout[1]
             right_str = '%s' % right
             right_line = ''
             found_right = False
             if len(right_str) == 1:
                 right_str = '0%s' % right_str
-            if source.get('audio_ch_%s' % right) not in [None,'']:
-                right_line  = '<div id="chrightreplace">CH%s: %s</div>' % (right_str, source.get('audio_ch_%s' % right))
+            if source.get('audio_ch_%s' % right) not in [None, '']:
+                right_line = '<div id="chrightreplace">CH%s: %s</div>' % (right_str, source.get('audio_ch_%s' % right))
                 found_right = True
             if found_left and not found_right:
-                this_line = '%s<div id="chrightreplace">&nbsp;</div>\n' % (left_line)
+                this_line = '%s<div id="chrightreplace">&nbsp;</div>\n' % left_line
             if found_left and found_right:
                 this_line = '%s%s\n' % (left_line, right_line)
             if not found_left and found_right:
-                this_line = '<div id="chleftreplace">&nbsp;</div>%s\n' % (right_line)
+                this_line = '<div id="chleftreplace">&nbsp;</div>%s\n' % right_line
             if this_line != '':
                 audio_lines = '%s%s' % (audio_lines, this_line)
+
         mtminfo = ''
         if source.get('description'):
             mtminfo = '''%s<span id="replace"><i>%s</i></span></br>''' % (mtminfo, source.get('description'))
@@ -171,7 +179,7 @@ class LabelWdg(BaseRefreshWdg):
         if source.get('po_number'):
             mtminfo = '''%s<span id="replace">PO #: %s</span><br/>''' % (mtminfo, source.get('po_number'))
         if barcode:
-            for guy in my.types:
+            for guy in my.template_file_types:
                 result = ''
                 template_file = open(my.template_files[guy], 'r')
                 for line in template_file:
@@ -198,7 +206,7 @@ class LabelWdg(BaseRefreshWdg):
                             if 'LARGE' in line:
                                 replacer = '_large'
                                 full_tag = '[AUDIO_CHANNELS_LARGE]'
-                            line = line.replace(full_tag, audio_lines.replace('replace',replacer))
+                            line = line.replace(full_tag, audio_lines.replace('replace', replacer))
                         if '[MTMINFOCHUNK_' in line:
                             replacer = 'medium'
                             full_tag = '[MTMINFOCHUNK_MEDIUM]'
@@ -208,7 +216,7 @@ class LabelWdg(BaseRefreshWdg):
                             elif 'LARGE' in line:
                                 replacer = 'large'
                                 full_tag = '[MTMINFOCHUNK_LARGE]'
-                            line = line.replace(full_tag, mtminfo.replace('replace',replacer))
+                            line = line.replace(full_tag, mtminfo.replace('replace', replacer))
                         line = line.replace('[AUDIO_CH01]', source.get('audio_ch_1'))
                         line = line.replace('[AUDIO_CH02]', source.get('audio_ch_2'))
                         line = line.replace('[AUDIO_CH03]', source.get('audio_ch_3'))

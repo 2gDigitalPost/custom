@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>2G Movements Sign-out Sheet</title>
+<style type="text/css">
+@media screen,print {
+        body { width: 973px }
+        body { width: 1026px }
+}
+body {
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        font-style: bold;
+}
+#barcode {
+}
+
+#pageTitle {
+        text-align: left;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        font-style: bold;
+}
+
+#name {
+        position: relative;
+        text-align: left;
+        width: 80px;
+        height: 34px;
+        top: 0px;
+        left: 0px;
+}
+#address_from {
+        position: relative;
+        top: 0%;
+        left: 0%;
+        width: 50%;
+        height: 50px;
+}
+#address_to {
+        position: relative;
+        top: -50px;
+        left: 50%;
+        width: 50%;
+        height: 50px;
+}
+#shipping {
+		float: inherit;
+        position: relative; 
+        left: 0%;
+        width: 100%;
+}
+#source_header {
+		postion: relative;
+		float: left;
+		width: 100%;
+        height: 40px;
+		background-color: #F7F7F7;
+		border: thin;
+		border-style: solid;
+		font-weight: bold;
+
+}
+#barcode_header {
+        position: relative;
+		float: inherit;
+        text-align: left;
+        width: 10%;
+        height: 30px;
+}
+#movement_code_header {
+        position: relative;
+		float: inherit;
+        text-align: center;
+        width: 100%;
+        height: 30px;
+}
+#type_header {
+        position: relative;
+		float: inherit;
+        text-align: left;
+        width: 10%;
+        height: 30px;
+}
+#episode_header {
+        position: relative;
+		float: inherit;
+        text-align: left;
+        width: 10%;
+        height: 30px;
+}
+#title_header {
+        position: relative;
+		float: inherit;
+        text-align: left;
+        width: 20%;
+        height: 30px;
+		text-wrap: !important;
+}
+#outside_barcode_header {
+        position: relative;
+		float: inherit;
+        text-align: left;
+        width: 10%;
+        height: 30px;
+		text-wrap: !important;
+}
+#client_header {
+        position: relative;
+		float: inherit;
+        text-align: left;
+        width: 10%;
+        height: 30px;
+}
+#source {
+		postion: relative;
+		float: left;
+		width: 100%;
+        height: 40px;
+		border-bottom: thin;
+		border-bottom-style: solid;
+		border-bottom-color: #9F9F9F;
+}
+
+#barcode {
+        position: relative;
+		float: inherit;
+        text-align: left;
+        width: 15%;
+        height: 30px;
+}
+#type {
+        position: relative;
+		float: inherit;
+        text-align: left;
+        width: 15%;
+        height: 30px;
+}
+#title {
+        position: relative;
+		float: inherit;
+        text-align: left;
+        width: 30%;
+        height: 30px;
+		text-wrap: !important;
+}
+#client {
+        position: relative;
+		float: inherit;
+        text-align: left;
+        width: 15%;
+        height: 30px;
+}
+#sig_block {
+	    position: relative;
+		float: left;
+		border-bottom: thin;
+		border-bottom-style: solid;
+		border-bottom-color: #9F9F9F;
+        width: 100%;
+        height: 60px;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 10px;
+        font-style: bold;
+		background-color: #F7F7F7;
+		font-weight: bold;
+}
+
+</style>
+</head>
+<body>
+
+<div><img src="2G_movements_colored.png" width="282" height="99" /><font id="pageTitle">2G Movements Sign-Out Form | [MOVEMENT_CODE] | [TIMESTAMP]</font></div>
+<hr />
+<div id="address_from">
+<strong>FROM:</strong><br />
+[FROM]<br />
+[FROM_STREET_ADDRESS]<br />
+[FROM_SUITE]<br />
+[FROM_CITY], [FROM_STATE], [FROM_COUNTRY]<br />
+[FROM_ZIP]<br />
+[FROM_PHONE]<br />
+[FROM_MAIN_CONTACT]<br />
+</div>
+<div id="address_to">
+<strong>TO:</strong><br />
+[TO]<br />
+[TO_STREET_ADDRESS]<br />
+[TO_SUITE]<br />
+[TO_CITY], [TO_STATE], [TO_COUNTRY]<br />
+[TO_ZIP]<br />
+[TO_PHONE]<br />
+[TO_MAIN_CONTACT]<br />
+</div>
+<br /><br />
+<hr />
+<div id="shipping">
+	SHIPPER: [SHIPPER_CODE] |
+	SHIPPING_CLASS: [SHIPPING_CLASS] |
+	WAYBILL: [WAYBILL]
+</div>
+<hr />
+<div id="source_header">
+	<div id="barcode_header">BARCODE</div>
+    <div id="title_header">TITLE</div>
+    <div id="episode_header">EPISODE</div>
+    <div id="type_header">TYPE</div>
+    <div id="outside_barcode_header">OUTSIDE BARCODE</div>
+    <div id="client_header">CLIENT</div>
+</div>
+<!-- SOURCES/ELEMENTS GO HERE -->
+<hr />
+&nbsp;
+<div id="sig_block">[DESCRIPTION]</div>
+<br/>
+<div id="sig_block">Print Name:</div>
+<br/>
+<div id="sig_block">Signature:</div>
+<br/>
+<div id="sig_block">Drivers License or Company Id #:</div>
+<br/>
+<div id="sig_block">Courier Company:</div>
+<br/>
+<div id="sig_block">Date:</div>
+</body>
+</html>
