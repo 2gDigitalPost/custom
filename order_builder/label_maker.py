@@ -183,8 +183,8 @@ class LabelWdg(BaseRefreshWdg):
             misc_info.append('<span class="replace">PO #: {0}</span>'.format(source.get('po_number')))
 
         if barcode:
-            for file_type in my.template_file_types:
-                label_page_template = Template(filename=my.template_files[file_type])
+            for file_type, file_location in my.template_files.items():
+                label_page_template = Template(filename=file_location)
 
                 context = {
                     'BARCODE': barcode,
@@ -200,7 +200,18 @@ class LabelWdg(BaseRefreshWdg):
                 if file_type == 'HDCAM':
                     context.update({
                         'WHOLETITLE': whole_title,
-                        'TRT': source.get('total_run_time'),
+                        'TOTAL_RUN_TIME': source.get('total_run_time'),
+                        'MTMINFOCHUNK_SMALL': '<br/>'.join(misc_info).replace('replace', 'small'),
+                        'AUDIO_CHANNELS_SMALL': audio_lines.replace('replace', 'small'),
+                        'MTMINFOCHUNK_MEDIUM': '<br/>'.join(misc_info).replace('replace', 'medium'),
+                        'AUDIO_CHANNELS': audio_lines.replace('replace', ''),
+                        'MTMINFOCHUNK_LARGE': '<br/>'.join(misc_info).replace('replace', 'large'),
+                        'AUDIO_CHANNELS_LARGE': audio_lines.replace('replace', '_large')
+                    })
+                elif file_type == 'Disney':
+                    context.update({
+                        'WHOLETITLE': whole_title,
+                        'TOTAL_RUN_TIME': source.get('total_run_time'),
                         'MTMINFOCHUNK_SMALL': '<br/>'.join(misc_info).replace('replace', 'small'),
                         'AUDIO_CHANNELS_SMALL': audio_lines.replace('replace', 'small'),
                         'MTMINFOCHUNK_MEDIUM': '<br/>'.join(misc_info).replace('replace', 'medium'),
@@ -224,7 +235,7 @@ class LabelWdg(BaseRefreshWdg):
                     })
                 elif file_type == 'HDCAM DIGIBETA':
                     context.update({
-                        'TRT': source.get('total_run_time'),
+                        'TOTAL_RUN_TIME': source.get('total_run_time'),
                         'TITLE': source.get('title'),
                         'DESCRIPTION': source.get('description'),
                         'ASPECT_RATIO': source.get('aspect_ratio'),
@@ -235,7 +246,7 @@ class LabelWdg(BaseRefreshWdg):
                     })
                 elif file_type == 'D5':
                     context.update({
-                        'TRT': source.get('total_run_time'),
+                        'TOTAL_RUN_TIME': source.get('total_run_time'),
                         'TITLE': source.get('title'),
                         'DESCRIPTION': source.get('description'),
                         'ASPECT_RATIO': source.get('aspect_ratio'),
@@ -252,7 +263,7 @@ class LabelWdg(BaseRefreshWdg):
                     })
                 elif file_type == 'HDCAM_FILM_FOX':
                     context.update({
-                        'TRT': source.get('total_run_time'),
+                        'TOTAL_RUN_TIME': source.get('total_run_time'),
                         'TITLE': source.get('title'),
                         'DESCRIPTION': source.get('description'),
                         'ASPECT_RATIO': source.get('aspect_ratio'),
@@ -278,7 +289,7 @@ class LabelWdg(BaseRefreshWdg):
                     })
                 elif file_type == 'HDCAM_TV_FOX':
                     context.update({
-                        'TRT': source.get('total_run_time'),
+                        'TOTAL_RUN_TIME': source.get('total_run_time'),
                         'TITLE': source.get('title'),
                         'DESCRIPTION': source.get('description'),
                         'ASPECT_RATIO': source.get('aspect_ratio'),
