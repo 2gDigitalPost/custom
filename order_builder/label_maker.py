@@ -341,8 +341,8 @@ try {
     var sels = top_el.getElementsByTagName('select');
     var type_sel = '';
 
-    for(var r = 0; r < sels.length; r++){
-        if(sels[r].name == 'label_type'){
+    for (var r = 0; r < sels.length; r++) {
+        if (sels[r].name == 'label_type') {
             type_sel = sels[r];
         }
     }
