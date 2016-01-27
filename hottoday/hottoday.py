@@ -321,6 +321,7 @@ class HotTodayWdg(BaseRefreshWdg):
         current_row = table.add_row()
         current_row.add_style('width', '100%')
         current_row.add_style('height', 'auto')
+        current_row.add_style('vertical-align', 'top')
 
         # Add the title table to the table row
         title_cell = table.add_cell(title_table, row=current_row)
