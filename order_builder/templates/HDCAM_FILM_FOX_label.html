@@ -520,7 +520,7 @@ body {
 <body>
 
 <div id="lbl1a">
-	<font id="bc">[BARCODE]</font><br />
+	<font id="bc">${BARCODE}</font><br />
     <img src="2GLogo_small3.png" width="58" height="42">
     <font id="tinyaddr">
 	2G Digital Post, Inc.<br />
@@ -528,31 +528,31 @@ body {
     Burbank, Ca 91502<br />
     818.863.8900<br />
     </font>
-    <font id="small">[DATE]</font><br />                        
-  <font id="medium">[STANDARD] [FRAME_RATE]</font><br />
-    <font id="medium">[STRAT2G_PART]</font><br />
-    <font id="large">[TRT]</font><br />
+    <font id="small">${DATE}</font><br />                        
+  <font id="medium">${STANDARD} ${FRAME_RATE}</font><br />
+    <font id="medium">${STRAT2G_PART}</font><br />
+    <font id="large">${TRT}</font><br />
 </div>
 
 <div id="lbl1b">
-	<font id="smallgray">[CLIENT]</font><br />
-    <font id="large">[TITLE]</font><br />                     
-  <font id="small">[VERSION]</font><br />
-    <font id="medium"><i>[DESCRIPTION]</i></font><br />
-    <font id="small">[ASPECT_RATIO]</font><br />
+	<font id="smallgray">${CLIENT}</font><br />
+    <font id="large">${TITLE}</font><br />                     
+  <font id="small">${VERSION}</font><br />
+    <font id="medium"><i>${DESCRIPTION}</i></font><br />
+    <font id="small">${ASPECT_RATIO}</font><br />
     <br />
   <div id="audio_small">
-        <div id="chleft_small">CH01: [CH01]</div><div id="chright_small">CH07: [CH07]</div>
-        <div id="chleft_small">CH02: [CH02]</div><div id="chright_small">CH08: [CH08]</div>  
-        <div id="chleft_small">CH03: [CH03]</div><div id="chright_small">CH09: [CH09]</div>  
-        <div id="chleft_small">CH04: [CH04]</div><div id="chright_small">CH10: [CH10]</div>  
-        <div id="chleft_small">CH05: [CH05]</div><div id="chright_small">CH11: [CH11]</div>  
-        <div id="chleft_small">CH06: [CH06]</div><div id="chright_small">CH12: [CH12]</div>                     	               
+        <div id="chleft_small">CH01: ${CH01}</div><div id="chright_small">CH07: ${CH07}</div>
+        <div id="chleft_small">CH02: ${CH02}</div><div id="chright_small">CH08: ${CH08}</div>  
+        <div id="chleft_small">CH03: ${CH03}</div><div id="chright_small">CH09: ${CH09}</div>  
+        <div id="chleft_small">CH04: ${CH04}</div><div id="chright_small">CH10: ${CH10}</div>  
+        <div id="chleft_small">CH05: ${CH05}</div><div id="chright_small">CH11: ${CH11}</div>  
+        <div id="chleft_small">CH06: ${CH06}</div><div id="chright_small">CH12: ${CH12}</div>                     	               
     </div>
 </div>
 
 <div id="lbl2a">
-	<font id="bc">[BARCODE]</font><br />
+	<font id="bc">${BARCODE}</font><br />
     <img src="2GLogo_small3.png" width="58" height="42"><br />
     <font id="tinyaddr">
 	2G Digital Post, Inc.<br />
@@ -560,47 +560,47 @@ body {
     Burbank, Ca 91502<br />
     818.863.8900<br />
     </font>                    
-    <font id="medium">[DATE]</font><br />
-    <font id="large">[STANDARD] [FRAME_RATE]</font><br />    
-    <font id="large">[STRAT2G_PART]</font><br />
-    <font id="large">[TRT]</font><br />
+    <font id="medium">${DATE}</font><br />
+    <font id="large">${STANDARD} ${FRAME_RATE}</font><br />    
+    <font id="large">${STRAT2G_PART}</font><br />
+    <font id="large">${TRT}</font><br />
 </div>
 
 <div id="lbl2b">
-	<font id="smallgray">[CLIENT]</font><br />                 
-	<font id="xlarge">[TITLE]</font><br />
-    <font id="xmedium">Version:[VERSION]</font><br />
-    <font id="xmedium">PO#:[PO_NUMBER] | ID:[CLIENT_ASSET_ID]</font><br />
-    <font id="medium"><i>[DESCRIPTION]</i></font><br />
+	<font id="smallgray">${CLIENT}</font><br />                 
+	<font id="xlarge">${TITLE}</font><br />
+    <font id="xmedium">Version:${VERSION}</font><br />
+    <font id="xmedium">PO#:${PO_NUMBER} | ID:${CLIENT_ASSET_ID}</font><br />
+    <font id="medium"><i>${DESCRIPTION}</i></font><br />
     <div id="metadata">
         <div><b><u>ASSET DETAILS:</u></b></div>
         <div id="metadata">
-        	<div id="md_left">Aspect: [ASPECT_RATIO]</div><div id="md_right">Format: [FORMAT]</div>
+        	<div id="md_left">Aspect: ${ASPECT_RATIO}</div><div id="md_right">Format: ${FORMAT}</div>
         </div>
         <div id="metadata">
-        	<div id="md_left">Frame: [FRAME_RATE]</div><div id="md_right">Textless: [TEXTLESS]</div>
+        	<div id="md_left">Frame: ${FRAME_RATE}</div><div id="md_right">Textless: ${TEXTLESS}</div>
         </div>
         <div id="metadata">
-        	<div id="md_left">Caption: [CAPTIONING]</div><div id="md_right">Subtitles: [SUBTITLES]</div>
+        	<div id="md_left">Caption: ${CAPTIONING}</div><div id="md_right">Subtitles: ${SUBTITLES}</div>
         </div>
         <div id="metadata">
-        	<div id="md_left">TRT: [TRT]</div><div id="md_right">Standard: [STANDARD]</div>
+        	<div id="md_left">TRT: ${TRT}</div><div id="md_right">Standard: ${STANDARD}</div>
         </div>
     </div>
     <div id="metadata">&nbsp;</div> 
   	<div id="metadata">
         <div><b><u>AUDIO INFORMATION:</u></b></div>
-        <div id="chleft_medium2">CH01: [CH01]</div><div id="chright_medium2">CH07: [CH07]</div>
-        <div id="chleft_medium2">CH02: [CH02]</div><div id="chright_medium2">CH08: [CH08]</div>  
-        <div id="chleft_medium2">CH03: [CH03]</div><div id="chright_medium2">CH09: [CH09]</div>  
-        <div id="chleft_medium2">CH04: [CH04]</div><div id="chright_medium2">CH10: [CH10]</div>  
-        <div id="chleft_medium2">CH05: [CH05]</div><div id="chright_medium2">CH11: [CH11]</div>  
-        <div id="chleft_medium2">CH06: [CH06]</div><div id="chright_medium2">CH12: [CH12]</div>                     	               
+        <div id="chleft_medium2">CH01: ${CH01}</div><div id="chright_medium2">CH07: ${CH07}</div>
+        <div id="chleft_medium2">CH02: ${CH02}</div><div id="chright_medium2">CH08: ${CH08}</div>  
+        <div id="chleft_medium2">CH03: ${CH03}</div><div id="chright_medium2">CH09: ${CH09}</div>  
+        <div id="chleft_medium2">CH04: ${CH04}</div><div id="chright_medium2">CH10: ${CH10}</div>  
+        <div id="chleft_medium2">CH05: ${CH05}</div><div id="chright_medium2">CH11: ${CH11}</div>  
+        <div id="chleft_medium2">CH06: ${CH06}</div><div id="chright_medium2">CH12: ${CH12}</div>                     	               
     </div>
     <div id="metadata">&nbsp;</div>
     <div id="additional_narrow">
         <div><b><u>ADDITIONAL INFO:</u></b></div>
-    	<div>[ADDITIONAL_LABEL_INFO]</div>
+    	<div>${ADDITIONAL_LABEL_INFO}</div>
     </div>
 </div>
 
@@ -609,7 +609,7 @@ body {
     	<div id="logoleft">
         	<img src="2GLogo_small3.png" width="74" height="58">
         </div>
-    	<div id="addr"><font id="bc">[BARCODE]</font><br />
+    	<div id="addr"><font id="bc">${BARCODE}</font><br />
             <font id="tinyaddr">
             2G Digital Post, Inc.<br />
             280 East Magnolia Blvd<br />
@@ -621,19 +621,19 @@ body {
 </div>
 
 <div id="lbl3b">
-        <font id="smallgray">[CLIENT]</font><br />                  
-        <font id="xlarge">[TITLE]</font><br />
-        <font id="large">Version: [VERSION]</font><br />
-        <font id="large">PO#: [PO_NUMBER] | ID: [CLIENT_ASSET_ID]</font><br />
+        <font id="smallgray">${CLIENT}</font><br />                  
+        <font id="xlarge">${TITLE}</font><br />
+        <font id="large">Version: ${VERSION}</font><br />
+        <font id="large">PO#: ${PO_NUMBER} | ID: ${CLIENT_ASSET_ID}</font><br />
 </div>
 
 <div id="lbl3c">                  
-    <font id="large">[STRAT2G_PART]</font><br />
-    <font id="large">[TRT]</font><br />
+    <font id="large">${STRAT2G_PART}</font><br />
+    <font id="large">${TRT}</font><br />
 </div>
 
 <div id="lbl4a">
-	<font id="bc">[BARCODE]</font><br />
+	<font id="bc">${BARCODE}</font><br />
     <img src="2GLogo_small3.png" width="58" height="42"><br />
     <font id="tinyaddr">
 	2G Digital Post, Inc.<br />
@@ -641,26 +641,26 @@ body {
     Burbank, Ca 91502<br />
     818.863.8900<br />
     </font>
-    <font id="medium">[DATE]</font><br />               
-  <font id="large">[STANDARD] [FRAME_RATE]</font><br />
-    <font id="large">[STRAT2G_PART]</font><br />
-    <font id="xlarge">[TRT]</font><br />
+    <font id="medium">${DATE}</font><br />               
+  <font id="large">${STANDARD} ${FRAME_RATE}</font><br />
+    <font id="large">${STRAT2G_PART}</font><br />
+    <font id="xlarge">${TRT}</font><br />
 </div>
 
 <div id="lbl4b">
-	<font id="smallgray">[CLIENT]</font><br />                 
-	<font id="large">[TITLE]</font><br />
-    <font id="medium">[VERSION]</font><br />
-    <font id="medium"><i>[DESCRIPTION]</i></font><br />
-    <font id="large">[ASPECT_RATIO]</font><br />
+	<font id="smallgray">${CLIENT}</font><br />                 
+	<font id="large">${TITLE}</font><br />
+    <font id="medium">${VERSION}</font><br />
+    <font id="medium"><i>${DESCRIPTION}</i></font><br />
+    <font id="large">${ASPECT_RATIO}</font><br />
   <br/ >
   <div id="audio">
-        <div id="chleft">CH01: [CH01]</div><div id="chright">CH07: [CH07]</div>
-        <div id="chleft">CH02: [CH02]</div><div id="chright">CH08: [CH08]</div>  
-        <div id="chleft">CH03: [CH03]</div><div id="chright">CH09: [CH09]</div>  
-        <div id="chleft">CH04: [CH04]</div><div id="chright">CH10: [CH10]</div>  
-        <div id="chleft">CH05: [CH05]</div><div id="chright">CH11: [CH11]</div>  
-        <div id="chleft">CH06: [CH06]</div><div id="chright">CH12: [CH12]</div>                     	               
+        <div id="chleft">CH01: ${CH01}</div><div id="chright">CH07: ${CH07}</div>
+        <div id="chleft">CH02: ${CH02}</div><div id="chright">CH08: ${CH08}</div>  
+        <div id="chleft">CH03: ${CH03}</div><div id="chright">CH09: ${CH09}</div>  
+        <div id="chleft">CH04: ${CH04}</div><div id="chright">CH10: ${CH10}</div>  
+        <div id="chleft">CH05: ${CH05}</div><div id="chright">CH11: ${CH11}</div>  
+        <div id="chleft">CH06: ${CH06}</div><div id="chright">CH12: ${CH12}</div>                     	               
     </div>
 </div>
 
@@ -670,7 +670,7 @@ body {
 </div>
 
 <div id="lbl5a">
-	<font id="bc">[BARCODE]</font><br />
+	<font id="bc">${BARCODE}</font><br />
     <img src="2GLogo_small3.png" width="58" height="42"><br />
     <font id="tinyaddr">
 	2G Digital Post, Inc.<br />
@@ -678,13 +678,13 @@ body {
     Burbank, Ca 91502<br />
     818.863.8900<br />
     </font>                    
-    <font id="large">[STANDARD] [FRAME_RATE]</font><br />
-    <font id="large">[STRAT2G_PART]</font><br />
-    <font id="large">[TRT]</font><br />
+    <font id="large">${STANDARD} ${FRAME_RATE}</font><br />
+    <font id="large">${STRAT2G_PART}</font><br />
+    <font id="large">${TRT}</font><br />
 </div>
 
 <div id="lbl6a">
-	<font id="bc">[BARCODE]</font><br />
+	<font id="bc">${BARCODE}</font><br />
     <img src="2GLogo_small3.png" width="58" height="42"><br />
     <font id="tinyaddr">
 	2G Digital Post, Inc.<br />
@@ -692,13 +692,13 @@ body {
     Burbank, Ca 91502<br />
     818.863.8900<br />
     </font>                    
-    <font id="large">[STANDARD] [FRAME_RATE]</font><br />
-    <font id="large">[STRAT2G_PART]</font><br />
-    <font id="large">[TRT]</font><br />
+    <font id="large">${STANDARD} ${FRAME_RATE}</font><br />
+    <font id="large">${STRAT2G_PART}</font><br />
+    <font id="large">${TRT}</font><br />
 </div>
 
 <div id="lbl7a">
-	<font id="bc">[BARCODE]</font><br />
+	<font id="bc">${BARCODE}</font><br />
     <img src="2GLogo_small3.png" width="58" height="42"><br />
     <font id="tinyaddr">
 	2G Digital Post, Inc.<br />
@@ -706,14 +706,14 @@ body {
     Burbank, Ca 91502<br />
     818.863.8900<br />
     </font>                    
-    <font id="medium">[DATE]</font><br />
-    <font id="large">[STANDARD] [FRAME_RATE]</font><br />    
-    <font id="large">[STRAT2G_PART]</font><br />
-    <font id="xlarge">[TRT]</font><br />
+    <font id="medium">${DATE}</font><br />
+    <font id="large">${STANDARD} ${FRAME_RATE}</font><br />    
+    <font id="large">${STRAT2G_PART}</font><br />
+    <font id="xlarge">${TRT}</font><br />
 </div>
 
 <div id="lbl8a">
-	<font id="bc">[BARCODE]</font><br />
+	<font id="bc">${BARCODE}</font><br />
     <img src="2GLogo_small3.png" width="58" height="42"><br />
     <font id="tinyaddr">
     2G Digital Post, Inc.<br />
@@ -721,36 +721,36 @@ body {
     Burbank, Ca 91502<br />
     818.863.8900<br />
     </font>                  
-	<font id="medium">[TITLE]</font><br />
-    <font id="medium">[VERSION]</font><br />
-    <font id="medium">[STANDARD] [FRAME_RATE]</font><br />
-    <font id="medium">[STRAT2G_PART]</font><br />
-    <font id="medium">[TRT]</font><br />
+	<font id="medium">${TITLE}</font><br />
+    <font id="medium">${VERSION}</font><br />
+    <font id="medium">${STANDARD} ${FRAME_RATE}</font><br />
+    <font id="medium">${STRAT2G_PART}</font><br />
+    <font id="medium">${TRT}</font><br />
 </div>
 
 <div id="lbl8b">
-	<font id="smallgray">[CLIENT]</font><br />                 
-	<font id="xlarge">[TITLE]</font><br />
-    <font id="large">Version:[VERSION]</font><br />
-    <font id="large">PO#:[PO_NUMBER] | ID:[CLIENT_ASSET_ID]</font><br />
-    <font id="medium"><i><b>[DESCRIPTION]</b></i></font><br />
-    <font id="small"><i><b>[DATE]</b></i></font><br />
+	<font id="smallgray">${CLIENT}</font><br />                 
+	<font id="xlarge">${TITLE}</font><br />
+    <font id="large">Version:${VERSION}</font><br />
+    <font id="large">PO#:${PO_NUMBER} | ID:${CLIENT_ASSET_ID}</font><br />
+    <font id="medium"><i><b>${DESCRIPTION}</b></i></font><br />
+    <font id="small"><i><b>${DATE}</b></i></font><br />
     <div>
       <div id="audio_small_left">
       		<div><b><u>AUDIO INFORMATION:</u></b></div>
-            <div id="chleft_small">CH01: [CH01]</div><div id="chright_small">CH07: [CH07]</div>
-            <div id="chleft_small">CH02: [CH02]</div><div id="chright_small">CH08: [CH08]</div>  
-            <div id="chleft_small">CH03: [CH03]</div><div id="chright_small">CH09: [CH09]</div>  
-            <div id="chleft_small">CH04: [CH04]</div><div id="chright_small">CH10: [CH10]</div>  
-            <div id="chleft_small">CH05: [CH05]</div><div id="chright_small">CH11: [CH11]</div>  
-            <div id="chleft_small">CH06: [CH06]</div><div id="chright_small">CH12: [CH12]</div>                     	               
+            <div id="chleft_small">CH01: ${CH01}</div><div id="chright_small">CH07: ${CH07}</div>
+            <div id="chleft_small">CH02: ${CH02}</div><div id="chright_small">CH08: ${CH08}</div>  
+            <div id="chleft_small">CH03: ${CH03}</div><div id="chright_small">CH09: ${CH09}</div>  
+            <div id="chleft_small">CH04: ${CH04}</div><div id="chright_small">CH10: ${CH10}</div>  
+            <div id="chleft_small">CH05: ${CH05}</div><div id="chright_small">CH11: ${CH11}</div>  
+            <div id="chleft_small">CH06: ${CH06}</div><div id="chright_small">CH12: ${CH12}</div>                     	               
       </div>
 
   	</div>
 </div>
 
 <div id="lbl9a">
-	<font id="bc">[BARCODE]</font><br />
+	<font id="bc">${BARCODE}</font><br />
     <img src="2GLogo_small3.png" width="58" height="42"><br />
     <font id="tinyaddr">
 	2G Digital Post, Inc.<br />
@@ -758,35 +758,35 @@ body {
     Burbank, Ca 91502<br />
     818.863.8900<br />
     </font>                    
-	<font id="medium">[TITLE]</font><br />
-    <font id="medium">[VERSION]</font><br />
-    <font id="medium">[STANDARD] [FRAME_RATE]</font><br />
-    <font id="medium">[STRAT2G_PART]</font><br />
-    <font id="medium">[TRT]</font><br />
+	<font id="medium">${TITLE}</font><br />
+    <font id="medium">${VERSION}</font><br />
+    <font id="medium">${STANDARD} ${FRAME_RATE}</font><br />
+    <font id="medium">${STRAT2G_PART}</font><br />
+    <font id="medium">${TRT}</font><br />
 </div>
 
 <div id="lbl9b">
-	<font id="smallgray">[CLIENT]</font><br />                 
-	<font id="xlarge">[TITLE]</font><br />
-    <font id="large">Version:[VERSION]</font><br />
-    <font id="large">PO#:[PO_NUMBER] | ID:[CLIENT_ASSET_ID]</font><br />
-    <font id="medium"><i><b>[DESCRIPTION]</b></i></font><br />
-    <font id="small"><i><b>[DATE]</b></i></font><br />
+	<font id="smallgray">${CLIENT}</font><br />                 
+	<font id="xlarge">${TITLE}</font><br />
+    <font id="large">Version:${VERSION}</font><br />
+    <font id="large">PO#:${PO_NUMBER} | ID:${CLIENT_ASSET_ID}</font><br />
+    <font id="medium"><i><b>${DESCRIPTION}</b></i></font><br />
+    <font id="small"><i><b>${DATE}</b></i></font><br />
     <div>
       <div id="audio_small_left">
       		<div><b><u>AUDIO INFORMATION:</u></b></div>
-            <div id="chleft_small">CH01: [CH01]</div><div id="chright_small">CH07: [CH07]</div>
-            <div id="chleft_small">CH02: [CH02]</div><div id="chright_small">CH08: [CH08]</div>  
-            <div id="chleft_small">CH03: [CH03]</div><div id="chright_small">CH09: [CH09]</div>  
-            <div id="chleft_small">CH04: [CH04]</div><div id="chright_small">CH10: [CH10]</div>  
-            <div id="chleft_small">CH05: [CH05]</div><div id="chright_small">CH11: [CH11]</div>  
-            <div id="chleft_small">CH06: [CH06]</div><div id="chright_small">CH12: [CH12]</div>                     	               
+            <div id="chleft_small">CH01: ${CH01}</div><div id="chright_small">CH07: ${CH07}</div>
+            <div id="chleft_small">CH02: ${CH02}</div><div id="chright_small">CH08: ${CH08}</div>  
+            <div id="chleft_small">CH03: ${CH03}</div><div id="chright_small">CH09: ${CH09}</div>  
+            <div id="chleft_small">CH04: ${CH04}</div><div id="chright_small">CH10: ${CH10}</div>  
+            <div id="chleft_small">CH05: ${CH05}</div><div id="chright_small">CH11: ${CH11}</div>  
+            <div id="chleft_small">CH06: ${CH06}</div><div id="chright_small">CH12: ${CH12}</div>                     	               
       </div>
   	</div>
 </div>
 
 <div id="lbl10a">
-	<font id="bc">[BARCODE]</font><br />
+	<font id="bc">${BARCODE}</font><br />
     <img src="2GLogo_small3.png" width="58" height="42"><br />
     <font id="tinyaddr">
 	2G Digital Post, Inc.<br />
@@ -794,53 +794,53 @@ body {
     Burbank, Ca 91502<br />
     818.863.8900<br />
     </font>                 
-	<font id="medium">[TITLE]</font><br />
-    <font id="medium">[VERSION]</font><br />
-    <font id="medium">[PO_NUMBER]</font><br />
-    <font id="medium">[CLIENT_ASSET_ID]</font><br />
-    <font id="medium">[STANDARD] [FRAME_RATE]</font><br />
-    <font id="medium">[STRAT2G_PART]</font><br />
-    <font id="medium">[TRT]</font><br />
+	<font id="medium">${TITLE}</font><br />
+    <font id="medium">${VERSION}</font><br />
+    <font id="medium">${PO_NUMBER}</font><br />
+    <font id="medium">${CLIENT_ASSET_ID}</font><br />
+    <font id="medium">${STANDARD} ${FRAME_RATE}</font><br />
+    <font id="medium">${STRAT2G_PART}</font><br />
+    <font id="medium">${TRT}</font><br />
 </div>
 
 <div id="lbl10b">
-<font id="smallgray">[CLIENT]</font><br />                 
-	<font id="xlarge">[TITLE]</font><br />
-    <font id="large">Version:[VERSION]</font><br />
-    <font id="large">PO#:[PO_NUMBER] | ID:[CLIENT_ASSET_ID]</font><br />
-    <font id="medium"><i><b>[DESCRIPTION]</b></i></font><br />
-    <font id="small"><i><b>[DATE]</b></i></font><br />
+<font id="smallgray">${CLIENT}</font><br />                 
+	<font id="xlarge">${TITLE}</font><br />
+    <font id="large">Version:${VERSION}</font><br />
+    <font id="large">PO#:${PO_NUMBER} | ID:${CLIENT_ASSET_ID}</font><br />
+    <font id="medium"><i><b>${DESCRIPTION}</b></i></font><br />
+    <font id="small"><i><b>${DATE}</b></i></font><br />
     <div>
       <div id="audio_medium_left">
       		<div><b><u>AUDIO INFORMATION:</u></b></div>
-            <div id="ch_medium">CH01: [CH01]</div>
-            <div id="ch_medium">CH02: [CH02]</div>  
-            <div id="ch_medium">CH03: [CH03]</div>  
-            <div id="ch_medium">CH04: [CH04]</div>  
-            <div id="ch_medium">CH05: [CH05]</div>  
-            <div id="ch_medium">CH06: [CH06]</div>
-            <div id="ch_medium">CH07: [CH07]</div>
-            <div id="ch_medium">CH08: [CH08]</div>
-            <div id="ch_medium">CH09: [CH09]</div>
-            <div id="ch_medium">CH10: [CH10]</div>
-            <div id="ch_medium">CH11: [CH11]</div>
-            <div id="ch_medium">CH12: [CH12]</div>                	               
+            <div id="ch_medium">CH01: ${CH01}</div>
+            <div id="ch_medium">CH02: ${CH02}</div>  
+            <div id="ch_medium">CH03: ${CH03}</div>  
+            <div id="ch_medium">CH04: ${CH04}</div>  
+            <div id="ch_medium">CH05: ${CH05}</div>  
+            <div id="ch_medium">CH06: ${CH06}</div>
+            <div id="ch_medium">CH07: ${CH07}</div>
+            <div id="ch_medium">CH08: ${CH08}</div>
+            <div id="ch_medium">CH09: ${CH09}</div>
+            <div id="ch_medium">CH10: ${CH10}</div>
+            <div id="ch_medium">CH11: ${CH11}</div>
+            <div id="ch_medium">CH12: ${CH12}</div>                	               
       </div>
       <div id="metadata_right">
       		<div><b><u>ASSET DETAILS:</u></b></div>
-            <div id="mdr_l">Aspect:</div><div id="mdr_r">[ASPECT_RATIO]</div>
-            <div id="mdr_l">Format:</div><div id="mdr_r">[FORMAT]</div>
-            <div id="mdr_l">Frame:</div><div id="mdr_r">[FRAME_RATE]</div>
-            <div id="mdr_l">Textless:</div><div id="mdr_r">[TEXTLESS]</div>
-            <div id="mdr_l">TRT:</div><div id="mdr_r">[TRT]</div>
-            <div id="mdr_l">Standard:</div><div id="mdr_r">[STANDARD]</div> 
-            <div id="mdr_l">Caption:</div><div id="mdr_r">[CAPTIONING]</div>
-            <div id="mdr_l">Subtitles:</div><div id="mdr_r">[SUBTITLES]</div>     
+            <div id="mdr_l">Aspect:</div><div id="mdr_r">${ASPECT_RATIO}</div>
+            <div id="mdr_l">Format:</div><div id="mdr_r">${FORMAT}</div>
+            <div id="mdr_l">Frame:</div><div id="mdr_r">${FRAME_RATE}</div>
+            <div id="mdr_l">Textless:</div><div id="mdr_r">${TEXTLESS}</div>
+            <div id="mdr_l">TRT:</div><div id="mdr_r">${TRT}</div>
+            <div id="mdr_l">Standard:</div><div id="mdr_r">${STANDARD}</div> 
+            <div id="mdr_l">Caption:</div><div id="mdr_r">${CAPTIONING}</div>
+            <div id="mdr_l">Subtitles:</div><div id="mdr_r">${SUBTITLES}</div>     
       </div>
       <div id="additional">
       		<div>&nbsp;</div>
             <div><b><u>ADDITIONAL INFO:</u></b></div>
-      		<div>[ADDITIONAL_LABEL_INFO]    </div>
+      		<div>${ADDITIONAL_LABEL_INFO}    </div>
       </div>
     </div>
 </div>

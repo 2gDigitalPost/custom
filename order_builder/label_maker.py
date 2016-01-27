@@ -182,23 +182,13 @@ class LabelWdg(BaseRefreshWdg):
         if source.get('po_number'):
             misc_info.append('<span class="replace">PO #: {0}</span>'.format(source.get('po_number')))
 
-        mtminfo = ''
-        if source.get('description'):
-            mtminfo = '''%s<span id="replace"><i>%s</i></span><br/>''' % (mtminfo, source.get('description'))
-        if source.get('aspect_ratio'):
-            mtminfo = '''%s<span id="replace">Aspect Ratio: %s</span><br/>''' % (mtminfo, source.get('aspect_ratio'))
-        if source.get('captioning'):
-            mtminfo = '''%s<span id="replace">Captioning: %s</span><br/>''' % (mtminfo, source.get('captioning'))
-        if source.get('textless'):
-            mtminfo = '''%s<span id="replace">Textless: %s</span><br/>''' % (mtminfo, source.get('textless'))
-        if source.get('po_number'):
-            mtminfo = '''%s<span id="replace">PO #: %s</span><br/>''' % (mtminfo, source.get('po_number'))
-
         if barcode:
             for file_type in my.template_file_types:
-                if file_type == 'HDCAM':
-                    label_page_template = Template(filename=my.template_files[file_type])
+                label_page_template = Template(filename=my.template_files[file_type])
+                context = {}
 
+                # TODO: Factor out the common parts of each context
+                if file_type == 'HDCAM':
                     context = {
                         'WHOLETITLE': whole_title,
                         'VERSION': source.get('version'),
@@ -216,11 +206,7 @@ class LabelWdg(BaseRefreshWdg):
                         'MTMINFOCHUNK_LARGE': '<br/>'.join(misc_info).replace('replace', 'large'),
                         'AUDIO_CHANNELS_LARGE': audio_lines.replace('replace', '_large')
                     }
-
-                    result = label_page_template.render(**context)
                 elif file_type == 'DVD':
-                    label_page_template = Template(filename=my.template_files[file_type])
-
                     context = {
                         'CLIENT': client_name,
                         'TITLE': source.get('title'),
@@ -242,88 +228,117 @@ class LabelWdg(BaseRefreshWdg):
                         'DATE': str(date),
                         'BARCODE': barcode
                     }
+                elif file_type == 'HDCAM DIGIBETA':
+                    context = {
+                        'BARCODE': barcode,
+                        'DATE': str(date),
+                        'STANDARD': source.get('standard'),
+                        'FRAME_RATE': source.get('frame_rate'),
+                        'STRAT2G_PART': source.get('part'),
+                        'TRT': source.get('total_run_time'),
+                        'CLIENT': client_name,
+                        'TITLE': source.get('title'),
+                        'VERSION': source.get('version'),
+                        'DESCRIPTION': source.get('description'),
+                        'ASPECT_RATIO': source.get('aspect_ratio'),
+                        'CH01': source.get('audio_ch_1'),
+                        'CH02': source.get('audio_ch_2'),
+                        'CH03': source.get('audio_ch_3'),
+                        'CH04': source.get('audio_ch_4'),
+                    }
+                elif file_type == 'D5':
+                    context = {
+                        'BARCODE': barcode,
+                        'DATE': str(date),
+                        'STANDARD': source.get('standard'),
+                        'FRAME_RATE': source.get('frame_rate'),
+                        'STRAT2G_PART': source.get('part'),
+                        'TRT': source.get('total_run_time'),
+                        'CLIENT': client_name,
+                        'TITLE': source.get('title'),
+                        'VERSION': source.get('version'),
+                        'DESCRIPTION': source.get('description'),
+                        'ASPECT_RATIO': source.get('aspect_ratio'),
+                        'CH01': source.get('audio_ch_1'),
+                        'CH02': source.get('audio_ch_2'),
+                        'CH03': source.get('audio_ch_3'),
+                        'CH04': source.get('audio_ch_4'),
+                        'TEXTLESS': source.get('textless'),
+                        'COLOR_SPACE': source.get('color_space'),
+                        'MTMINFOCHUNK_SMALL': '<br/>'.join(misc_info).replace('replace', 'small'),
+                        'AUDIO_CHANNELS': audio_lines.replace('replace', ''),
+                        'MTMINFOCHUNK_MEDIUM': '<br/>'.join(misc_info).replace('replace', 'medium'),
+                        'WHOLETITLE': whole_title,
+                    }
+                elif file_type == 'HDCAM_FILM_FOX':
+                    context = {
+                        'BARCODE': barcode,
+                        'DATE': str(date),
+                        'STANDARD': source.get('standard'),
+                        'FRAME_RATE': source.get('frame_rate'),
+                        'STRAT2G_PART': source.get('part'),
+                        'TRT': source.get('total_run_time'),
+                        'CLIENT': client_name,
+                        'TITLE': source.get('title'),
+                        'VERSION': source.get('version'),
+                        'DESCRIPTION': source.get('description'),
+                        'ASPECT_RATIO': source.get('aspect_ratio'),
+                        'CH01': source.get('audio_ch_1'),
+                        'CH02': source.get('audio_ch_2'),
+                        'CH03': source.get('audio_ch_3'),
+                        'CH04': source.get('audio_ch_4'),
+                        'CH07': source.get('audio_ch_7'),
+                        'CH08': source.get('audio_ch_8'),
+                        'CH09': source.get('audio_ch_9'),
+                        'CH10': source.get('audio_ch_10'),
+                        'CH05': source.get('audio_ch_5'),
+                        'CH11': source.get('audio_ch_11'),
+                        'CH06': source.get('audio_ch_6'),
+                        'CH12': source.get('audio_ch_12'),
+                        'PO_NUMBER': source.get('po_number'),
+                        'CLIENT_ASSET_ID': source.get('client_asset_id'),
+                        'FORMAT': source.get('format'),
+                        'TEXTLESS': source.get('textless'),
+                        'CAPTIONING': captioning,
+                        'SUBTITLES': subtitles,
+                        'ADDITIONAL_LABEL_INFO': source.get('additional_label_info')
+                    }
+                elif file_type == 'HDCAM_TV_FOX':
+                    context = {
+                        'BARCODE': barcode,
+                        'DATE': str(date),
+                        'STANDARD': source.get('standard'),
+                        'FRAME_RATE': source.get('frame_rate'),
+                        'STRAT2G_PART': source.get('part'),
+                        'TRT': source.get('total_run_time'),
+                        'CLIENT': client_name,
+                        'TITLE': source.get('title'),
+                        'VERSION': source.get('version'),
+                        'DESCRIPTION': source.get('description'),
+                        'ASPECT_RATIO': source.get('aspect_ratio'),
+                        'CH01': source.get('audio_ch_1'),
+                        'CH02': source.get('audio_ch_2'),
+                        'CH03': source.get('audio_ch_3'),
+                        'CH04': source.get('audio_ch_4'),
+                        'CH07': source.get('audio_ch_7'),
+                        'CH08': source.get('audio_ch_8'),
+                        'CH09': source.get('audio_ch_9'),
+                        'CH10': source.get('audio_ch_10'),
+                        'CH05': source.get('audio_ch_5'),
+                        'CH11': source.get('audio_ch_11'),
+                        'CH06': source.get('audio_ch_6'),
+                        'CH12': source.get('audio_ch_12'),
+                        'EPISODE': source.get('episode'),
+                        'PO_NUMBER': source.get('po_number'),
+                        'CLIENT_ASSET_ID': source.get('client_asset_id'),
+                        'FORMAT': source.get('format'),
+                        'TEXTLESS': source.get('textless'),
+                        'CAPTIONING': captioning,
+                        'SUBTITLES': subtitles,
+                        'ADDITIONAL_LABEL_INFO': source.get('additional_label_info')
+                    }
 
-                    result = label_page_template.render(**context)
-                else:
-                    result = ''
-                    template_file = open(my.template_files[file_type], 'r')
-                    for line in template_file:
-                        if not line.strip():
-                            continue
-                        else:
-                            line = line.rstrip('\r\n')
-                            line = line.replace('[WHOLETITLE]', whole_title)
-                            line = line.replace('[TITLE]', source.get('title'))
-                            line = line.replace('[EPISODE]', source.get('episode'))
-                            line = line.replace('[BARCODE]', barcode)
-                            line = line.replace('[TOTAL_RUN_TIME]', source.get('total_run_time'))
-                            line = line.replace('[TRT]', source.get('total_run_time'))
-                            line = line.replace('[VERSION]', source.get('version'))
-                            line = line.replace('[ASPECT_RATIO]', source.get('aspect_ratio'))
-                            line = line.replace('[COLOR_SPACE]', source.get('color_space'))
-                            line = line.replace('[STRAT2G_PART]', source.get('part'))
-                            if '[AUDIO_CHANNELS' in line:
-                                replacer = ''
-                                full_tag = '[AUDIO_CHANNELS]'
-                                if 'SMALL' in line:
-                                    replacer = '_small'
-                                    full_tag = '[AUDIO_CHANNELS_SMALL]'
-                                if 'LARGE' in line:
-                                    replacer = '_large'
-                                    full_tag = '[AUDIO_CHANNELS_LARGE]'
-                                line = line.replace(full_tag, audio_lines.replace('replace', replacer))
-                            if '[MTMINFOCHUNK_' in line:
-                                replacer = 'medium'
-                                full_tag = '[MTMINFOCHUNK_MEDIUM]'
-                                if 'SMALL' in line:
-                                    replacer = 'small'
-                                    full_tag = '[MTMINFOCHUNK_SMALL]'
-                                elif 'LARGE' in line:
-                                    replacer = 'large'
-                                    full_tag = '[MTMINFOCHUNK_LARGE]'
-                                line = line.replace(full_tag, mtminfo.replace('replace', replacer))
-                            line = line.replace('[AUDIO_CH01]', source.get('audio_ch_1'))
-                            line = line.replace('[AUDIO_CH02]', source.get('audio_ch_2'))
-                            line = line.replace('[AUDIO_CH03]', source.get('audio_ch_3'))
-                            line = line.replace('[AUDIO_CH04]', source.get('audio_ch_4'))
-                            line = line.replace('[AUDIO_CH05]', source.get('audio_ch_5'))
-                            line = line.replace('[AUDIO_CH06]', source.get('audio_ch_6'))
-                            line = line.replace('[AUDIO_CH07]', source.get('audio_ch_7'))
-                            line = line.replace('[AUDIO_CH08]', source.get('audio_ch_8'))
-                            line = line.replace('[AUDIO_CH09]', source.get('audio_ch_9'))
-                            line = line.replace('[AUDIO_CH10]', source.get('audio_ch_10'))
-                            line = line.replace('[AUDIO_CH11]', source.get('audio_ch_11'))
-                            line = line.replace('[AUDIO_CH12]', source.get('audio_ch_12'))
-                            line = line.replace('[CH01]', source.get('audio_ch_1'))
-                            line = line.replace('[CH02]', source.get('audio_ch_2'))
-                            line = line.replace('[CH03]', source.get('audio_ch_3'))
-                            line = line.replace('[CH04]', source.get('audio_ch_4'))
-                            line = line.replace('[CH05]', source.get('audio_ch_5'))
-                            line = line.replace('[CH06]', source.get('audio_ch_6'))
-                            line = line.replace('[CH07]', source.get('audio_ch_7'))
-                            line = line.replace('[CH08]', source.get('audio_ch_8'))
-                            line = line.replace('[CH09]', source.get('audio_ch_9'))
-                            line = line.replace('[CH10]', source.get('audio_ch_10'))
-                            line = line.replace('[CH11]', source.get('audio_ch_11'))
-                            line = line.replace('[CH12]', source.get('audio_ch_12'))
-                            line = line.replace('[STANDARD]', source.get('standard'))
-                            line = line.replace('[CLIENT]', client_name)
-                            line = line.replace('[FRAME_RATE]', source.get('frame_rate'))
-                            line = line.replace('[SOURCE_TYPE]', source.get('source_type'))
-                            line = line.replace('[TYPE]', source.get('source_type'))
-                            line = line.replace('[GENERATION]', source.get('generation'))
-                            line = line.replace('[DESCRIPTION]', source.get('description'))
-                            line = line.replace('[TEXTLESS]', source.get('textless'))
-                            line = line.replace('[PO_NUMBER]', source.get('po_number'))
-                            line = line.replace('[CLIENT_ASSET_ID]', source.get('client_asset_id'))
-                            line = line.replace('[FORMAT]', source.get('format'))
-                            line = line.replace('[CAPTIONING]', captioning)
-                            line = line.replace('[SUBTITLES]', subtitles)
-                            line = line.replace('[ADDITIONAL_LABEL_INFO]', source.get('additional_label_info'))
-                            line = line.replace('[DATE]', str(date))
-                            result = '%s%s' % (result, line)
-
-                    template_file.close()
+                result = label_page_template.render(**context)
 
                 new_bc_file = '/var/www/html/source_labels/printed_labels/%s_%s.html' % (barcode, file_type)
 
