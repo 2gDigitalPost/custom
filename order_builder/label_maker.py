@@ -167,7 +167,7 @@ class LabelWdg(BaseRefreshWdg):
             if not found_left and found_right:
                 this_line = '<div id="chleftreplace">&nbsp;</div>%s\n' % right_line
             if this_line != '':
-                audio_lines = '%s' % this_line
+                audio_lines = '%s%s' % (audio_lines, this_line)
 
         misc_info = []
 
