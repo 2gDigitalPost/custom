@@ -185,78 +185,58 @@ class LabelWdg(BaseRefreshWdg):
         if barcode:
             for file_type in my.template_file_types:
                 label_page_template = Template(filename=my.template_files[file_type])
-                context = {}
 
-                # TODO: Factor out the common parts of each context
+                context = {
+                    'BARCODE': barcode,
+                    'CLIENT': client_name,
+                    'DATE': str(date),
+                    'FRAME_RATE': source.get('frame_rate'),
+                    'STANDARD': source.get('standard'),
+                    'STRAT2G_PART': source.get('part'),
+                    'TOTAL_RUN_TIME': source.get('total_run_time'),
+                    'VERSION': source.get('version')
+                }
+
                 if file_type == 'HDCAM':
-                    context = {
+                    context.update({
                         'WHOLETITLE': whole_title,
-                        'VERSION': source.get('version'),
-                        'BARCODE': barcode,
-                        'DATE': str(date),
-                        'STANDARD': source.get('standard'),
-                        'FRAME_RATE': source.get('frame_rate'),
-                        'STRAT2G_PART': source.get('part'),
                         'TRT': source.get('total_run_time'),
-                        'CLIENT': client_name,
                         'MTMINFOCHUNK_SMALL': '<br/>'.join(misc_info).replace('replace', 'small'),
                         'AUDIO_CHANNELS_SMALL': audio_lines.replace('replace', 'small'),
                         'MTMINFOCHUNK_MEDIUM': '<br/>'.join(misc_info).replace('replace', 'medium'),
                         'AUDIO_CHANNELS': audio_lines.replace('replace', ''),
                         'MTMINFOCHUNK_LARGE': '<br/>'.join(misc_info).replace('replace', 'large'),
                         'AUDIO_CHANNELS_LARGE': audio_lines.replace('replace', '_large')
-                    }
+                    })
                 elif file_type == 'DVD':
-                    context = {
-                        'CLIENT': client_name,
+                    context.update({
                         'TITLE': source.get('title'),
-                        'VERSION': source.get('version'),
                         'TYPE': source.get('source_type'),
                         'DESCRIPTION': source.get('description'),
-                        'TOTAL_RUN_TIME': source.get('total_run_time'),
                         'AUDIO_CH01': source.get('audio_ch_1'),
                         'AUDIO_CH02': source.get('audio_ch_2'),
                         'AUDIO_CH03': source.get('audio_ch_3'),
                         'AUDIO_CH04': source.get('audio_ch_4'),
                         'AUDIO_CH05': source.get('audio_ch_5'),
                         'AUDIO_CH06': source.get('audio_ch_6'),
-                        'STANDARD': source.get('standard'),
-                        'FRAME_RATE': source.get('frame_rate'),
                         'SOURCE_TYPE': source.get('source_type'),
                         'GENERATION': source.get('generation'),
-                        'STRAT2G_PART': source.get('part'),
-                        'DATE': str(date),
-                        'BARCODE': barcode
-                    }
+                    })
                 elif file_type == 'HDCAM DIGIBETA':
-                    context = {
-                        'BARCODE': barcode,
-                        'DATE': str(date),
-                        'STANDARD': source.get('standard'),
-                        'FRAME_RATE': source.get('frame_rate'),
-                        'STRAT2G_PART': source.get('part'),
+                    context.update({
                         'TRT': source.get('total_run_time'),
-                        'CLIENT': client_name,
                         'TITLE': source.get('title'),
-                        'VERSION': source.get('version'),
                         'DESCRIPTION': source.get('description'),
                         'ASPECT_RATIO': source.get('aspect_ratio'),
                         'CH01': source.get('audio_ch_1'),
                         'CH02': source.get('audio_ch_2'),
                         'CH03': source.get('audio_ch_3'),
                         'CH04': source.get('audio_ch_4'),
-                    }
+                    })
                 elif file_type == 'D5':
-                    context = {
-                        'BARCODE': barcode,
-                        'DATE': str(date),
-                        'STANDARD': source.get('standard'),
-                        'FRAME_RATE': source.get('frame_rate'),
-                        'STRAT2G_PART': source.get('part'),
+                    context.update({
                         'TRT': source.get('total_run_time'),
-                        'CLIENT': client_name,
                         'TITLE': source.get('title'),
-                        'VERSION': source.get('version'),
                         'DESCRIPTION': source.get('description'),
                         'ASPECT_RATIO': source.get('aspect_ratio'),
                         'CH01': source.get('audio_ch_1'),
@@ -269,18 +249,11 @@ class LabelWdg(BaseRefreshWdg):
                         'AUDIO_CHANNELS': audio_lines.replace('replace', ''),
                         'MTMINFOCHUNK_MEDIUM': '<br/>'.join(misc_info).replace('replace', 'medium'),
                         'WHOLETITLE': whole_title,
-                    }
+                    })
                 elif file_type == 'HDCAM_FILM_FOX':
-                    context = {
-                        'BARCODE': barcode,
-                        'DATE': str(date),
-                        'STANDARD': source.get('standard'),
-                        'FRAME_RATE': source.get('frame_rate'),
-                        'STRAT2G_PART': source.get('part'),
+                    context.update({
                         'TRT': source.get('total_run_time'),
-                        'CLIENT': client_name,
                         'TITLE': source.get('title'),
-                        'VERSION': source.get('version'),
                         'DESCRIPTION': source.get('description'),
                         'ASPECT_RATIO': source.get('aspect_ratio'),
                         'CH01': source.get('audio_ch_1'),
@@ -302,18 +275,11 @@ class LabelWdg(BaseRefreshWdg):
                         'CAPTIONING': captioning,
                         'SUBTITLES': subtitles,
                         'ADDITIONAL_LABEL_INFO': source.get('additional_label_info')
-                    }
+                    })
                 elif file_type == 'HDCAM_TV_FOX':
-                    context = {
-                        'BARCODE': barcode,
-                        'DATE': str(date),
-                        'STANDARD': source.get('standard'),
-                        'FRAME_RATE': source.get('frame_rate'),
-                        'STRAT2G_PART': source.get('part'),
+                    context.update({
                         'TRT': source.get('total_run_time'),
-                        'CLIENT': client_name,
                         'TITLE': source.get('title'),
-                        'VERSION': source.get('version'),
                         'DESCRIPTION': source.get('description'),
                         'ASPECT_RATIO': source.get('aspect_ratio'),
                         'CH01': source.get('audio_ch_1'),
@@ -336,7 +302,7 @@ class LabelWdg(BaseRefreshWdg):
                         'CAPTIONING': captioning,
                         'SUBTITLES': subtitles,
                         'ADDITIONAL_LABEL_INFO': source.get('additional_label_info')
-                    }
+                    })
 
                 result = label_page_template.render(**context)
 
