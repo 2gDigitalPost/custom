@@ -71,12 +71,12 @@ class LabelWdg(BaseRefreshWdg):
             'HDCAM DIGIBETA': os.path.join(current_directory, 'templates/HDCAM_Digibeta_label.html'),
             'DVD': os.path.join(current_directory, 'templates/DVD_Label.html'),
             'D5': os.path.join(current_directory, 'templates/D5_label.html'),
-            'Disney': os.path.join(current_directory, 'templates/Disney_label.html')
+            'LTO': os.path.join(current_directory, 'templates/LTO_label.html')
         }
 
         # This is needed to present the keys in template_files in order
         # Since the platform is using Python 2.6, Ordered dictionaries are not available by default
-        my.template_file_types = ('HDCAM', 'HDCAM_FILM_FOX', 'HDCAM_TV_FOX', 'HDCAM DIGIBETA', 'DVD', 'D5', 'Disney')
+        my.template_file_types = ('HDCAM', 'HDCAM_FILM_FOX', 'HDCAM_TV_FOX', 'HDCAM DIGIBETA', 'DVD', 'D5', 'LTO')
     
     def get_display(my):
         code = str(my.kwargs.get('code'))
@@ -186,7 +186,7 @@ class LabelWdg(BaseRefreshWdg):
                         'MTMINFOCHUNK_LARGE': '<br/>'.join(misc_info).replace('replace', 'large'),
                         'AUDIO_CHANNELS_LARGE': audio_lines
                     })
-                elif file_type == 'Disney':
+                elif file_type == 'LTO':
                     context.update({
                         'WHOLETITLE': whole_title,
                         'TOTAL_RUN_TIME': source.get('total_run_time'),
