@@ -70,12 +70,13 @@ class LabelWdg(BaseRefreshWdg):
             'HDCAM_TV_FOX': os.path.join(current_directory, 'templates/HDCAM_TV_FOX_label.html'),
             'HDCAM DIGIBETA': os.path.join(current_directory, 'templates/HDCAM_Digibeta_label.html'),
             'DVD': os.path.join(current_directory, 'templates/DVD_Label.html'),
-            'D5': os.path.join(current_directory, 'templates/D5_label.html')
+            'D5': os.path.join(current_directory, 'templates/D5_label.html'),
+            'Disney': os.path.join(current_directory, 'templates/Disney_label.html')
         }
 
         # This is needed to present the keys in template_files in order
         # Since the platform is using Python 2.6, Ordered dictionaries are not available by default
-        my.template_file_types = ('HDCAM', 'HDCAM_FILM_FOX', 'HDCAM_TV_FOX', 'HDCAM DIGIBETA', 'DVD', 'D5')
+        my.template_file_types = ('HDCAM', 'HDCAM_FILM_FOX', 'HDCAM_TV_FOX', 'HDCAM DIGIBETA', 'DVD', 'D5', 'Disney')
     
     def get_display(my):
         code = str(my.kwargs.get('code'))
@@ -137,37 +138,14 @@ class LabelWdg(BaseRefreshWdg):
         date = str(datetime.datetime.now()).split(' ')[0]
 
         audio_lines = ''
-        audio_layout = ((1, 7), (2, 8), (3, 9), (4, 10), (5, 11), (6, 12))
+        audio_layouts = (1, 7, 2, 8, 3, 9, 4, 10, 5, 11, 6, 12)
 
-        for layout in audio_layout:
-            this_line = ''
+        for audio_layout in audio_layouts:
+            audio_layout_str = make_zero_padded(str(audio_layout), 2)
+            audio_data = source.get('audio_ch_{0}'.format(audio_layout))
 
-            left_digit = layout[0]
-            left_digit_str = make_zero_padded(str(left_digit), 2)
-            left_line = ''
-            found_left = False
-
-            if source.get('audio_ch_%s' % left_digit) not in [None, '']:
-                left_line = '<div id="chleftreplace">CH%s: %s</div>' % (left_digit_str, source.get('audio_ch_%s' % left_digit))
-                found_left = True
-
-            right_digit = layout[1]
-            right_digit_str = make_zero_padded(str(right_digit), 2)
-            right_line = ''
-            found_right = False
-
-            if source.get('audio_ch_%s' % right_digit) not in [None, '']:
-                right_line = '<div id="chrightreplace">CH%s: %s</div>' % (right_digit_str, source.get('audio_ch_%s' % right_digit))
-                found_right = True
-
-            if found_left and not found_right:
-                this_line = '%s<div id="chrightreplace">&nbsp;</div>\n' % left_line
-            if found_left and found_right:
-                this_line = '%s%s\n' % (left_line, right_line)
-            if not found_left and found_right:
-                this_line = '<div id="chleftreplace">&nbsp;</div>%s\n' % right_line
-            if this_line != '':
-                audio_lines = '%s%s' % (audio_lines, this_line)
+            if audio_data:
+                audio_lines += '<div>CH{0}: {1}</div>'.format(audio_layout_str, audio_data)
 
         misc_info = []
 
@@ -202,22 +180,22 @@ class LabelWdg(BaseRefreshWdg):
                         'WHOLETITLE': whole_title,
                         'TOTAL_RUN_TIME': source.get('total_run_time'),
                         'MTMINFOCHUNK_SMALL': '<br/>'.join(misc_info).replace('replace', 'small'),
-                        'AUDIO_CHANNELS_SMALL': audio_lines.replace('replace', 'small'),
+                        'AUDIO_CHANNELS_SMALL': audio_lines,
                         'MTMINFOCHUNK_MEDIUM': '<br/>'.join(misc_info).replace('replace', 'medium'),
-                        'AUDIO_CHANNELS': audio_lines.replace('replace', ''),
+                        'AUDIO_CHANNELS': audio_lines,
                         'MTMINFOCHUNK_LARGE': '<br/>'.join(misc_info).replace('replace', 'large'),
-                        'AUDIO_CHANNELS_LARGE': audio_lines.replace('replace', '_large')
+                        'AUDIO_CHANNELS_LARGE': audio_lines
                     })
                 elif file_type == 'Disney':
                     context.update({
                         'WHOLETITLE': whole_title,
                         'TOTAL_RUN_TIME': source.get('total_run_time'),
-                        'MTMINFOCHUNK_SMALL': '<br/>'.join(misc_info).replace('replace', 'small'),
-                        'AUDIO_CHANNELS_SMALL': audio_lines.replace('replace', 'small'),
+                        'MTMINFOCHUNK_SMALL': '<br/>'.join(misc_info),
+                        'AUDIO_CHANNELS_SMALL': audio_lines,
                         'MTMINFOCHUNK_MEDIUM': '<br/>'.join(misc_info).replace('replace', 'medium'),
-                        'AUDIO_CHANNELS': audio_lines.replace('replace', ''),
+                        'AUDIO_CHANNELS': audio_lines,
                         'MTMINFOCHUNK_LARGE': '<br/>'.join(misc_info).replace('replace', 'large'),
-                        'AUDIO_CHANNELS_LARGE': audio_lines.replace('replace', '_large')
+                        'AUDIO_CHANNELS_LARGE': audio_lines
                     })
                 elif file_type == 'DVD':
                     context.update({
@@ -257,7 +235,7 @@ class LabelWdg(BaseRefreshWdg):
                         'TEXTLESS': source.get('textless'),
                         'COLOR_SPACE': source.get('color_space'),
                         'MTMINFOCHUNK_SMALL': '<br/>'.join(misc_info).replace('replace', 'small'),
-                        'AUDIO_CHANNELS': audio_lines.replace('replace', ''),
+                        'AUDIO_CHANNELS': audio_lines,
                         'MTMINFOCHUNK_MEDIUM': '<br/>'.join(misc_info).replace('replace', 'medium'),
                         'WHOLETITLE': whole_title,
                     })
