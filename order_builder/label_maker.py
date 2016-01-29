@@ -195,7 +195,8 @@ class LabelWdg(BaseRefreshWdg):
                         'MTMINFOCHUNK_MEDIUM': '<br/>'.join(misc_info).replace('replace', 'medium'),
                         'AUDIO_CHANNELS': audio_lines,
                         'MTMINFOCHUNK_LARGE': '<br/>'.join(misc_info).replace('replace', 'large'),
-                        'AUDIO_CHANNELS_LARGE': audio_lines
+                        'AUDIO_CHANNELS_LARGE': audio_lines,
+                        'file_size': source.get('file_size')
                     })
                 elif file_type == 'DVD':
                     context.update({
