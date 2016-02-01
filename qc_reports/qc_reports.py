@@ -729,8 +729,8 @@ class QCReportClonerWdg(BaseTableElementWdg):
         from pyasm.common import Environment
         login = Environment.get_login()
         this_user = login.get_login()
-        wo_code = my.kwargs.get('wo_code');
-        report_code = my.kwargs.get('report_code');
+        wo_code = my.kwargs.get('wo_code')
+        report_code = my.kwargs.get('report_code')
         type = my.kwargs.get('type')
         widget = DivWdg()
         server = TacticServerStub.get()
@@ -786,11 +786,11 @@ class QCReportClonerWdg(BaseTableElementWdg):
                 if ep not in [None,'']:
                     tname = '%s Episode: %s' % (tname, ep)
                 nw2 = table.add_cell('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TITLE: %s (%s)' % (tname, title_code))
-                nw2.add_attr('nowrap','nowrap')
+                nw2.add_attr('nowrap', 'nowrap')
                 wotbl = Table()
-                wotbl.add_style('width: 100%s;' % '%')
+                wotbl.add_style('width', '100%')
                 wotbl.add_style('background-color: %s;' % title_color)
-                #qc_wos = server.eval("@SOBJECT(sthpw/task['title_code','%s']['search_type','twog/proj?project=twog']['assigned_login_group','in','qc|qc supervisor']['process','~','eature'])" % title_code)
+
                 qc_wos = server.eval("@SOBJECT(sthpw/task['title_code','%s']['search_type','twog/proj?project=twog']['assigned_login_group','in','qc|qc supervisor'])" % title_code)
                 for qcwo in qc_wos:
                     qcwocode = qcwo.get('lookup_code')
@@ -1118,7 +1118,7 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
 
     def txtbox(my, name, val, width='200px', js='no'):
         txt = TextWdg(name)
-        txt.add_attr('id',name)
+        txt.add_attr('id', name)
         txt.add_style('width: %s;' % width)
         txt.set_value(val)
         if js in ['Yes','yes']:

@@ -15,12 +15,20 @@ class PreQualEvalWdg(BaseTableElementWdg):
     def init(my):
         nothing = 'true'
         my.formats = ['Electronic/File', 'DBC', 'D5', 'HDCAM SR', 'NTSC', 'PAL']
-        my.frame_rates = ['23.98fps','59.94i','50i','29.97fps','59.94p','DFTC','NDFTC','PAL/EBU']
-        my.machines = ['VTR221','VTR222','VTR223','VTR224','VTR225','VTR231','VTR232','VTR233','VTR234','VTR235','VTR251','VTR252','VTR253','VTR254','VTR255','VTR261','VTR262','VTR263','VTR264','VTR265','VTR281','VTR282','VTR283','VTR284','VTR285','FCP01','FCP02','FCP03','FCP04','FCP05','FCP06','FCP07','FCP08','FCP09','FCP10','FCP11','FCP12','Amberfin','Clipster','Stradis']
-        my.styles = ['Technical','Spot QC','Mastering']
-        my.aspect_ratios = ['16x9 1.33','16x9 1.33 Pan & Scan','16x9 1.78 Anamorphic','16x9 1.78 Full Frame','16x9 1.85 Letterbox','16x9 1.85 Matted','16x9 1.85 Matted Anamorphic','16x9 2.20','16x9 2.20 Letterbox','16x9 2.35 Anamorphic','16x9 2.35 Letterbox','16x9 2.40 Letterbox','16x9 2.55 Letterbox','4x3 1.33 Full Frame','4x3 1.78 Letterbox','4x3 1.85 Letterbox','4x3 2.35 Letterbox','4x3 2.40 Letterbox']
+        my.frame_rates = ['23.98fps', '59.94i', '50i', '29.97fps', '59.94p', 'DFTC', 'NDFTC', 'PAL/EBU']
+        my.machines = ['VTR221', 'VTR222', 'VTR223', 'VTR224', 'VTR225', 'VTR231', 'VTR232', 'VTR233', 'VTR234',
+                       'VTR235', 'VTR251', 'VTR252', 'VTR253', 'VTR254', 'VTR255', 'VTR261', 'VTR262', 'VTR263',
+                       'VTR264', 'VTR265', 'VTR281', 'VTR282', 'VTR283', 'VTR284', 'VTR285', 'FCP01', 'FCP02', 'FCP03',
+                       'FCP04', 'FCP05', 'FCP06', 'FCP07', 'FCP08', 'FCP09', 'FCP10', 'FCP11', 'FCP12', 'Amberfin',
+                       'Clipster', 'Stradis']
+        my.styles = ['Technical', 'Spot QC', 'Mastering']
+        my.aspect_ratios = ['16x9 1.33', '16x9 1.33 Pan & Scan', '16x9 1.78 Anamorphic', '16x9 1.78 Full Frame',
+                            '16x9 1.85 Letterbox', '16x9 1.85 Matted', '16x9 1.85 Matted Anamorphic', '16x9 2.20',
+                            '16x9 2.20 Letterbox', '16x9 2.35 Anamorphic', '16x9 2.35 Letterbox', '16x9 2.40 Letterbox',
+                            '16x9 2.55 Letterbox', '4x3 1.33 Full Frame', '4x3 1.78 Letterbox', '4x3 1.85 Letterbox',
+                            '4x3 2.35 Letterbox', '4x3 2.40 Letterbox']
 
-        my.standards = ['625','525','720','1080 (4:4:4)','1080','PAL','NTSC']
+        my.standards = ['625', '525', '720', '1080 (4:4:4)', '1080', 'PAL', 'NTSC']
 
     def kill_nothing(my, val):
         if val == 'NOTHINGXsXNOTHING':
@@ -370,7 +378,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         wo_pevals = server.eval("@SOBJECT(twog/prequal_eval['work_order_code','%s']['code','!=','%s'])" % (code, prequal_code))
         title_pevals = server.eval("@SOBJECT(twog/prequal_eval['title_code','%s']['work_order_code','!=','%s']['code','!=','%s'])" % (work_order.get('title_code'), work_order.get('code'), prequal_code))
         others = Table()
-        others.add_style('background-color: #528B8B; width: 100%s;' % '%')
+        others.add_style('background-color: #528B8B; width: 100%;')
         cols = ['#537072','#518A1A']
         colsct = 0
         if len(title_pevals) > 0:
@@ -379,8 +387,8 @@ class PreQualEvalWdg(BaseTableElementWdg):
             others.add_cell('<b>Other PreQual Evals for Title</b>')
             for t in title_pevals:
                 click_row = others.add_row()
-                click_row.add_attr('prequal_code',t.get('code'))
-                click_row.add_attr('work_order_code',t.get('work_order_code'))
+                click_row.add_attr('prequal_code', t.get('code'))
+                click_row.add_attr('work_order_code', t.get('work_order_code'))
                 click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct%2])
                 click_row.add_behavior(my.get_click_row(t.get('work_order_code'), t.get('code')))
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (t.get('wo_name'), t.get('work_order_code')))
@@ -395,8 +403,8 @@ class PreQualEvalWdg(BaseTableElementWdg):
             others.add_cell('<b>Other PreQual Evals for Work Order</b>')
             for w in wo_pevals:
                 click_row = others.add_row()
-                click_row.add_attr('prequal_code',w.get('code'))
-                click_row.add_attr('work_order_code',w.get('work_order_code'))
+                click_row.add_attr('prequal_code', w.get('code'))
+                click_row.add_attr('work_order_code', w.get('work_order_code'))
                 click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct%2])
                 click_row.add_behavior(my.get_click_row(w.get('work_order_code'), w.get('code')))
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (w.get('wo_name'), w.get('work_order_code')))
@@ -407,12 +415,12 @@ class PreQualEvalWdg(BaseTableElementWdg):
                 colsct = colsct + 1
 
 
-        widget.add_attr('class','big_ol_prequal_wdg_%s' % code)
-        widget.add_attr('prequal_code',prequal.get('code'))
+        widget.add_attr('class', 'big_ol_prequal_wdg_%s' % code)
+        widget.add_attr('prequal_code', prequal.get('code'))
         table = Table()
-        table.add_attr('class','printable_prequal_form_%s' % code)
-        table.add_attr('prequal_code',prequal.get('code'))
-        table.add_attr('work_order_code',prequal.get('work_order_code'))
+        table.add_attr('class', 'printable_prequal_form_%s' % code)
+        table.add_attr('prequal_code', prequal.get('code'))
+        table.add_attr('work_order_code', prequal.get('work_order_code'))
         img_tbl = Table()
         img_tbl.add_row()
         i2 = Table()
@@ -422,10 +430,10 @@ class PreQualEvalWdg(BaseTableElementWdg):
         ad = Table()
         ad.add_row()
         address = ad.add_cell('<b>2G Digital Post, Inc.</b><br/>280 E. Magnolia Blvd.<br/>Burbank, CA 91502<br/>310-840-0600<br/>www.2gdigitalpost.com')
-        address.add_attr('nowrap','nowrap')
+        address.add_attr('nowrap', 'nowrap')
         address.add_style('font-size: 9px;')
         img_tbl.add_cell(ad)
-        acr_s = ['APPROVED','CONDITION','REJECTED']
+        acr_s = ['APPROVED', 'CONDITION', 'REJECTED']
         acr = Table()
         for mark in acr_s:
             acr.add_row()
@@ -440,10 +448,10 @@ class PreQualEvalWdg(BaseTableElementWdg):
         rtbl = Table()
         rtbl.add_row()
         big = rtbl.add_cell("<b>PREQUAL EVALUATION</b>")
-        big.add_attr('nowrap','nowrap')
-        big.add_attr('align','center')
-        big.add_attr('valign','center')
-        big.add_style('font-size: 40px;')
+        big.add_attr('nowrap', 'nowrap')
+        big.add_attr('align', 'center')
+        big.add_attr('valign', 'center')
+        big.add_style('font-size' '40px')
         rtbl.add_cell(acr)
         toptbl = Table()
         toptbl.add_row()
@@ -454,66 +462,66 @@ class PreQualEvalWdg(BaseTableElementWdg):
         bay_sel.add_style('width: 135px;')
         bay_sel.append_option('--Select--','')
         for i in range(1,13):
-            bay_sel.append_option('Bay %s' % i,'Bay %s' % i)
+            bay_sel.append_option('Bay %s' % i, 'Bay %s' % i)
         if prequal.get('bay') not in [None,'']:
             bay_sel.set_value(prequal.get('bay'))
 
         style_sel = SelectWdg('style_select')
-        style_sel.add_attr('id','style')
+        style_sel.add_attr('id', 'style')
         style_sel.add_style('width: 135px;')
-        style_sel.append_option('--Select--','')
+        style_sel.append_option('--Select--', '')
         for s in my.styles:
-            style_sel.append_option(s,s)
+            style_sel.append_option(s, s)
         if prequal.get('style') not in [None,'']:
             style_sel.set_value(prequal.get('style'))
 
         machine_sel = SelectWdg('machine_select')
         machine_sel.add_attr('id','machine_number')
         machine_sel.add_style('width: 135px;')
-        machine_sel.append_option('--Select--','')
+        machine_sel.append_option('--Select--', '')
         for m in my.machines:
             machine_sel.append_option(m,m)
         if prequal.get('machine_number') not in [None,'']:
             machine_sel.set_value(prequal.get('machine_number'))
 
         format_sel = SelectWdg('format_select')
-        format_sel.add_attr('id','format')
+        format_sel.add_attr('id', 'format')
         format_sel.add_style('width: 153px;')
-        format_sel.append_option('--Select--','')
+        format_sel.append_option('--Select--', '')
         for f in my.formats:
-            format_sel.append_option(f,f)
+            format_sel.append_option(f, f)
         if prequal.get('format') not in [None,'']:
             format_sel.set_value(prequal.get('format'))
 
         ar_select = SelectWdg('aspect_ratio_select')
-        ar_select.add_attr('id','aspect_ratio')
+        ar_select.add_attr('id', 'aspect_ratio')
         ar_select.add_style('width: 153px;')
-        ar_select.append_option('--Select--','')
+        ar_select.append_option('--Select--', '')
         for a in my.aspect_ratios:
-            ar_select.append_option(a,a)
+            ar_select.append_option(a, a)
         if prequal.get('aspect_ratio') not in [None,'']:
             ar_select.set_value(prequal.get('aspect_ratio'))
 
         frame_rate_sel = SelectWdg('frame_rate_select')
-        frame_rate_sel.add_attr('id','frame_rate')
+        frame_rate_sel.add_attr('id', 'frame_rate')
         frame_rate_sel.add_style('width: 153px;')
-        frame_rate_sel.append_option('--Select--','')
+        frame_rate_sel.append_option('--Select--', '')
         for f in my.frame_rates:
-            frame_rate_sel.append_option(f,f)
+            frame_rate_sel.append_option(f, f)
         if prequal.get('frame_rate') not in [None,'']:
             frame_rate_sel.set_value(prequal.get('frame_rate'))
 
         standard_sel = SelectWdg('standard_select')
-        standard_sel.add_attr('id','standard')
+        standard_sel.add_attr('id', 'standard')
         standard_sel.add_style('width: 153px;')
-        standard_sel.append_option('--Select--','')
+        standard_sel.append_option('--Select--', '')
         for s in my.standards:
-            standard_sel.append_option(s,s)
+            standard_sel.append_option(s, s)
         if prequal.get('standard') not in [None,'']:
             standard_sel.set_value(prequal.get('standard'))
 
         majtbl = Table()
-        majtbl.add_attr('class','majtbl')
+        majtbl.add_attr('class', 'majtbl')
         majtbl.add_row()
         majtbl.add_cell('DATE')
         majtbl.add_cell('OPERATOR')
@@ -530,65 +538,62 @@ class PreQualEvalWdg(BaseTableElementWdg):
                 prequal['operator'] = that_login_name
         majtbl.add_cell('<input type="text" id="operator" value="%s"/>' % prequal.get('operator'))
         mm1 = majtbl.add_cell(style_sel)
-        mm1.add_attr('class','select_cell')
+        mm1.add_attr('class', 'select_cell')
         mm2 = majtbl.add_cell(bay_sel)
-        mm2.add_attr('class','select_cell')
+        mm2.add_attr('class', 'select_cell')
         mm3 = majtbl.add_cell(machine_sel)
-        mm3.add_attr('class','select_cell')
+        mm3.add_attr('class', 'select_cell')
         tittbl = Table()
         tittbl.add_row()
         tittbl.add_cell('CLIENT:')
         tittbl.add_cell('<input type="text" id="client_name" value="%s" style="width: 400px;"/>' % prequal.get('client_name'))
         tittbl.add_cell('&nbsp;&nbsp;&nbsp;FORMAT:')
         mm4 = tittbl.add_cell(format_sel)
-        mm4.add_attr('class','select_cell')
+        mm4.add_attr('class', 'select_cell')
         tittbl.add_row()
         tittbl.add_cell('TITLE:')
         tittbl.add_cell('<input type="text" id="title" value="%s" style="width: 400px;"/>' % prequal.get('title'))
         tittbl.add_cell('&nbsp;&nbsp;&nbsp;STANDARD:')
         mm5 = tittbl.add_cell(standard_sel)
-        mm5.add_attr('class','select_cell')
+        mm5.add_attr('class', 'select_cell')
         tittbl.add_row()
         tittbl.add_cell('EPISODE:')
         tittbl.add_cell('<input type="text" id="episode" value="%s" style="width: 400px;"/>' % prequal.get('episode'))
         ffr = tittbl.add_cell('&nbsp;&nbsp;&nbsp;FRAME RATE:')
-        ffr.add_attr('nowrap','nowrap')
+        ffr.add_attr('nowrap', 'nowrap')
         mm6 = tittbl.add_cell(frame_rate_sel)
-        mm6.add_attr('class','select_cell')
+        mm6.add_attr('class', 'select_cell')
         tittbl.add_row()
         tittbl.add_cell('VERSION:')
         tittbl.add_cell('<input type="text" id="version" value="%s" style="width: 400px;"/>' % prequal.get('version'))
         tittbl.add_cell('&nbsp;&nbsp;&nbsp;PO #:')
         tittbl.add_cell('<input type="text" id="po_number" value="%s" style="width: 151px;"/>' % prequal.get('po_number'))
         tittbl.add_row()
-        #tittbl.add_cell('TYPE:')
-        #tittbl.add_cell('<input type="text" id="title_type" value="%s" style="width: 400px;"/>' % prequal.get('title_type'))
+
         tittbl.add_cell('')
         tittbl.add_cell('')
         frr = tittbl.add_cell('&nbsp;&nbsp;&nbsp;ASPECT RATIO:')
-        frr.add_attr('nowrap','nowrap')
+        frr.add_attr('nowrap', 'nowrap')
         mm7 = tittbl.add_cell(ar_select)
-        mm7.add_attr('class','select_cell')
+        mm7.add_attr('class', 'select_cell')
 
         ktbl = Table()
         ktbl.add_row()
         k1 = ktbl.add_cell('<i>Code Definitions: F=Film V=Video T=Telecine A=Audio</i>')
-        k1.add_attr('align','left')
+        k1.add_attr('align', 'left')
         k = ktbl.add_cell('&nbsp;&nbsp;&nbsp;')
-        k.add_attr('align','right')
+        k.add_attr('align', 'right')
         k2 = ktbl.add_cell('<i>Severity Scale: 1=Minor 2=Marginal 3=Severe</i>')
-        k2.add_attr('align','right')
+        k2.add_attr('align', 'right')
 
-        linestbl = PreQualEvalLinesWdg(code=prequal.get('code'),wo_code=code)
+        linestbl = PreQualEvalLinesWdg(code=prequal.get('code'), wo_code=code)
 
         fulllines = Table()
-        fulllines.add_attr('border','2')
+        fulllines.add_attr('border', '2')
         fulllines.add_row()
         fulllines.add_cell(ktbl)
         fulllines.add_row()
         fulllines.add_cell(linestbl)
-
-
 
         table.add_row()
         table.add_cell(toptbl)
@@ -600,34 +605,33 @@ class PreQualEvalWdg(BaseTableElementWdg):
         darktbl = Table()
         darktbl.add_attr('id','darktbl')
         darktbl.add_style('padding-right: 10px;')
-        #darktbl.add_style('width: 100%s;' % '%')
+
         darkrow = darktbl.add_row()
-        darkrow.add_attr('id','darkrow')
+        darkrow.add_attr('id', 'darkrow')
         dkcell = darktbl.add_cell('<b><font color="#FFFFFF">GENERAL COMMENTS</font></b>')
-        dkcell.add_attr('id','darkcell')
-        dkcell.add_attr('width','700px')
-        dkcell.set_style('background-color: #040404;')
+        dkcell.add_attr('id', 'darkcell')
+        dkcell.add_attr('width', '700px')
+        dkcell.set_style('background-color', '#040404;')
         dk2 = darktbl.add_cell(' ')
-        dk2.add_attr('width','20px')
+        dk2.add_attr('width', '20px')
         darktbl.add_row()
         darktbl.add_cell('''<textarea cols="160" rows="10" class="description" id="description" style="font-family: 'Arial, Helvetica, sans-serif'; font-size: 14px;">%s</textarea>''' % (prequal.get('description')))
-        #darktbl.add_cell('''<textarea cols="160" rows="10" class="description" id="description">%s</textarea>''' % (prequal.get('description')))
         darktbl.add_cell(' ')
 
         table.add_row()
         table.add_cell(darktbl)
 
         printtbl = Table()
-        printtbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
+        printtbl.add_style('background-color: #528B8B; width: 100%s')
         printtbl.add_row()
         p1 = printtbl.add_cell(' ')
-        p1.add_style('width: 40%s;' % '%')
+        p1.add_style('width', '40%')
         p2 = printtbl.add_cell('<u><b>Print This Report</b></u>')
-        p2.add_attr('nowrap','nowrap')
+        p2.add_attr('nowrap', 'nowrap')
         p2.add_style('cursor: pointer;')
         p2.add_behavior(my.get_print_bvr(code, prequal.get('code'), 'prequal'))
         p3 = printtbl.add_cell(' ')
-        p3.add_style('width: 40%s;' % '%')
+        p3.add_style('width' '40%')
 
         table.add_row()
         table.add_cell(fulllines)
@@ -636,24 +640,24 @@ class PreQualEvalWdg(BaseTableElementWdg):
         stbl = Table()
         stbl.add_row()
         s1 = stbl.add_cell(' ')
-        s1.add_style('width: 40%s;' % '%')
+        s1.add_style('width', '40%')
         s2 = stbl.add_cell('<input type="button" value="Save"/>')
         s2.add_behavior(my.get_save_bvr(code, prequal_code))
         s3 = stbl.add_cell(' ')
-        s3.add_style('width: 40%s;' % '%')
+        s3.add_style('width', '40%')
         if prequal.get('code') not in [None,'']:
             s33 = stbl.add_cell('<input type="button" value="Clone This Report"/>')
             s33.add_behavior(my.get_clone_report(code, prequal.get('code')))
             s4 = stbl.add_cell('<input type="button" value="Delete This Report"/>')
             s4.add_behavior(my.get_delete_report(code, prequal.get('code')))
         ttbl = Table()
-        ttbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
+        ttbl.add_style('background-color: #528B8B; width: 100%;')
         ttbl.add_row()
         tt1 = ttbl.add_cell(others)
-        tt1.add_attr('width','100%s' % '%')
+        tt1.add_attr('width', '100%')
         ttbl.add_row()
         tt2 = ttbl.add_cell(printtbl)
-        tt2.add_attr('width','100%s' % '%')
+        tt2.add_attr('width', '100%')
         widget.add(ttbl)
         widget.add(table)
         widget.add_style("font-family: Arial, Helvetica, sans-serif;")

@@ -344,10 +344,10 @@ class MetaDataReportWdg(BaseTableElementWdg):
         select = SelectWdg(wannabeid)
         select.add_attr('id',wannabeid)
         if class_name not in [None,'',False]:
-            select.add_attr('class','metadata_r_var')
+            select.add_attr('class', 'metadata_r_var')
         select.add_style('width: %spx;' % width)
         if empty_top:
-            select.append_option('--Select--','')
+            select.append_option('--Select--', '')
         if preppend != '':
             ps = preppend.split(',')
             for pp in ps:
@@ -602,8 +602,8 @@ class MetaDataReportWdg(BaseTableElementWdg):
         wo_reports = my.server.eval("@SOBJECT(twog/metadata_report['work_order_code','%s']['code','!=','%s'])" % (code, metadata_code))
         title_reports = my.server.eval("@SOBJECT(twog/metadata_report['title_code','%s']['work_order_code','!=','%s']['code','!=','%s'])" % (work_order.get('title_code'), work_order.get('code'), metadata_code))
         others = Table()
-        others.add_style('background-color: #528B8B; width: 100%s;' % '%')
-        cols = ['#537072','#518A1A']
+        others.add_style('background-color: #528B8B; width: 100%')
+        cols = ['#537072', '#518A1A']
         colsct = 0
         if len(title_reports) > 0:
             trrr = others.add_row()
@@ -611,9 +611,9 @@ class MetaDataReportWdg(BaseTableElementWdg):
             others.add_cell('<b>Other Element Evals for Title</b>')
             for t in title_reports:
                 click_row = others.add_row()
-                click_row.add_attr('metadata_code',t.get('code'))
-                click_row.add_attr('work_order_code',t.get('work_order_code'))
-                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct%2])
+                click_row.add_attr('metadata_code', t.get('code'))
+                click_row.add_attr('work_order_code', t.get('work_order_code'))
+                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct % 2])
                 click_row.add_behavior(my.get_click_row(t.get('work_order_code'), t.get('code')))
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (t.get('wo_name'), t.get('work_order_code')))
                 others.add_cell('<b>OPERATOR:</b> %s' % t.get('qc_operator'))
@@ -626,23 +626,22 @@ class MetaDataReportWdg(BaseTableElementWdg):
             others.add_cell('<b>Other Element Evals for Work Order</b>')
             for w in wo_reports:
                 click_row = others.add_row()
-                click_row.add_attr('metadata_code',w.get('code'))
-                click_row.add_attr('work_order_code',w.get('work_order_code'))
-                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct%2])
+                click_row.add_attr('metadata_code', w.get('code'))
+                click_row.add_attr('work_order_code', w.get('work_order_code'))
+                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct % 2])
                 click_row.add_behavior(my.get_click_row(w.get('work_order_code'), w.get('code')))
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (w.get('wo_name'), w.get('work_order_code')))
                 others.add_cell('<b>OPERATOR:</b> %s' % w.get('qc_operator'))
                 others.add_cell('<b>CONCLUSION:</b> %s' % w.get('conclusion'))
                 others.add_cell('<b>DATETIME:</b> %s' % fix_date(w.get('qc_date')))
-                colsct = colsct + 1
+                colsct += 1
 
-
-        widget.add_attr('class','big_ol_metadata_wdg_%s' % code)
-        widget.add_attr('metadata_code',metadata.get('code'))
+        widget.add_attr('class', 'big_ol_metadata_wdg_%s' % code)
+        widget.add_attr('metadata_code', metadata.get('code'))
         table = Table()
         table.add_attr('class','printable_metadata_form_%s' % code)
-        table.add_attr('metadata_code',metadata.get('code'))
-        table.add_attr('work_order_code',metadata.get('work_order_code'))
+        table.add_attr('metadata_code', metadata.get('code'))
+        table.add_attr('work_order_code', metadata.get('work_order_code'))
         table.add_style('font-family: Calibri, sans-serif;')
         img_tbl = Table()
         img_tbl.add_row()
@@ -653,15 +652,14 @@ class MetaDataReportWdg(BaseTableElementWdg):
         ad = Table()
         ad.add_row()
         address = ad.add_cell('<b>2G Digital Post, Inc.</b><br/>280 E. Magnolia Blvd.<br/>Burbank, CA 91502<br/>310-840-0600<br/>www.2gdigitalpost.com')
-        address.add_attr('nowrap','nowrap')
+        address.add_attr('nowrap', 'nowrap')
         address.add_style('font-size: 9px;')
         img_tbl.add_cell(ad)
-        acr_s = ['APPROVED','CONDITION','REJECTED']
+        acr_s = ['APPROVED', 'CONDITION', 'REJECTED']
         acr = Table()
         for mark in acr_s:
             acr.add_row()
             acr1 = CheckboxWdg('marked_%s' % mark)
-            #acr1.set_persistence()
             if mark in metadata.get('conclusion'):
                 acr1.set_value(True)
             else:
@@ -694,13 +692,13 @@ class MetaDataReportWdg(BaseTableElementWdg):
         qcd.set_option('id', 'qc_date')
         if metadata.get('qc_date') not in [None,'']:
             qcd.set_option('default', fix_date(metadata.get('qc_date')))
-        qcd.get_top().add_attr('id','qc_date')
+        qcd.get_top().add_attr('id', 'qc_date')
         qcd.set_persist_on_submit()
 
         majtbl = Table()
         majtbl.add_row()
         mt = majtbl.add_cell('TITLE:')
-        mt.add_attr('align','right')
+        mt.add_attr('align', 'right')
         majtbl.add_cell('<input type="text" value="%s" class="metadata_r_var" id="title" style="width: 340px;"/>' % metadata.get('title'))
         mo = majtbl.add_cell('QC OPERATOR:')
         mo.add_attr('align','right')
@@ -714,65 +712,137 @@ class MetaDataReportWdg(BaseTableElementWdg):
         majtbl.add_cell('<input type="text" value="%s" class="metadata_r_var" id="qc_operator" style="width: 340px;"/>' % metadata.get('qc_operator'))
         majtbl.add_row()
         me = majtbl.add_cell('EPISODE:')
-        me.add_attr('align','right')
+        me.add_attr('align', 'right')
         majtbl.add_cell('<input type="text" value="%s" class="metadata_r_var" id="episode" style="width: 340px;"/>' % metadata.get('episode'))
         md = majtbl.add_cell('QC DATE:')
-        md.add_attr('nowrap','nowrap')
-        md.add_attr('align','right')
+        md.add_attr('nowrap', 'nowrap')
+        md.add_attr('align', 'right')
         qcd_date = majtbl.add_cell(qcd)
-        qcd_date.add_attr('nowrap','nowrap')
+        qcd_date.add_attr('nowrap', 'nowrap')
         majtbl.add_row()
         mc = majtbl.add_cell('CONT:')
-        mc.add_attr('align','right')
+        mc.add_attr('align', 'right')
         majtbl.add_cell('<input type="text" value="%s" class="metadata_r_var" id="content" style="width: 340px;"/>' % metadata.get('content'))
         mo2 = majtbl.add_cell('TRT FEATURE:')
-        mo2.add_attr('align','right')
-        mo2.add_attr('nowrap','nowrap')
+        mo2.add_attr('align', 'right')
+        mo2.add_attr('nowrap', 'nowrap')
         majtbl.add_cell('<input type="text" value="%s" class="metadata_r_var" id="trt_f" style="width: 340px;"/>' % metadata.get('trt_f'))
         majtbl.add_row()
         ms = majtbl.add_cell('SOURCE TYPE:')
-        ms.add_attr('nowrap','nowrap')
-        ms.add_attr('align','right')
-        source_types = ['HD FEATURE','SD FEATURE NTSC','SD FEATURE PAL','HD TV','SD TV NTSC','SD TV PAL']
+        ms.add_attr('nowrap', 'nowrap')
+        ms.add_attr('align', 'right')
+        source_types = ['HD FEATURE', 'SD FEATURE NTSC', 'SD FEATURE PAL', 'HD TV', 'SD TV NTSC', 'SD TV PAL']
         st_sel = my.make_a_sel(metadata, 'source_type', source_types, 340, False, False)
-        st_sel.add_behavior(my.source_type_change(work_order.get('code'),metadata.get('code')))
+        st_sel.add_behavior(my.source_type_change(work_order.get('code'), metadata.get('code')))
         mmm = majtbl.add_cell(st_sel)
-        mmm.add_attr('class','select_cell')
+        mmm.add_attr('class', 'select_cell')
         mo3 = majtbl.add_cell('&nbsp;&nbsp;TRT TRAILER/PREVIEW:')
-        mo3.add_attr('align','right')
-        mo3.add_attr('nowrap','nowrap')
+        mo3.add_attr('align', 'right')
+        mo3.add_attr('nowrap', 'nowrap')
         majtbl.add_cell('<input type="text" value="%s" class="metadata_r_var" id="trt_p" style="width: 340px;"/>' % metadata.get('trt_p'))
-        #majtbl.add_cell('<input type="text" value="%s" class="metadata_r_var" id="source_type" style="width: 340px;"/>' % metadata.get('source_type'))
         majtbl.add_row()
         qcnl = majtbl.add_cell('QC NOTES:')
-        qcnl.add_attr('align','right')
-        qcnl.add_attr('nowrap','nowrap')
-        qcnl.add_attr('valign','top')
+        qcnl.add_attr('align', 'right')
+        qcnl.add_attr('nowrap', 'nowrap')
+        qcnl.add_attr('valign', 'top')
         qcn = majtbl.add_cell('<textarea cols="156" rows="5" class="metadata_r_var" id="qc_notes">%s</textarea>' % metadata.get('qc_notes'))
-        qcn.add_attr('colspan','3')
+        qcn.add_attr('colspan', '3')
 
 
         s1 = Table()
-        s1.add_attr('class','section1')
+        s1.add_attr('class', 'section1')
         s1.add_row()
         c1 = s1.add_cell('<b>SECTION 1 - VIDEO CONFIGURATION</b>')
-        c1.add_attr('nowrap','nowrap')
+        c1.add_attr('nowrap', 'nowrap')
         s1.add_row()
-        spcc = s1.add_cell('&nbsp;')
+        s1.add_cell('&nbsp;')
         s1.add_row()
         c2 = s1.add_cell('<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONFIRM THE FOLLOWING FOR THE FULL VIDEO FILE AND THE TRAILER/PREVIEW FILE</b>')
-        c2.add_attr('nowrap','nowrap')
+        c2.add_attr('nowrap', 'nowrap')
 
-        s1_list1 = ['ENCODING LOG SHOWS NO ERRORS?', 'CORRECT VIDEO CODEC USED (APPLE PRORES (HQ)422)?', 'FRAME RATE SAME AS THE NATIVE SOURCE (23.976, 24, 25, 29.97)?', 'HD RESOLUTION IS 1920X1080 (SQUARE PIXEL ASPECT RATIO)?', 'FIELD DOMINANCE SET TO NONE?', 'TAGGED AS PROGRESSIVE?', 'CLAP TAG HAS BEEN REMOVED?', 'PASP IS CORRECT (1:1)?', 'GAMMA TAG HAS BEEN REMOVED?', 'VIDEO ASSET DOES NOT CONTAIN FBI, MPAA, OR RELEASE DATE TAGGING?', 'VIDEO IS PROPER ASPECT RATIO (PIC IS NOT SQUEEZED, CUT OFF, DISTORTED)?', 'WEBSITES ARE NOT LISTED IN PROGRAM AND CREDITS?', '*CROPPING VALUES ARE CORRECT (NO INACTIVE PIXELS)?']
-        s1_dict1 = {'ENCODING LOG SHOWS NO ERRORS?': 'encoding_log_no_errors_', 'CORRECT VIDEO CODEC USED (APPLE PRORES (HQ)422)?': 'correct_codec_used_', 'FRAME RATE SAME AS THE NATIVE SOURCE (23.976, 24, 25, 29.97)?': 'fr_same_as_native_source_', 'HD RESOLUTION IS 1920X1080 (SQUARE PIXEL ASPECT RATIO)?': 'hd_res_is_1920x1080_', 'FIELD DOMINANCE SET TO NONE?': 'field_dominance_is_none_', 'TAGGED AS PROGRESSIVE?': 'tagged_as_progressive_', 'CLAP TAG HAS BEEN REMOVED?': 'clap_tag_removed_', 'PASP IS CORRECT (1:1)?': 'pasp_is_correct_', 'GAMMA TAG HAS BEEN REMOVED?': 'gamma_tag_removed_', 'VIDEO ASSET DOES NOT CONTAIN FBI, MPAA, OR RELEASE DATE TAGGING?': 'no_fbimpaareleasedate_tagging_', 'VIDEO IS PROPER ASPECT RATIO (PIC IS NOT SQUEEZED, CUT OFF, DISTORTED)?': 'proper_aspect_ratio_', 'WEBSITES ARE NOT LISTED IN PROGRAM AND CREDITS?': 'websites_not_listed_', '*CROPPING VALUES ARE CORRECT (NO INACTIVE PIXELS)?': 'cropping_values_correct_'}
-        s1_list2 = ['TRAILER DOES NOT CONTAIN ANY PROMOTIONAL BUMPERS?', 'TRAILER IS SAME ASPECT RATIO AS FEATURE?', '*TRAILER CONTAINS CONTENT SUITABLE FOR A GENERAL AUDIENCE?']
-        s1_dict2 = {'TRAILER DOES NOT CONTAIN ANY PROMOTIONAL BUMPERS?': 'no_promotional_bumpers_p', 'TRAILER IS SAME ASPECT RATIO AS FEATURE?': 'same_aspect_ratio_as_feature_p', '*TRAILER CONTAINS CONTENT SUITABLE FOR A GENERAL AUDIENCE?': 'suitable_for_general_audience_p'}
+        s1_list1 = [
+            'ENCODING LOG SHOWS NO ERRORS?',
+            'CORRECT VIDEO CODEC USED (APPLE PRORES (HQ)422)?',
+            'FRAME RATE SAME AS THE NATIVE SOURCE (23.976, 24, 25, 29.97)?',
+            'HD RESOLUTION IS 1920X1080 (SQUARE PIXEL ASPECT RATIO)?',
+            'FIELD DOMINANCE SET TO NONE?',
+            'TAGGED AS PROGRESSIVE?',
+            'CLAP TAG HAS BEEN REMOVED?',
+            'PASP IS CORRECT (1:1)?',
+            'GAMMA TAG HAS BEEN REMOVED?',
+            'VIDEO ASSET DOES NOT CONTAIN FBI, MPAA, OR RELEASE DATE TAGGING?',
+            'VIDEO IS PROPER ASPECT RATIO (PIC IS NOT SQUEEZED, CUT OFF, DISTORTED)?',
+            'WEBSITES ARE NOT LISTED IN PROGRAM AND CREDITS?',
+            '*CROPPING VALUES ARE CORRECT (NO INACTIVE PIXELS)?'
+        ]
+        s1_dict1 = {
+            'ENCODING LOG SHOWS NO ERRORS?': 'encoding_log_no_errors_',
+            'CORRECT VIDEO CODEC USED (APPLE PRORES (HQ)422)?': 'correct_codec_used_',
+            'FRAME RATE SAME AS THE NATIVE SOURCE (23.976, 24, 25, 29.97)?': 'fr_same_as_native_source_',
+            'HD RESOLUTION IS 1920X1080 (SQUARE PIXEL ASPECT RATIO)?': 'hd_res_is_1920x1080_',
+            'FIELD DOMINANCE SET TO NONE?': 'field_dominance_is_none_',
+            'TAGGED AS PROGRESSIVE?': 'tagged_as_progressive_',
+            'CLAP TAG HAS BEEN REMOVED?': 'clap_tag_removed_',
+            'PASP IS CORRECT (1:1)?': 'pasp_is_correct_',
+            'GAMMA TAG HAS BEEN REMOVED?': 'gamma_tag_removed_',
+            'VIDEO ASSET DOES NOT CONTAIN FBI, MPAA, OR RELEASE DATE TAGGING?': 'no_fbimpaareleasedate_tagging_',
+            'VIDEO IS PROPER ASPECT RATIO (PIC IS NOT SQUEEZED, CUT OFF, DISTORTED)?': 'proper_aspect_ratio_',
+            'WEBSITES ARE NOT LISTED IN PROGRAM AND CREDITS?': 'websites_not_listed_',
+            '*CROPPING VALUES ARE CORRECT (NO INACTIVE PIXELS)?': 'cropping_values_correct_'
+        }
 
-        st_fr = {'HD FEATURE': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25, 29.97)?','SD FEATURE NTSC': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 29.97)?','SD FEATURE PAL': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25)?','HD TV': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25, 29.97)?','SD TV NTSC': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 29.97)?','SD TV PAL': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25)?'}
-        st_res = {'HD FEATURE': 'HD RESOLUTION IS 1920X1080 (SQUARE PIXEL ASPECT RATIO)?','SD FEATURE NTSC': 'SD NTSC RESOLUTION IS 720X480 OR 720X486?','SD FEATURE PAL': 'SD PAL RESOLUTION IS 720X576?','HD TV': 'HD RESOLUTION IS 1920X1080 (SQUARE PIXEL ASPECT RATIO)?','SD TV NTSC': 'SD NTSC RESOLUTION IS 720X480 OR 720X486?','SD TV PAL': 'SD PAL RESOLUTION IS 720X576?'}
-        st_pasp = {'HD FEATURE': 'PASP IS CORRECT? (1:1)','SD FEATURE NTSC': 'PASP IS CORRECT? (4x3 = 0.889:1, 16x9 = 1.185:1)','SD FEATURE PAL': 'PASP IS CORRECT? (4x3 = 1.067:1, 16x9 = 1.422:1)','HD TV': 'PASP IS CORRECT? (1:1)','SD TV NTSC': 'PASP IS CORRECT? (4x3 = 0.889:1, 16x9 = 1.185:1)','SD TV PAL': 'PASP IS CORRECT? (4x3 = 1.067:1, 16x9 = 1.422:1)'}
-        st_asterix = {'HD FEATURE': '&nbsp;','SD FEATURE NTSC': '<i>*SD CONTENT FROM 525 720x486 SOURCES = MIN CROP OF 4 FROM TOP AND 2 FROM BOTTOM</i>','SD FEATURE PAL': '&nbsp;','HD TV': '&nbsp;','SD TV NTSC': '<i>*SD CONTENT FROM 525 720x486 SOURCES = MIN CROP OF 4 FROM TOP AND 2 FROM BOTTOM</i>','SD TV PAL': '&nbsp;'}
-        st_featepis = {'HD FEATURE': 'FEATURE','SD FEATURE NTSC': 'FEATURE','SD FEATURE PAL': 'FEATURE','HD TV': 'EPISODE','SD TV NTSC': 'EPISODE','SD TV PAL': 'EPISODE'}
+        s1_list2 = [
+            'TRAILER DOES NOT CONTAIN ANY PROMOTIONAL BUMPERS?',
+            'TRAILER IS SAME ASPECT RATIO AS FEATURE?',
+            '*TRAILER CONTAINS CONTENT SUITABLE FOR A GENERAL AUDIENCE?'
+        ]
+        s1_dict2 = {
+            'TRAILER DOES NOT CONTAIN ANY PROMOTIONAL BUMPERS?': 'no_promotional_bumpers_p',
+            'TRAILER IS SAME ASPECT RATIO AS FEATURE?': 'same_aspect_ratio_as_feature_p',
+            '*TRAILER CONTAINS CONTENT SUITABLE FOR A GENERAL AUDIENCE?': 'suitable_for_general_audience_p'
+        }
+
+        st_fr = {
+            'HD FEATURE': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25, 29.97)?',
+            'SD FEATURE NTSC': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 29.97)?',
+            'SD FEATURE PAL': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25)?',
+            'HD TV': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25, 29.97)?',
+            'SD TV NTSC': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 29.97)?',
+            'SD TV PAL': 'FRAME RATE IS THE SAME AS THE NATIVE SOURCE (23.976, 24, 25)?'
+        }
+        st_res = {
+            'HD FEATURE': 'HD RESOLUTION IS 1920X1080 (SQUARE PIXEL ASPECT RATIO)?',
+            'SD FEATURE NTSC': 'SD NTSC RESOLUTION IS 720X480 OR 720X486?',
+            'SD FEATURE PAL': 'SD PAL RESOLUTION IS 720X576?',
+            'HD TV': 'HD RESOLUTION IS 1920X1080 (SQUARE PIXEL ASPECT RATIO)?',
+            'SD TV NTSC': 'SD NTSC RESOLUTION IS 720X480 OR 720X486?',
+            'SD TV PAL': 'SD PAL RESOLUTION IS 720X576?'
+        }
+        st_pasp = {
+            'HD FEATURE': 'PASP IS CORRECT? (1:1)',
+            'SD FEATURE NTSC': 'PASP IS CORRECT? (4x3 = 0.889:1, 16x9 = 1.185:1)',
+            'SD FEATURE PAL': 'PASP IS CORRECT? (4x3 = 1.067:1, 16x9 = 1.422:1)',
+            'HD TV': 'PASP IS CORRECT? (1:1)',
+            'SD TV NTSC': 'PASP IS CORRECT? (4x3 = 0.889:1, 16x9 = 1.185:1)',
+            'SD TV PAL': 'PASP IS CORRECT? (4x3 = 1.067:1, 16x9 = 1.422:1)'
+        }
+        st_asterix = {
+            'HD FEATURE': '&nbsp;',
+            'SD FEATURE NTSC': '<i>*SD CONTENT FROM 525 720x486 SOURCES = MIN CROP OF 4 FROM TOP AND 2 FROM BOTTOM</i>',
+            'SD FEATURE PAL': '&nbsp;',
+            'HD TV': '&nbsp;',
+            'SD TV NTSC': '<i>*SD CONTENT FROM 525 720x486 SOURCES = MIN CROP OF 4 FROM TOP AND 2 FROM BOTTOM</i>',
+            'SD TV PAL': '&nbsp;'
+        }
+        st_featepis = {
+            'HD FEATURE': 'FEATURE',
+            'SD FEATURE NTSC': 'FEATURE',
+            'SD FEATURE PAL': 'FEATURE',
+            'HD TV': 'EPISODE',
+            'SD TV NTSC': 'EPISODE',
+            'SD TV PAL': 'EPISODE'
+        }
+
         pulls = Table()
         pulls_l = Table()
         pulls_r = Table()
@@ -794,19 +864,19 @@ class MetaDataReportWdg(BaseTableElementWdg):
                     id_to_set = 'frame_rate_text'
                     stext = st_fr[metadata.get('source_type')]
             scl = pulls_l.add_cell('%s&nbsp;&nbsp;' % stext)
-            scl.add_attr('align','right')
+            scl.add_attr('align', 'right')
             if id_to_set != '':
-                scl.add_attr('id',id_to_set)
+                scl.add_attr('id', id_to_set)
             mm1 = pulls_l.add_cell(my.make_a_sel(metadata, '%sf' % field_name, my.ynd, 70))
-            mm1.add_attr('class','select_cell')
+            mm1.add_attr('class', 'select_cell')
             mm2 = pulls_r.add_cell(my.make_a_sel(metadata, '%sp' % field_name, my.ynd, 70))
-            mm2.add_attr('class','select_cell')
+            mm2.add_attr('class', 'select_cell')
         pulls_l.add_row()
         ast_text = '&nbsp;'
         if source_type not in [None,'']:
             ast_text = st_asterix[source_type]
         asterixer = pulls_l.add_cell(ast_text)
-        asterixer.add_attr('id','asterixer')
+        asterixer.add_attr('id', 'asterixer')
         pulls_l.add_cell('&nbsp;')
         pulls_r.add_row()
         pulls_r.add_cell('&nbsp;')
@@ -814,25 +884,25 @@ class MetaDataReportWdg(BaseTableElementWdg):
             pulls_l.add_row()
             pulls_r.add_row()
             scl = pulls_l.add_cell('%s&nbsp;&nbsp;' % s)
-            scl.add_attr('align','right')
+            scl.add_attr('align', 'right')
             pulls_l.add_cell('__________')
             mm1 = pulls_r.add_cell(my.make_a_sel(metadata, s1_dict2[s], my.ynd, 70))
-            mm1.add_attr('class','select_cell')
+            mm1.add_attr('class', 'select_cell')
         pulls.add_row()
         feat_text = 'FEATURE'
         if source_type not in [None,'']:
             feat_text = st_featepis[source_type]
         p1 = pulls.add_cell('<b>%s&nbsp;&nbsp;</b>' % feat_text)
-        p1.add_attr('class','feat_epi')
-        p1.add_attr('align','right')
-        p1 = pulls.add_cell('&nbsp;&nbsp;')
+        p1.add_attr('class', 'feat_epi')
+        p1.add_attr('align', 'right')
+        pulls.add_cell('&nbsp;&nbsp;')
         pulls.add_cell('<b>TRAILER/PREVIEW</b>')
         pulls.add_row()
         ddd1 = pulls.add_cell(pulls_l)
-        dp1 = pulls.add_cell('&nbsp;&nbsp;')
+        pulls.add_cell('&nbsp;&nbsp;')
         ddd2 = pulls.add_cell(pulls_r)
-        ddd1.add_attr('valign','top')
-        ddd2.add_attr('valign','top')
+        ddd1.add_attr('valign', 'top')
+        ddd2.add_attr('valign', 'top')
         pulls.add_row()
         pulls.add_cell(' ')
         pulls.add_cell(' ')
@@ -841,50 +911,65 @@ class MetaDataReportWdg(BaseTableElementWdg):
 
         s1.add_row()
         ssr = s1.add_cell(pulls)
-        ssr.add_attr('align','center')
+        ssr.add_attr('align', 'center')
 
+        s1_listc1 = [
+            'FILE STARTS @ 00:59:59:00 WITH BLACK?',
+            'PROGRAM STARTS @ 1:00:00:00?',
+            '&nbsp;&nbsp;&nbsp;PROGRAM ENDS WITH AT LEAST ONE BLACK FRAME?'
+        ]
+        s1_dictc1 = {
+            'FILE STARTS @ 00:59:59:00 WITH BLACK?': 'file_starts_at_5959_w_black_f',
+            'PROGRAM STARTS @ 1:00:00:00?': 'program_starts_at_1hr_f',
+            '&nbsp;&nbsp;&nbsp;PROGRAM ENDS WITH AT LEAST ONE BLACK FRAME?': 'program_ends_with_black_frame_f'
+        }
+        s1_listc2 = [
+            'FILE STARTS @ 00:01:00:00 WITH FADE UP/DOWN?',
+            'PROGRAM BEGINS WITH AT LEAST ONE BLACK FRAME?',
+            '&nbsp;&nbsp;&nbsp;PROGRAM ENDS WITH FADE DOWN (WITH AT LEAST ONCE BLACK FRAME)?'
+        ]
+        s1_dictc2 = {
+            'FILE STARTS @ 00:01:00:00 WITH FADE UP/DOWN?': 'file_starts_at_1hr_w_fade_p',
+            'PROGRAM BEGINS WITH AT LEAST ONE BLACK FRAME?': 'program_begins_with_black_frame_p',
+            '&nbsp;&nbsp;&nbsp;PROGRAM ENDS WITH FADE DOWN (WITH AT LEAST ONCE BLACK FRAME)?': 'program_ends_with_fade_p'
+        }
 
-
-        s1_listc1 = ['FILE STARTS @ 00:59:59:00 WITH BLACK?','PROGRAM STARTS @ 1:00:00:00?', '&nbsp;&nbsp;&nbsp;PROGRAM ENDS WITH AT LEAST ONE BLACK FRAME?']
-        s1_dictc1 = {'FILE STARTS @ 00:59:59:00 WITH BLACK?': 'file_starts_at_5959_w_black_f', 'PROGRAM STARTS @ 1:00:00:00?': 'program_starts_at_1hr_f', '&nbsp;&nbsp;&nbsp;PROGRAM ENDS WITH AT LEAST ONE BLACK FRAME?': 'program_ends_with_black_frame_f'}
-        s1_listc2 = ['FILE STARTS @ 00:01:00:00 WITH FADE UP/DOWN?', 'PROGRAM BEGINS WITH AT LEAST ONE BLACK FRAME?', '&nbsp;&nbsp;&nbsp;PROGRAM ENDS WITH FADE DOWN (WITH AT LEAST ONCE BLACK FRAME)?']
-        s1_dictc2 = {'FILE STARTS @ 00:01:00:00 WITH FADE UP/DOWN?': 'file_starts_at_1hr_w_fade_p', 'PROGRAM BEGINS WITH AT LEAST ONE BLACK FRAME?': 'program_begins_with_black_frame_p', '&nbsp;&nbsp;&nbsp;PROGRAM ENDS WITH FADE DOWN (WITH AT LEAST ONCE BLACK FRAME)?': 'program_ends_with_fade_p'}
         ctbl = Table()
         ctbl.add_row()
         cc1 = ctbl.add_cell('<b>CONFIRM THE BUILD OF FEATURE</b>')
-        cc1.add_attr('nowrap','nowrap')
-        cc1.add_attr('align','right')
+        cc1.add_attr('nowrap', 'nowrap')
+        cc1.add_attr('align', 'right')
         ctbl.add_cell(' ')
         cc2 = ctbl.add_cell('<b>CONFIRM THE BUILD OF TRAILER/PREVIEW</b>')
-        cc2.add_attr('nowrap','nowrap')
-        cc2.add_attr('align','middle')
+        cc2.add_attr('nowrap', 'nowrap')
+        cc2.add_attr('align', 'middle')
         ctbl.add_cell(' ')
         ctr = 0
         for s in s1_listc1:
             ctbl.add_row()
             nc = ctbl.add_cell('%s&nbsp;&nbsp;' % s)
-            nc.add_attr('align','right')
-            nc.add_attr('nowrap','nowrap')
+            nc.add_attr('align', 'right')
+            nc.add_attr('nowrap', 'nowrap')
             mm1 = ctbl.add_cell(my.make_a_sel(metadata, s1_dictc1[s], my.ynd, 70))
-            mm1.add_attr('class','select_cell')
+            mm1.add_attr('class', 'select_cell')
             s2 = s1_listc2[ctr]
             nc2 = ctbl.add_cell('%s&nbsp;&nbsp;' % s2)
-            nc2.add_attr('align','right')
-            nc2.add_attr('nowrap','nowrap')
+            nc2.add_attr('align', 'right')
+            nc2.add_attr('nowrap', 'nowrap')
             mm2 = ctbl.add_cell(my.make_a_sel(metadata, s1_dictc2[s2], my.ynd, 70))
-            mm2.add_attr('class','select_cell')
+            mm2.add_attr('class', 'select_cell')
             ctr = ctr + 1
         ntbl = Table()
         ntbl.add_row()
         vn = ntbl.add_cell('VIDEO NOTES:')
-        vn.add_attr('nowrap','nowrap')
-        vn.add_attr('align','right')
-        vn.add_attr('valign','top')
+        vn.add_attr('nowrap', 'nowrap')
+        vn.add_attr('align', 'right')
+        vn.add_attr('valign', 'top')
         lng = ntbl.add_cell('<textarea cols="156" rows="5" class="metadata_r_var" id="video_notes">%s</textarea>' % metadata.get('video_notes'))
-        lng.add_attr('colspan','3')
+        lng.add_attr('colspan', '3')
         ctbl.add_row()
         cct = ctbl.add_cell(ntbl)
-        cct.add_attr('align','left')
+        cct.add_attr('align', 'left')
 
         s1.add_row()
         s1.add_cell('&nbsp;')
@@ -894,15 +979,15 @@ class MetaDataReportWdg(BaseTableElementWdg):
         s1_tbl = Table()
         s1_tbl.add_row()
         s1_tbl.add_cell(s1)
-        s1_tbl.add_attr('border','1')
-        s1_tbl.add_style('border-width: 5px;')
+        s1_tbl.add_attr('border', '1')
+        s1_tbl.add_style('border-width' '5px')
 
         s2 = Table()
-        s2.add_attr('class','section2')
-        s2.add_attr('width','100%s' % '%')
+        s2.add_attr('class', 'section2')
+        s2.add_attr('width', '100%')
         s2.add_row()
         c1 = s2.add_cell('<b>SECTION 2 - AUDIO CONFIGURATION</b>')
-        c1.add_attr('nowrap','nowrap')
+        c1.add_attr('nowrap', 'nowrap')
         s2.add_row()
         spcc = s2.add_cell('&nbsp;')
 
@@ -921,13 +1006,13 @@ class MetaDataReportWdg(BaseTableElementWdg):
 
         s2.add_row()
         s2pc = s2.add_cell(s2_pulls)
-        s2pc.add_attr('align','center')
+        s2pc.add_attr('align', 'center')
 
         s2.add_row()
         s2.add_cell('&nbsp;&nbsp;')
         s2.add_row()
         s21 = s2.add_cell('<b>&nbsp;&nbsp;&nbsp;CONFIRM THE FOLLOWING FOR THE FULL VIDEO FILE, AUDIO BUNDLE, AND THE TRAILER/PREVIEW FILE</b>')
-        s21.add_attr('nowrap','nowrap')
+        s21.add_attr('nowrap', 'nowrap')
 
         s2_list = ['AUDIO CONFIGURATION VERIFIED (STEREO OR MONO/MAPPING IS CORRECT)?&nbsp;&nbsp;','AUDIO IS IN SYNC WITH VIDEO (CHECKED IN 3 RANDOM SPOTS AND HEAD/TAIL)?&nbsp;&nbsp;','AUDIO IS TAGGED CORRECTLY?&nbsp;&nbsp;','NO AUDIO IS CUT OFF (AT BEGINNING OR END)?&nbsp;&nbsp;', 'TRT OF AUDIO EQUALS TRT OF THE VIDEO?&nbsp;&nbsp;','CORRECT LANGUAGE IS PRESENT (ON APPLICABLE CHANNELS)?&nbsp;&nbsp;']
         s2_dict = {'AUDIO CONFIGURATION VERIFIED (STEREO OR MONO/MAPPING IS CORRECT)?&nbsp;&nbsp;': 'aconfig_verified_', 'AUDIO IS IN SYNC WITH VIDEO (CHECKED IN 3 RANDOM SPOTS AND HEAD/TAIL)?&nbsp;&nbsp;': 'audio_in_sync_with_video_', 'AUDIO IS TAGGED CORRECTLY?&nbsp;&nbsp;': 'audio_tagged_correctly_', 'NO AUDIO IS CUT OFF (AT BEGINNING OR END)?&nbsp;&nbsp;': 'no_audio_cut_off_', 'TRT OF AUDIO EQUALS TRT OF THE VIDEO?&nbsp;&nbsp;': 'trt_audio_is_trt_video_', 'CORRECT LANGUAGE IS PRESENT (ON APPLICABLE CHANNELS)?&nbsp;&nbsp;': 'correct_audio_language_'}
@@ -940,28 +1025,28 @@ class MetaDataReportWdg(BaseTableElementWdg):
             s2_c.add_row()
             s2_r.add_row()
             s2c = s2_l.add_cell('%s&nbsp;&nbsp;' % s)
-            s2c.add_attr('nowrap','nowrap')
-            s2c.add_attr('align','right')
+            s2c.add_attr('nowrap', 'nowrap')
+            s2c.add_attr('align', 'right')
             mm1 = s2_l.add_cell(my.make_a_sel(metadata, '%sf' % s2_dict[s], my.ynd, 70))
-            mm1.add_attr('class','select_cell')
+            mm1.add_attr('class', 'select_cell')
 
             mm2 = s2_c.add_cell(my.make_a_sel(metadata, '%sb' % s2_dict[s], my.ynd, 70))
-            mm2.add_attr('class','select_cell')
+            mm2.add_attr('class', 'select_cell')
 
             mm3 = s2_r.add_cell(my.make_a_sel(metadata, '%sp' % s2_dict[s], my.ynd, 70))
-            mm3.add_attr('class','select_cell')
+            mm3.add_attr('class', 'select_cell')
 
         s2_annoy = Table()
         s2_annoy.add_row()
         s2f = s2_annoy.add_cell('<b>FEATURE</b>')
-        s2f.add_attr('class','feat_epi')
-        s2f.add_attr('align','right')
+        s2f.add_attr('class', 'feat_epi')
+        s2f.add_attr('align', 'right')
         s2_annoy.add_cell('&nbsp;&nbsp;')
         s2b = s2_annoy.add_cell('<b>AUDIO BUNDLE</b>')
         s2b.add_attr('align','center')
         s2_annoy.add_cell('&nbsp;&nbsp;')
         s2p = s2_annoy.add_cell('<b>TRAILER/PREVIEW</b>')
-        s2p.add_attr('align','center')
+        s2p.add_attr('align', 'center')
         s2_annoy.add_row()
         s2_annoy.add_cell(s2_l)
         s2_annoy.add_cell('&nbsp;&nbsp;')
@@ -975,8 +1060,8 @@ class MetaDataReportWdg(BaseTableElementWdg):
         s2_n = Table()
         s2_n.add_row()
         s2nc = s2_n.add_cell('AUDIO NOTES:')
-        s2nc.add_attr('nowrap','nowrap')
-        s2nc.add_attr('valign','top')
+        s2nc.add_attr('nowrap', 'nowrap')
+        s2nc.add_attr('valign', 'top')
         s2_n.add_cell('<textarea cols="156" rows="5" class="metadata_r_var" id="audio_notes">%s</textarea>' % metadata.get('audio_notes'))
         s2.add_row()
         s2.add_cell(s2_n)
@@ -984,17 +1069,16 @@ class MetaDataReportWdg(BaseTableElementWdg):
         s2_tbl = Table()
         s2_tbl.add_row()
         s2_tbl.add_cell(s2)
-        s2_tbl.add_attr('border','1')
-        s2_tbl.add_attr('width','100%s' % '%')
-        s2_tbl.add_style('border-width: 5px;')
-
+        s2_tbl.add_attr('border', '1')
+        s2_tbl.add_attr('width', '100%')
+        s2_tbl.add_style('border-width', '5px')
 
         s3 = Table()
-        s3.add_attr('class','section3')
-        s3.add_attr('width','100%s' % '%')
+        s3.add_attr('class', 'section3')
+        s3.add_attr('width', '100%')
         s3.add_row()
         c1 = s3.add_cell('<b>SECTION 3 - ASSETS</b>')
-        c1.add_attr('nowrap','nowrap')
+        c1.add_attr('nowrap', 'nowrap')
         s3.add_row()
         spcc = s3.add_cell('&nbsp;')
 
@@ -1004,8 +1088,8 @@ class MetaDataReportWdg(BaseTableElementWdg):
         snap = Table()
         snap.add_row()
         scen = snap.add_cell('<b>DELIVERY SNAPSHOT</b>')
-        scen.add_attr('colspan','2')
-        scen.add_attr('align','center')
+        scen.add_attr('colspan', '2')
+        scen.add_attr('align', 'center')
         for s in s3_list1:
             snap.add_row()
             sn1 = snap.add_cell('%s&nbsp;&nbsp;' % s)
@@ -1018,12 +1102,10 @@ class MetaDataReportWdg(BaseTableElementWdg):
         sn2.add_attr('align','right')
         snap.add_cell('<input type="text" value="%s" class="metadata_r_var" id="delivery_snapshot_other" style="width: 70px;"/>' % metadata.get('delivery_snapshot_other'))
 
-
         snap_t = Table()
         snap_t.add_attr('border','1')
         snap_t.add_style('border-width: 2px;')
         snap_t.add_cell(snap)
-
 
         s3_list2 = ['FORCED NARRATIVE ON FEATURE?', 'FORCED NARRATIVE ON TRAILER?', 'SUBTITLES ON FEATURE?', 'SUBTITLES ON TRAILER?']
         s3_dict2 = {'FORCED NARRATIVE ON FEATURE?': 'forced_narrative_f|forced_narrative_not_overlapping_f', 'FORCED NARRATIVE ON TRAILER?': 'forced_narrative_p|forced_narrative_not_overlapping_p', 'SUBTITLES ON FEATURE?': 'subtitles_on_feature|subtitles_on_feature_not_overlapping', 'SUBTITLES ON TRAILER?': 'subtitles_on_trailer|subtitles_on_trailer_not_overlapping'}
@@ -1034,10 +1116,10 @@ class MetaDataReportWdg(BaseTableElementWdg):
             s32c.add_attr('nowrap','nowrap')
             s32c.add_attr('align','right')
             mm1 = s32.add_cell(my.make_a_sel(metadata, s3_dict2[s].split('|')[0], my.ynd, 70))
-            mm1.add_attr('class','select_cell')
+            mm1.add_attr('class', 'select_cell')
             s32.add_cell('->')
             s32c2 = s32.add_cell('...DOES NOT OVERLAP ANY CREDITS OR OTHER TEXT?&nbsp;&nbsp;')
-            s32c2.add_attr('nowrap','nowrap')
+            s32c2.add_attr('nowrap', 'nowrap')
             mm2 = s32.add_cell(my.make_a_sel(metadata, s3_dict2[s].split('|')[1], my.ynd, 70))
             mm2.add_attr('class','select_cell')
 
@@ -1048,10 +1130,10 @@ class MetaDataReportWdg(BaseTableElementWdg):
             s33.add_row()
             s33b = s33.add_cell('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
             s33c = s33.add_cell('%s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' % s)
-            s33c.add_attr('nowrap','nowrap')
-            s33c.add_attr('align','right')
+            s33c.add_attr('nowrap', 'nowrap')
+            s33c.add_attr('align', 'right')
             mm1 = s33.add_cell(my.make_a_sel(metadata, s3_dict3[s], my.ynd, 70))
-            mm1.add_attr('class','select_cell')
+            mm1.add_attr('class', 'select_cell')
 
         s3_list4 = ['CC IS IN SYNC WITH VIDEO?','SUBTITLES ARE IN SYNC WITH VIDEO?','SUBTITLES HAVE CORRECT LANGUAGE?']
         s3_dict4 = {'CC IS IN SYNC WITH VIDEO?': 'cc_in_synch_with_video','SUBTITLES ARE IN SYNC WITH VIDEO?': 'subtitles_in_synch_with_video','SUBTITLES HAVE CORRECT LANGUAGE?': 'subtitles_have_correct_language'}
@@ -1059,10 +1141,10 @@ class MetaDataReportWdg(BaseTableElementWdg):
         for s in s3_list4:
             s34.add_row()
             s34c = s34.add_cell('%s&nbsp;&nbsp;' % s)
-            s34c.add_attr('nowrap','nowrap')
-            s34c.add_attr('align','right')
+            s34c.add_attr('nowrap', 'nowrap')
+            s34c.add_attr('align', 'right')
             mm1 = s34.add_cell(my.make_a_sel(metadata, s3_dict4[s], my.ynd, 70))
-            mm1.add_attr('class','select_cell')
+            mm1.add_attr('class', 'select_cell')
 
         s3.add_row()
         s3.add_cell(snap_t)
@@ -1070,50 +1152,50 @@ class MetaDataReportWdg(BaseTableElementWdg):
         sj = Table()
         sj.add_row()
         lcell2 = sj.add_cell(s32)
-        lcell2.add_attr('colspan','3')
+        lcell2.add_attr('colspan', '3')
         sj.add_row()
         sj.add_cell('&nbsp;')
         sj.add_row()
         sj.add_cell(s33)
         sj.add_cell('&nbsp;&nbsp;&nbsp;')
         sj4c = sj.add_cell(s34)
-        sj4c.add_attr('valign','top')
+        sj4c.add_attr('valign', 'top')
 
         sj2 = Table()
         sj2.add_row()
         sjc = sj2.add_cell('DUB CARD TEXT IS NOT CUT OFF WHEN FEATURE CROPPING VALUES ARE APPLIED?&nbsp;')
-        sjc.add_attr('nowrap','nowrap')
+        sjc.add_attr('nowrap', 'nowrap')
         mm11 = sj2.add_cell(my.make_a_sel(metadata, 'dub_card_text_not_cutoff_with_cropping', my.ynd, 70))
-        mm11.add_attr('class','select_cell')
+        mm11.add_attr('class', 'select_cell')
 
 
         s3.add_cell(sj)
         s3.add_row()
         sj2c = s3.add_cell(sj2)
-        sj2c.add_attr('colspan','2')
+        sj2c.add_attr('colspan', '2')
 
         s3.add_row()
         ltbl = Table()
         ltbl.add_row()
         tll = ltbl.add_cell('ASSETS NOTES:')
-        tll.add_attr('nowrap','nowrap')
-        tll.add_attr('valign','top')
+        tll.add_attr('nowrap', 'nowrap')
+        tll.add_attr('valign', 'top')
         tlong = ltbl.add_cell('<textarea cols="156" rows="5" class="metadata_r_var" id="assets_notes">%s</textarea>' % metadata.get('assets_notes'))
         s3.add_cell(ltbl)
 
         s3_tbl = Table()
         s3_tbl.add_row()
         s3_tbl.add_cell(s3)
-        s3_tbl.add_attr('border','1')
-        s3_tbl.add_attr('width','100%s' % '%')
-        s3_tbl.add_style('border-width: 5px;')
+        s3_tbl.add_attr('border', '1')
+        s3_tbl.add_attr('width', '100%')
+        s3_tbl.add_style('border-width', '5px')
 
         s4 = Table()
-        s4.add_attr('class','section3')
-        s4.add_attr('width','100%s' % '%')
+        s4.add_attr('class', 'section3')
+        s4.add_attr('width', '100%')
         s4.add_row()
         c1 = s4.add_cell('<b>SECTION 4 - CHAPTER THUMBNAILS AND POSTER ART (FEATURES ONLY)</b>')
-        c1.add_attr('nowrap','nowrap')
+        c1.add_attr('nowrap', 'nowrap')
         s4.add_row()
         spc4 = s4.add_cell('&nbsp;')
 
@@ -1123,10 +1205,10 @@ class MetaDataReportWdg(BaseTableElementWdg):
         for s in s4_list1:
             s41.add_row()
             s41c = s41.add_cell('%s&nbsp;&nbsp;' % s)
-            s41c.add_attr('nowrap','nowrap')
-            s41c.add_attr('align','right')
+            s41c.add_attr('nowrap', 'nowrap')
+            s41c.add_attr('align', 'right')
             mm1 = s41.add_cell(my.make_a_sel(metadata, s4_dict1[s], my.ynd, 70))
-            mm1.add_attr('class','select_cell')
+            mm1.add_attr('class', 'select_cell')
 
         s4_list2 = ['IMAGE IS A JPEG (.JPG EXTENSION)?', 'DPI IS 72 OR GREATER?', 'COLOR PROFILE IS RGB?', 'RESOLUTION IS AT LEAST 1400x2100?', 'ASPECT RATIO IS 2:3?', 'CONTAINS KEY ART AND TITLE ONLY (NO FILM RATING ON IMAGE)?', 'NO DVD COVER, DATE STAMP, URL OR PROMO TAGGING INCLUDED?']
         s4_dict2 = {'IMAGE IS A JPEG (.JPG EXTENSION)?': 'poster_is_jpeg' , 'DPI IS 72 OR GREATER?': 'poster_dpi_72_or_more', 'COLOR PROFILE IS RGB?': 'poster_profile_is_rgb', 'RESOLUTION IS AT LEAST 1400x2100?': 'poster_rez_at_least_1400x2100', 'ASPECT RATIO IS 2:3?': 'poster_aspect_ratio_2x3', 'CONTAINS KEY ART AND TITLE ONLY (NO FILM RATING ON IMAGE)?': 'poster_key_art_and_title_only', 'NO DVD COVER, DATE STAMP, URL OR PROMO TAGGING INCLUDED?': 'poster_no_dvdcover_date_urlpromo_tagging'}
@@ -1134,19 +1216,19 @@ class MetaDataReportWdg(BaseTableElementWdg):
         for s in s4_list2:
             s42.add_row()
             s42c = s42.add_cell('%s&nbsp;&nbsp;' % s)
-            s42c.add_attr('nowrap','nowrap')
-            s42c.add_attr('align','right')
+            s42c.add_attr('nowrap', 'nowrap')
+            s42c.add_attr('align', 'right')
             mm1 = s42.add_cell(my.make_a_sel(metadata, s4_dict2[s], my.ynd, 70))
-            mm1.add_attr('class','select_cell')
+            mm1.add_attr('class', 'select_cell')
 
         cmbn = Table()
         cmbn.add_row()
         ct1 = cmbn.add_cell('<b>CHAPTER THUMBNAILS</b>')
-        ct1.add_attr('nowrap','nowrap')
-        ct1.add_attr('align','center')
+        ct1.add_attr('nowrap', 'nowrap')
+        ct1.add_attr('align', 'center')
         ct2 = cmbn.add_cell('<b>POSTER ART (ONE SHEET)</b>')
-        ct2.add_attr('nowrap','nowrap')
-        ct2.add_attr('align','center')
+        ct2.add_attr('nowrap', 'nowrap')
+        ct2.add_attr('align', 'center')
         cmbn.add_row()
         cmbn.add_cell(s41)
         cmbn.add_cell(s42)
@@ -1154,8 +1236,8 @@ class MetaDataReportWdg(BaseTableElementWdg):
         ltbl2 = Table()
         ltbl2.add_row()
         tll = ltbl2.add_cell('IMAGES NOTES:')
-        tll.add_attr('nowrap','nowrap')
-        tll.add_attr('valign','top')
+        tll.add_attr('nowrap', 'nowrap')
+        tll.add_attr('valign', 'top')
         tlong = ltbl2.add_cell('<textarea cols="156" rows="5" class="metadata_r_var" id="image_notes">%s</textarea>' % metadata.get('image_notes'))
 
         cmbn.add_row()
@@ -1168,8 +1250,8 @@ class MetaDataReportWdg(BaseTableElementWdg):
         s4_tbl = Table()
         s4_tbl.add_row()
         s4_tbl.add_cell(s4)
-        s4_tbl.add_attr('border','1')
-        s4_tbl.add_attr('width','100%s' % '%')
+        s4_tbl.add_attr('border', '1')
+        s4_tbl.add_attr('width', '100%')
         s4_tbl.add_style('border-width: 5px;')
 
         table.add_row()
@@ -1186,25 +1268,25 @@ class MetaDataReportWdg(BaseTableElementWdg):
         table.add_cell(s4_tbl)
 
         printtbl = Table()
-        printtbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
+        printtbl.add_style('background-color: #528B8B; width: 100%')
         printtbl.add_row()
         p1 = printtbl.add_cell(' ')
-        p1.add_style('width: 40%s;' % '%')
+        p1.add_style('width', '40%')
         p2 = printtbl.add_cell('<u><b>Print This Report</b></u>')
         p2.add_attr('nowrap','nowrap')
         p2.add_style('cursor: pointer;')
         p2.add_behavior(my.get_print_bvr(code, metadata.get('code'), 'metadata'))
         p3 = printtbl.add_cell(' ')
-        p3.add_style('width: 40%s;' % '%')
+        p3.add_style('width', '40%')
 
         stbl = Table()
         stbl.add_row()
         s1 = stbl.add_cell(' ')
-        s1.add_style('width: 40%s;' % '%')
+        s1.add_style('width', '40%')
         s2 = stbl.add_cell('<input type="button" value="Save"/>')
         s2.add_behavior(my.get_save_bvr(code, metadata.get('code')))
         s3 = stbl.add_cell(' ')
-        s3.add_style('width: 40%s;' % '%')
+        s3.add_style('width', '40%')
         if metadata.get('code') not in [None,'']:
             #s33 = stbl.add_cell('<input type="button" value="Clone This Report"/>')
             #s33.add_behavior(my.get_clone_report(code, metadata.get('code')))
@@ -1215,10 +1297,10 @@ class MetaDataReportWdg(BaseTableElementWdg):
         ttbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
         ttbl.add_row()
         tt1 = ttbl.add_cell(others)
-        tt1.add_attr('width','100%s' % '%')
+        tt1.add_attr('width','100%')
         ttbl.add_row()
         tt2 = ttbl.add_cell(printtbl)
-        tt2.add_attr('width','100%s' % '%')
+        tt2.add_attr('width','100%')
 
         widget.add(ttbl)
         widget.add(table)
