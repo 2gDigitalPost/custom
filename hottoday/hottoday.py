@@ -477,17 +477,23 @@ class HotTodayWdg(BaseRefreshWdg):
 
         # Get the titles that fall under 'external rejection' (they need to be on the top of the board)
         search_for_external_rejections = Search('twog/title')
-        search_for_external_rejections.add_filter('is_external_rejection', True)
-        external_rejections = search_for_external_rejections.get_sobjects()
+        search_for_external_rejections.add_filter('is_external_rejection', 'true')
+        search_for_external_rejections.add_filter('bigboard', True)
+        search_for_external_rejections.add_filters(name='status', values=['Completed'], op='not in')
+        external_rejections_sobjects = search_for_external_rejections.get_sobjects()
 
         # Search for titles that are marked as 'hot'
         search_for_hot_items = Search('twog/title')
         search_for_hot_items.add_filter('bigboard', True)
+        search_for_hot_items.add_filter('is_external_rejection', 'false')
         search_for_hot_items.add_order_by('priority')
         search_for_hot_items.add_order_by('expected_delivery_date')
-        hot_items = search_for_hot_items.get_sobjects()
+        hot_items_sobjects = search_for_hot_items.get_sobjects()
 
-        hot_items = [hot_item for hot_item in hot_items if hot_item.get_value('status') != 'Completed']
+        hot_items = external_rejections_sobjects
+        hot_items.extend([hot_item for hot_item in hot_items_sobjects if hot_item.get_value('status') != 'Completed'])
+
+        # hot_items = [hot_item for hot_item in hot_items if hot_item.get_value('status') != 'Completed']
 
         tasks = self.get_tasks(hot_items)
 
@@ -525,11 +531,11 @@ class HotTodayWdg(BaseRefreshWdg):
         hotlist_body.add_attr('id', 'hotlist-body')
 
         # Put external rejections on the board first
-        for external_rejection in external_rejections:
-            item_tasks = [task for task in tasks if task.get_value('title_code') == external_rejection.get_value('code')]
-            self.set_row(external_rejection, table, title_counter, header_groups, item_tasks, current_priority, is_admin_user)
+        # for external_rejection in external_rejections:
+        #     item_tasks = [task for task in tasks if task.get_value('title_code') == external_rejection.get_value('code')]
+        #     self.set_row(external_rejection, table, title_counter, header_groups, item_tasks, current_priority, is_admin_user)
 
-            title_counter += 1
+        #     title_counter += 1
 
         for hot_item in hot_items:
             hot_item_priority = float(hot_item.get_value('priority'))
