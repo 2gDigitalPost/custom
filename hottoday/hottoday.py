@@ -79,7 +79,8 @@ class HotTodayRibbonWdg(BaseTableElementWdg):
             state = 'unchecked'
 
         table.add_row()
-        ribbon_cell = table.add_cell('<img border="0" style="vertical-align: middle" title="" src="{0}">'.format(ribbon_image))
+        ribbon_cell = table.add_cell(
+            '<img border="0" style="vertical-align: middle" title="" src="{0}">'.format(ribbon_image))
         ribbon_cell.add_attr('id', 'title_bigboard_{0}'.format(self.code))
         ribbon_cell.add_attr('sk', self.search_key)
         ribbon_cell.add_attr('state', state)
@@ -124,8 +125,8 @@ class HotTodayWdg(BaseRefreshWdg):
 
     @staticmethod
     def get_header_groups(tasks):
-        group_order = ['machine room', 'media vault', 'onboarding', 'compression', 'edit',
-                  'audio', 'localization', 'qc', 'streamz', 'vault', 'edeliveries']
+        group_order = ['machine room', 'media vault', 'onboarding', 'compression', 'edit', 'audio', 'localization',
+                       'qc', 'streamz', 'vault', 'edeliveries']
         header_groups = []
 
         for task in tasks:
@@ -464,11 +465,20 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_style('font-family', 'Helvetica')
         table.add_border(style='solid', color='#F2F2F2', size='1px')
 
+        # print("GETGROUPNAMES: %s" % Environment.get_group_names())
+        # if 'client' in Environment.get_group_names():
+        #     return table
+
         # Because Tactic doesn't allow for the <thead> element (that I know of), the table header has to be split
         # into it's own <tbody>. Highly inelegant, but I don't have a choice.
         header_body = table.add_tbody()
         header_body.add_style('display', 'block')
         header_body.add_attr('id', 'thead-section')
+
+        # Get the titles that fall under 'external rejection' (they need to be on the top of the board)
+        search_for_external_rejections = Search('twog/title')
+        search_for_external_rejections.add_filter('is_external_rejection', True)
+        external_rejections = search_for_external_rejections.get_sobjects()
 
         # Search for titles that are marked as 'hot'
         search_for_hot_items = Search('twog/title')
@@ -514,6 +524,13 @@ class HotTodayWdg(BaseRefreshWdg):
         hotlist_body.add_style('width', '100%')
         hotlist_body.add_attr('id', 'hotlist-body')
 
+        # Put external rejections on the board first
+        for external_rejection in external_rejections:
+            item_tasks = [task for task in tasks if task.get_value('title_code') == external_rejection.get_value('code')]
+            self.set_row(external_rejection, table, title_counter, header_groups, item_tasks, current_priority, is_admin_user)
+
+            title_counter += 1
+
         for hot_item in hot_items:
             hot_item_priority = float(hot_item.get_value('priority'))
 
@@ -548,5 +565,3 @@ class HotTodayWdg(BaseRefreshWdg):
         outer_div.add_behavior(get_scrollbar_width())
 
         return outer_div
-
-
