@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:asd="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>2G HDCAM Label</title>
@@ -332,13 +332,13 @@ body {
 	font-size: 7px;
 }
 
-#chleft_small {
+.chleft_small {
 	position: relative;
 	float: left;
 	width: 85px;
 }
 
-#chright_small {
+.chright_small {
 	position: relative;
 	float: right;
 	width: 85px;
@@ -350,13 +350,13 @@ body {
 	font-size: 10px;
 }
 
-#chleft_large {
+.chleft_large {
 	position: relative;
 	float: left;
 	width: 150px;
 }
 
-#chright_large {
+.chright_large {
 	position: relative;
 	float: right;
 	width: 150px;
@@ -382,16 +382,70 @@ body {
     </style>
 </head>
 
+<%def name="address_info()">
+    2G Digital Post, Inc.<br />
+    280 East Magnolia Blvd<br />
+    Burbank, Ca 91502<br />
+    818.863.8900<br />
+</%def>
+
+<%def name="medium_label_with_date()">
+	<div class="barcode">${BARCODE}</div>
+    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
+    <span class="tinyaddr">
+	    ${address_info()}
+    </span>
+    <div class="medium">${DATE}</div>
+    <div class="medium">Std: ${STANDARD}</div>
+    <div class="medium">FR: ${FRAME_RATE}</div>
+    <div class="medium">Part: ${STRAT2G_PART}</div>
+    <div class="medium">TRT: ${TOTAL_RUN_TIME}</div>
+</%def>
+
+<%def name="medium_label_with_title()">
+	<div class="barcode">${BARCODE}</div>
+    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
+    <span class="tinyaddr">
+        ${address_info()}
+    </span>
+	<div class="medium">${WHOLETITLE}</div>
+    <div class="medium">Std: ${STANDARD}</div>
+    <div class="medium">FR: ${FRAME_RATE}</div>
+    <div class="medium">Part: ${STRAT2G_PART}</div>
+    <div class="medium">TRT: ${TOTAL_RUN_TIME}</div>
+</%def>
+
+<%def name="large_label()">
+    <div class="barcode">${BARCODE}</div>
+    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
+    <span class="tinyaddr">
+        ${address_info()}
+    </span>
+    <div class="large">Std: ${STANDARD}</div>
+    <div class="large">FR: ${FRAME_RATE}</div>
+    <div class="large">Part: ${STRAT2G_PART}</div>
+    <div class="large">TRT: ${TOTAL_RUN_TIME}</div>
+</%def>
+
+<%def name="audio_channels(size=None)">
+	% for left_channel, right_channel in zip(audio_channels_left, audio_channels_right):
+        % if size:
+            <div class="chleft_${size}">${left_channel}</div>
+            <div class="chright_${size}">${right_channel}</div>
+        % else:
+            <div class="chleft">${left_channel}</div>
+            <div class="chright">${right_channel}</div>
+        % endif
+    % endfor
+</%def>
+
 <body>
 
 <div id="lbl1a">
 	<div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42">
+    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
     <span class="tinyaddr">
-	2G Digital Post, Inc.<br />
-    280 East Magnolia Blvd<br />
-    Burbank, Ca 91502<br />
-    818.863.8900<br />
+        ${address_info()}
     </span>
     <div class="small">${DATE}</div>
     <div class="medium">Std: ${STANDARD}</div>
@@ -407,27 +461,12 @@ body {
     ${MTMINFOCHUNK_SMALL}
     <br />
     <div id="audio_small">
-	% for left_channel, right_channel in zip(audio_channels_left, audio_channels_right):
-        <div id="chleft_small">${left_channel}</div>
-        <div id="chright_small">${right_channel}</div>
-    % endfor
+	    ${audio_channels('small')}
     </div>
 </div>
 
 <div id="lbl2a">
-	<div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <span class="tinyaddr">
-	2G Digital Post, Inc.<br />
-    280 East Magnolia Blvd<br />
-    Burbank, Ca 91502<br />
-    818.863.8900<br />
-    </span>
-    <div class="medium">${DATE}</div>
-    <div class="medium">Std: ${STANDARD}</div>
-    <div class="medium">FR: ${FRAME_RATE}</div>
-    <div class="medium">Part: ${STRAT2G_PART}</div>
-    <div class="medium">TRT: ${TOTAL_RUN_TIME}</div>
+	${medium_label_with_date()}
 </div>
 
 <div id="lbl2b">
@@ -438,10 +477,7 @@ body {
 	<br />
     <br />
     <div class="audio">
-	% for left_channel, right_channel in zip(audio_channels_left, audio_channels_right):
-        <div class="chleft">${left_channel}</div>
-        <div class="chright">${right_channel}</div>
-    % endfor
+	    ${audio_channels()}
     </div>
 </div>
 
@@ -451,11 +487,7 @@ body {
         	<img src="2GLogo_small3_color2.png" width="74" height="58">
         </div>
     	<div id="addr"><div class="barcode">${BARCODE}</div>
-            <span class="tinyaddr">
-            2G Digital Post, Inc.<br />
-            280 East Magnolia Blvd<br />
-            Burbank, Ca 91502<br />
-            818.863.8900<br />
+                ${address_info()}
             </span>
        </div>
   </div>
@@ -472,19 +504,7 @@ body {
 </div>
 
 <div id="lbl4a">
-	<div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <span class="tinyaddr">
-	2G Digital Post, Inc.<br />
-    280 East Magnolia Blvd<br />
-    Burbank, Ca 91502<br />
-    818.863.8900<br />
-    </span>
-    <div class="medium">${DATE}</div>
-    <div class="medium">Std: ${STANDARD}</div>
-    <div class="medium">FR: ${FRAME_RATE}</div>
-    <div class="medium">Part: ${STRAT2G_PART}</div>
-    <div class="medium">TRT: ${TOTAL_RUN_TIME}</div>
+	${medium_label_with_date()}
 </div>
 
 <div id="lbl4b">
@@ -494,10 +514,7 @@ body {
     ${MTMINFOCHUNK_MEDIUM}
     <br />
     <div class="audio">
-	% for left_channel, right_channel in zip(audio_channels_left, audio_channels_right):
-        <div class="chleft">${left_channel}</div>
-        <div class="chright">${right_channel}</div>
-    % endfor
+	    ${audio_channels()}
     </div>
 </div>
 
@@ -507,65 +524,19 @@ body {
 </div>
 
 <div id="lbl5a">
-	<div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <span class="tinyaddr">
-	2G Digital Post, Inc.<br />
-    280 East Magnolia Blvd<br />
-    Burbank, Ca 91502<br />
-    818.863.8900<br />
-    </span>
-    <div class="large">Std: ${STANDARD}</div>
-    <div class="large">FR: ${FRAME_RATE}</div>
-    <div class="large">Part: ${STRAT2G_PART}</div>
-    <div class="large">TRT: ${TOTAL_RUN_TIME}</div>
+    ${large_label()}
 </div>
 
 <div id="lbl6a">
-	<div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <span class="tinyaddr">
-	2G Digital Post, Inc.<br />
-    280 East Magnolia Blvd<br />
-    Burbank, Ca 91502<br />
-    818.863.8900<br />
-    </span>
-    <div class="large">Std: ${STANDARD}</div>
-    <div class="large">FR: ${FRAME_RATE}</div>
-    <div class="large">Part: ${STRAT2G_PART}</div>
-    <div class="large">TRT: ${TOTAL_RUN_TIME}</div>
+    ${large_label()}
 </div>
 
 <div id="lbl7a">
-	<div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <span class="tinyaddr">
-	2G Digital Post, Inc.<br />
-    280 East Magnolia Blvd<br />
-    Burbank, Ca 91502<br />
-    818.863.8900<br />
-    </span>
-    <div class="medium">${DATE}</div>
-    <div class="medium">Std: ${STANDARD}</div>
-    <div class="medium">FR: ${FRAME_RATE}</div>
-    <div class="medium">Part: ${STRAT2G_PART}</div>
-    <div class="medium">TRT: ${TOTAL_RUN_TIME}</div>
+	${medium_label_with_date()}
 </div>
 
 <div id="lbl8a">
-	<div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <span class="tinyaddr">
-    2G Digital Post, Inc.<br />
-    280 East Magnolia Blvd<br />
-    Burbank, Ca 91502<br />
-    818.863.8900<br />
-    </span>
-	<div class="medium">${WHOLETITLE}</div>
-    <div class="medium">Std: ${STANDARD}</div>
-    <div class="medium">FR: ${FRAME_RATE}</div>
-    <div class="medium">Part: ${STRAT2G_PART}</div>
-    <div class="medium">TRT: ${TOTAL_RUN_TIME}</div>
+	${medium_label_with_title()}
 </div>
 
 <div id="lbl8b">
@@ -575,27 +546,12 @@ body {
     ${MTMINFOCHUNK_MEDIUM}
     <br />
     <div class="audio">
-	% for left_channel, right_channel in zip(audio_channels_left, audio_channels_right):
-        <div class="chleft">${left_channel}</div>
-        <div class="chright">${right_channel}</div>
-    % endfor
+	    ${audio_channels()}
     </div>
 </div>
 
 <div id="lbl9a">
-	<div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <span class="tinyaddr">
-	2G Digital Post, Inc.<br />
-    280 East Magnolia Blvd<br />
-    Burbank, Ca 91502<br />
-    818.863.8900<br />
-    </span>
-	<div class="medium">${WHOLETITLE}</div>
-    <div class="medium">Std: ${STANDARD}</div>
-    <div class="medium">FR: ${FRAME_RATE}</div>
-    <div class="medium">PART: ${STRAT2G_PART}</div>
-    <div class="medium">TRT: ${TOTAL_RUN_TIME}</div>
+	${medium_label_with_title()}
 </div>
 
 <div id="lbl9b">
@@ -605,27 +561,12 @@ body {
     ${MTMINFOCHUNK_MEDIUM}
     <br />    
     <div class="audio">
-	% for left_channel, right_channel in zip(audio_channels_left, audio_channels_right):
-        <div class="chleft">${left_channel}</div>
-        <div class="chright">${right_channel}</div>
-    % endfor
+	    ${audio_channels()}
     </div>
 </div>
 
 <div id="lbl10a">
-	<div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <span class="tinyaddr">
-	2G Digital Post, Inc.<br />
-    280 East Magnolia Blvd<br />
-    Burbank, Ca 91502<br />
-    818.863.8900<br />
-    </span>
-	<div class="medium">${WHOLETITLE}</div>
-    <div class="medium">Std: ${STANDARD}</div>
-    <div class="medium">FR: ${FRAME_RATE}</div>
-    <div class="medium">Part: ${STRAT2G_PART}</div>
-    <div class="medium">TRT: ${TOTAL_RUN_TIME}</div>
+	${medium_label_with_title()}
 </div>
 
 <div id="lbl10b">
@@ -635,10 +576,7 @@ body {
     ${MTMINFOCHUNK_LARGE}
     <br />
     <div id="audio_large">
-	% for left_channel, right_channel in zip(audio_channels_left, audio_channels_right):
-        <div id="chleft_large">${left_channel}</div>
-        <div id="chright_large">${right_channel}</div>
-    % endfor
+	    ${audio_channels('large')}
     </div>
 </div>
 
