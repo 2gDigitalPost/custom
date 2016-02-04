@@ -12,3 +12,4 @@ from source_security_wdg import *
 from error_viewer import *
 from platform_tools import *
 from task_edit_widget import *
+from builder_tools_wdg import *
