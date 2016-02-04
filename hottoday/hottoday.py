@@ -476,17 +476,8 @@ class HotTodayWdg(BaseRefreshWdg):
         header_body.add_attr('id', 'thead-section')
 
         # Get the titles that fall under 'external rejection' (they need to be on the top of the board)
-        # search_for_external_rejections = Search('twog/external_rejection')
-        # search_for_external_rejections.add_filters('status', ['Closed'], op='not in')
-        # external_rejections = search_for_external_rejections.get_sobjects()
-        # print(external_rejections)
-        # external_title_codes = [rejection.get_value('title_code') for rejection in external_rejections]
-        # print("EXTREJECTIONS: {0}".format(external_title_codes))
-
         search_for_external_rejections = Search('twog/title')
         search_for_external_rejections.add_filter('is_external_rejection', 'true')
-        # search_for_external_rejections.add_filter('bigboard', True)
-        # search_for_external_rejections.add_filters(name='status', values=['Completed'], op='not in')
         external_rejections_sobjects = search_for_external_rejections.get_sobjects()
 
         # Search for titles that are marked as 'hot'
@@ -497,11 +488,8 @@ class HotTodayWdg(BaseRefreshWdg):
         search_for_hot_items.add_order_by('expected_delivery_date')
         hot_items_sobjects = search_for_hot_items.get_sobjects()
 
-        # hot_items = external_rejections_sobjects
         external_rejections = [hot_item for hot_item in external_rejections_sobjects if hot_item.get_value('status') != 'Completed']
         hot_items = [hot_item for hot_item in hot_items_sobjects if hot_item.get_value('status') != 'Completed']
-
-        # hot_items = [hot_item for hot_item in hot_items if hot_item.get_value('status') != 'Completed']
 
         external_rejection_tasks = self.get_tasks(external_rejections)
         tasks = self.get_tasks(hot_items)
