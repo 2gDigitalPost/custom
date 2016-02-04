@@ -1,4 +1,4 @@
-__all__ = ["OrderBuilderLauncherWdg","TitleSelectorWdg","TitleDuePrioBBWdg","TitleCloneSelectorWdg","TitleDeletorWdg","TitleProjStatusTriggerWdg","OrderBuilder","QuickEditWdg","ErrorEntryLauncherWdg","ErrorEntryWdg","BuilderTools","OrderTable","TitleRow","AddWorkOrderWdg","AddProjWdg","GlobalReplacerWdg","EditHackPipe","HackPipeConnectWdg","TitleSourceInspectorWdg","DeliverableCountWdg","DeliverableWdg","IntermediateEditWdg","DeliverableEditWdg","PreReqCountWdg","PreReqWdg","WorkOrderSourcesRow","WorkOrderSourceAddWdg","SourcesRow","TwogEasyCheckinWdg","OutsideBarcodesListWdg","NewSourceWdg","SourceEditWdg","ProjRow","ProjDueDateChanger","WorkOrderRow","OutFilesWdg","SourcePortalWdg","IntermediatePassinAddWdg","DeliverablePassinAddWdg","DeliverableAddWdg","IntermediateFileAddWdg","EquipmentUsedRow","TitleAdderWdg","EquipmentUsedAdderWdg","EquipmentUsedMultiAdderWdg","OperatorErrorDescriptPopupWdg","ExternalRejectionReasonWdg","Barcoder","TitleRedoWdg","MultiManualAdderWdg","OBScripts"]
+__all__ = ["OrderBuilderLauncherWdg","TitleSelectorWdg","TitleDuePrioBBWdg","TitleCloneSelectorWdg","TitleDeletorWdg","TitleProjStatusTriggerWdg","OrderBuilder","QuickEditWdg","ErrorEntryLauncherWdg","ErrorEntryWdg","OrderTable","TitleRow","AddWorkOrderWdg","AddProjWdg","GlobalReplacerWdg","EditHackPipe","HackPipeConnectWdg","TitleSourceInspectorWdg","DeliverableCountWdg","DeliverableWdg","IntermediateEditWdg","DeliverableEditWdg","PreReqCountWdg","PreReqWdg","WorkOrderSourcesRow","WorkOrderSourceAddWdg","SourcesRow","TwogEasyCheckinWdg","OutsideBarcodesListWdg","NewSourceWdg","SourceEditWdg","ProjRow","ProjDueDateChanger","WorkOrderRow","OutFilesWdg","SourcePortalWdg","IntermediatePassinAddWdg","DeliverablePassinAddWdg","DeliverableAddWdg","IntermediateFileAddWdg","EquipmentUsedRow","TitleAdderWdg","EquipmentUsedAdderWdg","EquipmentUsedMultiAdderWdg","OperatorErrorDescriptPopupWdg","ExternalRejectionReasonWdg","Barcoder","TitleRedoWdg","MultiManualAdderWdg","OBScripts"]
 
 import tacticenv
 from pyasm.common import Environment
@@ -6,7 +6,6 @@ from pyasm.biz import *
 from pyasm.web import Table, DivWdg
 from pyasm.widget import SelectWdg, IconWdg, TextWdg, CheckboxWdg
 from pyasm.search import Search
-
 
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
@@ -20,6 +19,7 @@ from nighttime_hotlist.nighttime_hotlist import IndieBigBoardSelectWdg, BigBoard
 from alternative_elements.customcheckbox import *
 
 from common_tools.full_instructions import FullInstructionsLauncherWdg
+from common_tools.common_functions import fix_date
 from builder_tools_wdg import BuilderTools
 from task_edit_widget import TaskEditWdg
 from order_builder_utils import OBScripts
@@ -361,15 +361,6 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
         my.checked = '/context/icons/silk/rosette.png';
         my.unchecked = '/context/icons/silk/rosette_grey.png';
 
-    def fix_date(my, date):
-        #This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-        from pyasm.common import SPTDate
-        return_date = ''
-        date_obj = SPTDate.convert_to_local(date)
-        if date_obj not in [None,'']:
-            return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-        return return_date
-
     def get_display(my):
         #from tactic_client_lib import TacticServerStub
         #server = TacticServerStub.get()
@@ -459,7 +450,7 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
             start.set_option('show_activator','true')
             start.set_option('display_format','MM/DD/YYYY HH:MM')
             start.set_option('time_input_default','5:00 PM')
-            sd_fixed = my.fix_date(title.get_value('start_date'))
+            sd_fixed = fix_date(title.get_value('start_date'))
             if title.get_value('start_date') not in [None,'']:
                 start.set_option('default', sd_fixed)
 
@@ -468,7 +459,7 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
             due.set_option('show_activator','true')
             due.set_option('display_format','MM/DD/YYYY HH:MM')
             due.set_option('time_input_default','5:00 PM')
-            dd_fixed = my.fix_date(title.get_value('due_date'))
+            dd_fixed = fix_date(title.get_value('due_date'))
             if title.get_value('due_date') not in [None,'']:
                 due.set_option('default', dd_fixed)
 
@@ -477,7 +468,7 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
             expected_delivery.set_option('show_activator','true')
             expected_delivery.set_option('display_format','MM/DD/YYYY HH:MM')
             expected_delivery.set_option('time_input_default','5:00 PM')
-            ed_fixed = my.fix_date(title.get_value('expected_delivery_date'))
+            ed_fixed = fix_date(title.get_value('expected_delivery_date'))
             if title.get_value('expected_delivery_date') not in [None,'']:
                 expected_delivery.set_option('default', ed_fixed)
 
@@ -2242,15 +2233,6 @@ class OrderTable(BaseRefreshWdg):
         my.groups_str = ''
         my.is_master = False
         my.is_master_str = 'false'
-
-    def fix_date(my, date):
-        #This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-        from pyasm.common import SPTDate
-        return_date = ''
-        date_obj = SPTDate.convert_to_local(date)
-        if date_obj not in [None,'']:
-            return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-        return return_date
     
     def get_display(my):
         import common_tools.utils as ctu
@@ -2351,7 +2333,7 @@ class OrderTable(BaseRefreshWdg):
         order_name_cell.add_attr('nowrap','nowrap')
         order_name_cell.add_style('cursor: pointer;')
         order_name_cell.add_behavior(obs.get_panel_change_behavior(my.search_type, my.code, my.sk, my.sk, my.title, '', 'builder/refresh_from_save', '',my.sk,main_obj.get_value('name'), user_is_scheduler))
-        order_due_cell = table.add_cell("Due: %s" % my.fix_date(main_obj.get_value('due_date')).split(' ')[0])
+        order_due_cell = table.add_cell("Due: %s" % fix_date(main_obj.get_value('due_date')).split(' ')[0])
         order_due_cell.add_attr('nowrap','nowrap')
         long_cell1 = table.add_cell('Scheduler: %s' % sched_full_name)
         long_cell1.add_style('width: 100%s' % '%')
@@ -2471,16 +2453,6 @@ class TitleRow(BaseRefreshWdg):
         my.off_color = '#d9edcf'
         my.on_color = '#ff0000'
         my.stat_colors = {'Assignment': '#fcaf88', 'Pending': '#d7d7d7', 'In Progress': '#f5f3a4', 'In_Progress': '#f5f3a4', 'In Production': '#f5f3a4', 'In_Production': '#f5f3a4', 'In production': '#f5f3a4', 'In_production': '#f5f3a4', 'Waiting': '#ffd97f', 'Need Assistance': '#fc88fb', 'Need_Assistance': '#fc88fb', 'Review': '#888bfc', 'Approved': '#d4b5e7', 'On Hold': '#e8b2b8', 'On_Hold': '#e8b2b8', 'Client Response': '#ddd5b8', 'Completed': '#b7e0a5', 'Ready': '#b2cee8', 'Internal Rejection': '#ff0000', 'External Rejection': '#ff0000', 'Rejected': '#ff0000', 'Failed QC': '#ff0000', 'Fix Needed': '#c466a1', 'Need Buddy Check': '#e3701a', 'DR In_Progress': '#d6e0a4', 'DR In Progress': '#d6e0a4','Amberfin01_In_Progress':'#D8F1A8', 'Amberfin01 In Progress':'#D8F1A8', 'Amberfin02_In_Progress':'#F3D291',  'Amberfin02 In Progress':'#F3D291','BATON In_Progress': '#c6e0a4', 'BATON In Progress': '#c6e0a4','Export In_Progress': '#796999', 'Export In Progress': '#796999','Buddy Check In_Progress': '#1aade3','Buddy Check In Progress': '#1aade3'}
-
-
-    def fix_date(my, date):
-        #This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-        from pyasm.common import SPTDate
-        return_date = ''
-        date_obj = SPTDate.convert_to_local(date)
-        if date_obj not in [None,'']:
-            return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-        return return_date
     
     def get_display(my):   
         #--print "IN TITLEROW"
@@ -2566,7 +2538,7 @@ class TitleRow(BaseRefreshWdg):
         title_cell.add_attr('nowrap','nowrap')
         title_cell.add_style('cursor: pointer;')
         title_cell.add_behavior(obs.get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title, '', 'builder/refresh_from_save', '', my.parent_sk, '%s: %s' % (main_obj.get_value('title'),main_obj.get_value('episode')), user_is_scheduler))
-        due_cell = table.add_cell('Due: %s' % my.fix_date(main_obj.get_value('due_date')).split(' ')[0])
+        due_cell = table.add_cell('Due: %s' % fix_date(main_obj.get_value('due_date')).split(' ')[0])
         due_cell.add_attr('nowrap','nowrap')
         pipe_disp = main_obj.get_value('pipeline_code')
         if 'XsX' in pipe_disp:
@@ -4883,16 +4855,6 @@ class ProjRow(BaseRefreshWdg):
                 file_only = splits[len(splits) - 1]
                 what_to_ret = '<a href="%s/%s">%s</a>' % (base,rel_path, file_only)
         return what_to_ret
-        
-    
-    def fix_date(my, date):
-        #This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-        from pyasm.common import SPTDate
-        return_date = ''
-        date_obj = SPTDate.convert_to_local(date)
-        if date_obj not in [None,'']:
-            return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-        return return_date
 
     def get_display(my):   
 #        proj_row_time = time.time()
@@ -5014,7 +4976,7 @@ class ProjRow(BaseRefreshWdg):
         s2 = stat_tbl.add_cell(' ')
         s2.add_attr('width','100%s' % '%')
         table.add_cell(stat_tbl)
-        due_cell = table.add_cell('Due: %s' % my.fix_date(due_date).split(' ')[0])
+        due_cell = table.add_cell('Due: %s' % fix_date(due_date).split(' ')[0])
         due_cell.add_attr('nowrap','nowrap')
         top_buttons = Table()
         top_buttons.add_row()
@@ -5232,15 +5194,6 @@ class ProjDueDateChanger(BaseRefreshWdg):
          ''' % (proj_code, proj_name, order_sk, send_wdg)}
         return behavior
 
-    def fix_date(my, date):
-        #This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-        from pyasm.common import SPTDate
-        return_date = ''
-        date_obj = SPTDate.convert_to_local(date)
-        if date_obj not in [None,'']:
-            return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-        return return_date
-
     def get_display(my):   
         #from tactic.ui.widget import CalendarTimeInputWdg #3.9
 #        proj_due_date_time = time.time()
@@ -5258,7 +5211,7 @@ class ProjDueDateChanger(BaseRefreshWdg):
         proj_search.add_filter('code',proj_code)
         proj = proj_search.get_sobject()
         if proj.get_value('due_date') not in [None,'']:
-            calendar.set_option('default', my.fix_date(proj.get_value('due_date')))
+            calendar.set_option('default', fix_date(proj.get_value('due_date')))
         table = Table()
         table.add_attr('class', 'due_date_change_proj_%s' % proj_code)
         table.add_row()
@@ -5322,15 +5275,6 @@ class WorkOrderRow(BaseRefreshWdg):
                 what_to_ret = '<a href="%s/%s">%s</a>' % (base,rel_path, file_only)
         return what_to_ret
 
-    def fix_date(my, date):
-        #This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-        from pyasm.common import SPTDate
-        return_date = ''
-        date_obj = SPTDate.convert_to_local(date)
-        if date_obj not in [None,'']:
-            return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-        return return_date
- 
     def get_display(my):   
 #        wo_row_time = time.time()
         my.sk = str(my.kwargs.get('sk'))
@@ -5476,7 +5420,7 @@ class WorkOrderRow(BaseRefreshWdg):
         priority_cell.add_attr('nowrap','nowrap')
         assigned_cell = table.add_cell('Assigned to: %s' % assigned)
         assigned_cell.add_attr('nowrap','nowrap')
-        due_cell = table.add_cell('Due: %s' % my.fix_date(due_date))
+        due_cell = table.add_cell('Due: %s' % fix_date(due_date))
         due_cell.add_attr('nowrap','nowrap')
         top_buttons = Table()
         top_buttons.add_row()
@@ -5512,9 +5456,9 @@ class WorkOrderRow(BaseRefreshWdg):
         table.add_row()
         ccel = table.add_cell('Code: %s' % my.code)
         ccel.add_attr('nowrap','nowrap')
-        start_cell = table.add_cell('Start: %s' % my.fix_date(start_date))
+        start_cell = table.add_cell('Start: %s' % fix_date(start_date))
         start_cell.add_attr('nowrap','nowrap')
-        end_cell = table.add_cell('End: %s' % my.fix_date(end_date))
+        end_cell = table.add_cell('End: %s' % fix_date(end_date))
         end_cell.add_attr('nowrap','nowrap')
         active_cell = table.add_cell(active_status)
         active_cell.add_attr('align','right')
@@ -6490,15 +6434,6 @@ class TitleAdderWdg(BaseRefreshWdg):
         my.aspect_ratios = ['16x9 1.33','16x9 1.33 Pan & Scan','16x9 1.78 Anamorphic','16x9 1.78 Full Frame','16x9 1.85 Letterbox','16x9 1.85 Matted','16x9 1.85 Matted Anamorphic','16x9 2.20','16x9 2.20 Letterbox','16x9 2.35 Anamorphic','16x9 2.35 Letterbox','16x9 2.40 Letterbox','16x9 2.55 Letterbox','4x3 1.33 Full Frame','4x3 1.78 Letterbox','4x3 1.85 Letterbox','4x3 2.35 Letterbox','4x3 2.40 Letterbox']
         my.standards = ['625','525','720','1080 (4:4:4)','1080','PAL','NTSC']
 
-    def fix_date(my, date):
-        #This is needed due to the way Tactic deals with dates (using timezone info), post v4.0
-        from pyasm.common import SPTDate
-        return_date = ''
-        date_obj = SPTDate.convert_to_local(date)
-        if date_obj not in [None,'']:
-            return_date = date_obj.strftime("%Y-%m-%d  %H:%M")
-        return return_date
-    
     def get_display(my):   
 #        title_adder_time = time.time()
         my.client_code = str(my.kwargs.get('client_code'))
@@ -6686,7 +6621,7 @@ class TitleAdderWdg(BaseRefreshWdg):
         sd.add_attr('nowrap','nowrap')
         start = CalendarInputWdg("tadd_start_date")
         if the_order.get_value('start_date') not in [None,'']:
-            start.set_option('default', my.fix_date(the_order.get_value('start_date')))
+            start.set_option('default', fix_date(the_order.get_value('start_date')))
         start.set_option('show_activator', True)
         start.set_option('show_confirm', False)
         start.set_option('show_text', True)
@@ -6703,7 +6638,7 @@ class TitleAdderWdg(BaseRefreshWdg):
         ed.add_attr('nowrap','nowrap')
         end = CalendarInputWdg("tadd_due_date")
         if the_order.get_value('due_date') not in [None,'']:
-            end.set_option('default', my.fix_date(the_order.get_value('due_date')))
+            end.set_option('default', fix_date(the_order.get_value('due_date')))
         end.set_option('show_activator', True)
         end.set_option('show_confirm', False)
         end.set_option('show_text', True)
@@ -6720,7 +6655,7 @@ class TitleAdderWdg(BaseRefreshWdg):
         rm.add_attr('nowrap','nowrap')
         rem = CalendarInputWdg("tadd_rm_date")
         if the_order.get_value('expected_delivery_date') not in [None,'']:
-            rem.set_option('default', my.fix_date(the_order.get_value('expected_delivery_date')))
+            rem.set_option('default', fix_date(the_order.get_value('expected_delivery_date')))
         rem.set_option('show_activator', True)
         rem.set_option('show_confirm', False)
         rem.set_option('show_text', True)
