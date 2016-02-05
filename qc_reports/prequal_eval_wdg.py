@@ -151,7 +151,7 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
         txt.add_attr('id', name)
         txt.add_style('width: %s;' % width)
         txt.set_value(val)
-        if js in ['Yes','yes']:
+        if js in ['Yes', 'yes']:
             txt.add_behavior(my.get_add_dots())
         return txt
 
@@ -201,9 +201,9 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
                 seen_descs = []
                 if pl.get('code') != '':
                     row = linestbl.add_row()
-                    row.add_attr('line',rowct)
-                    row.add_attr('code',pl.get('code'))
-                    row.add_attr('class','pq_lines')
+                    row.add_attr('line', rowct)
+                    row.add_attr('code', pl.get('code'))
+                    row.add_attr('class', 'pq_lines')
 
                     linestbl.add_cell(my.txtbox('timecode-%s' % rowct, pl.get('timecode'),width='75px',js='yes'))
                     linestbl.add_cell('<input type="text" id="media_type-%s" name="media_type" value="%s" style="width: 20px;"/>' % (rowct, pl.get('media_type')))
@@ -220,7 +220,7 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
                     desc_select.add_attr('id', 'description-%s' % rowct)
                     desc_select.add_behavior(my.get_select_fillin(wo_code, rowct, code))
                     mm1 = linestbl.add_cell(desc_select)
-                    mm1.add_attr('class','select_cell')
+                    mm1.add_attr('class', 'select_cell')
                     type_code_select = SelectWdg('type_code')
                     type_code_select.append_option('-', '')
                     for tc in type_codes:
@@ -228,7 +228,7 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
                     type_code_select.set_value(pl.get('type_code'))
                     type_code_select.add_attr('id', 'type_code-%s' % rowct)
                     mm2 = linestbl.add_cell(type_code_select)
-                    mm2.add_attr('class','select_cell')
+                    mm2.add_attr('class', 'select_cell')
                     scale_select = SelectWdg('scale')
                     scale_select.append_option('-', '')
                     for s in scales:
@@ -243,9 +243,9 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
                     for i in insrc:
                         insrc_select.append_option(i, i)
                     insrc_select.set_value(pl.get('in_source'))
-                    insrc_select.add_attr('id','in_source-%s' % rowct)
+                    insrc_select.add_attr('id', 'in_source-%s' % rowct)
                     mm4 = linestbl.add_cell(insrc_select)
-                    mm4.add_attr('class','select_cell')
+                    mm4.add_attr('class', 'select_cell')
                     killer = linestbl.add_cell('<b>X</b>')#This must delete the entry
                     killer.add_style('cursor: pointer;')
                     killer.add_behavior(my.get_kill_bvr(rowct, wo_code, pl.get('code'), code))
@@ -259,13 +259,13 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
         linestbl.add_cell(my.txtbox('timecode-%s' % rowct, '', width='75px', js='yes'))
         linestbl.add_cell('<input type="text" id="media_type-%s" name="media_type" value="" style="width: 20px;"/>' % (rowct))
         desc_select = SelectWdg('description')
-        desc_select.append_option('--Select--','')
+        desc_select.append_option('--Select--', '')
         desc_select.add_style('width: %spx;' % (longest_len * 7.5))
         for d in descriptions:
             desc = d.get('description')
             desc_select.append_option(desc,desc)
         desc_select.set_value('')
-        desc_select.add_attr('id','description-%s' % rowct)
+        desc_select.add_attr('id', 'description-%s' % rowct)
         desc_select.add_behavior(my.get_select_fillin(wo_code, rowct, code))
         linestbl.add_cell(desc_select)
         type_code_select = SelectWdg('type_code')
@@ -275,9 +275,9 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
         type_code_select.add_attr('id', 'type_code-%s' % rowct)
         linestbl.add_cell(type_code_select)
         scale_select = SelectWdg('scale')
-        scale_select.append_option('-','')
+        scale_select.append_option('-', '')
         for s in scales:
-            scale_select.append_option(s,s)
+            scale_select.append_option(s, s)
         scale_select.add_attr('id', 'scale-%s' % rowct)
         linestbl.add_cell(scale_select)
         linestbl.add_cell('<input type="text" id="sector_or_channel-%s" value="" style="width: 75px;"/>' % rowct)
@@ -295,11 +295,9 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
         return linestbl
 
 
-
 class PreQualEvalWdg(BaseTableElementWdg):
 
     def init(my):
-        nothing = 'true'
         my.formats = ['Electronic/File', 'DBC', 'D5', 'HDCAM SR', 'NTSC', 'PAL']
         my.frame_rates = ['23.98fps', '59.94i', '50i', '29.97fps', '59.94p', 'DFTC', 'NDFTC', 'PAL/EBU']
         my.machines = ['VTR221', 'VTR222', 'VTR223', 'VTR224', 'VTR225', 'VTR231', 'VTR232', 'VTR233', 'VTR234',
@@ -675,7 +673,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
                 click_row = others.add_row()
                 click_row.add_attr('prequal_code', t.get('code'))
                 click_row.add_attr('work_order_code', t.get('work_order_code'))
-                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct%2])
+                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct % 2])
                 click_row.add_behavior(my.get_click_row(t.get('work_order_code'), t.get('code')))
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (t.get('wo_name'), t.get('work_order_code')))
                 others.add_cell('<b>OPERATOR:</b> %s' % t.get('operator'))
@@ -691,7 +689,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
                 click_row = others.add_row()
                 click_row.add_attr('prequal_code', w.get('code'))
                 click_row.add_attr('work_order_code', w.get('work_order_code'))
-                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct%2])
+                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct % 2])
                 click_row.add_behavior(my.get_click_row(w.get('work_order_code'), w.get('code')))
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (w.get('wo_name'), w.get('work_order_code')))
                 others.add_cell('<b>OPERATOR:</b> %s' % w.get('operator'))
@@ -765,7 +763,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         machine_sel.add_style('width: 135px;')
         machine_sel.append_option('--Select--', '')
         for m in my.machines:
-            machine_sel.append_option(m,m)
+            machine_sel.append_option(m, m)
         if prequal.get('machine_number'):
             machine_sel.set_value(prequal.get('machine_number'))
 
