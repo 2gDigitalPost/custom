@@ -178,7 +178,7 @@ class TitleRow(BaseRefreshWdg):
                                              normal_color=my.off_color, selected_color=my.on_color, code=my.code,
                                              ntype='title', search_key=my.sk,
                                              additional_js=get_selected_color_behavior(my.code,
-                                                                                           'TitleRow',
+                                                                                       'TitleRow',
                                                                                        my.on_color,
                                                                                        my.off_color))
 
@@ -237,7 +237,7 @@ class TitleRow(BaseRefreshWdg):
                 bboc.add_attr('align', 'right')
 
                 adder = ButtonSmallNewWdg(title="Add A Project", icon=IconWdg.ADD)
-                adder.add_behavior(obs.get_multi_add_projs_behavior(my.sk))
+                adder.add_behavior(get_multi_add_projs_behavior(my.order_sk, my.sk))
                 add = bottom_buttons.add_cell(adder)
                 add.add_attr('align', 'right')
 
@@ -247,7 +247,7 @@ class TitleRow(BaseRefreshWdg):
 
             if user_is_scheduler:
                 stop_button = ButtonSmallNewWdg(title='Deactivate Title - Remove from Operator Views', icon='/context/icons/custom/stopsmall.png')
-                stop_button.add_behavior(obs.get_deactivate_behavior(my.code))
+                stop_button.add_behavior(get_deactivate_behavior(my.code))
                 sb = bottom_buttons.add_cell(stop_button)
                 sb.add_attr('id','stop_button_%s' % my.code)
                 sb.add_attr('align','right')
@@ -258,7 +258,7 @@ class TitleRow(BaseRefreshWdg):
                     mastering_icon = '/context/icons/custom/mastering_lilac.png'
                     mastering_text = "Currently Requires QC Mastering. Change?"
                 mastering_button = ButtonSmallNewWdg(title=mastering_text, icon=mastering_icon)
-                mastering_button.add_behavior(obs.get_set_mastering(main_obj.get_value('code'), my.order_sk))
+                mastering_button.add_behavior(get_set_mastering(main_obj.get_value('code'), my.order_sk))
                 mb = bottom_buttons.add_cell(mastering_button)
                 mb.add_attr('id', 'mastering_button_%s' % my.code)
                 mb.add_attr('align', 'right')
@@ -270,7 +270,7 @@ class TitleRow(BaseRefreshWdg):
                     face_text = "This is an External Rejection!!!"
 
                 panic_button = ButtonSmallNewWdg(title=face_text, icon=face_icon)
-                panic_button.add_behavior(obs.get_set_external_rejection(main_obj.get_value('code'), my.order_sk))
+                panic_button.add_behavior(get_set_external_rejection(main_obj.get_value('code'), my.order_sk))
                 pb = bottom_buttons.add_cell(panic_button)
                 pb.add_attr('id', 'panic_button_%s' % my.code)
                 pb.add_attr('align', 'right')
@@ -282,23 +282,23 @@ class TitleRow(BaseRefreshWdg):
                     redo_text = "Currently marked as a Redo Title. Change?"
 
                 redo_button = ButtonSmallNewWdg(title=redo_text, icon=redo_icon)
-                redo_button.add_behavior(obs.get_set_redo(main_obj.get_value('code'), my.order_sk))
+                redo_button.add_behavior(get_set_redo(main_obj.get_value('code'), my.order_sk))
                 rb = bottom_buttons.add_cell(redo_button)
                 rb.add_attr('id','redo_button_%s' % my.code)
-                rb.add_attr('align','right')
+                rb.add_attr('align', 'right')
 
                 prio_reset = ButtonSmallNewWdg(title="Reset Dept Priorities", icon=IconWdg.UNDO)
-                prio_reset.add_behavior(obs.get_reset_dept_prios(main_obj.get_value('code')))
+                prio_reset.add_behavior(get_reset_dept_prios(main_obj.get_value('code')))
                 pr = bottom_buttons.add_cell(prio_reset)
-                pr.add_attr('align','right')
+                pr.add_attr('align', 'right')
 
                 sts_launcher = ButtonSmallNewWdg(title="Set Status Triggers", icon=IconWdg.LINK)
-                sts_launcher.add_behavior(obs.get_launch_title_proj_sts_behavior(main_obj.get_value('code')))
+                sts_launcher.add_behavior(get_launch_title_proj_sts_behavior(main_obj.get_value('code')))
                 stsl = bottom_buttons.add_cell(sts_launcher)
-                stsl.add_attr('align','right')
+                stsl.add_attr('align', 'right')
 
             source_inspector = ButtonSmallNewWdg(title="Inspect Sources", icon=IconWdg.SOURCE_PORTAL)
-            source_inspector.add_behavior(obs.get_source_inspector_behavior(my.sk, '%s: %s' % (main_obj.get_value('title'), main_obj.get_value('episode'))))
+            source_inspector.add_behavior(get_source_inspector_behavior(my.sk, '%s: %s' % (main_obj.get_value('title'), main_obj.get_value('episode'))))
             si = bottom_buttons.add_cell(source_inspector)
             si.add_attr('align', 'right')
 
@@ -1507,4 +1507,255 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
         return two_gether
 
 
+def get_multi_add_projs_behavior(order_sk, title_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try {
+    title_sk = '%s';
+    order_sk = '%s';
+    kwargs = {'parent_sk': title_sk, 'order_sk': order_sk, 'search_type': 'twog/proj'};
+    spt.panel.load_popup('Add Proj(s)', 'order_builder.order_builder.MultiManualAdderWdg', kwargs);
+}
+catch(err){
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % (title_sk, order_sk)}
+    return behavior
 
+
+def get_deactivate_behavior(title_code):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try {
+    var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+    title_code = '%s';
+    if(confirm('Are you sure you want to deactivate this title and remove it from operator views?')){
+        server = TacticServerStub.get();
+        tasks = server.eval("@SOBJECT(sthpw/task['title_code','" + title_code + "'])");
+        for(var r = 0; r < tasks.length; r++) {
+            server.update(tasks[r].__search_key__, {'active': 0});
+        }
+
+        alert('Done Deactivating the title. If you want to activate it again and put it on the Operator Views, put the order in "Bid", then "In Production"');
+    }
+}
+catch(err){
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % (title_code)}
+    return behavior
+
+
+def get_set_mastering(title_code, order_sk):
+    """
+    Toggles the QC Mastering requirement on an order
+
+    :param title_code:
+    :param order_sk:
+    :return:
+    """
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try{
+    var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+    server = TacticServerStub.get();
+    title_code = '%s';
+    order_sk = '%s';
+    title_sk = server.build_search_key('twog/title',title_code);
+    mastering_button = top_el.getElementById('mastering_button_' + title_code).getElementsByClassName("spt_button_icon")[0];
+    inner = mastering_button.innerHTML;
+    is_currently_on = false;
+    confirm_text = "Are you sure you want to set 'QC Mastering Requirement'?";
+    if(inner.indexOf('mastering_lilac.png') != -1) {
+        is_currently_on = true;
+        confirm_text = "Are you sure you want to remove the 'QC Mastering Requirement'?";
+    }
+    if(confirm(confirm_text)) {
+        if(!is_currently_on) {
+            spt.app_busy.show("Setting 'QC Mastering Requirement'...");
+            server.update(title_sk, {'requires_mastering_qc': true});
+        } else {
+            //Then it is an external rejection, but we will set it to NOT be one
+            spt.app_busy.show("Removing 'QC Mastering Requirement'...");
+            server.update(title_sk, {'requires_mastering_qc': false});
+        }
+
+        order_sk = top_el.getAttribute('order_sk');
+        display_mode = top_el.getAttribute('display_mode');
+        user = top_el.getAttribute('user');
+        groups_str = top_el.get('groups_str');
+        is_master_str = top_el.getAttribute('is_master_str');
+        allowed_titles = top_el.getAttribute('allowed_titles');
+        title_el = top_el.getElementsByClassName('cell_' + title_sk)[0];
+        found_parent_sk = title_el.get('parent_sk');
+        found_parent_sid = title_el.get('parent_sid');
+        send_data =  {sk: title_sk, parent_sid: found_parent_sid, parent_sk: found_parent_sk, order_sk: order_sk, display_mode: display_mode, user: user, groups_str: groups_str, allowed_titles: allowed_titles, is_master: is_master_str};
+        spt.api.load_panel(title_el, 'order_builder.TitleRow', send_data);
+        spt.app_busy.hide();
+    }
+}
+catch(err){
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % (title_code, order_sk)}
+    return behavior
+
+
+def get_set_external_rejection(title_code, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try {
+    var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+
+    server = TacticServerStub.get();
+    title_code = '%s';
+    order_sk = '%s';
+    title_sk = server.build_search_key('twog/title',title_code);
+    panic_button = top_el.getElementById('panic_button_' + title_code).getElementsByClassName("spt_button_icon")[0];
+    inner = panic_button.innerHTML;
+    is_currently_on = false;
+    confirm_text = "Are you sure you want to set this Title as Externally Rejected?";
+    if(inner.indexOf('red_bomb.png') != -1) {
+        is_currently_on = true;
+        confirm_text = "Are you sure you want to make this Title NOT Externally Rejected?";
+    }
+    if(confirm(confirm_text)) {
+        if(!is_currently_on) {
+            //Then it is currently not an external rejection, but we will set it to be one
+            //We need to open a class for them to enter text. After submit in the next class, it will set the 'is_external_rejection' to true
+            //server.update(title_sk, {'is_external_rejection': 'true'});
+            spt.panel.load_popup('Please tell us why this was rejected externally.', 'order_builder.order_builder.ExternalRejectionReasonWdg', {'title_sk': title_sk, 'order_sk': order_sk});
+        } else {
+            //Then it is an external rejection, but we will set it to NOT be one
+            spt.app_busy.show("Removing External Rejection desgination...");
+            server.update(title_sk, {'is_external_rejection': 'false'});
+            alert("You may want to check out the Due and Expected Delivery Dates, as they changed when the title was set to be an external rejection. Also, the Title has been taken off the bigboard.");
+            order_sk = top_el.getAttribute('order_sk');
+            display_mode = top_el.getAttribute('display_mode');
+            user = top_el.getAttribute('user');
+            groups_str = top_el.get('groups_str');
+            is_master_str = top_el.getAttribute('is_master_str');
+            allowed_titles = top_el.getAttribute('allowed_titles');
+            title_el = top_el.getElementsByClassName('cell_' + title_sk)[0];
+            found_parent_sk = title_el.get('parent_sk');
+            found_parent_sid = title_el.get('parent_sid');
+            send_data =  {sk: title_sk, parent_sid: found_parent_sid, parent_sk: found_parent_sk, order_sk: order_sk, display_mode: display_mode, user: user, groups_str: groups_str, allowed_titles: allowed_titles, is_master: is_master_str};
+            spt.api.load_panel(title_el, 'order_builder.TitleRow', send_data);
+            spt.app_busy.hide();
+        }
+    }
+}
+catch(err){
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % (title_code, order_sk)}
+    return behavior
+
+
+def get_set_redo(title_code, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try{
+    var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+
+    server = TacticServerStub.get();
+    title_code = '%s';
+    order_sk = '%s';
+    title_sk = server.build_search_key('twog/title',title_code);
+    redo_button = top_el.getElementById('redo_button_' + title_code).getElementsByClassName("spt_button_icon")[0];
+    inner = redo_button.innerHTML;
+    is_currently_on = false;
+    confirm_text = "Are you sure you want to mark this Title as a Redo?";
+    if(inner.indexOf('history.png') != -1) {
+        is_currently_on = true;
+        confirm_text = "Are you sure you want to make this Title NOT a Redo?";
+    }
+    if(confirm(confirm_text)) {
+        if(!is_currently_on) {
+            //Then it is currently not an external rejection, but we will set it to be one
+            //We need to open a class for them to enter text. After submit in the next class, it will set the 'is_external_rejection' to true
+            //server.update(title_sk, {'redo': 'true'});
+            spt.panel.load_popup('Please enter the requested information.', 'order_builder.order_builder.TitleRedoWdg', {'title_sk': title_sk, 'order_sk': order_sk});
+        } else {
+            //Then it is an external rejection, but we will set it to NOT be one
+            spt.app_busy.show("Removing Redo Designation...");
+            server.update(title_sk, {'redo': 'false'});
+            order_sk = top_el.getAttribute('order_sk');
+            display_mode = top_el.getAttribute('display_mode');
+            user = top_el.getAttribute('user');
+            groups_str = top_el.get('groups_str');
+            is_master_str = top_el.getAttribute('is_master_str');
+            allowed_titles = top_el.getAttribute('allowed_titles');
+            title_el = top_el.getElementsByClassName('cell_' + title_sk)[0];
+            found_parent_sk = title_el.get('parent_sk');
+            found_parent_sid = title_el.get('parent_sid');
+            send_data =  {sk: title_sk, parent_sid: found_parent_sid, parent_sk: found_parent_sk, order_sk: order_sk, display_mode: display_mode, user: user, groups_str: groups_str, allowed_titles: allowed_titles, is_master: is_master_str};
+            spt.api.load_panel(title_el, 'order_builder.TitleRow', send_data);
+            spt.app_busy.hide();
+        }
+    }
+}
+catch(err) {
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % (title_code, order_sk)}
+    return behavior
+
+
+def get_reset_dept_prios(title_code):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try{
+    title_code = '%s';
+    if(confirm("Are you sure you want to set all Department Priorities under this Title to the Title's Main Priority?")) {
+        server = TacticServerStub.get();
+        title = server.eval("@SOBJECT(twog/title['code','" + title_code + "'])")[0];
+        adps = title.active_dept_priorities;
+        depts = ['audio','compression','edeliveries','edit','machine room','media vault','qc','vault'];
+        data = {};
+        for(var r = 0; r < depts.length; r++){
+            if(adps.indexOf(depts[r]) == -1){
+                data[depts[r].replace(' ','_') + '_priority'] = title.priority;
+            }
+        }
+        if(data != {}){
+            server.update(title.__search_key__, data);
+        }
+    }
+}
+catch(err){
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % (title_code)}
+    return behavior
+
+
+def get_launch_title_proj_sts_behavior(title_code):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try {
+    title_code = '%s';
+    kwargs = {'title_code': title_code};
+    spt.panel.load_popup('Set Status Triggers On ' + title_code, 'order_builder.order_builder.TitleProjStatusTriggerWdg', kwargs);
+}
+catch(err) {
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % (title_code)}
+    return behavior
+
+
+def get_source_inspector_behavior(search_key, name):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try {
+    search_key = '%s';
+    name = '%s';
+    kwargs = {'search_key': search_key};
+    spt.panel.load_popup('Source Inspector for ' + name, 'order_builder.order_builder.TitleSourceInspectorWdg', kwargs);
+}
+catch(err) {
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % (search_key, name)}
+    return behavior
