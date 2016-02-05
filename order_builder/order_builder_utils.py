@@ -1540,24 +1540,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (work_order_code, work_order_sk, call_me, my.order_sk)}
         return behavior
 
-    def get_launch_deliverables_behavior(my, title_code, title_name):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m20');
-                          var server = TacticServerStub.get();
-                          title_code = '%s';
-                          title_name = '%s';
-                          order_sk = '%s';
-                          spt.panel.load_popup('Permanents for ' + title_name, 'order_builder.DeliverableWdg', {title_code: title_code , order_sk: order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (title_code, title_name, my.order_sk)}
-        return behavior
-
     def get_launch_prereq_behavior(my, sob_code, sob_st, sob_sk, sob_name, pipeline):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{

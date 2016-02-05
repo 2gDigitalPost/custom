@@ -1,3 +1,4 @@
+from client.tactic_client_lib import TacticServerStub
 from tactic.ui.common import BaseRefreshWdg
 from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg
 
@@ -11,6 +12,7 @@ from common_tools.common_functions import fix_date
 from order_builder_utils import OBScripts
 from qc_reports import QCReportLauncherWdg
 
+from deliverable_count_wdg import DeliverableCountWdg
 from nighttime_hotlist.nighttime_hotlist import BigBoardSelectWdg, BigBoardSingleWOSelectWdg, IndieBigBoardSelectWdg
 from work_order_printer import WorkOrderPrintLauncherWdg
 
@@ -383,46 +385,6 @@ class TitleRow(BaseRefreshWdg):
         return tab2ret
 
 
-class DeliverableCountWdg(BaseRefreshWdg):
-
-    def init(my):
-        my.title_code = ''
-        my.order_sk = ''
-
-    def get_display(my):
-#        deliverable_count_time = time.time()
-        my.order_sk = str(my.kwargs.get('order_sk'))
-        my.title_code = str(my.kwargs.get('title_code'))
-        full_title = str(my.kwargs.get('full_title'))
-        delivs_search = Search("twog/work_order_deliverables")
-        delivs_search.add_filter('title_code',my.title_code)
-        delivs = delivs_search.get_sobjects()
-        linked = []
-        for d in delivs:
-            linked.append(d.get_value('satisfied'))
-        satisfied = 0
-        unsatisfied = 0
-        for link in linked:
-            if link == True:
-                satisfied = satisfied + 1
-            else:
-                unsatisfied = unsatisfied + 1
-        obs = OBScripts(order_sk=my.order_sk)
-        table = Table()
-        table.add_row()
-        deliverable_launcher = table.add_cell('<u>Delivs: (%s/%s)</u>' % (satisfied, satisfied + unsatisfied))
-        deliverable_launcher.add_attr('nowrap','nowrap')
-        deliverable_launcher.add_attr('valign','bottom')
-        deliverable_launcher.add_style('font-size: 80%s;' % '%')
-        deliverable_launcher.add_style('font-color: #2e2e2e;')
-        deliverable_launcher.add_style('cursor: pointer;')
-        deliverable_launcher.add_behavior(obs.get_launch_deliverables_behavior(my.title_code, full_title))
-        #--print "LEAVING DELIVERABLE COUNT WDG"
-#        print "DELIVERABLE COUNT TIME = %s" % (time.time() - deliverable_count_time)
-        return table
-
-
-
 class PreReqCountWdg(BaseRefreshWdg):
 
     def init(my):
@@ -435,7 +397,6 @@ class PreReqCountWdg(BaseRefreshWdg):
         my.order_sk = ''
 
     def get_display(my):
-#        prereq_count_time = time.time()
         my.sob_code = str(my.kwargs.get('sob_code'))
         my.sob_sk = str(my.kwargs.get('sob_sk'))
         my.sob_st = str(my.kwargs.get('sob_st'))
@@ -447,16 +408,16 @@ class PreReqCountWdg(BaseRefreshWdg):
         if my.sob_st == 'twog/work_order':
             code_type = 'work_order_code'
         all_search = Search(my.prereq_st)
-        all_search.add_filter(code_type,my.sob_code)
+        all_search.add_filter(code_type, my.sob_code)
         all_pres = all_search.get_sobjects()
 
         satisfied = 0
         unsatisfied = 0
         for ap in all_pres:
             if ap.get_value('satisfied') == True:
-                satisfied = satisfied + 1
+                satisfied += 1
             else:
-                unsatisfied = unsatisfied + 1
+                unsatisfied += 1
 
         obs = OBScripts(order_sk=my.order_sk)
         table = Table()
@@ -466,13 +427,13 @@ class PreReqCountWdg(BaseRefreshWdg):
             if (satisfied/(satisfied + unsatisfied)) == 1:
                 fcolor = '#458b00'
         prereq_launcher = table.add_cell('<font color="%s"><u>Checklist: (%s/%s)</u></font>' % (fcolor, satisfied, satisfied + unsatisfied))
-        prereq_launcher.add_attr('nowrap','nowrap')
-        prereq_launcher.add_attr('valign','bottom')
-        prereq_launcher.add_style('font-size: 80%s;' % '%')
+        prereq_launcher.add_attr('nowrap', 'nowrap')
+        prereq_launcher.add_attr('valign', 'bottom')
+        prereq_launcher.add_style('font-size: 80%;')
         prereq_launcher.add_style('font-color: #2e2e2e;')
         prereq_launcher.add_style('cursor: pointer;')
         prereq_launcher.add_behavior(obs.get_launch_prereq_behavior(my.sob_code, my.sob_st, my.sob_sk, my.sob_name, my.pipeline))
-#        print "PREREQ COUNT TIME = %s" % (time.time() - prereq_count_time)
+
         return table
 
 
@@ -522,7 +483,6 @@ class ProjRow(BaseRefreshWdg):
         return what_to_ret
 
     def get_display(my):
-#        proj_row_time = time.time()
         my.sk = str(my.kwargs.get('sk'))
         my.code = my.sk.split('code=')[1]
         my.parent_sk = str(my.kwargs.get('parent_sk'))
@@ -646,18 +606,7 @@ class ProjRow(BaseRefreshWdg):
         top_buttons = Table()
         top_buttons.add_row()
         if my.small:
-            #select_check = CheckboxWdg('select_%s' % (my.code))
             select_check = CustomCheckboxWdg(name='select_%s' % my.code,value_field=my.code,checked='false',dom_class='ob_selector',parent_table="ProjRow_%s" % my.code,normal_color=my.off_color,selected_color=my.on_color,code=my.code,ntype='proj',search_key=my.sk,task_sk=task_sk,additional_js=obs.get_selected_color_behavior(my.code, 'ProjRow', my.on_color, my.off_color))
-            #select_check.set_persistence()
-            #select_check.set_value(False)
-            #select_check.add_attr('code',my.code)
-            #select_check.add_attr('ntype','proj')
-            #select_check.add_attr('parent_table','ProjRow_%s' % my.code)
-            #select_check.add_attr('normal_color',my.off_color)
-            #select_check.add_attr('selected_color',my.on_color)
-            #select_check.add_attr('search_key',my.sk)
-            #select_check.add_attr('task_sk',task_sk)
-            #select_check.add_behavior(obs.get_selected_color_behavior(my.code, 'ProjRow', my.on_color, my.off_color))
             cb = top_buttons.add_cell(select_check)
         elif user_is_scheduler:
             xb = top_buttons.add_cell(my.x_butt)
@@ -863,10 +812,11 @@ class SourcesRow(BaseRefreshWdg):
                 celly.add_style('cursor: pointer;')
                 celly.add_style('font-size: 80%s;' % '%')
                 celly.add_behavior(obs.get_launch_source_behavior(my.title_code,my.title_sk,source.get_value('code'),source.get_search_key()))
-                spacer = table.add_cell(' &nbsp;&nbsp; ')
-                count = count + 1
+
+                table.add_cell(' &nbsp;&nbsp; ')
+                count += 1
             else:
-                from client.tactic_client_lib import TacticServerStub
+
                 my.server = TacticServerStub.get()
                 my.server.retire_sobject(origin.get_search_key())
         table2 = Table()
@@ -1064,8 +1014,8 @@ class WorkOrderRow(BaseRefreshWdg):
         table.add_style('border-top-right-radius', '10px')
         table.add_style('border-top-left-radius', '10px')
         row1 = table.add_row()
-        row1.add_attr('width','100%s' % '%')
-        row1.add_style('width: 100%s;' % '%')
+        row1.add_attr('width', '100%')
+        row1.add_style('width: 100%;')
         wo_cell = table.add_cell('<b><u>Work Order: %s</u></b>' % main_obj.get_value('process'))
         wo_cell.add_attr('nowrap','nowrap')
         wo_cell.add_style('cursor: pointer;')
@@ -1083,45 +1033,28 @@ class WorkOrderRow(BaseRefreshWdg):
         top_buttons = Table()
         top_buttons.add_row()
         if my.small:
-            #select_check = CheckboxWdg('select_%s' % (my.code))
             select_check = CustomCheckboxWdg(name='select_%s' % my.code,value_field=my.code,checked='false',dom_class='ob_selector',parent_table="WorkOrderRow_%s" % my.code,process=main_obj.get_value('process'),work_group=main_obj.get_value('work_group'),proj_code=main_obj.get_value('proj_code'),title_code=main_obj.get_value('title_code'),order_code=order_code,task_code=main_obj.get_value('task_code'),normal_color=my.off_color,selected_color=my.on_color,code=my.code,ntype='work_order',search_key=my.sk,task_sk=task_sk,additional_js=obs.get_selected_color_behavior(my.code, 'WorkOrderRow', my.on_color, my.off_color))
-            #select_check.set_persistence()
-            #select_check.set_value(False)
-            #select_check.add_attr('code',my.code)
-            #select_check.add_attr('ntype','work_order')
-            #select_check.add_attr('work_group',main_obj.get_value('work_group'))
-            #select_check.add_attr('process',main_obj.get_value('process'))
-            #select_check.add_attr('proj_code',parent_obj.get_value('code'))
-            #select_check.add_attr('title_code',parent_obj.get_value('title_code'))
-            #select_check.add_attr('order_code',order_code)
-            #select_check.add_attr('task_code',main_obj.get_value('task_code'))
-            #select_check.add_attr('parent_table','WorkOrderRow_%s' % my.code)
-            #select_check.add_attr('normal_color',my.off_color)
-            #select_check.add_attr('selected_color',my.on_color)
-            #select_check.add_attr('search_key',my.sk)
-            #select_check.add_attr('task_sk',task_sk)
-            #select_check.add_behavior(obs.get_selected_color_behavior(my.code, 'WorkOrderRow', my.on_color, my.off_color))
             cb = top_buttons.add_cell(select_check)
         elif user_is_scheduler:
             xb = top_buttons.add_cell(my.x_butt)
-            xb.add_attr('align','right')
+            xb.add_attr('align', 'right')
             xb.add_style('cursor: pointer;')
             xb.add_behavior(obs.get_killer_behavior(my.sk, my.parent_sk, 'ProjRow', main_obj.get_value('process')))
         long_cell1 = table.add_cell(top_buttons)
-        long_cell1.add_attr('align','right')
-        long_cell1.add_attr('colspan','1')
-        long_cell1.add_style('width: 100%s' % '%')
+        long_cell1.add_attr('align', 'right')
+        long_cell1.add_attr('colspan', '1')
+        long_cell1.add_style('width: 100%')
         table.add_row()
         ccel = table.add_cell('Code: %s' % my.code)
         ccel.add_attr('nowrap','nowrap')
         start_cell = table.add_cell('Start: %s' % fix_date(start_date))
         start_cell.add_attr('nowrap','nowrap')
         end_cell = table.add_cell('End: %s' % fix_date(end_date))
-        end_cell.add_attr('nowrap','nowrap')
+        end_cell.add_attr('nowrap', 'nowrap')
         active_cell = table.add_cell(active_status)
-        active_cell.add_attr('align','right')
-        active_cell.add_attr('colspan','3')
-        active_cell.add_style("width: 100%%;")
+        active_cell.add_attr('align', 'right')
+        active_cell.add_attr('colspan', '3')
+        active_cell.add_style("width: 100%;")
         if my.small:
             wo_cell.add_style('font-size: 8px;')
             stat_cell.add_style('font-size: 8px;')
@@ -1167,28 +1100,23 @@ class WorkOrderRow(BaseRefreshWdg):
                 error_edit.add_behavior(obs.get_add_wo_error_behavior(my.code))
                 uno = bbr.add_cell('&nbsp;')
                 er = bbr.add_cell(error_edit)
-                er.add_attr('align','right')
-                er.add_attr('valign','bottom')
-                er.add_attr('colspan','3')
-                er.add_attr('width','100%s' % '%')
-
+                er.add_attr('align', 'right')
+                er.add_attr('valign', 'bottom')
+                er.add_attr('colspan', '3')
+                er.add_attr('width', '100%')
 
             bbr.add_row()
 
             if not my.is_master and user_is_scheduler and task_exists:
-#                indie_button_time = time.time()
                 indie_button = IndieBigBoardSelectWdg(search_key=task.get_search_key(),indie_bigboard=task.get_value('indie_bigboard'),title_code=parent_obj.get_value('title_code'),lookup_code=my.code)
                 indie = bbr.add_cell(indie_button)
                 indie.add_attr('align','right')
                 indie.add_attr('valign','bottom')
-#                print "INDIE BUTTON TIME = %s" % (time.time() - indie_button_time)
 
-#                bb_time = time.time()
                 big_button = BigBoardSingleWOSelectWdg(search_key=task.get_search_key(),bigboard=task.get_value('bigboard'),title_code=parent_obj.get_value('title_code'),lookup_code=my.code)
                 bbw = bbr.add_cell(big_button)
                 bbw.add_attr('align','right')
                 bbw.add_attr('valign','bottom')
-#                print "BB TIME = %s" % (time.time() - bb_time)
 
             print_button = WorkOrderPrintLauncherWdg(work_order_code=my.code)
             prnt = bbr.add_cell(print_button)
@@ -1204,15 +1132,15 @@ class WorkOrderRow(BaseRefreshWdg):
             note_adder = ButtonSmallNewWdg(title="Add Note", icon=IconWdg.NOTE_ADD)
             note_adder.add_behavior(obs.get_launch_note_behavior(my.parent_sk, parent_obj.get_value('process')))
             nadd = bbr.add_cell(note_adder)
-            nadd.add_attr('align','right')
-            nadd.add_attr('valign','bottom')
+            nadd.add_attr('align', 'right')
+            nadd.add_attr('valign', 'bottom')
             nadd.add_style('cursor: pointer;')
 
             if user_is_scheduler:
                 add_eq_used_butt = ButtonSmallNewWdg(title="Add Equipment", icon=IconWdg.EQUIPMENT_ADD)
                 add_eq_used_butt.add_behavior(obs.get_eu_add_behavior(main_obj.get_value('process'),main_obj.get_search_key(), main_obj.get_value('code')))
                 eu_adder = bbr.add_cell(add_eq_used_butt)
-                eu_adder.add_attr('width','100%s' % '%')
+                eu_adder.add_attr('width','100%')
                 eu_adder.add_attr('align', 'right')
                 eu_adder.add_attr('valign', 'bottom')
                 eu_adder.add_style('cursor: pointer;')
@@ -1242,34 +1170,34 @@ class WorkOrderRow(BaseRefreshWdg):
                 if main_obj.get_value('templ_me') == False:
                     templ_button.add_behavior(obs.get_templ_wo_behavior(main_obj.get_value('templ_me'),main_obj.get_value('work_order_templ_code'),main_obj.get_search_key()))
                 templ_butt = bbr.add_cell(templ_button)
-                templ_butt.add_attr('class','templ_butt_%s' % my.sk)
-                templ_butt.add_attr('width','100%s' % '%')
+                templ_butt.add_attr('class', 'templ_butt_%s' % my.sk)
+                templ_butt.add_attr('width', '100%')
                 templ_butt.add_attr('align', 'right')
                 templ_butt.add_attr('valign', 'bottom')
             bl = bottom_buttons.add_cell(bbl)
-            bl.add_attr('valign','bottom')
-            bl.add_attr('align','left')
-            bl.add_attr('width','100%s' % '%')
+            bl.add_attr('valign', 'bottom')
+            bl.add_attr('align', 'left')
+            bl.add_attr('width', '100%')
             br = bottom_buttons.add_cell(bbr)
-            br.add_attr('valign','bottom')
+            br.add_attr('valign', 'bottom')
 
             bbs = table.add_cell(bottom_buttons)
-            bbs.add_attr('width','100%s' % '%')
-            bbs.add_attr('align','left')
-            bbs.add_attr('valign','bottom')
+            bbs.add_attr('width', '100%')
+            bbs.add_attr('align', 'left')
+            bbs.add_attr('valign', 'bottom')
 
             if user_is_scheduler:
                 src_row = table.add_row()
-                src_row.add_attr('class','wo_sources_row')
+                src_row.add_attr('class', 'wo_sources_row')
                 wos = WorkOrderSourcesRow(work_order_code=my.code, work_order_sk=my.sk, order_sk=my.order_sk)
                 wos_cell = table.add_cell(wos)
-                wos_cell.add_attr('colspan','4')
-                wos_cell.add_attr('class','wo_sources_%s' % my.sk)
+                wos_cell.add_attr('colspan', '4')
+                wos_cell.add_attr('class', 'wo_sources_%s' % my.sk)
 
         bottom = Table()
-        bottom.add_attr('width','100%s' % '%')
-        bottom.add_attr('cellpadding','0')
-        bottom.add_attr('cellspacing','0')
+        bottom.add_attr('width', '100%')
+        bottom.add_attr('cellpadding', '0')
+        bottom.add_attr('cellspacing', '0')
         for eu in eus:
             eu_sk = eu.get_search_key()
             if eu.get_value('client_code') in [None,'']:
@@ -1278,29 +1206,29 @@ class WorkOrderRow(BaseRefreshWdg):
             eu_row.add_attr('class', 'EquipmentUsedRowRow row_%s' % eu_sk)
             eu_obj = EquipmentUsedRow(sk=eu_sk, parent_sk=my.sk, order_sk=my.order_sk, parent_sid=my.search_id, groups_str=my.groups_str, user=my.user, display_mode=my.disp_mode, is_master=my.is_master_str,main_obj=eu)
             eu_cell = bottom.add_cell(eu_obj)
-            eu_cell.add_attr('width','100%s' % '%')
+            eu_cell.add_attr('width', '100%')
             eu_cell.add_attr('sk', eu_sk)
             eu_cell.add_attr('order_sk', my.order_sk)
             eu_cell.add_attr('parent_sk', my.sk )
             eu_cell.add_attr('parent_sid', my.search_id )
             eu_cell.add_attr('call_me', eu.get_value('name'))
             eu_cell.add_attr('wot_code', main_obj.get_value('work_order_templ_code'))
-            eu_cell.add_attr('my_class','EquipmentUsedRow')
-            eu_cell.add_attr('class','cell_%s' % eu_sk)
+            eu_cell.add_attr('my_class', 'EquipmentUsedRow')
+            eu_cell.add_attr('class', 'cell_%s' % eu_sk)
         tab2ret = Table()
-        tab2ret.add_attr('width','100%s' % '%')
+        tab2ret.add_attr('width', '100%')
         top_row = tab2ret.add_row()
-        top_row.add_attr('class','top_%s' % my.sk)
+        top_row.add_attr('class', 'top_%s' % my.sk)
         tab2ret.add_cell(table)
         bot_row = tab2ret.add_row()
         if not open_bottom:
             bot_row.add_style('display: none;')
         else:
             bot_row.add_style('display: table-row;')
-        bot_row.add_attr('class','bot_%s' % my.sk)
+        bot_row.add_attr('class', 'bot_%s' % my.sk)
         bot = tab2ret.add_cell(bottom)
         bot.add_style('padding-left: 40px;')
-#        print "WO ROW TIME = %s" % (time.time() - wo_row_time)
+
         return tab2ret
 
 
@@ -1329,36 +1257,35 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
         return what_to_ret
 
     def get_display(my):
-#        wo_sources_time = time.time()
         my.work_order_code = str(my.kwargs.get('work_order_code'))
         my.work_order_sk = str(my.kwargs.get('work_order_sk'))
         my.work_order_sk = my.server.build_search_key('twog/work_order', my.work_order_code)
         my.order_sk = str(my.kwargs.get('order_sk'))
         obs = OBScripts(order_sk=my.order_sk)
         wsource_search = Search("twog/work_order_sources")
-        wsource_search.add_filter('work_order_code',my.work_order_code)
+        wsource_search.add_filter('work_order_code', my.work_order_code)
         wo_sources = wsource_search.get_sobjects()
         table = Table()
-        table.add_attr('width','100%s' % '%')
-        table.add_attr('bgcolor','#c6c6e4')
+        table.add_attr('width', '100%')
+        table.add_attr('bgcolor', '#c6c6e4')
         table.add_style('border-bottom-left-radius', '10px')
         table.add_style('border-top-left-radius', '10px')
         table.add_row()
         source_limit = 4
         pass_search = Search("twog/work_order_passin")
-        pass_search.add_filter('work_order_code',my.work_order_code)
+        pass_search.add_filter('work_order_code', my.work_order_code)
         passins = pass_search.get_sobjects()
         sources = []
         inter_passins = []
         for passin in passins:
             if passin.get_value('deliverable_source_code') not in [None,'']:
                 source_search = Search("twog/source")
-                source_search.add_filter('code',passin.get_value('deliverable_source_code'))
+                source_search.add_filter('code', passin.get_value('deliverable_source_code'))
                 that_src = source_search.get_sobject()
                 sources.append(that_src)
             elif passin.get_value('intermediate_file_code') not in [None,'']:
                 inter_search = Search("twog/intermediate_file")
-                inter_search.add_filter('code',passin.get_value('intermediate_file_code'))
+                inter_search.add_filter('code', passin.get_value('intermediate_file_code'))
                 inter_file = inter_search.get_sobject()
                 inter_passins.append(inter_file)
 
@@ -1368,20 +1295,20 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
             if source_code not in seen:
                 seen.append(source_code)
                 source_search = Search("twog/source")
-                source_search.add_filter("code",source_code)
+                source_search.add_filter("code", source_code)
                 source = source_search.get_sobject()
                 sources.append(source)
 
         if len(sources) > 0:
             table.add_row()
             mr_title = table.add_cell('<b><u><i>Sources</i></u></b>')
-            mr_title.add_style('font-size: 90%s;' % '%')
+            mr_title.add_style('font-size: 90%;')
 
         count = 0
         for source in sources:
             inner_table = Table()
             inner_table.add_row()
-            celly = None
+
             if not source.get_value('high_security'):
                 celly = inner_table.add_cell('<font color="#3e3e3e"><b><u>(%s): %s</u></b></font>' % (source.get_value('barcode'),source.get_value('title')))
             else:
@@ -1393,18 +1320,18 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
             if count % source_limit == 0:
                 table.add_row()
             inner_cell = table.add_cell(inner_table)
-            inner_cell.add_attr('valign','top')
-            spacer = table.add_cell(' &nbsp;&nbsp; ')
+            inner_cell.add_attr('valign', 'top')
+            table.add_cell(' &nbsp;&nbsp; ')
             count = count + 1
 
         inter_pass_table = Table()
-        inter_pass_table.add_attr('width','100%s' % '%')
-        inter_pass_table.add_attr('bgcolor','#c6c6e4')
+        inter_pass_table.add_attr('width', '100%')
+        inter_pass_table.add_attr('bgcolor', '#c6c6e4')
         if len(inter_passins) > 0:
             inter_pass_table.add_row()
             mr_title = inter_pass_table.add_cell('<b><u><i>Intermediate Sources</i></u></b>')
-            mr_title.add_attr('nowrap','nowrap')
-            mr_title.add_style('font-size: 90%s;' % '%')
+            mr_title.add_attr('nowrap', 'nowrap')
+            mr_title.add_style('font-size: 90%;')
             if len(sources) < 1:
                 inter_pass_table.add_style('border-top-left-radius', '10px')
                 inter_pass_table.add_style('border-bottom-left-radius', '10px')
@@ -1413,17 +1340,17 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
             inner_table = Table()
             inner_table.add_row()
             celly = inner_table.add_cell('<font color="#3e3e3e"><b><u>%s</u></b></font>' % (intermediate.get_value('title')))
-            celly.add_attr('nowrap','nowrap')
+            celly.add_attr('nowrap', 'nowrap')
             celly.add_style('cursor: pointer;')
-            celly.add_style('font-size: 80%s;' % '%')
+            celly.add_style('font-size: 80%;')
             celly.add_behavior(obs.get_launch_wo_inter_behavior(my.work_order_code,my.work_order_sk,intermediate.get_value('code')))
             if count % source_limit == 0:
                 inter_pass_table.add_row()
             inner_cell = inter_pass_table.add_cell(inner_table)
             inner_cell.add_attr('valign','top')
-            spacer = inter_pass_table.add_cell(' &nbsp;&nbsp; ')
-            count = count + 1
+            inter_pass_table.add_cell(' &nbsp;&nbsp; ')
 
+            count += 1
 
         # Need to enter Interims and Delivs Here
         inter_table = Table()
@@ -1458,9 +1385,10 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
                 if count % source_limit == 0:
                     inter_table.add_row()
                 inner_cell = inter_table.add_cell(inner_table)
-                inner_cell.add_attr('valign','top')
-                spacer = inter_table.add_cell(' &nbsp;&nbsp; ')
-                count = count + 1
+                inner_cell.add_attr('valign', 'top')
+                inter_table.add_cell(' &nbsp;&nbsp; ')
+
+                count += 1
 
         # Need deliverables listed here
         deliv_table = Table()
@@ -1491,7 +1419,7 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
                     deliverable = deliverable[0]
                     inner_table = Table()
                     inner_table.add_row()
-                    celly = None
+
                     if not deliverable.get_value('high_security'):
                         celly = inner_table.add_cell('<font color="#3e3e3e"><b><u>(%s): %s</u></b></font>' % (deliverable.get_value('barcode'), deliverable.get_value('title')))
                     else:
@@ -1504,8 +1432,9 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
                         deliv_table.add_row()
                     inner_cell = deliv_table.add_cell(inner_table)
                     inner_cell.add_attr('valign','top')
-                    spacer = deliv_table.add_cell(' &nbsp;&nbsp; ')
-                    count = count + 1
+                    deliv_table.add_cell(' &nbsp;&nbsp; ')
+
+                    count += 1
                 else:
                     with open('/var/www/html/Lost_Sources','a') as lostsources:
                         lostsources.write('%s:%s SOURCE: %s\n' % (my.order_sk, my.work_order_code, deliv_code))
@@ -1526,32 +1455,32 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
         barcode_text_wdg = TextWdg('wo_barcode_insert')
         barcode_text_wdg.add_behavior(obs.get_wo_barcode_insert_behavior(my.work_order_code, my.work_order_sk))
         bct = table2.add_cell(barcode_text_wdg)
-        bct.add_attr('align','right')
-        bct.add_attr('width','100%s' % '%')
+        bct.add_attr('align', 'right')
+        bct.add_attr('width', '100%')
 
         two_gether = Table()
         two_gether.add_row()
         if len(sources) > 0:
             srcs = two_gether.add_cell(table)
-            srcs.add_attr('width','100%s' % '%')
-            srcs.add_attr('valign','top')
+            srcs.add_attr('width', '100%')
+            srcs.add_attr('valign', 'top')
         if len(inter_passins) > 0:
             ips = two_gether.add_cell(inter_pass_table)
-            ips.add_attr('width','100%s' % '%')
-            ips.add_attr('valign','top')
+            ips.add_attr('width', '100%')
+            ips.add_attr('valign', 'top')
         if len(wointers) > 0:
             intr = two_gether.add_cell(inter_table)
-            intr.add_attr('width','100%s' % '%')
-            intr.add_attr('valign','top')
+            intr.add_attr('width', '100%')
+            intr.add_attr('valign', 'top')
         if len(wodelivs) > 0:
             delvs = two_gether.add_cell(deliv_table)
-            delvs.add_attr('width','100%s' % '%')
-            delvs.add_attr('valign','top')
+            delvs.add_attr('width', '100%')
+            delvs.add_attr('valign', 'top')
         long = two_gether.add_cell(' ')
-        long.add_style('width: 100%s' % '%')
+        long.add_style('width: 100%')
         bcentry = two_gether.add_cell(table2)
-        bcentry.add_attr('valign','top')
-        bcentry.add_attr('align','right')
+        bcentry.add_attr('valign', 'top')
+        bcentry.add_attr('align', 'right')
 
         for source in sources:
             if source.get_value('children') in [None,'']:
@@ -1574,7 +1503,6 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
                 if len(wodelivs) > 0:
                     my.server.update(source.get_search_key(), {'children': update_str})
 
-#        print "WO SOURCES TIME = %s" % (time.time() - wo_sources_time)
         return two_gether
 
 
@@ -1600,7 +1528,6 @@ class EquipmentUsedRow(BaseRefreshWdg):
         my.off_color = '#c6aeae'
 
     def get_display(my):
-#        eq_used_row_time = time.time()
         my.sk = str(my.kwargs.get('sk'))
         my.code = my.sk.split('code=')[1]
         my.parent_sk = str(my.kwargs.get('parent_sk'))
@@ -1687,17 +1614,7 @@ class EquipmentUsedRow(BaseRefreshWdg):
             button.add_behavior(obs.get_template_single_eu_behavior(my.sk,eq_templ_code))
             top_buttons.add_cell(button)
         if my.small:
-            #select_check = CheckboxWdg('select_%s' % (my.code))
             select_check = CustomCheckboxWdg(name='select_%s' % my.code,value_field=my.code,checked='false',dom_class='ob_selector',parent_table="EquipmentUsedRow_%s" % my.code,normal_color=my.off_color,selected_color=my.on_color,code=my.code,ntype='equipment_used',search_key=my.sk,additional_js=obs.get_selected_color_behavior(my.code, 'EquipmentUsedRow', my.on_color, my.off_color))
-            #select_check.set_persistence()
-            #select_check.set_value(False)
-            #select_check.add_attr('code',my.code)
-            #select_check.add_attr('ntype','equipment_used')
-           # select_check.add_attr('parent_table','EquipmentUsedRow_%s' % my.code)
-           # select_check.add_attr('normal_color',my.off_color)
-           # select_check.add_attr('selected_color',my.on_color)
-           # select_check.add_attr('search_key',my.sk)
-           # select_check.add_behavior(obs.get_selected_color_behavior(my.code, 'EquipmentUsedRow', my.on_color, my.off_color))
             cb = top_buttons.add_cell(select_check)
         elif user_is_scheduler:
             xb = top_buttons.add_cell(my.x_butt)
@@ -1707,7 +1624,7 @@ class EquipmentUsedRow(BaseRefreshWdg):
         unit_cell = table.add_cell('UNITS: %s' % main_obj.get_value('units'))
         unit_cell.add_attr('nowrap','nowrap')
         unit_cell.add_style('font-size: 10px;')
-        second_cell = None
+
         if eq_length in [None,'']:
             if main_obj.get_value('units') in ['gb','tb']:
                 second_cell = table.add_cell('EST SIZE: %s' % main_obj.get_value('expected_duration'))
@@ -1726,9 +1643,9 @@ class EquipmentUsedRow(BaseRefreshWdg):
             else:
                 third_cell.add_style('font-size: 10px;')
         long_cell1 = table.add_cell(top_buttons)
-        long_cell1.add_attr('colspan','4')
-        long_cell1.add_attr('align','right')
-        long_cell1.add_style('width: 100%s' % '%')
+        long_cell1.add_attr('colspan', '4')
+        long_cell1.add_attr('align', 'right')
+        long_cell1.add_style('width: 100%')
         if my.small:
             eu_cell.add_style('font-size: 8px;')
             unit_cell.add_style('font-size: 8px;')
@@ -1740,10 +1657,9 @@ class EquipmentUsedRow(BaseRefreshWdg):
             second_cell.add_style('font-size: 10px;')
             long_cell1.add_style('font-size: 10px;')
         tab2ret = Table()
-        tab2ret.add_attr('width','100%s' % '%')
+        tab2ret.add_attr('width', '100%')
         top_row = tab2ret.add_row()
-        top_row.add_attr('class','top_%s' % my.sk)
+        top_row.add_attr('class', 'top_%s' % my.sk)
         tab2ret.add_cell(table)
-#        print "EQ USED ROW TIME = %s" % (time.time() - eq_used_row_time)
-        return table
 
+        return table
