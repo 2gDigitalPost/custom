@@ -8,7 +8,7 @@ from pyasm.widget import IconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 
-from order_builder_utils import OBScripts
+from order_builder_utils import OBScripts, get_selected_color_behavior
 
 
 class EquipmentUsedRow(BaseRefreshWdg):
@@ -119,7 +119,7 @@ class EquipmentUsedRow(BaseRefreshWdg):
             button.add_behavior(get_template_single_eu_behavior(my.order_sk, my.is_master_str, my.sk, eq_templ_code))
             top_buttons.add_cell(button)
         if my.small:
-            select_check = CustomCheckboxWdg(name='select_%s' % my.code,value_field=my.code,checked='false',dom_class='ob_selector',parent_table="EquipmentUsedRow_%s" % my.code,normal_color=my.off_color,selected_color=my.on_color,code=my.code,ntype='equipment_used',search_key=my.sk,additional_js=obs.get_selected_color_behavior(my.code, 'EquipmentUsedRow', my.on_color, my.off_color))
+            select_check = CustomCheckboxWdg(name='select_%s' % my.code, value_field=my.code, checked='false', dom_class='ob_selector', parent_table="EquipmentUsedRow_%s" % my.code, normal_color=my.off_color, selected_color=my.on_color, code=my.code, ntype='equipment_used', search_key=my.sk, additional_js=get_selected_color_behavior(my.code, 'EquipmentUsedRow', my.on_color, my.off_color))
             cb = top_buttons.add_cell(select_check)
         elif user_is_scheduler:
             xb = top_buttons.add_cell(my.x_butt)

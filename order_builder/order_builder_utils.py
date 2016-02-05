@@ -249,6 +249,29 @@ def get_save_task_info_behavior(task_sk, parent_sk, parent_pyclass, order_sk, is
     return behavior
 
 
+def get_selected_color_behavior(code, row_type, on_color, off_color):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try {
+    code = '%s';
+    row_type = '%s';
+    on_color = '%s';
+    off_color = '%s';
+    var row_el = document.getElementsByClassName(row_type + '_' + code)[0];
+    check_val = bvr.src_el.getAttribute('checked');
+    if(check_val == 'true') {
+        row_el.style.backgroundColor = on_color;
+    } else {
+        row_el.style.backgroundColor = off_color;
+    }
+}
+catch(err) {
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % (code, row_type, on_color, off_color)}
+    return behavior
+
+
 class OBScripts(BaseRefreshWdg):
     def init(my):
         my.order_sk = ''
@@ -626,30 +649,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (my.order_sk)}
-        return behavior
-
-    #MTM Type used to be "change" with the old way of doing checkboxes
-    def get_selected_color_behavior(my, code, row_type, on_color, off_color):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                               code = '%s';
-                               row_type = '%s';
-                               on_color = '%s';
-                               off_color = '%s';
-                               var row_el = document.getElementsByClassName(row_type + '_' + code)[0];
-                               check_val = bvr.src_el.getAttribute('checked');
-                               if(check_val == 'true'){
-                                   row_el.style.backgroundColor = on_color;
-                               }else{
-                                   row_el.style.backgroundColor = off_color;
-                               }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (code, row_type, on_color, off_color)}
         return behavior
 
     def get_add_wo_error_behavior(my, code): #NO SID NECC

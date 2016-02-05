@@ -9,7 +9,7 @@ from pyasm.widget import IconWdg, TextWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
-from order_builder_utils import OBScripts
+from order_builder_utils import OBScripts, get_selected_color_behavior
 from qc_reports import QCReportLauncherWdg
 
 from deliverable_count_wdg import DeliverableCountWdg
@@ -177,10 +177,10 @@ class TitleRow(BaseRefreshWdg):
                                              dom_class='ob_selector', parent_table="TitleRow_%s" % my.code,
                                              normal_color=my.off_color, selected_color=my.on_color, code=my.code,
                                              ntype='title', search_key=my.sk,
-                                             additional_js=obs.get_selected_color_behavior(my.code,
+                                             additional_js=get_selected_color_behavior(my.code,
                                                                                            'TitleRow',
-                                                                                           my.on_color,
-                                                                                           my.off_color))
+                                                                                       my.on_color,
+                                                                                       my.off_color))
 
             table.add_cell(select_check)
         elif user_is_scheduler:
@@ -607,7 +607,7 @@ class ProjRow(BaseRefreshWdg):
         top_buttons = Table()
         top_buttons.add_row()
         if my.small:
-            select_check = CustomCheckboxWdg(name='select_%s' % my.code,value_field=my.code,checked='false',dom_class='ob_selector',parent_table="ProjRow_%s" % my.code,normal_color=my.off_color,selected_color=my.on_color,code=my.code,ntype='proj',search_key=my.sk,task_sk=task_sk,additional_js=obs.get_selected_color_behavior(my.code, 'ProjRow', my.on_color, my.off_color))
+            select_check = CustomCheckboxWdg(name='select_%s' % my.code, value_field=my.code, checked='false', dom_class='ob_selector', parent_table="ProjRow_%s" % my.code, normal_color=my.off_color, selected_color=my.on_color, code=my.code, ntype='proj', search_key=my.sk, task_sk=task_sk, additional_js=get_selected_color_behavior(my.code, 'ProjRow', my.on_color, my.off_color))
             cb = top_buttons.add_cell(select_check)
         elif user_is_scheduler:
             xb = top_buttons.add_cell(my.x_butt)
@@ -1034,7 +1034,7 @@ class WorkOrderRow(BaseRefreshWdg):
         top_buttons = Table()
         top_buttons.add_row()
         if my.small:
-            select_check = CustomCheckboxWdg(name='select_%s' % my.code,value_field=my.code,checked='false',dom_class='ob_selector',parent_table="WorkOrderRow_%s" % my.code,process=main_obj.get_value('process'),work_group=main_obj.get_value('work_group'),proj_code=main_obj.get_value('proj_code'),title_code=main_obj.get_value('title_code'),order_code=order_code,task_code=main_obj.get_value('task_code'),normal_color=my.off_color,selected_color=my.on_color,code=my.code,ntype='work_order',search_key=my.sk,task_sk=task_sk,additional_js=obs.get_selected_color_behavior(my.code, 'WorkOrderRow', my.on_color, my.off_color))
+            select_check = CustomCheckboxWdg(name='select_%s' % my.code, value_field=my.code, checked='false', dom_class='ob_selector', parent_table="WorkOrderRow_%s" % my.code, process=main_obj.get_value('process'), work_group=main_obj.get_value('work_group'), proj_code=main_obj.get_value('proj_code'), title_code=main_obj.get_value('title_code'), order_code=order_code, task_code=main_obj.get_value('task_code'), normal_color=my.off_color, selected_color=my.on_color, code=my.code, ntype='work_order', search_key=my.sk, task_sk=task_sk, additional_js=get_selected_color_behavior(my.code, 'WorkOrderRow', my.on_color, my.off_color))
             cb = top_buttons.add_cell(select_check)
         elif user_is_scheduler:
             xb = top_buttons.add_cell(my.x_butt)
