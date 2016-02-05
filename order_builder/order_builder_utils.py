@@ -1461,27 +1461,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (work_order_code, work_order_sk, call_me, my.order_sk)}
         return behavior
 
-    def get_launch_prereq_behavior(my, sob_code, sob_st, sob_sk, sob_name, pipeline):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m21');
-                          var server = TacticServerStub.get();
-                          sob_code = '%s';
-                          sob_st = '%s';
-                          sob_sk = '%s';
-                          sob_name = '%s';
-                          pipeline = '%s';
-                          order_sk = '%s';
-                          spt.panel.load_popup('Checklist for ' + sob_name, 'order_builder.PreReqWdg', {sob_code: sob_code, sob_sk: sob_sk, sob_st: sob_st, sob_name: sob_name, pipeline: pipeline, order_sk: order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sob_code, sob_st, sob_sk, sob_name, pipeline, my.order_sk)}
-        return behavior
-
     def get_template_intermediate_passin_behavior(my, work_order_code, work_order_templ_code, passin_code):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
