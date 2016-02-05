@@ -14,5 +14,10 @@ from platform_tools import *
 from task_edit_widget import *
 from builder_tools_wdg import *
 from global_replacer_wdg import *
-from title_row import *
+
 from equipment_used_row import *
+from proj_row import *
+from sources_row import *
+from title_row import *
+from work_order_row import *
+from work_order_sources_row import *
