@@ -1,11 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns:asd="http://www.w3.org/1999/xhtml">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>2G HDCAM Label</title>
-    <style type="text/css">
 @media print {
 	html,body {
+		moz-margin: 0px;
+		moz-padding: 0px;
+		moz-border: 0px;
+		/*width: 800px;*/
 		width: 770px;
 		height: 980px;
 		background-image: url(HDCAM_bg.png);
@@ -13,8 +11,10 @@
 		background-size: contain;
 	}
 }
-
 body {
+	moz-margin: 0;
+	moz-padding: 0;
+	moz-border: 0px;
 	width: 770px;
 	height: 980px;
 	background-image: url(HDCAM_bg.png);
@@ -33,7 +33,6 @@ body {
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 }
-
 #lbl1b {
 	position: absolute;
 	text-align: left;
@@ -46,7 +45,6 @@ body {
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 }
-
 #lbl2a {
 	position: absolute;
 	text-align: left;
@@ -58,7 +56,6 @@ body {
 	-o-transform: rotate(-180deg);
 	height: 247px;
 }
-
 #lbl2b {
 	position: absolute;
 	text-align: left;
@@ -71,7 +68,6 @@ body {
 	-ms-transform: rotate(-180deg);
 	-o-transform: rotate(-180deg);
 }
-
 #lbl3a {
 	position: absolute;
 	text-align: left;
@@ -80,7 +76,6 @@ body {
 	top: 326px;
 	left: 31px;
 }
-
 #lbl3b {
 	position: absolute;
 	text-align: left;
@@ -89,7 +84,6 @@ body {
 	top: 326px;
 	left: 246px;
 }
-
 #lbl3c {
 	position: absolute;
 	text-align: left;
@@ -98,7 +92,6 @@ body {
 	top: 326px;
 	left: 436px;
 }
-
 #lbl4a {
 	position: absolute;
 	text-align: left;
@@ -111,7 +104,6 @@ body {
 	height: 247px;
 	width: 135px;
 }
-
 #lbl4b {
 	position: absolute;
 	text-align: left;
@@ -124,7 +116,6 @@ body {
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 }
-
 #lbl4c {
 	position: absolute;
 	text-align: left;
@@ -133,7 +124,6 @@ body {
 	top: 471px;
 	left: 1px;
 }
-
 #lbl5a {
 	position: absolute;
 	text-align: left;
@@ -146,7 +136,6 @@ body {
 	height: 247px;
 	width: 135px;
 }
-
 #lbl6a {
 	position: absolute;
 	text-align: left;
@@ -159,7 +148,6 @@ body {
 	height: 247px;
 	width: 135px;
 }
-
 #lbl7a {
 	position: absolute;
 	text-align: left;
@@ -172,7 +160,6 @@ body {
 	height: 247px;
 	width: 135px;
 }
-
 #lbl8a {
 	position: absolute;
 	text-align: left;
@@ -185,7 +172,6 @@ body {
 	height: 240px;
 	width: 120px;
 }
-
 #lbl8b {
 	position: absolute;
 	text-align: left;
@@ -198,7 +184,6 @@ body {
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 }
-
 #lbl9a {
 	position: absolute;
 	text-align: left;
@@ -211,7 +196,6 @@ body {
 	height: 240px;
 	width: 120px;
 }
-
 #lbl9b {
 	position: absolute;
 	text-align: left;
@@ -224,7 +208,6 @@ body {
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 }
-
 #lbl10a {
 	position: absolute;
 	float: left;
@@ -239,7 +222,6 @@ body {
 	height: 240px;
 	width: 120px;
 }
-
 #lbl10b {
 	position: absolute;
 	text-align: left;
@@ -258,6 +240,10 @@ body {
 	font-size: 18px;
 }
 
+#tiny {
+	font-family: Helvetica, Futura, Arial, Helvetica, sans-serif;
+	font-size: 6px;
+}
 .small {
 	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
 	font-size: 8px;
@@ -290,15 +276,32 @@ body {
 	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
 	font-size: 18px;
 }
-
 #semi_xxlarge {
 	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
 	font-size: 22px;
+}
+#xxlarge {
+	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
+	font-size: 24px;
+}
+#xxxlarge {
+	font-family: Helvetica, Futura, Impact, Arial Black, sans-serif;
+	font-size: 26px;
 }
 
 .tinyaddr {
 	font-family: Helvetica, Futura, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 6px;
+}
+
+#tinyaddrright {
+	float: right;
+	font-family: Helvetica, Futura, Verdana, Arial, Helvetica, sans-serif;
+	font-size: 6px;
+}
+#smalladdr {
+	font-family: Helvetica, Futura, Verdana, Arial, Helvetica, sans-serif;
+	font-size: 8px;
 }
 
 .smallgray {
@@ -332,255 +335,48 @@ body {
 	font-size: 7px;
 }
 
-.chleft_small {
+#chleft_small {
 	position: relative;
 	float: left;
 	width: 85px;
 }
-
-.chright_small {
+#chright_small {
 	position: relative;
 	float: right;
 	width: 85px;
 }
-
 #audio_large {
 	width: 300px;
 	font-family: Helvetica, Futura, Arial, Helvetica, sans-serif;
 	font-size: 10px;
 }
-
-.chleft_large {
+#chleft_large {
 	position: relative;
 	float: left;
 	width: 150px;
 }
-
-.chright_large {
+#chright_large {
 	position: relative;
 	float: right;
 	width: 150px;
 }
-
 #logo {
 	width: 175px;
 	font-family: Helvetica, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 6px;
 }
-
 #logoleft {
 	position: relative;
 	float: left;
 	width: 75px;
 }
-
 #addr {
 	position: relative;
 	float: right;
 	width: 80px;
 }
-    </style>
-</head>
-
-<%def name="address_info()">
-    2G Digital Post, Inc.<br />
-    280 East Magnolia Blvd<br />
-    Burbank, Ca 91502<br />
-    818.863.8900<br />
-</%def>
-
-<%def name="medium_label_with_date()">
-	<div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <span class="tinyaddr">
-	    ${address_info()}
-    </span>
-    <div class="medium">${DATE}</div>
-    <div class="medium">Std: ${STANDARD}</div>
-    <div class="medium">FR: ${FRAME_RATE}</div>
-    <div class="medium">Part: ${STRAT2G_PART}</div>
-    <div class="medium">TRT: ${TOTAL_RUN_TIME}</div>
-</%def>
-
-<%def name="medium_label_with_title()">
-	<div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <span class="tinyaddr">
-        ${address_info()}
-    </span>
-	<div class="medium">${WHOLETITLE}</div>
-    <div class="medium">Std: ${STANDARD}</div>
-    <div class="medium">FR: ${FRAME_RATE}</div>
-    <div class="medium">Part: ${STRAT2G_PART}</div>
-    <div class="medium">TRT: ${TOTAL_RUN_TIME}</div>
-</%def>
-
-<%def name="large_label()">
-    <div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <span class="tinyaddr">
-        ${address_info()}
-    </span>
-    <div class="large">Std: ${STANDARD}</div>
-    <div class="large">FR: ${FRAME_RATE}</div>
-    <div class="large">Part: ${STRAT2G_PART}</div>
-    <div class="large">TRT: ${TOTAL_RUN_TIME}</div>
-</%def>
-
-<%def name="audio_channels(size=None)">
-	% for left_channel, right_channel in zip(audio_channels_left, audio_channels_right):
-        % if size:
-            <div class="chleft_${size}">${left_channel}</div>
-            <div class="chright_${size}">${right_channel}</div>
-        % else:
-            <div class="chleft">${left_channel}</div>
-            <div class="chright">${right_channel}</div>
-        % endif
-    % endfor
-</%def>
-
-<body>
-
-<div id="lbl1a">
-	<div class="barcode">${BARCODE}</div>
-    <img src="2GLogo_small3_color2.png" width="58" height="42"><br />
-    <span class="tinyaddr">
-        ${address_info()}
-    </span>
-    <div class="small">${DATE}</div>
-    <div class="medium">Std: ${STANDARD}</div>
-    <div class="medium">FR: ${FRAME_RATE}</div>
-    <div class="medium">Part: ${STRAT2G_PART}</div>
-    <div class="medium">TRT: ${TOTAL_RUN_TIME}</div>
-</div>
-
-<div id="lbl1b">
-	<div class="smallgray">${CLIENT}</div>
-    <div class="semi_large">${WHOLETITLE}</div>
-    <div class="small">Version: ${VERSION}</div>
-    ${MTMINFOCHUNK_SMALL}
-    <br />
-    <div id="audio_small">
-	    ${audio_channels('small')}
-    </div>
-</div>
-
-<div id="lbl2a">
-	${medium_label_with_date()}
-</div>
-
-<div id="lbl2b">
-	<div class="smallgray">${CLIENT}</div>
-	<div class="semi_xlarge">${WHOLETITLE}</div>
-    <div class="medium">Version: ${VERSION}</div>
-    ${MTMINFOCHUNK_MEDIUM}
-	<br />
-    <br />
-    <div class="audio">
-	    ${audio_channels()}
-    </div>
-</div>
-
-<div id="lbl3a">
-  <div id="logo">
-    	<div id="logoleft">
-        	<img src="2GLogo_small3_color2.png" width="74" height="58">
-        </div>
-    	<div id="addr">
-            <div class="barcode">${BARCODE}</div>
-            <span class="tinyaddr">
-                ${address_info()}
-            </span>
-       </div>
-  </div>
-</div>
-
-<div id="lbl3b">
-	<div class="smallgray">${CLIENT}</div>
-	<div class="semi_xlarge">${WHOLETITLE}</div>
-</div>
-
-<div id="lbl3c">
-    <div class="medium">Part: ${STRAT2G_PART}</div>
-    <div class="medium">TRT: ${TOTAL_RUN_TIME}</div>
-</div>
-
-<div id="lbl4a">
-	${medium_label_with_date()}
-</div>
-
-<div id="lbl4b">
-	<div class="smallgray">${CLIENT}</div>
-	<div class="semi_large">${WHOLETITLE}</div>
-    <div class="medium">Version: ${VERSION}</div>
-    ${MTMINFOCHUNK_MEDIUM}
-    <br />
-    <div class="audio">
-	    ${audio_channels()}
-    </div>
-</div>
-
-<div id="lbl4c">
-	 <img src="5P_vertical.png">
-     <img src="5P_vertical.png">
-</div>
-
-<div id="lbl5a">
-    ${large_label()}
-</div>
-
-<div id="lbl6a">
-    ${large_label()}
-</div>
-
-<div id="lbl7a">
-	${medium_label_with_date()}
-</div>
-
-<div id="lbl8a">
-	${medium_label_with_title()}
-</div>
-
-<div id="lbl8b">
-	<div class="smallgray">${CLIENT}</div>
-	<div class="large">${WHOLETITLE}</div>
-    <div class="medium">Version: ${VERSION}</div>
-    ${MTMINFOCHUNK_MEDIUM}
-    <br />
-    <div class="audio">
-	    ${audio_channels()}
-    </div>
-</div>
-
-<div id="lbl9a">
-	${medium_label_with_title()}
-</div>
-
-<div id="lbl9b">
-	<div class="smallgray">${CLIENT}</div>
-	<div class="large">${WHOLETITLE}</div>
-    <div class="medium">Version: ${VERSION}</div>
-    ${MTMINFOCHUNK_MEDIUM}
-    <br />    
-    <div class="audio">
-	    ${audio_channels()}
-    </div>
-</div>
-
-<div id="lbl10a">
-	${medium_label_with_title()}
-</div>
-
-<div id="lbl10b">
-	<div class="smallgray">${CLIENT}</div>
-	<div id="semi_xxlarge">${WHOLETITLE}</div>
-    <div id="xlarge">Version: ${VERSION}</div>
-    ${MTMINFOCHUNK_LARGE}
-    <br />
-    <div id="audio_large">
-	    ${audio_channels('large')}
-    </div>
-</div>
-
-</body>
-</html>
+#addrleft {
+	position: relative;
+	float: left;
+	width: 180px;
+}
