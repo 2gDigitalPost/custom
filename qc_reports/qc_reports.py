@@ -1,4 +1,5 @@
-__all__ = ["QCReportLauncherWdg","QCReportClonerWdg","QCReportSelectorWdg","PreQualEvalLinesWdg","PrintQCReportWdg","ElementEvalAudioWdg","ElementEvalBarcodesWdg","ElementEvalLinesWdg","ReportTimecodeShifterWdg"]
+__all__ = ["QCReportLauncherWdg", "QCReportClonerWdg", "QCReportSelectorWdg", "PrintQCReportWdg", "ElementEvalAudioWdg",
+           "ElementEvalBarcodesWdg", "ElementEvalLinesWdg", "ReportTimecodeShifterWdg"]
 import tacticenv
 import os, datetime
 
