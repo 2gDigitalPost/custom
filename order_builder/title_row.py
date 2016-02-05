@@ -9,7 +9,7 @@ from pyasm.widget import IconWdg, TextWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
-from order_builder_utils import OBScripts, get_selected_color_behavior
+from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior
 from qc_reports import QCReportLauncherWdg
 
 from deliverable_count_wdg import DeliverableCountWdg
@@ -185,7 +185,7 @@ class TitleRow(BaseRefreshWdg):
             table.add_cell(select_check)
         elif user_is_scheduler:
             xb = table.add_cell(my.x_butt)
-            xb.add_attr('align','right')
+            xb.add_attr('align', 'right')
             xb.add_style('cursor: pointer;')
             xb.add_behavior(obs.get_killer_behavior(my.sk, my.parent_sk, 'OrderTable', '%s: %s' % (main_obj.get_value('title'),main_obj.get_value('episode'))))
         table.add_row()
@@ -216,8 +216,8 @@ class TitleRow(BaseRefreshWdg):
             deliverable_count = DeliverableCountWdg(title_code=my.code, order_sk=my.order_sk,
                                                     full_title=full_title_name)
             d_launcher = bottom_buttons.add_cell(deliverable_count)
-            d_launcher.add_attr('class','deliverable_count_%s' % my.code)
-            d_launcher.add_attr('valign','bottom')
+            d_launcher.add_attr('class', 'deliverable_count_%s' % my.code)
+            d_launcher.add_attr('valign', 'bottom')
             bottom_buttons.add_row()
             prereq_count = PreReqCountWdg(sob_code=my.code, sob_st='twog/title', sob_sk=my.sk,
                                           prereq_st='twog/title_prereq',
@@ -249,8 +249,8 @@ class TitleRow(BaseRefreshWdg):
                 stop_button = ButtonSmallNewWdg(title='Deactivate Title - Remove from Operator Views', icon='/context/icons/custom/stopsmall.png')
                 stop_button.add_behavior(get_deactivate_behavior(my.code))
                 sb = bottom_buttons.add_cell(stop_button)
-                sb.add_attr('id','stop_button_%s' % my.code)
-                sb.add_attr('align','right')
+                sb.add_attr('id', 'stop_button_%s' % my.code)
+                sb.add_attr('align', 'right')
 
                 mastering_icon = '/context/icons/custom/mastering_gray.png'
                 mastering_text = "Currently Doesn't Require QC Mastering. Change?"
@@ -303,7 +303,7 @@ class TitleRow(BaseRefreshWdg):
             si.add_attr('align', 'right')
 
             upload = ButtonSmallNewWdg(title="Upload", icon=IconWdg.PUBLISH)
-            upload.add_behavior(obs.get_upload_behavior(my.sk))
+            upload.add_behavior(get_upload_behavior(my.sk))
             up = bottom_buttons.add_cell(upload)
             up.add_attr('align', 'right')
 
@@ -320,11 +320,11 @@ class TitleRow(BaseRefreshWdg):
                                                                        main_obj.get_value('pipeline_code'),
                                                                        main_obj.get_search_key(),
                                                                        'TitleRow','%s: %s' % (main_obj.get_value('title'),main_obj.get_value('episode'))))
-                scratch = bottom_buttons.add_cell(pipe_button)
+                bottom_buttons.add_cell(pipe_button)
 
             if my.is_master and user_is_scheduler:
                 templer = ButtonSmallNewWdg(title="Template All", icon=IconWdg.TEMPLATE_DOWN)
-                templer.add_behavior(obs.get_template_all_behavior(my.code))
+                templer.add_behavior(get_template_all_behavior(my.order_sk, my.code, my.is_master_str))
                 tem = bottom_buttons.add_cell(templer)
                 tem.add_attr('align', 'right')
                 tem.add_style('cursor: pointer;')
@@ -349,7 +349,7 @@ class TitleRow(BaseRefreshWdg):
             explanation_cell.add_attr('colspan', '5')
 
         bottom = Table()
-        bottom.add_attr('width','100%')
+        bottom.add_attr('width', '100%')
         bottom.add_attr('cellpadding', '0')
         bottom.add_attr('cellspacing', '0')
         for proj in projs:
@@ -577,8 +577,8 @@ class ProjRow(BaseRefreshWdg):
         table = Table()
         table.add_attr('class','ProjRow_%s' % my.code)
         table.add_attr('id',main_obj.get_value('code'))
-        table.add_attr('cellpadding','0')
-        table.add_attr('cellspacing','0')
+        table.add_attr('cellpadding', '0')
+        table.add_attr('cellspacing', '0')
         table.add_style('border-collapse', 'separate')
         table.add_style('border-spacing', '25px 0px')
         table.add_style('color: #1d216a;')
@@ -682,7 +682,7 @@ class ProjRow(BaseRefreshWdg):
                     due.add_attr('align','right')
 
             upload = ButtonSmallNewWdg(title="Upload", icon=IconWdg.PUBLISH)
-            upload.add_behavior(obs.get_upload_behavior(my.sk))
+            upload.add_behavior(get_upload_behavior(my.sk))
             up = bottom_buttons.add_cell(upload)
             up.add_attr('align','right')
             note_adder = ButtonSmallNewWdg(title="Add Note", icon=IconWdg.NOTE_ADD)
@@ -1125,7 +1125,7 @@ class WorkOrderRow(BaseRefreshWdg):
             prnt.add_attr('valign','bottom')
 
             upload = ButtonSmallNewWdg(title="Upload", icon=IconWdg.PUBLISH)
-            upload.add_behavior(obs.get_upload_behavior(my.sk))
+            upload.add_behavior(get_upload_behavior(my.sk))
             up = bbr.add_cell(upload)
             up.add_attr('align','right')
             up.add_attr('valign','bottom')
@@ -1758,4 +1758,104 @@ catch(err) {
     spt.alert(spt.exception.handler(err));
 }
      ''' % (search_key, name)}
+    return behavior
+
+
+def get_template_all_behavior(order_sk, title_code, is_master_str):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try {
+    if(confirm('Are you sure you want to template this Title pipeline now? Are you finished building the pipeline with all its bits and pieces?')) {
+        spt.app_busy.show("Allllrighty then. We're Templating it now...");
+        var server = TacticServerStub.get();
+        var order_sk = '%s';
+        var title_code = '%s';
+        var is_master_str = '%s';
+        var title_sk = server.build_search_key('twog/title', title_code);
+        var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+        var allowed_titles = top_el.getAttribute('allowed_titles');
+        if(allowed_titles == 'NOTHING|NOTHING') {
+            allowed_titles = '';
+        }
+        projs = server.eval("@SOBJECT(twog/proj['title_code','" + title_code + "'])");
+        bad_projs = [];
+        bad_wos = [];
+        partially_rejected = false;
+        for(var r = 0; r < projs.length; r++){
+            // DO PROJ STUFF HERE, BUILD LIST OF BAD PROJS (cant template)
+            proj_templ_code = projs[r].proj_templ_code;
+            proj_others = server.eval("@SOBJECT(twog/proj['templ_me','true']['proj_templ_code','" + proj_templ_code + "']['code','!=','" + projs[r].code + "'])");
+            if(proj_others.length == 0){
+                // IF PROJ WAS GOOD, DO PROJ'S WO'S
+                server.update(projs[r].__search_key__, {'templ_me': 'true', 'specs': projs[r].specs + ' '});
+                wos = server.eval("@SOBJECT(twog/work_order['proj_code','" + projs[r].code + "'])")
+                for(var v = 0; v < wos.length; v++){
+                    work_order_templ_code = wos[v].work_order_templ_code;
+                    wo_others = server.eval("@SOBJECT(twog/work_order['templ_me','true']['work_order_templ_code','" + work_order_templ_code + "']['code','!=','" + wos[v].code + "'])");
+                    if(wo_others.length == 0){
+                        server.update(wos[v].__search_key__, {'templ_me': 'true', 'instructions': wos[v].instructions + ' '});
+                        // now do the equipment_used
+                        all_wot_eqts = server.eval("@SOBJECT(twog/equipment_used_templ['work_order_templ_code','" + work_order_templ_code + "'])");
+                        equip = server.eval("@SOBJECT(twog/equipment_used['work_order_code','" + wos[v].code + "'])")
+                        for(var w = 0; w < all_wot_eqts.length; w++){
+                            eqt_code = all_wot_eqts[w].code;
+                            at_least_one = false;
+                            for(var b = 0; b < equip.length; b++){
+                                if(equip[b].equipment_used_templ_code == eqt_code){
+                                    at_least_one = true;
+                                }
+                            }
+                            if(!at_least_one){
+                                server.delete_sobject(all_wot_eqts[w].__search_key__);
+                            }
+                        }
+                        equip = server.eval("@SOBJECT(twog/equipment_used['work_order_code','" + wos[v].code + "'])")
+                        for(var t = 0; t < equip.length; t++) {
+                            eq_code = equip[t].code;
+                            eq_templ_code = equip[t].equipment_used_templ_code;
+                            if(eq_templ_code != '' && eq_templ_code != null){
+                                eqt_sk = server.build_search_key('twog/equipment_used_templ', eq_templ_code);
+                                server.update(eqt_sk, {'work_order_templ_code': work_order_templ_code, 'name': equip[t].name, 'description': equip[t].description, 'client_code': equip[t].client_code, 'equipment_code': equip[t].equipment_code, 'expected_cost': equip[t].expected_cost, 'expected_duration': equip[t].expected_duration, 'expected_quantity': equip[t].expected_quantity, 'units': equip[t].units})
+                            } else {
+                                templ = server.insert('twog/equipment_used_templ',{'work_order_templ_code': work_order_templ_code, 'name': equip[t].name, 'description': equip[t].description, 'client_code': equip[t].client_code, 'equipment_code': equip[t].equipment_code, 'expected_cost': equip[t].expected_cost, 'expected_duration': equip[t].expected_duration, 'expected_quantity': equip[t].expected_quantity, 'units': equip[t].units})
+                                server.update(equip[t].__search_key__, {'equipment_used_templ_code': templ.code})
+                            }
+                       }
+                    } else {
+                        bad_wos.push(wos[v].code + ': ' + wos[v].process);
+                        partially_rejected = true;
+                    }
+                }
+            } else {
+                bad_projs.push(projs[r].code + ': ' + projs[r].process);
+                partially_rejected = true;
+            }
+        }
+        spt.app_busy.hide();
+        if(partially_rejected) {
+            alert('Cannot template the following projects, please notify the Admin' + bad_projs);
+            alert('Cannot template the following work_orders, please notify the Admin' + bad_wos);
+        } else {
+            //reload
+            order_sk = top_el.getAttribute('order_sk');
+            display_mode = top_el.getAttribute('display_mode');
+            user = top_el.getAttribute('user');
+            groups_str = top_el.get('groups_str');
+            allowed_titles = top_el.getAttribute('allowed_titles');
+            parent_el = top_el.getElementsByClassName('cell_' + order_sk)[0];
+            found_parent_sk = parent_el.get('parent_sk');
+            found_parent_sid = parent_el.get('parent_sid');
+            is_master = 'true';
+            send_data = {sk: order_sk, user: user, groups_str: groups_str, allowed_titles: allowed_titles, parent_sid: found_parent_sid, parent_sk: found_parent_sk, order_sk: order_sk, display_mode: display_mode, is_master: is_master};
+            parent_pyclass = 'OrderTable';
+            send_data['allowed_titles'] = allowed_titles;
+            spt.api.load_panel(parent_el, 'order_builder.' + parent_pyclass, send_data);
+            spt.app_busy.hide();
+        }
+    }
+}
+catch(err){
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % (order_sk, title_code, is_master_str)}
     return behavior

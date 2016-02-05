@@ -272,6 +272,26 @@ catch(err) {
     return behavior
 
 
+def get_upload_behavior(sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try {
+    var my_sk = '%s';
+    var class_name = 'uploader.CustomHTML5UploadWdg';
+
+    kwargs = {
+        'sk': my_sk
+    };
+
+    spt.panel.load_popup('Upload', class_name, kwargs);
+}
+catch(err) {
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % sk}
+    return behavior
+
+
 class OBScripts(BaseRefreshWdg):
     def init(my):
         my.order_sk = ''
@@ -670,104 +690,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (my.order_sk, my.user, code)}
         return behavior
 
-    def get_template_all_behavior(my, title_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                           if(confirm('Are you sure you want to template this Title pipeline now? Are you finished building the pipeline with all its bits and pieces?')){
-                                   spt.app_busy.show("Allllrighty then. We're Templating it now...");
-                                   var server = TacticServerStub.get();
-                                   var order_sk = '%s';
-                                   var title_code = '%s';
-                                   var is_master_str = '%s';
-                                   var title_sk = server.build_search_key('twog/title', title_code);
-                                   var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
-                                   var allowed_titles = top_el.getAttribute('allowed_titles');
-                                   if(allowed_titles == 'NOTHING|NOTHING'){
-                                      allowed_titles = '';
-                                   }
-                                   projs = server.eval("@SOBJECT(twog/proj['title_code','" + title_code + "'])");
-                                   bad_projs = [];
-                                   bad_wos = [];
-                                   partially_rejected = false;
-                                   for(var r = 0; r < projs.length; r++){
-                                       // DO PROJ STUFF HERE, BUILD LIST OF BAD PROJS (cant template)
-                                       proj_templ_code = projs[r].proj_templ_code;
-                                       proj_others = server.eval("@SOBJECT(twog/proj['templ_me','true']['proj_templ_code','" + proj_templ_code + "']['code','!=','" + projs[r].code + "'])");
-                                       if(proj_others.length == 0){
-                                           // IF PROJ WAS GOOD, DO PROJ'S WO'S
-                                           server.update(projs[r].__search_key__, {'templ_me': 'true', 'specs': projs[r].specs + ' '});
-                                           wos = server.eval("@SOBJECT(twog/work_order['proj_code','" + projs[r].code + "'])")
-                                           for(var v = 0; v < wos.length; v++){
-                                               work_order_templ_code = wos[v].work_order_templ_code;
-                                               wo_others = server.eval("@SOBJECT(twog/work_order['templ_me','true']['work_order_templ_code','" + work_order_templ_code + "']['code','!=','" + wos[v].code + "'])");
-                                               if(wo_others.length == 0){
-                                                   server.update(wos[v].__search_key__, {'templ_me': 'true', 'instructions': wos[v].instructions + ' '});
-                                                   // now do the equipment_used
-                                                   all_wot_eqts = server.eval("@SOBJECT(twog/equipment_used_templ['work_order_templ_code','" + work_order_templ_code + "'])");
-                                                   equip = server.eval("@SOBJECT(twog/equipment_used['work_order_code','" + wos[v].code + "'])")
-                                                   for(var w = 0; w < all_wot_eqts.length; w++){
-                                                       eqt_code = all_wot_eqts[w].code;
-                                                       at_least_one = false;
-                                                       for(var b = 0; b < equip.length; b++){
-                                                           if(equip[b].equipment_used_templ_code == eqt_code){
-                                                               at_least_one = true;
-                                                           }
-                                                       }
-                                                       if(!at_least_one){
-                                                           server.delete_sobject(all_wot_eqts[w].__search_key__);
-                                                       }
-                                                   }
-                                                   equip = server.eval("@SOBJECT(twog/equipment_used['work_order_code','" + wos[v].code + "'])")
-                                                   for(var t = 0; t < equip.length; t++){
-                                                           eq_code = equip[t].code;
-                                                           eq_templ_code = equip[t].equipment_used_templ_code;
-                                                           if(eq_templ_code != '' && eq_templ_code != null){
-                                                              eqt_sk = server.build_search_key('twog/equipment_used_templ', eq_templ_code);
-                                                              server.update(eqt_sk, {'work_order_templ_code': work_order_templ_code, 'name': equip[t].name, 'description': equip[t].description, 'client_code': equip[t].client_code, 'equipment_code': equip[t].equipment_code, 'expected_cost': equip[t].expected_cost, 'expected_duration': equip[t].expected_duration, 'expected_quantity': equip[t].expected_quantity, 'units': equip[t].units})
-                                                          }else{
-                                                              templ = server.insert('twog/equipment_used_templ',{'work_order_templ_code': work_order_templ_code, 'name': equip[t].name, 'description': equip[t].description, 'client_code': equip[t].client_code, 'equipment_code': equip[t].equipment_code, 'expected_cost': equip[t].expected_cost, 'expected_duration': equip[t].expected_duration, 'expected_quantity': equip[t].expected_quantity, 'units': equip[t].units})
-                                                              server.update(equip[t].__search_key__, {'equipment_used_templ_code': templ.code})
-                                                          }
-                                                   }
-                                               }else{
-                                                   bad_wos.push(wos[v].code + ': ' + wos[v].process);
-                                                   partially_rejected = true;
-                                               }
-                                           }
-                                       }else{
-                                           bad_projs.push(projs[r].code + ': ' + projs[r].process);
-                                           partially_rejected = true;
-                                       }
-                                   }
-                                   spt.app_busy.hide();
-                                   if(partially_rejected){
-                                       alert('Cannot template the following projects, please notify the Admin' + bad_projs);
-                                       alert('Cannot template the following work_orders, please notify the Admin' + bad_wos);
-                                   }else{
-                                       //reload
-                                      order_sk = top_el.getAttribute('order_sk');
-                                      display_mode = top_el.getAttribute('display_mode');
-                                      user = top_el.getAttribute('user');
-                                      groups_str = top_el.get('groups_str');
-                                      allowed_titles = top_el.getAttribute('allowed_titles');
-                                      parent_el = top_el.getElementsByClassName('cell_' + order_sk)[0];
-                                      found_parent_sk = parent_el.get('parent_sk');
-                                      found_parent_sid = parent_el.get('parent_sid');
-                                      is_master = 'true';
-                                      send_data = {sk: order_sk, user: user, groups_str: groups_str, allowed_titles: allowed_titles, parent_sid: found_parent_sid, parent_sk: found_parent_sk, order_sk: order_sk, display_mode: display_mode, is_master: is_master};
-                                      parent_pyclass = 'OrderTable';
-                                      send_data['allowed_titles'] = allowed_titles;
-                                      spt.api.load_panel(parent_el, 'order_builder.' + parent_pyclass, send_data);
-                                      spt.app_busy.hide();
-                                   }
-                           }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
-         ''' % (my.order_sk, title_code, my.is_master_str)}
-        return behavior
 
     def get_templ_wo_behavior(my, templ_me, wo_templ_code, sk):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
@@ -3116,23 +3038,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (code, work_order_name)}
-        return behavior
-
-    def get_upload_behavior(my, sk):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var my_sk = '%s';
-                          var class_name = 'uploader.CustomHTML5UploadWdg';
-                          kwargs = {
-                                           'sk': my_sk
-                                   };
-                          spt.panel.load_popup('Upload', class_name, kwargs);
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
-         ''' % sk}
         return behavior
 
     def old_get_upload_behavior(my, search_key, process, ctx, processes):
