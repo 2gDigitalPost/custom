@@ -15,3 +15,4 @@ from task_edit_widget import *
 from builder_tools_wdg import *
 from global_replacer_wdg import *
 from title_row import *
+from equipment_used_row import *

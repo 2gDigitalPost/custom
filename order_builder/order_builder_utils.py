@@ -4150,58 +4150,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (eq_sk, eq_templ_code, work_order_code, wot_code, my.order_sk)}
         return behavior
 
-    def get_template_single_eu_behavior(my,eq_sk,eq_templ_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        function oc(a){
-                            var o = {};
-                            for(var i=0;i<a.length;i++){
-                                o[a[i]]='';
-                            }
-                            return o;
-                        }
-                        try{
-                          //alert('m68');
-                          var server = TacticServerStub.get();
-                          var eq_sk = '%s'; //this is the equipment code
-                          var eq_templ_code = '%s';
-                          var order_sk = '%s';
-                          var is_master_str = '%s';
-                          var eq_code = eq_sk.split('code=')[1];
-                          //var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder_' + order_sk);
-                          var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
-                          display_mode = top_el.getAttribute('display_mode');
-                          groups_str = top_el.getAttribute('groups_str');
-                          user = top_el.getAttribute('user');
-                          var client_code = top_el.get('client');
-                          my_cell = top_el.getElementsByClassName('cell_' + eq_sk)[0];
-                          sk = eq_sk;
-                          parent_sk = my_cell.getAttribute('parent_sk')
-                          wo_code = parent_sk.split('code=')[1];
-                          wot_code = my_cell.getAttribute('wot_code');
-                          parent_sid = my_cell.getAttribute('parent_sid')
-                          order_sk = my_cell.getAttribute('order_sk')
-                          if(eq_templ_code != ''){
-                              eqt_sk = server.build_search_key('twog/equipment_used_templ', eq_templ_code);
-                              server.retire_sobject(eqt_sk);
-                              server.update(eq_sk, {'equipment_used_templ_code': ''})
-                          }else{
-                              me_expr = "@SOBJECT(twog/equipment_used['code','" + eq_code + "'])";
-                              eq = server.eval(me_expr)[0];
-                              templ = server.insert('twog/equipment_used_templ',{'work_order_templ_code': wot_code, 'name': eq.name, 'description': eq.description, 'client_code': client_code, 'equipment_code': eq.equipment_code, 'expected_cost': eq.expected_cost, 'expected_duration': eq.expected_duration, 'expected_quantity': eq.expected_quantity, 'units': eq.units})
-                              server.update(eq_sk, {'equipment_used_templ_code': templ.code})
-                          }
-
-                          spt.api.load_panel(my_cell, 'order_builder.EquipmentUsedRow', {'sk': sk, 'parent_sk': parent_sk, 'parent_sid': parent_sid, 'order_sk': order_sk, 'display_mode': display_mode, 'user': user, 'groups_str': groups_str, is_master: is_master_str});
-
-
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (eq_sk, eq_templ_code, my.order_sk, my.is_master_str)}
-        return behavior
 
     def get_templ_eus_behavior(my, wo_code, wo_sk, wot_code): #NO SID NECC
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
