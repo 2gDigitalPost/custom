@@ -1,6 +1,15 @@
-__all__ = ["OrderBuilderLauncherWdg","TitleSelectorWdg","TitleDuePrioBBWdg","TitleCloneSelectorWdg","TitleDeletorWdg","TitleProjStatusTriggerWdg","OrderBuilder","QuickEditWdg","ErrorEntryLauncherWdg","ErrorEntryWdg","OrderTable","TitleRow","AddWorkOrderWdg","AddProjWdg","EditHackPipe","HackPipeConnectWdg","TitleSourceInspectorWdg","DeliverableWdg","IntermediateEditWdg","DeliverableEditWdg","PreReqWdg","WorkOrderSourceAddWdg","TwogEasyCheckinWdg","OutsideBarcodesListWdg","NewSourceWdg","SourceEditWdg","ProjDueDateChanger","OutFilesWdg","SourcePortalWdg","IntermediatePassinAddWdg","DeliverablePassinAddWdg","DeliverableAddWdg","IntermediateFileAddWdg","TitleAdderWdg","EquipmentUsedAdderWdg","EquipmentUsedMultiAdderWdg","OperatorErrorDescriptPopupWdg","ExternalRejectionReasonWdg","Barcoder","TitleRedoWdg","MultiManualAdderWdg","OBScripts"]
+__all__ = ["OrderBuilderLauncherWdg", "TitleSelectorWdg", "TitleDuePrioBBWdg", "TitleCloneSelectorWdg",
+           "TitleDeletorWdg", "TitleProjStatusTriggerWdg", "OrderBuilder", "QuickEditWdg", "ErrorEntryWdg",
+           "OrderTable", "TitleRow", "AddWorkOrderWdg", "AddProjWdg", "EditHackPipe", "HackPipeConnectWdg",
+           "TitleSourceInspectorWdg", "DeliverableWdg", "IntermediateEditWdg", "DeliverableEditWdg", "PreReqWdg",
+           "WorkOrderSourceAddWdg", "TwogEasyCheckinWdg", "OutsideBarcodesListWdg", "NewSourceWdg", "SourceEditWdg",
+           "ProjDueDateChanger", "OutFilesWdg", "SourcePortalWdg", "IntermediatePassinAddWdg",
+           "DeliverablePassinAddWdg", "DeliverableAddWdg", "IntermediateFileAddWdg", "TitleAdderWdg",
+           "EquipmentUsedAdderWdg", "EquipmentUsedMultiAdderWdg", "OperatorErrorDescriptPopupWdg",
+           "ExternalRejectionReasonWdg", "Barcoder", "TitleRedoWdg", "MultiManualAdderWdg"]
 
 import tacticenv
+from tactic_client_lib import TacticServerStub
 from pyasm.common import Environment
 from pyasm.biz import *
 from pyasm.web import Table, DivWdg
@@ -22,7 +31,7 @@ from common_tools.common_functions import fix_date
 from builder_tools_wdg import BuilderTools
 from task_edit_widget import TaskEditWdg
 from title_row import TitleRow
-from order_builder_utils import OBScripts
+from order_builder_utils import OBScripts, get_upload_behavior
 
 
 class OrderBuilderLauncherWdg(BaseTableElementWdg):
@@ -85,11 +94,10 @@ class TitleSelectorWdg(BaseTableElementWdg):
         nothing = 'true'
 
     def get_display(my):
-        from tactic_client_lib import TacticServerStub
         user_name = Environment.get_user_name() 
         expression_lookup = {'twog/order': "@SOBJECT(twog/order['code','REPLACE_ME'])", 'twog/title': "@SOBJECT(twog/title['code','REPLACE_ME'].twog/order)", 'twog/proj': "@SOBJECT(twog/proj['code','REPLACE_ME'].twog/title.twog/order)", 'twog/work_order': "@SOBJECT(twog/work_order['code','REPLACE_ME'].twog/proj.twog/title.twog/order)", 'twog/equipment_used': "@SOBJECT(twog/equipment_used['code','REPLACE_ME'].twog/work_order.twog/proj.twog/title.twog/order)", 'twog/status_log': "@SOBJECT(twog/order['code','REPLACE_ME'])"}
         server = TacticServerStub.get()
-        code = my.kwargs.get('code');
+        code = my.kwargs.get('code')
         order_code = ''
         order = None
         #Depending on the code of the object passed in (could be a work order, project, title, order, etc), get the order object
@@ -188,23 +196,7 @@ class TitleSelectorWdg(BaseTableElementWdg):
                 display_mode_selector.append_option('Quick Edit','Small')
             table.add_cell(display_mode_selector)
             #Toggle behavior sets all checkboxes to selected or not selected
-#MTM - using old checks, this is how you do it            toggle_behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-#MTM - using old checks, this is how you do it                            try{
-#MTM - using old checks, this is how you do it                                var top_el = spt.api.get_parent(bvr.src_el, '.allowed_titles_selector');
-#MTM - using old checks, this is how you do it                                inputs = top_el.getElementsByTagName('input');
-#MTM - using old checks, this is how you do it                                var curr_val = bvr.src_el.checked;
-#MTM - using old checks, this is how you do it                                for(var r = 0; r < inputs.length; r++){
-#MTM - using old checks, this is how you do it                                    if(inputs[r].type == 'checkbox' && inputs[r].name != 'chk_toggler'){
-#MTM - using old checks, this is how you do it                                        inputs[r].checked = curr_val;
-#MTM - using old checks, this is how you do it                                    }
-#MTM - using old checks, this is how you do it                                }
-#MTM - using old checks, this is how you do it                    }
-#MTM - using old checks, this is how you do it                    catch(err){
-#MTM - using old checks, this is how you do it                              spt.app_busy.hide();
-#MTM - using old checks, this is how you do it                              spt.alert(spt.exception.handler(err));
-#MTM - using old checks, this is how you do it                              //alert(err);
-#MTM - using old checks, this is how you do it                    }
-#MTM - using old checks, this is how you do it             '''}
+
             toggle_behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                             try{
                                 var checked_img = '<img src="/context/icons/custom/custom_checked.png"/>'
@@ -231,37 +223,24 @@ class TitleSelectorWdg(BaseTableElementWdg):
                     }
              '''}
             client_status_colors = {'Assignment': '#fcaf88', 'Pending': '#d7d7d7', 'In Progress': '#f5f3a4', 'In_Progress': '#f5f3a4', 'In Production': '#f5f3a4', 'In_Production': '#f5f3a4', 'In production': '#f5f3a4', 'In_production': '#f5f3a4', 'Waiting': '#ffd97f', 'Need Assistance': '#fc88fb', 'Need_Assistance': '#fc88fb', 'Review': '#888bfc', 'Approved': '#d4b5e7', 'On Hold': '#e8b2b8', 'On_Hold': '#e8b2b8', 'Client Response': '#ddd5b8', 'Completed': '#b7e0a5','Ready': '#b2cee8', 'Internal Rejection': '#ff0000', 'External Rejection': '#ff0000', 'Rejected': '#ff0000', 'Failed QC': '#ff0000', 'Not Set': '#d7d7d7', 'Waiting on client materials': '#ffd97f', 'Materials received': '#b2cee8', 'QC Rejected': '#ff0000', 'QC Passed': '#d4b5e7', 'QC rejected': '#ff0000', 'QC passed': '#d4b5e7', 'Fix Needed': '#c466a1', 'Need Buddy Check': '#e3701a', 'DR In_Progress': '#d6e0a4', 'DR In Progress': '#d6e0a4','Amberfin01_In_Progress':'#D8F1A8', 'Amberfin01 In Progress':'#D8F1A8', 'Amberfin02_In_Progress':'#F3D291',  'Amberfin02 In Progress':'#F3D291','BATON In_Progress': '#c6e0a4', 'BATON In Progress': '#c6e0a4','Export In_Progress': '#796999', 'Export In Progress': '#796999','Buddy Check In_Progress': '#1aade3','Buddy Check In Progress': '#1aade3', 'Not Set' : '#FFFFCC'} 
-            #No need for the toggler if there's only 1 title or less
+            # No need for the toggler if there's only 1 title or less
             if len(titles) > 1:
-                #toggler = CheckboxWdg('chk_toggler')
                 toggler = CustomCheckboxWdg(name='chk_toggler',additional_js=toggle_behavior,value_field='toggler',id='selection_toggler',checked='true',text='<b><- Select/Deselect ALL</b>',text_spot='right',text_align='left',nowrap='nowrap')
-                #toggler.set_persistence()
-                #toggler.set_value(True)
-                #toggler.add_behavior(toggle_behavior)
+
                 table.add_row()
                 table.add_cell(toggler)
-                #table.add_cell('<b><- Select/Deselect ALL</b>')
                 table.add_cell('&nbsp;&nbsp;&nbsp;')
                 table.add_cell('<b>Status</b>')
                 table.add_cell('&nbsp;&nbsp;&nbsp;')
                 table.add_cell('<b>Client Status</b>')
-            #Display the selection list of titles 
+            # Display the selection list of titles
             for title in titles:
                 table.add_row()
 
-
-
-#MTM - using old checks, this is how you do it                checkbox = CheckboxWdg('allowed_title_%s' % title.get('code'))
-#MTM - using old checks, this is how you do it                checkbox.set_persistence()
-#MTM - using old checks, this is how you do it                if title.get('code') in current_titles or current_titles == '':
-#MTM - using old checks, this is how you do it                    checkbox.set_value(True)
-#MTM - using old checks, this is how you do it                else:
-#MTM - using old checks, this is how you do it                    checkbox.set_value(False)
                 tname = title.get('title')
                 if title.get('episode') not in [None,'']:
                     tname = '%s: %s' % (tname, title.get('episode'))
 
-                check_val = 'false'
                 if title.get('code') in current_titles or current_titles == '':
                     check_val = 'true'
                 else:
@@ -269,8 +248,7 @@ class TitleSelectorWdg(BaseTableElementWdg):
                 checkbox = CustomCheckboxWdg(name='allowed_titles_%s' % title.get('code'),value_field=title.get('code'),checked=check_val,text=tname,text_spot='right',text_align='left',nowrap='nowrap',dom_class='title_selector') 
 
                 ck = table.add_cell(checkbox)
-                #name = table.add_cell(tname)
-                #name.add_attr('nowrap','nowrap')
+
                 table.add_cell('&nbsp;&nbsp;&nbsp;')
                 tstatus = title.get('status')
                 if tstatus in [None,'']:
@@ -358,18 +336,14 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
     #This is a widget that will allow you to change the due date, priority and bigboard values on multiple orders at the same time
     def init(my):
         nothing = 'true'
-        my.checked = '/context/icons/silk/rosette.png';
-        my.unchecked = '/context/icons/silk/rosette_grey.png';
+        my.checked = '/context/icons/silk/rosette.png'
+        my.unchecked = '/context/icons/silk/rosette_grey.png'
 
     def get_display(my):
-        #from tactic_client_lib import TacticServerStub
-        #server = TacticServerStub.get()
         user_name = my.kwargs.get('user')
-        code = my.kwargs.get('code');
-        sk = my.kwargs.get('sk');
-        #Get the list of titles attached to order
-        #titles_expr = "@SOBJECT(twog/title['order_code','%s'])" % (code)
-        #titles = server.eval(titles_expr)
+        code = my.kwargs.get('code')
+        sk = my.kwargs.get('sk')
+
         t_search = Search("twog/title")
         t_search.add_filter('order_code',code)
         titles = t_search.get_sobjects()
@@ -377,7 +351,7 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
         table = Table()
         table.add_attr('cellpadding','10')
         table.add_attr('class','change_titles_selector')
-        #Turn all checkboxes on or off
+        # Turn all checkboxes on or off
         toggle_behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
                             var checked_img = '<img src="%s"/>'
@@ -403,13 +377,10 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
                           spt.alert(spt.exception.handler(err));
                 }
         ''' % (my.checked, my.unchecked)}
-        #No need for toggler if there are less than 2 titles
+        # No need for toggler if there are less than 2 titles
         if len(titles) > 1:
-            #toggler = CheckboxWdg('chk_change_toggler')
             toggler = CustomCheckboxWdg(name='chk_change_toggler',additional_js=toggle_behavior,value_field='toggler',id='selection_toggler',checked='false',checked_img=my.checked,unchecked_img=my.unchecked)
-            #toggler.set_persistence()
-            #toggler.set_value(False)
-            #toggler.add_behavior(toggle_behavior)
+
             table.add_row()
             cs = table.add_cell('<b>BigBoard Select/Deselect ALL -></b>')
             cs.add_attr('colspan','6')
@@ -419,7 +390,8 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
             cs2 = table.add_cell('<b>Work Order Bigboarding Duplication</b>')
             cs2.add_attr('align','right')
             table.add_cell(dupe)
-        #display the column heads
+
+        # display the column heads
         if len(titles) > 0:
             table.add_row()
             table.add_cell('<b>Code</b>')
@@ -432,7 +404,7 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
             edd.add_attr('nowrap','nowrap')
             table.add_cell('<b>Priority</b>')
             table.add_cell('<b>BigBoard</b>')
-        #Display the list of titles and values that can be changed
+        # Display the list of titles and values that can be changed
         for title in titles:
             table.add_row()
             tisk = title.get_search_key()
@@ -487,21 +459,14 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
                 check_val = 'true'
             else:
                 check_val = 'false'
-            #Want to remove all Checkboxes from Order Builder, since they query the database and make everything a little slower
-            #checkbox = CheckboxWdg('bigboard_title_%s' % tisk)
-            checkbox = CustomCheckboxWdg(name='bigboard_title_%s' % tisk,alert_name=tname,value_field=title.get_code(),checked=check_val,dom_class='change_title_selector',checked_img=my.checked,unchecked_img=my.unchecked) 
-            #checkbox.add_attr('title_name',tname)
-            #checkbox.set_persistence()
+            # Want to remove all Checkboxes from Order Builder, since they query the database and make everything a little slower
+            checkbox = CustomCheckboxWdg(name='bigboard_title_%s' % tisk,alert_name=tname,value_field=title.get_code(),checked=check_val,dom_class='change_title_selector',checked_img=my.checked,unchecked_img=my.unchecked)
             ck = table.add_cell(checkbox)
             ck.add_attr('valign','top')
-
-            
-            
 
         if len(titles) < 1:
             table.add_row()
             table.add_cell('There are no titles in this Order')
-            
         
         table.add_row()
         go_butt = ''
@@ -661,13 +626,13 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
         return widget
 
 class TitleCloneSelectorWdg(BaseTableElementWdg):
-    #This allows the uset to select titles to clone and attach to new orders or existing orders
-    #Will copy everything (minus unique stuff) from one title and create another exactly like it
+    # This allows the uset to select titles to clone and attach to new orders or existing orders
+    # Will copy everything (minus unique stuff) from one title and create another exactly like it
     def init(my):
         nothing = 'true'
 
     def get_clone_here(my, order_code):
-        #This just makes it so that the titles can easily be cloned to the same order the user is in currently
+        # This just makes it so that the titles can easily be cloned to the same order the user is in currently
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
                             order_code = '%s';
@@ -684,21 +649,17 @@ class TitleCloneSelectorWdg(BaseTableElementWdg):
         return behavior
  
     def get_display(my):
-        #from tactic_client_lib import TacticServerStub
-        #server = TacticServerStub.get()
         user_name = my.kwargs.get('user')
-        code = my.kwargs.get('code');
-        sk = my.kwargs.get('sk');
-        #Get the list of titles in this order
-        #titles_expr = "@SOBJECT(twog/title['order_code','%s'])" % (code)
-        #titles = server.eval(titles_expr)
+        code = my.kwargs.get('code')
+        sk = my.kwargs.get('sk')
+
         t_search = Search("twog/title")
         t_search.add_filter('order_code',code)
         titles = t_search.get_sobjects()
         widget = DivWdg()
         table = Table()
         table.add_attr('class','clone_titles_selector')
-        #Select all or none
+        # Select all or none
         toggle_behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
                             var checked_img = '<img src="/context/icons/custom/custom_checked.png"/>'
@@ -724,14 +685,14 @@ class TitleCloneSelectorWdg(BaseTableElementWdg):
                           spt.alert(spt.exception.handler(err));
                 }
         '''}
-        #Here need textbox for either an order code to clone to, or if the order code is invalid then create a new order with what is in the textbox as its name
+        # Here need textbox for either an order code to clone to, or if the order code is invalid then create a new order with what is in the textbox as its name
         table2 = Table()
         table2.add_row()
         uto = table2.add_cell('<input type="button" value="Clone to Same Order"/>')
         uto.add_behavior(my.get_clone_here(code))
         table2.add_row()
-        #User can enter a new name, which will create a new order with that name and place the clones inside
-        #Or user can provide an exiting order code, so the cloned titles will go into that one
+        # User can enter a new name, which will create a new order with that name and place the clones inside
+        # Or user can provide an exiting order code, so the cloned titles will go into that one
         t22 = table2.add_cell('Order Code or New Name:')
         t22.add_attr('nowrap','nowrap')
         namer = table2.add_cell('<input type="text" id="clone_order_name"/>')
@@ -739,7 +700,7 @@ class TitleCloneSelectorWdg(BaseTableElementWdg):
         charge_sel.add_style('width: 120px;')
         charge_sel.add_attr('id','charge_sel')
         charges = ['New','Redo','Redo - No Charge']
-        #Allow the user to tell us whether this is a normal order, a redo, or a redo with no charge
+        # Allow the user to tell us whether this is a normal order, a redo, or a redo with no charge
         for ch in charges:
             charge_sel.append_option(ch,ch)
         table2.add_cell(' Type: ')
@@ -757,14 +718,11 @@ class TitleCloneSelectorWdg(BaseTableElementWdg):
         ncell = table.add_cell(table2)
         t2b = Table()
         t2b.add_attr('id','t2b')
-        #Put the toggler in if there are more than 1 titles
+        # Put the toggler in if there are more than 1 titles
         if len(titles) > 1:
             t2b.add_row()
-            #toggler = CheckboxWdg('chk_clone_toggler')
             toggler = CustomCheckboxWdg(name='chk_clone_toggler',additional_js=toggle_behavior,value_field='toggler',id='selection_toggler',checked='false')
-            #toggler.set_persistence()
-            #toggler.set_value(False)
-            #toggler.add_behavior(toggle_behavior)
+
             t2b.add_row()
             t2b.add_cell(toggler)
             t2b.add_cell('<b><- Select/Deselect ALL</b>')
@@ -772,32 +730,28 @@ class TitleCloneSelectorWdg(BaseTableElementWdg):
         table.add_cell(t2b)
         t3b = Table()
         t3b.add_attr('id','t3b')
-        #Display list of titles to choose from
+        # Display list of titles to choose from
         for title in titles:
             t3b.add_row()
             t3b.add_row()
-            #checkbox = CheckboxWdg('clone_title_%s' % title.get('code'))
+
             tname = title.get_value('title')
             if title.get_value('episode') not in [None,'']:
                 tname = '%s: %s' % (tname, title.get_value('episode'))
             checkbox = CustomCheckboxWdg(name='clone_title_%s' % title.get_code(),value_field=title.get_code(),checked='false',text=tname,text_spot='right',text_align='left',nowrap='nowrap',dom_class='title_selector') 
-            #checkbox.set_persistence()
-            #checkbox.set_value(False)
+
             ck = t3b.add_cell(checkbox)
-            #name = t3b.add_cell(tname)
-            #name.add_attr('nowrap','nowrap')
+
             cter = t3b.add_cell(' --- Count: ')
-            #This is how many clones you want to add of each title
+            # This is how many clones you want to add of each title
             inser = t3b.add_cell('<input type="text" value="1" id="clone_count_%s" style="width: 40px;"/>' % title.get_code())
         table.add_row()
         table.add_cell(t3b)
-            
 
         if len(titles) < 1:
             table.add_row()
             table.add_cell('There are no titles in this Order')
-            
-        
+
         table.add_row()
         go_butt = ''
         if len(titles) > 0: 
@@ -996,40 +950,20 @@ class TitleDeletorWdg(BaseTableElementWdg):
         nothing = 'true'
 
     def get_display(my):
-        from tactic_client_lib import TacticServerStub
         server = TacticServerStub.get()
         user_name = my.kwargs.get('user')
-        code = my.kwargs.get('code');
-        order_name = my.kwargs.get('order_name');
+        code = my.kwargs.get('code')
+        order_name = my.kwargs.get('order_name')
         allowed_titles_str = my.kwargs.get('allowed_titles_str')
         sk = server.build_search_key('twog/order', code)
-        #Get list of titles in this order
+        # Get list of titles in this order
         titles_expr = "@SOBJECT(twog/title['order_code','%s']['code','in','%s'])" % (code, allowed_titles_str)
         titles = server.eval(titles_expr)
         widget = DivWdg()
         table = Table()
         table.add_style('background-color: #FF0000;')
         table.add_attr('class','del_titles_selector')
-        #Toggle for all checkboxes
-#MTM -- THIS IS THE OLD CHECKBOX WAY        toggle_behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''        
-#MTM -- THIS IS THE OLD CHECKBOX WAY                        try{
-#MTM -- THIS IS THE OLD CHECKBOX WAY                            var top_el = spt.api.get_parent(bvr.src_el, '.del_titles_selector');
-#MTM -- THIS IS THE OLD CHECKBOX WAY                            inputs = top_el.getElementsByTagName('input');
-#MTM -- THIS IS THE OLD CHECKBOX WAY                            var curr_val = bvr.src_el.checked;
-#MTM -- THIS IS THE OLD CHECKBOX WAY                            //alert(curr_val);
-#MTM -- THIS IS THE OLD CHECKBOX WAY                            for(var r = 0; r < inputs.length; r++){
-#MTM -- THIS IS THE OLD CHECKBOX WAY                                if(inputs[r].type == 'checkbox' && inputs[r].name != 'chk_del_toggler'){
-#MTM -- THIS IS THE OLD CHECKBOX WAY                                    //alert('found one');
-#MTM -- THIS IS THE OLD CHECKBOX WAY                                    inputs[r].checked = curr_val;
-#MTM -- THIS IS THE OLD CHECKBOX WAY                                }
-#MTM -- THIS IS THE OLD CHECKBOX WAY                            }
-#MTM -- THIS IS THE OLD CHECKBOX WAY                }
-#MTM -- THIS IS THE OLD CHECKBOX WAY                catch(err){
-#MTM -- THIS IS THE OLD CHECKBOX WAY                          spt.app_busy.hide();
-#MTM -- THIS IS THE OLD CHECKBOX WAY                          spt.alert(spt.exception.handler(err));
-#MTM -- THIS IS THE OLD CHECKBOX WAY                          //alert(err);
-#MTM -- THIS IS THE OLD CHECKBOX WAY                }
-#MTM -- THIS IS THE OLD CHECKBOX WAY        '''}
+
         toggle_behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
                             var checked_img = '<img src="/context/icons/custom/custom_checked.png"/>'
@@ -1056,13 +990,10 @@ class TitleDeletorWdg(BaseTableElementWdg):
                 }
         '''}
         client_status_colors = {'Assignment': '#fcaf88', 'Pending': '#d7d7d7', 'In Progress': '#f5f3a4', 'In_Progress': '#f5f3a4', 'In Production': '#f5f3a4', 'In_Production': '#f5f3a4', 'In production': '#f5f3a4', 'In_production': '#f5f3a4', 'Waiting': '#ffd97f', 'Need Assistance': '#fc88fb', 'Need_Assistance': '#fc88fb', 'Review': '#888bfc', 'Approved': '#d4b5e7', 'On Hold': '#e8b2b8', 'On_Hold': '#e8b2b8', 'Client Response': '#ddd5b8', 'Completed': '#b7e0a5','Ready': '#b2cee8', 'Internal Rejection': '#ff0000', 'External Rejection': '#ff0000', 'Rejected': '#ff0000', 'Failed QC': '#ff0000', 'Not Set': '#d7d7d7', 'Waiting on client materials': '#ffd97f', 'Materials received': '#b2cee8', 'QC Rejected': '#ff0000', 'QC Passed': '#d4b5e7', 'QC rejected': '#ff0000', 'QC passed': '#d4b5e7', 'Fix Needed': '#c466a1', 'Need Buddy Check': '#e3701a', 'DR In_Progress': '#d6e0a4', 'DR In Progress': '#d6e0a4','Amberfin01_In_Progress':'#D8F1A8', 'Amberfin01 In Progress':'#D8F1A8', 'Amberfin02_In_Progress':'#F3D291',  'Amberfin02 In Progress':'#F3D291','BATON In_Progress': '#c6e0a4', 'BATON In Progress': '#c6e0a4','Export In_Progress': '#796999', 'Export In Progress': '#796999','Buddy Check In_Progress': '#1aade3','Buddy Check In Progress': '#1aade3', 'Not Set' : '#FFFFCC'} 
-        #Only need the toggler if there's more than 1 title
+        # Only need the toggler if there's more than 1 title
         if len(titles) > 1:
-            #toggler = CheckboxWdg('chk_del_toggler')
             toggler = CustomCheckboxWdg(name='chk_del_toggler',additional_js=toggle_behavior,value_field='toggler',id='selection_toggler',checked='false')
-            #toggler.set_persistence()
-            #toggler.set_value(False)
-            #toggler.add_behavior(toggle_behavior)
+
             table.add_row()
             table.add_cell(toggler)
             table.add_cell('<b><- Select/Deselect ALL</b>')
@@ -1070,13 +1001,12 @@ class TitleDeletorWdg(BaseTableElementWdg):
             table.add_cell('<b>Status</b>')
             table.add_cell('&nbsp;&nbsp;&nbsp;')
             table.add_cell('<b>Client Status</b>')
-        #Display the titles to choose from
+        # Display the titles to choose from
         for title in titles:
             table.add_row()
-            #checkbox = CheckboxWdg('del_title_%s' % title.get('code'))
+
             checkbox = CustomCheckboxWdg(name='del_title_%s' % title.get('code'),value_field=title.get('code'),checked='false',dom_class='title_selector') 
-            #checkbox.set_persistence()
-            #checkbox.set_value(False)
+
             ck = table.add_cell(checkbox)
             tname = title.get('title')
             if title.get('episode') not in [None,'']:
@@ -1095,18 +1025,16 @@ class TitleDeletorWdg(BaseTableElementWdg):
                 tclient_status = 'Not Set'
             client_status = table.add_cell(tclient_status)
             client_status.add_attr('nowrap','nowrap')
-	   
 
             client_status.add_style('color: %s;' % client_status_colors[tclient_status])
 
         if len(titles) < 1:
             table.add_row()
             table.add_cell('There are no titles in this Order')
-            
-        
+
         table.add_row()
         go_butt = ''
-        #If there is nothing to delete, just show them the exit button "Continue"
+        # If there is nothing to delete, just show them the exit button "Continue"
         if len(titles) < 1: 
             go_butt = table.add_cell('<input type="button" class="filter_titles" value="Continue"/>') 
         else:
@@ -1222,12 +1150,11 @@ class TitleProjStatusTriggerWdg(BaseTableElementWdg):
         return behavior
 
     def get_display(my):
-        from tactic_client_lib import TacticServerStub
         server = TacticServerStub.get()
-        title_code = my.kwargs.get('title_code');
-        #Get the title
+        title_code = my.kwargs.get('title_code')
+        # Get the title
         title = server.eval("@SOBJECT(twog/title['code','%s'])" % title_code)[0]
-        #Get the projects
+        # Get the projects
         projs = server.eval("@SOBJECT(twog/proj['title_code','%s'])" % title_code)
         widget = DivWdg()
         table = Table()
@@ -1235,14 +1162,14 @@ class TitleProjStatusTriggerWdg(BaseTableElementWdg):
         table.add_row()
         tc = table.add_cell('<b><u>Status Triggers on Title:</u></b> ')
         tc.add_attr('nowrap','nowrap')
-        #Create a selection for the whole title
+        # Create a selection for the whole title
         title_sel = SelectWdg("title_st_sel_%s" % title_code)
         title_sel.append_option('Yes','Yes')
         title_sel.append_option('No','No')
         title_sel.set_value(title.get('status_triggers'),title.get('status_triggers'))
         title_sel.add_behavior(my.set_status_triggers(title_code))
         table.add_cell(title_sel)
-        #Create a selection for each project
+        # Create a selection for each project
         for proj in projs:
             table.add_row()
             guy = table.add_cell('&nbsp;&nbsp;&nbsp;%s (%s))' % (proj.get('process'), proj.get('code')))
@@ -1250,7 +1177,7 @@ class TitleProjStatusTriggerWdg(BaseTableElementWdg):
             p_sel = SelectWdg('proj_st_sel_%s' % proj.get('code'))
             p_sel.append_option('Yes','Yes')
             p_sel.append_option('No','No')
-            #Preset the value on the select
+            # Preset the value on the select
             p_sel.set_value(proj.get('status_triggers'),proj.get('status_triggers'))
             p_sel.add_behavior(my.set_status_triggers(proj.get('code')))
             table.add_cell(p_sel)
@@ -1259,9 +1186,8 @@ class TitleProjStatusTriggerWdg(BaseTableElementWdg):
         return widget
 
 class OrderBuilder(BaseRefreshWdg):
-    #This is the top level widget, containing the whole order builder
+    # This is the top level widget, containing the whole order builder
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.sk = ''
         my.code = ''
@@ -1470,7 +1396,6 @@ class QuickEditWdg(BaseRefreshWdg):
     #It's good for making a lot of changes, especially global changes to selected elements
     #I hate this widget now, and it really doesn't seem to do much for us. Would like to take it out and modify the regular order builder to keep it's good elements
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.order_sk = ''
         my.user = ''
@@ -1581,13 +1506,12 @@ class QuickEditWdg(BaseRefreshWdg):
             if my.is_master_str == 'true':
                 my.is_master = True 
         else:
-            from client.tactic_client_lib import TacticServerStub
             server = TacticServerStub.get()
             main_obj = server.eval("@SOBJECT(twog/order['code','%s'])" % order_code)[0]
             if main_obj.get('classification') in ['master','Master']:
                 my.is_master = True
                 my.is_master_str = 'true'
-        #Get the javascript functions
+        # Get the javascript functions
         obs = OBScripts(order_sk=my.order_sk,user=my.user,groups_str=my.groups_str,display_mode=my.disp_mode)
         table = Table()
         table.add_attr('class','qe_top_%s' % my.order_sk)
@@ -1597,31 +1521,22 @@ class QuickEditWdg(BaseRefreshWdg):
         long_row = type_checks_tbl.add_row() 
         long_row.add_attr('width','100%s' % '%')
         title_check = CustomCheckboxWdg(name='qe_titles_%s' % my.order_sk,value_field='title',checked='false',dom_class='quick_edit_selector') 
-        #title_check = CheckboxWdg('qe_titles_%s' % my.order_sk) 
-        #title_check.set_persistence()
-        #title_check.set_value(False)
+
         type_checks_tbl.add_cell(title_check)
         type_checks_tbl.add_cell('Titles')
 
-        #proj_check = CheckboxWdg('qe_projects_%s' % my.order_sk) 
         proj_check = CustomCheckboxWdg(name='qe_projects_%s' % my.order_sk,value_field='projects',checked='false',dom_class='quick_edit_selector') 
-        #proj_check.set_persistence()
-        #proj_check.set_value(False)
+
         type_checks_tbl.add_cell(proj_check)
         type_checks_tbl.add_cell('Projects')
 
-        #wo_check = CheckboxWdg('qe_work_orders_%s' % my.order_sk) 
-        wo_check = CustomCheckboxWdg(name='qe_work_orders_%s' % my.order_sk,value_field='work orders',checked='false',dom_class='quick_edit_selector') 
-        #wo_check.set_persistence()
-        #wo_check.set_value(False)
+        wo_check = CustomCheckboxWdg(name='qe_work_orders_%s' % my.order_sk,value_field='work orders',checked='false',dom_class='quick_edit_selector')
         type_checks_tbl.add_cell(wo_check)
         wo = type_checks_tbl.add_cell('Work Orders')
         wo.add_attr('nowrap','nowrap')
 
-        #eq_check = CheckboxWdg('qe_equipment_%s' % my.order_sk) 
         eq_check = CustomCheckboxWdg(name='qe_equipment_%s' % my.order_sk,value_field='equipment',checked='false',dom_class='quick_edit_selector') 
-        #eq_check.set_persistence()
-        #eq_check.set_value(False)
+
         type_checks_tbl.add_cell(eq_check)
         type_checks_tbl.add_cell('Equipment')
 
@@ -1631,16 +1546,9 @@ class QuickEditWdg(BaseRefreshWdg):
         sbd = type_checks_tbl.add_cell('Select by Dept:')
         sbd.add_attr('nowrap','nowrap')
         type_checks_tbl.add_cell(group_selector)
-        
-        
-     
-        
-        #tog_check = CheckboxWdg('qe_toggler_%s' % my.order_sk) 
+
         tog_check = CustomCheckboxWdg(name='qe_toggler',additional_js=my.get_toggle_select_check_behavior(),value_field='toggler',id='selection_toggler',checked='false')
-        #tog_check.set_persistence()
-        #tog_check.set_value(False)
-        # Need to add toggle behavior here
-        #tog_check.add_behavior(obs.get_toggle_select_check_behavior())
+
         last_cell = type_checks_tbl.add_cell(tog_check)
         last_cell.add_attr('width', '100%s' % '%')
         last_cell.add_attr('align','right')
@@ -1654,8 +1562,8 @@ class QuickEditWdg(BaseRefreshWdg):
 
         table.add_row()
         table.add_cell('Platform: ')
-        #Get the list of platforms from the db
-        #Create the platform select wdg 
+        # Get the list of platforms from the db
+        # Create the platform select wdg
         platforms = my.server.eval("@GET(twog/platform['@ORDER_BY','name'].name)")
         platform_sel = SelectWdg('platform_sel_%s' % my.order_sk)
         platform_sel.append_option('--Select--','--Select--')
@@ -1663,7 +1571,7 @@ class QuickEditWdg(BaseRefreshWdg):
             platform_sel.append_option(platform, platform)
         table.add_cell(platform_sel)
 
-        #Create the territory select wdg 
+        # Create the territory select wdg
         territories = my.territory_str.split('|')
         territory_sel = SelectWdg('territory_sel_%s' % my.order_sk)
         territory_sel.append_option('--Select--','--Select--')
@@ -1672,7 +1580,7 @@ class QuickEditWdg(BaseRefreshWdg):
         table.add_cell('Territory: ')
         table.add_cell(territory_sel)
 
-        #Create the languages select wdg 
+        # Create the languages select wdg
         languages = my.language_str.split('|')
         language_sel = SelectWdg('language_sel_%s' % my.order_sk)
         language_sel.append_option('--Select--','--Select--')
@@ -1681,7 +1589,7 @@ class QuickEditWdg(BaseRefreshWdg):
         table.add_cell('Language: ')
         table.add_cell(language_sel)
         
-        #Create calendar input for start date
+        # Create calendar input for start date
         sd = table.add_cell('Start Date: ')
         sd.add_attr('nowrap','nowrap')
         start = CalendarInputWdg("qe_start_date_%s" % my.order_sk)
@@ -1695,7 +1603,7 @@ class QuickEditWdg(BaseRefreshWdg):
         start_date = table.add_cell(start)
         start_date.add_attr('nowrap','nowrap')
 
-        #Create calendar input for due date
+        # Create calendar input for due date
         dd = table.add_cell('Due Date: ')
         dd.add_attr('nowrap','nowrap')
         due = CalendarInputWdg("qe_due_date_%s" % my.order_sk)
@@ -1714,8 +1622,10 @@ class QuickEditWdg(BaseRefreshWdg):
 
         table.add_row()
 
-        #Statuses should pull from the database soon, so I won't have to adjust this list every time a new status is added or removed
-        statuses = ['Pending','Ready','On Hold','Client Response','Fix Needed','Rejected','In Progress','DR In Progress','Amberfin01 In Progress','Amberfin02 In Progress','BATON In Progress','Export In Progress','Need Buddy Check','Buddy Check In Progress','Completed']
+        # Statuses should pull from the database soon, so I won't have to adjust this list every time a new status is added or removed
+        statuses = ['Pending', 'Ready', 'On Hold', 'Client Response', 'Fix Needed', 'Rejected', 'In Progress',
+                    'DR In Progress', 'Amberfin01 In Progress', 'Amberfin02 In Progress', 'BATON In Progress',
+                    'Export In Progress', 'Need Buddy Check', 'Buddy Check In Progress', 'Completed']
         status_sel = SelectWdg('eq_status_%s' % my.order_sk)
         status_sel.append_option('--Select--','--Select--')
         for status in statuses:
@@ -1759,11 +1669,11 @@ class QuickEditWdg(BaseRefreshWdg):
         open_errors.add_attr('name','qe_error_opener_%s' % my.order_sk)
         open_errors.add_style('cursor: pointer;')
         open_errors.add_behavior(obs.get_open_errors_behavior())
-        #Button to delete selected objects
+        # Button to delete selected objects
         delete_button = table.add_cell('<input type="button" name="delete_button" value="Delete Selected"/>')
         delete_button.add_behavior(obs.get_qe_delete())
 
-        #This is where the scheduler can enter production errors. It is hidden until "Document Errors" is clicked
+        # This is where the scheduler can enter production errors. It is hidden until "Document Errors" is clicked
         errors_row = table.add_row()
         errors_row.add_attr('class','qe_errors_row_%s' % my.order_sk)
         errors_row.add_style('display: none;')
@@ -1772,60 +1682,9 @@ class QuickEditWdg(BaseRefreshWdg):
         errors_cell.add_attr('colspan','10')
         return table
 
-class ErrorEntryLauncherWdg(BaseTableElementWdg):
-    #This is not used at all. It would have opened the ErrorEntryWdg in a popup so the scheduler can report errors
-    def init(my):
-        nothing = 'true'
-
-    def get_stub(my):
-        from tactic_client_lib import TacticServerStub
-    
-    def get_launch_behavior(my, wo_code, user):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-                        try{
-                          var wo_code = '%s';
-                          var user = '%s'; 
-                          spt.panel.load_popup('Report Error for ' + wo_code, 'order_builder.ErrorEntryWdg', {'in_ob': 'false', 'work_order_code': wo_code, 'user': user });
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
-         ''' % (wo_code, user)}
-        return behavior
-
-    def get_display(my):
-        expression_lookup = {'twog/order': "@SOBJECT(twog/order['code','REPLACE_ME'])", 'twog/title': "@SOBJECT(twog/title['code','REPLACE_ME'].twog/order)", 'twog/proj': "@SOBJECT(twog/proj['code','REPLACE_ME'].twog/title.twog/order)", 'twog/work_order': "@SOBJECT(twog/work_order['code','REPLACE_ME'].twog/proj.twog/title.twog/order)", 'twog/equipment_used': "@SOBJECT(twog/equipment_used['code','REPLACE_ME'].twog/work_order.twog/proj.twog/title.twog/order)"}
-        search_type = 'twog/order'
-        code = ''
-        wo_code = ''
-        if 'work_order_code' in my.kwargs.keys():
-            wo_code = my.kwargs.get('work_order_code')
-        else: 
-            sobject = my.get_current_sobject()
-            code = sobject.get_code()
-            if 'TASK' in code:
-                wo_code = sobject.get_value('lookup_code')
-            elif 'WORK_ORDER' in code:
-                wo_code = code
-                
-        widget = DivWdg()
-        table = Table()
-        table.add_attr('width', '50px')
-        user_name = Environment.get_user_name() 
-        table.add_row()
-        cell1 =  table.add_cell('<img border="0" style="vertical-align: middle" title="" src="/context/icons/custom/report_error.png">')
-        launch_behavior = my.get_launch_behavior(wo_code, user_name)
-        cell1.add_style('cursor: pointer;')
-        cell1.add_behavior(launch_behavior)
-        widget.add(table)
-
-        return widget
-
 class ErrorEntryWdg(BaseRefreshWdg):
     #This is the widget with which people can report production errrors
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.order_sk = ''
         my.user = ''
@@ -1848,7 +1707,7 @@ class ErrorEntryWdg(BaseRefreshWdg):
         my.rejection_causes = ['Client Error','Machine Error','Manager Error','Operator Error','Process Error','Scheduler Error']
 
     def get_submit_errors_behavior(my, wo_code, in_ob):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
+        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         function encode_utf8( s )
                         {
                             return unescape( encodeURIComponent( s ) );
@@ -1875,7 +1734,7 @@ class ErrorEntryWdg(BaseRefreshWdg):
                                    if(name == 'rejection_cause_' + order_sk){
                                        cause_sel = selects[r];
                                    }
-                               } 
+                               }
                                type = type_sel.value;
                                cause = cause_sel.value;
                                //--Select-- and NOTHINGXsXNOTHING are the same - they just mean nothing has been selected
@@ -1912,11 +1771,11 @@ class ErrorEntryWdg(BaseRefreshWdg):
                                               field = checks2[r].getAttribute('field');
                                               errchecks.push(field);
                                           }
-                                      } 
-                                   } 
+                                      }
+                                   }
                                }
                                if(wo_code == 'NOCODE'){
-                                   //If there was no real code passed in, you'll have to grab that info from the selected work orders 
+                                   //If there was no real code passed in, you'll have to grab that info from the selected work orders
                                    //Get all the checkboxes
                                    checks = null;
                                    if(in_ob == 'true'){
@@ -1945,7 +1804,7 @@ class ErrorEntryWdg(BaseRefreshWdg):
                                                            var server = TacticServerStub.get();
                                                            title = server.eval("@SOBJECT(twog/title['code','" + title_code + "'])")[0];
                                                            order = server.eval("@SOBJECT(twog/order['code','" + order_code + "'])")[0];
-                                                           task = server.eval("@SOBJECT(sthpw/task['code','" + task_code + "'])")[0]; 
+                                                           task = server.eval("@SOBJECT(sthpw/task['code','" + task_code + "'])")[0];
                                                            insert_data = {'error_type': type, 'process': process, 'work_order_code': code, 'proj_code': proj_code, 'title_code': title_code, 'order_code': order_code, 'title': title.title, 'episode': title.episode, 'order_name': order.name, 'po_number': order.po_number, 'scheduler_login': task.creator_login, 'login': user_name, 'responsible_users': responsible, 'time_spent': time_spent, 'action_taken': action_taken, 'scheduler_description': error_description, 'rejection_cause': cause, 'operator_login': user_name}
                                                            //Loop through the errors selected and add them to the dictionary for insert
                                                            for(var p = 0; p < errchecks.length; p++){
@@ -1954,7 +1813,7 @@ class ErrorEntryWdg(BaseRefreshWdg):
                                                            server.insert('twog/production_error',insert_data);
                                                        }
                                                    }
-                                               }   
+                                               }
                                            }
                                        }
                                    }
@@ -1966,7 +1825,7 @@ class ErrorEntryWdg(BaseRefreshWdg):
                                    proj = server.eval("@SOBJECT(twog/proj['code','" + wo.proj_code + "'])")[0];
                                    title = server.eval("@SOBJECT(twog/title['code','" + proj.title_code + "'])")[0];
                                    order = server.eval("@SOBJECT(twog/order['code','" + title.order_code + "'])")[0];
-                                   task = server.eval("@SOBJECT(sthpw/task['code','" + wo.task_code + "'])")[0]; 
+                                   task = server.eval("@SOBJECT(sthpw/task['code','" + wo.task_code + "'])")[0];
                                    process = wo.process
                                    insert_data = {'error_type': type, 'process': process, 'work_order_code': code, 'proj_code': proj.code, 'title_code': title.code, 'order_code': order.code, 'title': title.title, 'episode': title.episode, 'order_name': order.name, 'po_number': order.po_number, 'scheduler_login': task.creator_login, 'login': user_name, 'responsible_users': responsible, 'time_spent': time_spent, 'action_taken': action_taken, 'scheduler_description': error_description, 'rejection_cause': cause, 'operator_login': user_name}
                                    //Loop through the errors selected and add them to the dictionary for insert
@@ -1999,7 +1858,7 @@ class ErrorEntryWdg(BaseRefreshWdg):
                                    spt.popup.close(spt.popup.get_popup(bvr.src_el));
                                }
                                spt.app_busy.hide();
-                                                          
+
                 }
                 catch(err){
                           spt.app_busy.hide();
@@ -2376,7 +2235,7 @@ class OrderTable(BaseRefreshWdg):
         filt.add_attr('align','right')
 
         upload = ButtonSmallNewWdg(title="Upload", icon=IconWdg.PUBLISH)
-        upload.add_behavior(obs.get_upload_behavior(my.sk))
+        upload.add_behavior(get_upload_behavior(my.sk))
         up = bottom_buttons.add_cell(upload)
         up.add_attr('align','right')
 
@@ -2658,7 +2517,6 @@ class AddProjWdg(BaseRefreshWdg):
 class EditHackPipe(BaseRefreshWdg): 
 
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.sob = None
 
@@ -3137,7 +2995,7 @@ class TitleSourceInspectorWdg(BaseRefreshWdg):
         table.add_attr('class', 'titlesourceinspector_%s' % my.sk)
         if sources in [None,[]]:
             table.add_row()
-            table.add_cell('There are no sources attached to this Title');
+            table.add_cell('There are no sources attached to this Title')
         else:
             for source_link in sources:
                 source_search = Search("twog/source")
@@ -3219,7 +3077,6 @@ class DeliverableWdg(BaseRefreshWdg):
 class IntermediateEditWdg(BaseRefreshWdg): 
 
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.order_sk = ''
         my.intermediate_code = ''
@@ -3265,7 +3122,6 @@ class IntermediateEditWdg(BaseRefreshWdg):
 class DeliverableEditWdg(BaseRefreshWdg): 
 
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.title_code = ''
         my.order_sk = ''
@@ -3473,7 +3329,6 @@ class PreReqWdg(BaseRefreshWdg):
 class WorkOrderSourceAddWdg(BaseRefreshWdg): 
 
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.work_order_sk = ''
         my.work_order_code = '' 
@@ -3703,7 +3558,6 @@ class OutsideBarcodesListWdg(BaseRefreshWdg):
 
 class NewSourceWdg(BaseRefreshWdg):
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.source_code = ''
         my.order_sk = ''
@@ -3758,7 +3612,6 @@ class NewSourceWdg(BaseRefreshWdg):
 class SourceEditWdg(BaseRefreshWdg): 
 
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.title_sk = ''
         my.title_code = '' 
@@ -4386,7 +4239,6 @@ class DeliverablePassinAddWdg(BaseRefreshWdg):
 class DeliverableAddWdg(BaseRefreshWdg): 
 
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.work_order_code = ''
         my.order_sk = ''
@@ -4925,7 +4777,6 @@ class EquipmentUsedAdderWdg(BaseRefreshWdg):
 
 class EquipmentUsedMultiAdderWdg(BaseRefreshWdg):
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.work_order_sk = ''
         my.work_order_code = ''
@@ -5350,8 +5201,7 @@ class TitleRedoWdg(BaseRefreshWdg):
          ''' % (title_sk, order_sk)}
         return behavior
 
-    def get_display(my):   
-        from client.tactic_client_lib import TacticServerStub
+    def get_display(my):
         server = TacticServerStub.get()
         my.title_sk = str(my.kwargs.get('title_sk'))
         my.order_sk = str(my.kwargs.get('order_sk'))
@@ -5392,8 +5242,6 @@ class TitleRedoWdg(BaseRefreshWdg):
 
 class MultiManualAdderWdg(BaseRefreshWdg):
     def init(my):
-        #Keeping this with TACTIC SERVER STUB instead of SEARCH, DUE TO LINKING
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.order_sk = ''
         if 'order_sk' in my.kwargs.keys():
@@ -5753,7 +5601,7 @@ class MultiManualAdderWdg(BaseRefreshWdg):
         table.add_cell(ntbl)
 
         ptbl = Table()
-        #start_date = CalendarTimeInputWdg('start_date') #3.9
+
         start_date = CalendarInputWdg('start_date')
         start_date.set_option('show_time','true')
         start_date.set_option('show_activator','true')
@@ -5762,7 +5610,7 @@ class MultiManualAdderWdg(BaseRefreshWdg):
         ptbl.add_row()
         ptbl.add_cell("Start Date: ")
         ptbl.add_cell(start_date)
-        #due_date = CalendarTimeInputWdg('due_date') # 3.9
+
         due_date = CalendarInputWdg('due_date')
         due_date.set_option('show_time','true')
         due_date.set_option('show_activator','true')
@@ -5801,23 +5649,17 @@ class MultiManualAdderWdg(BaseRefreshWdg):
             fromtbl = Table()
             for p in projs:
                 fromtbl.add_row()
-                #checker = CheckboxWdg('from_check')
+
                 checker = CustomCheckboxWdg(name='from_check',value_field=p.get_value('code'),id=p.get_value('code'),checked='false',dom_class='from_check',code=p.get_value('code'))
-                #checker.add_attr('id',p.get_value('code'))
-                #checker.add_attr('class','from_check')
-                #checker.set_persistence()
-                #checker.set_value(False)
+
                 fromtbl.add_cell(checker)
                 fromtbl.add_cell("%s (%s)" % (p.get_value('process'), p.get_value('code')))
             totbl = Table()
             for p in projs:
                 totbl.add_row()
-                #checker = CheckboxWdg('to_check')
+
                 checker = CustomCheckboxWdg(name='to_check',value_field=p.get_value('code'),checked='false',id=p.get_value('code'),dom_class='to_check',code=p.get_value('code'))
-                #checker.add_attr('id',p.get_value('code'))
-                #checker.add_attr('class','to_check')
-                #checker.set_persistence()
-                #checker.set_value(False)
+
                 totbl.add_cell(checker)
                 totbl.add_cell("%s (%s)" % (p.get_value('process'), p.get_value('code')))
             btbl.add_row()
@@ -5843,60 +5685,54 @@ class MultiManualAdderWdg(BaseRefreshWdg):
             user_sel.add_attr('id','assigned')
             user_sel.append_option('--Select--','')
             for u in users:
-                user_sel.append_option(u.get_value('login'),u.get_value('login')) 
+                user_sel.append_option(u.get_value('login'), u.get_value('login'))
             ptbl.add_row()
             p1 = ptbl.add_cell('Work Group: ')
-            p1.add_attr('nowrap','nowrap')
+            p1.add_attr('nowrap', 'nowrap')
             ptbl.add_cell(group_sel)
             ptbl.add_row()
             ptbl.add_cell('Assigned: ')
             ptbl.add_cell(user_sel)
             ptbl.add_row()
             p2 = ptbl.add_cell('Title Id Number: ')
-            p2.add_attr('nowrap','nowrap')
+            p2.add_attr('nowrap', 'nowrap')
             ptbl.add_cell('<input type="text" id="title_id_num" style="width: 200px;"/>')
             ptbl.add_row()
             p3 = ptbl.add_cell('Estimated Work Hours: ')
-            p3.add_attr('nowrap','nowrap')
+            p3.add_attr('nowrap', 'nowrap')
             ptbl.add_cell('<input type="text" id="estimated_work_hours" style="width: 50px;"/>')
             ptbl.add_row()
             p4 = ptbl.add_cell('Instructions: ')
-            p4.add_attr('valign','top')
+            p4.add_attr('valign', 'top')
             ptbl.add_cell('<textarea cols="100" rows="20" id="instructions"></textarea>')
             wo_search = Search("twog/work_order")
-            wo_search.add_filter('proj_code',my.parent_code)
+            wo_search.add_filter('proj_code', my.parent_code)
             wo_search.add_order_by('order_in_pipe')
             wos = wo_search.get_sobjects()
 
             btbl.add_row()
             p5 = btbl.add_cell('<u>First WO Comes After</u>')
-            p5.add_attr('nowrap','nowrap')
+            p5.add_attr('nowrap', 'nowrap')
             p6 = btbl.add_cell('<u>Last WO Leads To</u>')
-            p6.add_attr('nowrap','nowrap')
+            p6.add_attr('nowrap', 'nowrap')
             fromtbl = Table()
             for p in wos:
                 fromtbl.add_row()
-                #checker = CheckboxWdg('from_check')
+
                 checker = CustomCheckboxWdg(name='from_check',value_field=p.get_value('code'),id=p.get_value('code'),checked='false',dom_class='from_check',code=p.get_value('code'))
-                #checker.add_attr('id',p.get_value('code'))
-                #checker.add_attr('class','from_check')
-                #checker.set_persistence()
-                #checker.set_value(False)
+
                 fromtbl.add_cell(checker)
                 f1 = fromtbl.add_cell("%s (%s)" % (p.get_value('process'), p.get_value('code')))
-                f1.add_attr('nowrap','nowrap')
+                f1.add_attr('nowrap', 'nowrap')
             totbl = Table()
             for p in wos:
                 totbl.add_row()
-                #checker = CheckboxWdg('to_check')
+
                 checker = CustomCheckboxWdg(name='to_check',value_field=p.get_value('code'),checked='false',id=p.get_value('code'),dom_class='to_check',code=p.get_value('code'))
-                #checker.add_attr('id',p.get_value('code'))
-                #checker.add_attr('class','to_check')
-                #checker.set_persistence()
-                #checker.set_value(False)
+
                 totbl.add_cell(checker)
                 t1 = totbl.add_cell("%s (%s)" % (p.get_value('process'), p.get_value('code')))
-                t1.add_attr('nowrap','nowrap')
+                t1.add_attr('nowrap', 'nowrap')
             btbl.add_row()
             btbl.add_cell(fromtbl)
             btbl.add_cell(totbl)
@@ -5912,11 +5748,11 @@ class MultiManualAdderWdg(BaseRefreshWdg):
         stbl = Table()
         stbl.add_row()
         s1 = stbl.add_cell('&nbsp;')
-        s1.add_attr('width','40%s' % '%')
+        s1.add_attr('width', '40%')
         saction = stbl.add_cell('<input type="button" value="Create %ss"/>' % my.name_type)
         saction.add_behavior(my.get_save())
         s2 = stbl.add_cell('&nbsp;')
-        s2.add_attr('width','40%s' % '%')
+        s2.add_attr('width', '40%')
 
         ss = table.add_cell(stbl)
         ss.add_attr('colspan','2')
@@ -5928,14 +5764,12 @@ class MultiManualAdderWdg(BaseRefreshWdg):
 
 class Barcoder(BaseRefreshWdg):
     def init(my):
-        from client.tactic_client_lib import TacticServerStub
         my.server = TacticServerStub.get()
         my.order_sk = ''
         if 'order_sk' in my.kwargs.keys():
             my.order_sk = str(my.kwargs.get('order_sk'))
 
     def get_new_barcode(my, deliverable):
-#        barcoder_time = time.time()
         new_bc = 'XsXsXsXsX'
         repeat = True
         while repeat:
@@ -5953,5 +5787,5 @@ class Barcoder(BaseRefreshWdg):
             bc_sources = bc_search.get_sobjects()
             if len(bc_sources) < 2:
                repeat = False
-#        print "BARCODER TIME = %s" % (time.time() - barcoder_time)
+
         return new_bc  

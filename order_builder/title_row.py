@@ -1,11 +1,10 @@
-from client.tactic_client_lib import TacticServerStub
 from tactic.ui.common import BaseRefreshWdg
 from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg
 
 from pyasm.common import Environment
 from pyasm.search import Search
 from pyasm.web import Table
-from pyasm.widget import IconWdg, TextWdg
+from pyasm.widget import IconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
@@ -13,11 +12,10 @@ from order_builder_utils import OBScripts, get_selected_color_behavior, get_uplo
 from qc_reports import QCReportLauncherWdg
 
 from deliverable_count_wdg import DeliverableCountWdg
-from equipment_used_row import EquipmentUsedRow
-from nighttime_hotlist.nighttime_hotlist import BigBoardSelectWdg, BigBoardSingleWOSelectWdg, IndieBigBoardSelectWdg
-from work_order_printer import WorkOrderPrintLauncherWdg
+from nighttime_hotlist.nighttime_hotlist import BigBoardSelectWdg
 from proj_row import ProjRow
 from prereq_count_wdg import PreReqCountWdg
+from sources_row import SourcesRow
 
 
 class TitleRow(BaseRefreshWdg):
@@ -70,10 +68,10 @@ class TitleRow(BaseRefreshWdg):
             'Need Buddy Check': '#e3701a',
             'DR In_Progress': '#d6e0a4',
             'DR In Progress': '#d6e0a4',
-            'Amberfin01_In_Progress':'#D8F1A8',
-            'Amberfin01 In Progress':'#D8F1A8',
-            'Amberfin02_In_Progress':'#F3D291',
-            'Amberfin02 In Progress':'#F3D291',
+            'Amberfin01_In_Progress': '#D8F1A8',
+            'Amberfin01 In Progress': '#D8F1A8',
+            'Amberfin02_In_Progress': '#F3D291',
+            'Amberfin02 In Progress': '#F3D291',
             'BATON In_Progress': '#c6e0a4',
             'BATON In Progress': '#c6e0a4',
             'Export In_Progress': '#796999',
@@ -134,7 +132,7 @@ class TitleRow(BaseRefreshWdg):
             main_obj = my.kwargs.get('main_obj')
         else:
             main_search = Search("twog/title")
-            main_search.add_filter('code',my.code)
+            main_search.add_filter('code', my.code)
             main_obj = main_search.get_sobject()
         my.search_id = main_obj.get_value('id')
         proj_search = Search("twog/proj")
@@ -238,7 +236,7 @@ class TitleRow(BaseRefreshWdg):
                 bboc = bottom_buttons.add_cell(bbo)
                 bboc.add_attr('align', 'right')
 
-                adder = ButtonSmallNewWdg(title="Add A Project", icon=IconWdg.ADD)
+                adder = ButtonSmallNewWdg(title="Add A Project", icon=IconWdg.icons.get('ADD'))
                 adder.add_behavior(get_multi_add_projs_behavior(my.order_sk, my.sk))
                 add = bottom_buttons.add_cell(adder)
                 add.add_attr('align', 'right')
@@ -265,10 +263,10 @@ class TitleRow(BaseRefreshWdg):
                 mb.add_attr('id', 'mastering_button_%s' % my.code)
                 mb.add_attr('align', 'right')
 
-                face_icon = IconWdg.GRAY_BOMB
+                face_icon = IconWdg.icons.get('GRAY_BOMB')
                 face_text = "All is Ok - Set External Rejection?"
                 if main_obj.get('is_external_rejection') == 'true':
-                    face_icon = IconWdg.RED_BOMB
+                    face_icon = IconWdg.icons.get('RED_BOMB')
                     face_text = "This is an External Rejection!!!"
 
                 panic_button = ButtonSmallNewWdg(title=face_text, icon=face_icon)
@@ -289,34 +287,34 @@ class TitleRow(BaseRefreshWdg):
                 rb.add_attr('id','redo_button_%s' % my.code)
                 rb.add_attr('align', 'right')
 
-                prio_reset = ButtonSmallNewWdg(title="Reset Dept Priorities", icon=IconWdg.UNDO)
+                prio_reset = ButtonSmallNewWdg(title="Reset Dept Priorities", icon=IconWdg.icons.get('UNDO'))
                 prio_reset.add_behavior(get_reset_dept_prios(main_obj.get_value('code')))
                 pr = bottom_buttons.add_cell(prio_reset)
                 pr.add_attr('align', 'right')
 
-                sts_launcher = ButtonSmallNewWdg(title="Set Status Triggers", icon=IconWdg.LINK)
+                sts_launcher = ButtonSmallNewWdg(title="Set Status Triggers", icon=IconWdg.icons.get('LINK'))
                 sts_launcher.add_behavior(get_launch_title_proj_sts_behavior(main_obj.get_value('code')))
                 stsl = bottom_buttons.add_cell(sts_launcher)
                 stsl.add_attr('align', 'right')
 
-            source_inspector = ButtonSmallNewWdg(title="Inspect Sources", icon=IconWdg.SOURCE_PORTAL)
+            source_inspector = ButtonSmallNewWdg(title="Inspect Sources", icon=IconWdg.icons.get('SOURCE_PORTAL'))
             source_inspector.add_behavior(get_source_inspector_behavior(my.sk, '%s: %s' % (main_obj.get_value('title'), main_obj.get_value('episode'))))
             si = bottom_buttons.add_cell(source_inspector)
             si.add_attr('align', 'right')
 
-            upload = ButtonSmallNewWdg(title="Upload", icon=IconWdg.PUBLISH)
+            upload = ButtonSmallNewWdg(title="Upload", icon=IconWdg.icons.get('PUBLISH'))
             upload.add_behavior(get_upload_behavior(my.sk))
             up = bottom_buttons.add_cell(upload)
             up.add_attr('align', 'right')
 
-            note_adder = ButtonSmallNewWdg(title="Add Note", icon=IconWdg.NOTE_ADD)
+            note_adder = ButtonSmallNewWdg(title="Add Note", icon=IconWdg.icons.get('NOTE_ADD'))
             note_adder.add_behavior(obs.get_launch_note_behavior(my.sk, main_obj.get_value('title')))
             nadd = bottom_buttons.add_cell(note_adder)
             nadd.add_attr('align', 'right')
             nadd.add_style('cursor: pointer;')
 
             if user_is_scheduler:
-                pipe_button = ButtonSmallNewWdg(title="Assign Pipeline", icon=IconWdg.PIPELINE)
+                pipe_button = ButtonSmallNewWdg(title="Assign Pipeline", icon=IconWdg.icons.get('PIPELINE'))
                 pipe_button.add_behavior(obs.get_scratch_pipe_behavior('twog/title', my.search_id, my.parent_sid,
                                                                        my.width, my.height,
                                                                        main_obj.get_value('pipeline_code'),
@@ -325,7 +323,7 @@ class TitleRow(BaseRefreshWdg):
                 bottom_buttons.add_cell(pipe_button)
 
             if my.is_master and user_is_scheduler:
-                templer = ButtonSmallNewWdg(title="Template All", icon=IconWdg.TEMPLATE_DOWN)
+                templer = ButtonSmallNewWdg(title="Template All", icon=IconWdg.icons.get('TEMPLATE_DOWN'))
                 templer.add_behavior(get_template_all_behavior(my.order_sk, my.code, my.is_master_str))
                 tem = bottom_buttons.add_cell(templer)
                 tem.add_attr('align', 'right')
