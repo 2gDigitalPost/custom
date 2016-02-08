@@ -1,16 +1,11 @@
 __all__ = ["QCReportLauncherWdg", "QCReportClonerWdg", "QCReportSelectorWdg", "PrintQCReportWdg", "ElementEvalAudioWdg",
            "ElementEvalBarcodesWdg", "ElementEvalLinesWdg", "ReportTimecodeShifterWdg"]
-import tacticenv
-import os, datetime
 
 from tactic_client_lib import TacticServerStub
 
-from pyasm.common import Environment
-from pyasm.biz import *
 from pyasm.web import Table, DivWdg
-from pyasm.widget import SelectWdg, IconWdg, TextWdg, CheckboxWdg
+from pyasm.widget import SelectWdg, TextWdg, CheckboxWdg
 from tactic.ui.common import BaseTableElementWdg
-from tactic.ui.common import BaseRefreshWdg
 from pyasm.command import *
 
 
@@ -726,8 +721,6 @@ class QCReportClonerWdg(BaseTableElementWdg):
         return behavior
 
     def get_display(my):
-        from tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
         login = Environment.get_login()
         this_user = login.get_login()
         wo_code = my.kwargs.get('wo_code')
@@ -737,10 +730,10 @@ class QCReportClonerWdg(BaseTableElementWdg):
         server = TacticServerStub.get()
         thing = None
         if 'new_titles' not in my.kwargs.keys():
-            widget.add_attr('id','cloner_for_%s' % report_code)
-            widget.add_attr('wo_code',wo_code)
-            widget.add_attr('report_code',report_code)
-            widget.add_attr('type',type)
+            widget.add_attr('id', 'cloner_for_%s' % report_code)
+            widget.add_attr('wo_code', wo_code)
+            widget.add_attr('report_code', report_code)
+            widget.add_attr('type', type)
             widget.add_style('width: 400px;')
             wo = server.eval("@SOBJECT(twog/work_order['code','%s'])" % wo_code)[0]
             order = server.eval("@SOBJECT(twog/order['code','%s'])" % wo.get('order_code'))[0]
@@ -748,7 +741,7 @@ class QCReportClonerWdg(BaseTableElementWdg):
             #all_titles = server.eval("@SOBJECT(twog/title['order_code','%s'])" % wo.get('order_code'))
             all_titles = [this_title]
             table = Table()
-            table.add_style('width: 100%s;' % '%')
+            table.add_style('width', '100%')
             #Need Select All Checkbox Here
             toggler = CheckboxWdg('clone_toggler')
             toggler.set_value(False)
@@ -757,7 +750,7 @@ class QCReportClonerWdg(BaseTableElementWdg):
             chktbl.add_row()
             chktbl.add_cell(' ')
             ct = chktbl.add_cell('Select/Deselect All')
-            ct.add_attr('align','right')
+            ct.add_attr('align', 'right')
             chktbl.add_cell(toggler)
             table.add_row()
             table.add_cell(chktbl)
@@ -983,8 +976,6 @@ class QCReportSelectorWdg(BaseTableElementWdg):
 class PrintQCReportWdg(Command):
 
     def __init__(my, **kwargs):
-        from client.tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
         super(PrintQCReportWdg, my).__init__(**kwargs)
         my.html = unicode(kwargs.get('html'))
         my.preppend_file_name = str(kwargs.get('preppend_file_name'))
@@ -1019,11 +1010,13 @@ class ElementEvalAudioWdg(BaseTableElementWdg):
     def init(my):
         nothing = 'true'
         my.content_pull = '<select REPLACE_ME><option value="">--Select--</option>'
-        my.contents = ['5.1 Left', '5.1 Right', '5.1 Center','5.1 LFE','5.1 Left Surround','5.1 Right Surround','Stereo Left','Stereo Right','Stereo Music Left','Stereo Music Right','Stereo FX Left','Stereo FX Right','Stereo M&E Left','Stereo M&E Right','Stereo Dialogue','Mono Narration','M.O.S','Mono','Mono Dialogue','Mono Music','Mono FX','Various']
+        my.contents = ['5.1 Left', '5.1 Right', '5.1 Center', '5.1 LFE', '5.1 Left Surround', '5.1 Right Surround',
+                       'Stereo Left', 'Stereo Right', 'Stereo Music Left', 'Stereo Music Right', 'Stereo FX Left',
+                       'Stereo FX Right', 'Stereo M&E Left', 'Stereo M&E Right', 'Stereo Dialogue', 'Mono Narration',
+                       'M.O.S', 'Mono', 'Mono Dialogue', 'Mono Music', 'Mono FX', 'Various']
         for c in my.contents:
             my.content_pull = '%s<option value="%s">%s</option>' % (my.content_pull, c, c)
         my.content_pull = '%s</select>' % my.content_pull
-
 
     def get_nums_only(my):
         behavior = {'css_class': 'clickme', 'type': 'keyup', 'cbjs_action': '''        
@@ -1067,9 +1060,6 @@ class ElementEvalAudioWdg(BaseTableElementWdg):
         return txt
 
     def get_display(my):
-        import time, datetime
-        from tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
         code = ''
         element_auds = []
         server = TacticServerStub.get()
@@ -1231,19 +1221,18 @@ class ElementEvalBarcodesWdg(BaseTableElementWdg):
          '''}
         return behavior
 
-    def txtbox(my, name, val, width='200px', js='no'):
+    def txtbox(my, name, val, width='200px', js=False):
         txt = TextWdg(name)
-        txt.add_attr('id',name)
+        txt.add_attr('id', name)
         txt.add_style('width: %s;' % width)
         txt.set_value(val)
-        if js in ['Yes','yes']:
+
+        if js:
             txt.add_behavior(my.get_add_dots())
+
         return txt
 
     def get_display(my):
-        import time, datetime
-        from tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
         login = Environment.get_login()
         this_user = login.get_login()
         code = ''
@@ -1272,63 +1261,45 @@ class ElementEvalBarcodesWdg(BaseTableElementWdg):
             bctable.add_cell("SLATE INFO")
             plus_butt = bctable.add_cell(" ")
         if code not in [None,'']:
-            #plus_butt.add_style('cursor: pointer;')
-            #plus_butt.add_behavior(my.get_add_line())
             for el in element_bcs:
                 brow = bctable.add_row()
-                brow.add_attr('line',rowct)
-                brow.add_attr('code',el.get('code'))
-                brow.add_attr('class','element_barcodes')
+                brow.add_attr('line', rowct)
+                brow.add_attr('code', el.get('code'))
+                brow.add_attr('class', 'element_barcodes')
                 nw = bctable.add_cell('Part %s' % rowct)
-                nw.add_attr('nowrap','nowrap')
-                #bctable.add_cell('<input type="text" id="barcode-%s" class="barcode" value="%s" style="width: 100px;"/>' % (rowct, el.get('barcode')))
-                bctable.add_cell(my.txtbox('barcode-%s' % rowct, el.get('barcode'),width='100px',js='no'))
-                #bctable.add_cell('<input type="text" id="program_start-%s" class="program_start" value="%s" style="width: 150px;"/>' % (rowct, el.get('program_start')))
-                bctable.add_cell(my.txtbox('program_start-%s' % rowct, el.get('program_start'),width='150px',js='yes'))
-                #bctable.add_cell('<input type="text" id="f1-%s" class="f1" value="%s" style="width: 20px;"/>' % (rowct, el.get('f1')))
-                bctable.add_cell(my.txtbox('f1-%s' % rowct, el.get('f1'),width='20px',js='no'))
-                #bctable.add_cell('<input type="text" id="program_end-%s" class="program_end" value="%s" style="width: 150px;"/>' % (rowct, el.get('program_end')))
-                bctable.add_cell(my.txtbox('program_end-%s' % rowct, el.get('program_end'),width='150px',js='yes'))
-                #bctable.add_cell('<input type="text" id="f2-%s" class="f2" value="%s" style="width: 20px;"/>' % (rowct, el.get('f2')))
-                bctable.add_cell(my.txtbox('f2-%s' % rowct, el.get('f2'),width='20px',js='no'))
-                #bctable.add_cell('<input type="text" id="length-%s" class="length" value="%s" style="width: 100px;"/>' % (rowct, el.get('length')))
-                bctable.add_cell(my.txtbox('length-%s' % rowct, el.get('length'),width='155px',js='yes'))
-                #bctable.add_cell('<input type="text" id="label_info-%s" class="label_info" value="%s" style="width: 160px;"/>' % (rowct, el.get('label_info')))
-                bctable.add_cell(my.txtbox('label_info-%s' % rowct, el.get('label_info'),width='190px',js='no'))
-                #bctable.add_cell('<input type="text" id="slate_info-%s" class="slate_info" value="%s" style="width: 160px;"/>' % (rowct, el.get('slate_info')))
-                bctable.add_cell(my.txtbox('slate_info-%s' % rowct, el.get('slate_info'),width='190px',js='no'))
-                killer = bctable.add_cell('<b>X</b>')#This must delete the entry
+                nw.add_attr('nowrap', 'nowrap')
+                bctable.add_cell(my.txtbox('barcode-%s' % rowct, el.get('barcode'), width='100px', js=False))
+                bctable.add_cell(my.txtbox('program_start-%s' % rowct, el.get('program_start'), width='150px', js=True))
+                bctable.add_cell(my.txtbox('f1-%s' % rowct, el.get('f1'), width='20px', js=False))
+                bctable.add_cell(my.txtbox('program_end-%s' % rowct, el.get('program_end'), width='150px', js=True))
+                bctable.add_cell(my.txtbox('f2-%s' % rowct, el.get('f2'), width='20px', js=False))
+                bctable.add_cell(my.txtbox('length-%s' % rowct, el.get('length'), width='155px', js=True))
+                bctable.add_cell(my.txtbox('label_info-%s' % rowct, el.get('label_info'), width='190px', js=False))
+                bctable.add_cell(my.txtbox('slate_info-%s' % rowct, el.get('slate_info'), width='190px', js=False))
+                killer = bctable.add_cell('<b>X</b>')  # This must delete the entry
                 killer.add_style('cursor: pointer;')
                 killer.add_behavior(my.get_kill_bvr(rowct, wo_code, el.get('code')))
-                rowct = rowct + 1
+                rowct += 1
 
         erow = bctable.add_row()
-        erow.add_attr('line',rowct)
-        erow.add_attr('code','')
-        erow.add_attr('class','element_barcodes')
+        erow.add_attr('line', rowct)
+        erow.add_attr('code', '')
+        erow.add_attr('class', 'element_barcodes')
         nw2 = bctable.add_cell('Part %s' % rowct)
-        nw2.add_attr('nowrap','nowrap')
-        #bctable.add_cell('<input type="text" id="barcode-%s" class="barcode" value="" style="width: 100px;"/>' % (rowct))
-        bctable.add_cell(my.txtbox('barcode-%s' % rowct,'',width='100px',js='no'))
-        #bctable.add_cell('<input type="text" id="program_start-%s" class="program_start" value="" style="width: 150px;"/>' % (rowct))
-        bctable.add_cell(my.txtbox('program_start-%s' % rowct,'',width='150px',js='yes'))
-        #bctable.add_cell('<input type="text" id="f1-%s" class="f1" value="" style="width: 20px;"/>' % (rowct))
-        bctable.add_cell(my.txtbox('f1-%s' % rowct,'',width='20px',js='yes'))
-        #bctable.add_cell('<input type="text" id="program_end-%s" class="program_end" value="" style="width: 150px;"/>' % (rowct))
-        bctable.add_cell(my.txtbox('program_end-%s' % rowct,'',width='150px',js='yes'))
-        #bctable.add_cell('<input type="text" id="f2-%s" class="f2" value="" style="width: 20px;"/>' % (rowct))
-        bctable.add_cell(my.txtbox('f2-%s' % rowct,'',width='20px',js='no'))
-        #bctable.add_cell('<input type="text" id="length-%s" class="length" value="" style="width: 100px;"/>' % (rowct))
-        bctable.add_cell(my.txtbox('length-%s' % rowct,'',width='155px',js='yes'))
-        #bctable.add_cell('<input type="text" id="label_info-%s" class="label_info" value="" style="width: 160px;"/>' % (rowct))
-        bctable.add_cell(my.txtbox('label_info-%s' % rowct,'',width='190px',js='no'))
-        #bctable.add_cell('<input type="text" id="slate_info-%s" class="slate_info" value="" style="width: 160px;"/>' % (rowct))
-        bctable.add_cell(my.txtbox('slate_info-%s' % rowct,'',width='190px',js='no'))
-        addnew = bctable.add_cell('<b>+</b>')#This must add new entry
+        nw2.add_attr('nowrap', 'nowrap')
+        bctable.add_cell(my.txtbox('barcode-%s' % rowct, '', width='100px', js=False))
+        bctable.add_cell(my.txtbox('program_start-%s' % rowct, '', width='150px', js=True))
+        bctable.add_cell(my.txtbox('f1-%s' % rowct, '', width='20px', js=True))
+        bctable.add_cell(my.txtbox('program_end-%s' % rowct, '', width='150px', js=True))
+        bctable.add_cell(my.txtbox('f2-%s' % rowct, '', width='20px', js=False))
+        bctable.add_cell(my.txtbox('length-%s' % rowct, '', width='155px', js=True))
+        bctable.add_cell(my.txtbox('label_info-%s' % rowct, '', width='190px', js=False))
+        bctable.add_cell(my.txtbox('slate_info-%s' % rowct, '', width='190px', js=False))
+        addnew = bctable.add_cell('<b>+</b>')  # This must add new entry
         addnew.add_style('cursor: pointer;')
-        addnew.add_behavior(my.get_add_line(rowct,wo_code, code))
+        addnew.add_behavior(my.get_add_line(rowct, wo_code, code))
         erow2 = bctable.add_row()
-        erow2.add_attr('class','new_barcode_line')
+        erow2.add_attr('class', 'new_barcode_line')
         return bctable
 
 
@@ -1504,7 +1475,7 @@ class ElementEvalLinesWdg(BaseTableElementWdg):
 
     def txtbox(my, name, val, width='200px', js='no', style=''):
         txt = TextWdg(name)
-        txt.add_attr('id',name)
+        txt.add_attr('id', name)
         txt.add_style('width: %s;' % width)
         txt.set_value(val)
         if not style:
@@ -1513,7 +1484,7 @@ class ElementEvalLinesWdg(BaseTableElementWdg):
             txt.add_style('font-style: italic;')
         if 'b' in style:
             txt.add_style('font-weight: bold;')
-        if js in ['Yes','yes']:
+        if js in ['Yes', 'yes']:
             txt.add_behavior(my.get_add_dots())
         if 'description' in name:
             txt.add_behavior(my.get_alter_text_bold())
@@ -1521,10 +1492,6 @@ class ElementEvalLinesWdg(BaseTableElementWdg):
         return txt
 
     def get_display(my):
-        import time, datetime
-        from tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
-        from pyasm.prod.biz import ProdSetting
         login = Environment.get_login()
         this_user = login.get_login()
         code = ''
@@ -1532,8 +1499,8 @@ class ElementEvalLinesWdg(BaseTableElementWdg):
         rowct = 0
         server = TacticServerStub.get()
         #descriptions = server.eval("@SOBJECT(twog/qc_report_vars['type','element']['@ORDER_BY','description'])")
-        type_codes = ['F','A','T','V']
-        scales = ['1','2','3','FYI']
+        type_codes = ['F', 'A', 'T', 'V']
+        scales = ['1', '2', '3', 'FYI']
         in_safe = ['No', 'Yes']
         insrc = ['No', 'Yes', 'New', 'Approved', 'Fixed', 'Not Fixed']
         wo_code = str(my.kwargs.get('wo_code'))
@@ -1826,13 +1793,15 @@ class ReportTimecodeShifterWdg(BaseTableElementWdg):
          '''}
         return behavior
 
-    def txtbox(my, name, val, width='200px', js='no'):
+    def txtbox(my, name, val, width='200px', js=False):
         txt = TextWdg(name)
         txt.add_attr('id',name)
         txt.add_style('width: %s;' % width)
         txt.set_value(val)
-        if js in ['Yes','yes']:
+
+        if js:
             txt.add_behavior(my.get_add_dots())
+
         return txt
 
     def get_display(my):
@@ -1840,21 +1809,21 @@ class ReportTimecodeShifterWdg(BaseTableElementWdg):
         ell_code = my.kwargs.get('ell_code')
         widget = DivWdg()
         table = Table()
-        table.add_attr('id','timecode_shifter')
+        table.add_attr('id', 'timecode_shifter')
         table.add_row()
         sa = table.add_cell('Start After:')
-        sa.add_attr('nowrap','nowrap')
-        table.add_cell(my.txtbox('start_at', '',width='75px',js='yes'))
+        sa.add_attr('nowrap', 'nowrap')
+        table.add_cell(my.txtbox('start_at', '', width='75px', js=True))
         sb = table.add_cell('(Must exactly match the following format EX: 01:33:57:19)')
-        sb.add_attr('nowrap','nowrap')
+        sb.add_attr('nowrap', 'nowrap')
         table.add_row()
         table.add_cell('Add:')
-        table.add_cell(my.txtbox('add_amt', '',width='75px',js='yes'))
+        table.add_cell(my.txtbox('add_amt', '', width='75px', js=True))
         sc = table.add_cell('(Minute:Second:Frame or Minute:Second)')
-        sc.add_attr('nowrap','nowrap')
+        sc.add_attr('nowrap', 'nowrap')
         table.add_row()
         butt = table.add_cell('<input type="button" value="Shift Timecodes"/>')
-        butt.add_behavior(my.shift_em(wo_code,ell_code))
+        butt.add_behavior(my.shift_em(wo_code, ell_code))
         widget.add(table)
 
         return widget
