@@ -3,6 +3,9 @@ This file was generated automatically from a custom script found in Project -> S
 The custom script was moved to a file so that it could be integrated with GitHub.
 """
 
+# TODO: This trigger was removed from production, as it did not work. It is probably safe to delete as it likely doesn't
+# do anything
+
 __author__ = 'Topher.Hughes'
 __date__ = '04/08/2015'
 
