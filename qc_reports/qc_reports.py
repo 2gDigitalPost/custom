@@ -1289,13 +1289,15 @@ class ReportTimecodeShifterWdg(BaseTableElementWdg):
          '''}
         return behavior
 
-    def txtbox(my, name, val, width='200px', js='no'):
+    def txtbox(my, name, val, width='200px', js=False):
         txt = TextWdg(name)
         txt.add_attr('id',name)
         txt.add_style('width: %s;' % width)
         txt.set_value(val)
-        if js in ['Yes','yes']:
+
+        if js:
             txt.add_behavior(my.get_add_dots())
+
         return txt
 
     def get_display(my):
@@ -1303,21 +1305,21 @@ class ReportTimecodeShifterWdg(BaseTableElementWdg):
         ell_code = my.kwargs.get('ell_code')
         widget = DivWdg()
         table = Table()
-        table.add_attr('id','timecode_shifter')
+        table.add_attr('id', 'timecode_shifter')
         table.add_row()
         sa = table.add_cell('Start After:')
-        sa.add_attr('nowrap','nowrap')
-        table.add_cell(my.txtbox('start_at', '',width='75px',js='yes'))
+        sa.add_attr('nowrap', 'nowrap')
+        table.add_cell(my.txtbox('start_at', '', width='75px', js=True))
         sb = table.add_cell('(Must exactly match the following format EX: 01:33:57:19)')
-        sb.add_attr('nowrap','nowrap')
+        sb.add_attr('nowrap', 'nowrap')
         table.add_row()
         table.add_cell('Add:')
-        table.add_cell(my.txtbox('add_amt', '',width='75px',js='yes'))
+        table.add_cell(my.txtbox('add_amt', '', width='75px', js=True))
         sc = table.add_cell('(Minute:Second:Frame or Minute:Second)')
-        sc.add_attr('nowrap','nowrap')
+        sc.add_attr('nowrap', 'nowrap')
         table.add_row()
         butt = table.add_cell('<input type="button" value="Shift Timecodes"/>')
-        butt.add_behavior(my.shift_em(wo_code,ell_code))
+        butt.add_behavior(my.shift_em(wo_code, ell_code))
         widget.add(table)
 
         return widget

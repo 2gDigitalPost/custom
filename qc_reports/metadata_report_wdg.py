@@ -10,6 +10,7 @@ from pyasm.widget import SelectWdg, CheckboxWdg
 
 from common_tools.common_functions import fix_date
 
+
 class MetaDataReportWdg(BaseTableElementWdg):
 
     def init(my):
