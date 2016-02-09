@@ -4,300 +4,14 @@ from tactic_client_lib import TacticServerStub
 from tactic.ui.common import BaseTableElementWdg
 
 from pyasm.common import Environment
-from pyasm.widget import SelectWdg, CheckboxWdg, TextWdg
+from pyasm.widget import SelectWdg, TextWdg, CheckboxWdg
 from pyasm.web import Table, DivWdg
-
-
-class PreQualEvalLinesWdg(BaseTableElementWdg):
-    def init(my):
-        nothing = 'true'
-
-    def get_kill_bvr(my, rowct, wo_code, pl_code, pq_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                            var rowct = Number('%s');
-                            var wo_code = '%s';
-                            var pl_code = '%s';
-                            var pq_code = '%s';
-                            if(confirm("Do you really want to delete this evaluation line?")){
-                                server = TacticServerStub.get();
-                                server.retire_sobject(server.build_search_key('twog/prequal_eval_lines',pl_code));
-                                top_els = document.getElementsByClassName('printable_prequal_form_' + wo_code);
-                                top_el = null;
-                                for(var r = 0; r < top_els.length; r++){
-                                    if(top_els[r].getAttribute('prequal_code') == pq_code){
-                                        top_el = top_els[r];
-                                    }
-                                }
-                                linestbl = top_el.getElementsByClassName('linestbl')[0];
-                                pq_lines = linestbl.getElementsByClassName('pq_lines');
-                                pqer = null;
-                                for(var r = 0; r < pq_lines.length; r++){
-                                    if(pq_lines[r].getAttribute('line') == rowct){
-                                        pq_lines[r].innerHTML = '';
-                                        pq_lines[r].style.display = 'none';
-                                    }
-                                }
-                                send_data = {'rowct': rowct, 'wo_code': wo_code, 'code': pl_code};
-                                //spt.api.load_panel(linestbl, 'qc_reports.qc_reports.PreQualEvalLinesWdg', send_data);
-                            }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
-         ''' % (rowct, wo_code, pl_code, pq_code)}
-        return behavior
-
-    def get_add_line(my, rowct, wo_code, prequal_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                            var rowct = Number('%s');
-                            var wo_code = '%s';
-                            var pq_code = '%s';
-                            top_els = document.getElementsByClassName('printable_prequal_form_' + wo_code);
-                            top_el = null;
-                            for(var r = 0; r < top_els.length; r++){
-                                if(top_els[r].getAttribute('prequal_code') == pq_code){
-                                    top_el = top_els[r];
-                                }
-                            }
-                            linestbl = top_el.getElementsByClassName('linestbl');
-                            lastlinestbl = linestbl[linestbl.length - 1];
-                            addportions = top_el.getElementsByClassName('new_pq_line');
-                            addportion = addportions[addportions.length - 1];
-                            addportion.setAttribute('class','pq_lines');
-                            addportion.setAttribute('line',Number(rowct) + 1);
-                            addportion.setAttribute('code','');
-                            send_data = {'rowct': rowct + 1, 'wo_code': wo_code};
-                            spt.api.load_panel(addportion, 'qc_reports.qc_reports.PreQualEvalLinesWdg', send_data);
-                            newrow = lastlinestbl.insertRow(-1);
-                            newrow.setAttribute('class','new_pq_line');
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
-         ''' % (rowct, wo_code, prequal_code)}
-        return behavior
-
-    def get_select_fillin(my, wo_code, rowct, prequal_code):
-        behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
-                try{
-                   wo_code = '%s';
-                   rowct = '%s';
-                   pq_code = '%s';
-                   top_els = document.getElementsByClassName('printable_prequal_form_' + wo_code);
-                   top_el = null;
-                   for(var r = 0; r < top_els.length; r++){
-                       if(top_els[r].getAttribute('prequal_code') == pq_code){
-                           top_el = top_els[r];
-                       }
-                   }
-                   this_sel = top_el.getElementById('description-' + rowct);
-                   val = this_sel.value;
-                   if(val.indexOf('( )') != -1){
-                       deets = prompt("Please enter more detail for: " + val);
-                       newval = val.replace('( )','(' + deets + ')');
-                       inner = this_sel.innerHTML;
-                       newinner = inner + '<option value="' + newval + '" selected="selected">' + newval + '</option>';
-                       this_sel.innerHTML = newinner;
-                   }else if(val.indexOf('...') != -1){
-                       deets = prompt("Please enter the new description.");
-                       newval = deets;
-                       if(val.indexOf('V -') != -1){
-                           newval = 'V - ' + newval;
-                       }else{
-                           newval = 'A - ' + newval;
-                       }
-                       inner = this_sel.innerHTML;
-                       newinner = inner + '<option value="' + newval + '" selected="selected">' + newval + '</option>';
-                       this_sel.innerHTML = newinner;
-                       //bottom lines would insert it into qc_report_vars to be remembered for future use in the pulldowns
-                       //server = TacticServerStub.get();
-                       //server.insert('twog/qc_report_vars', {'type': 'prequal', 'description': newval});
-                   }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
-         ''' % (wo_code, rowct, prequal_code)}
-        return behavior
-
-    def get_add_dots(my):
-        behavior = {'css_class': 'clickme', 'type': 'keyup', 'cbjs_action': '''
-                try{
-                    var entered = bvr.src_el.value;
-                    var new_str = '';
-                    entered = entered.replace(/:/g,'');
-                    for(var r = 0; r < entered.length; r++){
-                        if(r % 2 == 0 && r != 0){
-                            new_str = new_str + ':';
-                        }
-                        new_str = new_str + entered[r];
-                    }
-                    bvr.src_el.value = new_str;
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
-         '''}
-        return behavior
-
-    def txtbox(my, name, val, width='200px', js='no'):
-        txt = TextWdg(name)
-        txt.add_attr('id', name)
-        txt.add_style('width: %s;' % width)
-        txt.set_value(val)
-        if js in ['Yes', 'yes']:
-            txt.add_behavior(my.get_add_dots())
-        return txt
-
-    def get_display(my):
-        from tactic_client_lib import TacticServerStub
-        from pyasm.common import Environment
-        login = Environment.get_login()
-        this_user = login.get_login()
-        code = ''
-        prequal_lines = None
-        rowct = 0
-        server = TacticServerStub.get()
-        descriptions = server.eval("@SOBJECT(twog/qc_report_vars['type','prequal']['@ORDER_BY','description'])")
-        type_codes = ['F', 'A', 'T', 'V']
-        scales = ['1', '2', '3', 'FYI']
-        insrc = ['No', 'Yes']
-        wo_code = str(my.kwargs.get('wo_code'))
-        if 'code' in my.kwargs.keys():
-            code = my.kwargs.get('code')
-            prequal_lines = server.eval("@SOBJECT(twog/prequal_eval_lines['prequal_eval_code','%s']['@ORDER_BY','timecode'])" % code)
-        elif 'rowct' in my.kwargs.keys():
-            rowct = int(my.kwargs.get('rowct'))
-        linestbl = Table()
-        linestbl.add_attr('class', 'linestbl')
-        longest_len = 0
-        for d in descriptions:
-            desc = d.get('description')
-            lendesc = len(desc)
-            if lendesc > longest_len:
-                longest_len = lendesc
-        if code:
-            for pl in prequal_lines:
-                if len(pl.get('description')) > longest_len:
-                    longest_len = len(pl.get('description'))
-
-            linestbl.add_row()
-            linestbl.add_cell("Timecode")
-            linestbl.add_cell("F")
-            linestbl.add_cell("Description")
-            linestbl.add_cell("Code")
-            linestbl.add_cell("Scale")
-            linestbl.add_cell("Sector/Ch")
-            linestbl.add_cell("In Source")
-            linestbl.add_cell(" ")
-
-            for pl in prequal_lines:
-                seen_descs = []
-                if pl.get('code') != '':
-                    row = linestbl.add_row()
-                    row.add_attr('line', rowct)
-                    row.add_attr('code', pl.get('code'))
-                    row.add_attr('class', 'pq_lines')
-
-                    linestbl.add_cell(my.txtbox('timecode-%s' % rowct, pl.get('timecode'),width='75px',js='yes'))
-                    linestbl.add_cell('<input type="text" id="media_type-%s" name="media_type" value="%s" style="width: 20px;"/>' % (rowct, pl.get('media_type')))
-                    desc_select = SelectWdg('description')
-                    desc_select.append_option('--Select--', '')
-                    for d in descriptions:
-                        desc = d.get('description')
-                        desc_select.append_option(desc,desc)
-                        seen_descs.append(desc)
-                    desc_select.add_style('width: %spx;' % int(float(longest_len * 7.5)))
-                    if pl.get('description') not in seen_descs:
-                        desc_select.append_option(pl.get('description'), pl.get('description'))
-                    desc_select.set_value(pl.get('description'))
-                    desc_select.add_attr('id', 'description-%s' % rowct)
-                    desc_select.add_behavior(my.get_select_fillin(wo_code, rowct, code))
-                    mm1 = linestbl.add_cell(desc_select)
-                    mm1.add_attr('class', 'select_cell')
-                    type_code_select = SelectWdg('type_code')
-                    type_code_select.append_option('-', '')
-                    for tc in type_codes:
-                        type_code_select.append_option(tc, tc)
-                    type_code_select.set_value(pl.get('type_code'))
-                    type_code_select.add_attr('id', 'type_code-%s' % rowct)
-                    mm2 = linestbl.add_cell(type_code_select)
-                    mm2.add_attr('class', 'select_cell')
-                    scale_select = SelectWdg('scale')
-                    scale_select.append_option('-', '')
-                    for s in scales:
-                        scale_select.append_option(s, s)
-                    scale_select.set_value(pl.get('scale'))
-                    scale_select.add_attr('id', 'scale-%s' % rowct)
-                    mm3 = linestbl.add_cell(scale_select)
-                    mm3.add_attr('class', 'select_cell')
-                    linestbl.add_cell('<input type="text" id="sector_or_channel-%s" value="%s" style="width: 75px;"/>' % (rowct, pl.get('sector_or_channel')))
-                    insrc_select = SelectWdg('in_source')
-                    insrc_select.append_option('-', '')
-                    for i in insrc:
-                        insrc_select.append_option(i, i)
-                    insrc_select.set_value(pl.get('in_source'))
-                    insrc_select.add_attr('id', 'in_source-%s' % rowct)
-                    mm4 = linestbl.add_cell(insrc_select)
-                    mm4.add_attr('class', 'select_cell')
-                    killer = linestbl.add_cell('<b>X</b>')#This must delete the entry
-                    killer.add_style('cursor: pointer;')
-                    killer.add_behavior(my.get_kill_bvr(rowct, wo_code, pl.get('code'), code))
-                    rowct += 1
-
-        erow = linestbl.add_row()
-        erow.add_attr('line', rowct)
-        erow.add_attr('code', '')
-        erow.add_attr('class', 'pq_lines')
-
-        linestbl.add_cell(my.txtbox('timecode-%s' % rowct, '', width='75px', js='yes'))
-        linestbl.add_cell('<input type="text" id="media_type-%s" name="media_type" value="" style="width: 20px;"/>' % (rowct))
-        desc_select = SelectWdg('description')
-        desc_select.append_option('--Select--', '')
-        desc_select.add_style('width: %spx;' % (longest_len * 7.5))
-        for d in descriptions:
-            desc = d.get('description')
-            desc_select.append_option(desc,desc)
-        desc_select.set_value('')
-        desc_select.add_attr('id', 'description-%s' % rowct)
-        desc_select.add_behavior(my.get_select_fillin(wo_code, rowct, code))
-        linestbl.add_cell(desc_select)
-        type_code_select = SelectWdg('type_code')
-        type_code_select.append_option('-', '')
-        for tc in type_codes:
-            type_code_select.append_option(tc,tc)
-        type_code_select.add_attr('id', 'type_code-%s' % rowct)
-        linestbl.add_cell(type_code_select)
-        scale_select = SelectWdg('scale')
-        scale_select.append_option('-', '')
-        for s in scales:
-            scale_select.append_option(s, s)
-        scale_select.add_attr('id', 'scale-%s' % rowct)
-        linestbl.add_cell(scale_select)
-        linestbl.add_cell('<input type="text" id="sector_or_channel-%s" value="" style="width: 75px;"/>' % rowct)
-        insrc_select = SelectWdg('in_source')
-        insrc_select.append_option('-', '')
-        for i in insrc:
-            insrc_select.append_option(i,i)
-        insrc_select.add_attr('id', 'in_source-%s' % rowct)
-        linestbl.add_cell(insrc_select)
-        addnew = linestbl.add_cell('<b>+</b>')#This must add new entry
-        addnew.add_style('cursor: pointer;')
-        addnew.add_behavior(my.get_add_line(rowct,wo_code,code))
-        erow2 = linestbl.add_row()
-        erow2.add_attr('class', 'new_pq_line')
-        return linestbl
 
 
 class PreQualEvalWdg(BaseTableElementWdg):
 
     def init(my):
+        nothing = 'true'
         my.formats = ['Electronic/File', 'DBC', 'D5', 'HDCAM SR', 'NTSC', 'PAL']
         my.frame_rates = ['23.98fps', '59.94i', '50i', '29.97fps', '59.94p', 'DFTC', 'NDFTC', 'PAL/EBU']
         my.machines = ['VTR221', 'VTR222', 'VTR223', 'VTR224', 'VTR225', 'VTR231', 'VTR232', 'VTR233', 'VTR234',
@@ -314,7 +28,8 @@ class PreQualEvalWdg(BaseTableElementWdg):
 
         my.standards = ['625', '525', '720', '1080 (4:4:4)', '1080', 'PAL', 'NTSC']
 
-    def kill_nothing(my, val):
+    @staticmethod
+    def kill_nothing(val):
         if val == 'NOTHINGXsXNOTHING':
             val = ''
         return val
@@ -663,7 +378,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         title_pevals = server.eval("@SOBJECT(twog/prequal_eval['title_code','%s']['work_order_code','!=','%s']['code','!=','%s'])" % (work_order.get('title_code'), work_order.get('code'), prequal_code))
         others = Table()
         others.add_style('background-color: #528B8B; width: 100%;')
-        cols = ['#537072','#518A1A']
+        cols = ['#537072', '#518A1A']
         colsct = 0
         if len(title_pevals) > 0:
             trrr = others.add_row()
@@ -671,9 +386,9 @@ class PreQualEvalWdg(BaseTableElementWdg):
             others.add_cell('<b>Other PreQual Evals for Title</b>')
             for t in title_pevals:
                 click_row = others.add_row()
-                click_row.add_attr('prequal_code', t.get('code'))
-                click_row.add_attr('work_order_code', t.get('work_order_code'))
-                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct % 2])
+                click_row.add_attr('prequal_code',t.get('code'))
+                click_row.add_attr('work_order_code',t.get('work_order_code'))
+                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct%2])
                 click_row.add_behavior(my.get_click_row(t.get('work_order_code'), t.get('code')))
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (t.get('wo_name'), t.get('work_order_code')))
                 others.add_cell('<b>OPERATOR:</b> %s' % t.get('operator'))
@@ -687,9 +402,9 @@ class PreQualEvalWdg(BaseTableElementWdg):
             others.add_cell('<b>Other PreQual Evals for Work Order</b>')
             for w in wo_pevals:
                 click_row = others.add_row()
-                click_row.add_attr('prequal_code', w.get('code'))
-                click_row.add_attr('work_order_code', w.get('work_order_code'))
-                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct % 2])
+                click_row.add_attr('prequal_code',w.get('code'))
+                click_row.add_attr('work_order_code',w.get('work_order_code'))
+                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct%2])
                 click_row.add_behavior(my.get_click_row(w.get('work_order_code'), w.get('code')))
                 others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (w.get('wo_name'), w.get('work_order_code')))
                 others.add_cell('<b>OPERATOR:</b> %s' % w.get('operator'))
@@ -699,11 +414,11 @@ class PreQualEvalWdg(BaseTableElementWdg):
                 colsct += 1
 
         widget.add_attr('class', 'big_ol_prequal_wdg_%s' % code)
-        widget.add_attr('prequal_code', prequal.get('code'))
+        widget.add_attr('prequal_code',prequal.get('code'))
         table = Table()
         table.add_attr('class', 'printable_prequal_form_%s' % code)
-        table.add_attr('prequal_code', prequal.get('code'))
-        table.add_attr('work_order_code', prequal.get('work_order_code'))
+        table.add_attr('prequal_code',prequal.get('code'))
+        table.add_attr('work_order_code',prequal.get('work_order_code'))
         img_tbl = Table()
         img_tbl.add_row()
         i2 = Table()
@@ -734,19 +449,19 @@ class PreQualEvalWdg(BaseTableElementWdg):
         big.add_attr('nowrap', 'nowrap')
         big.add_attr('align', 'center')
         big.add_attr('valign', 'center')
-        big.add_style('font-size', '40px')
+        big.add_style('font-size: 40px;')
         rtbl.add_cell(acr)
         toptbl = Table()
         toptbl.add_row()
         toptbl.add_cell(img_tbl)
         toptbl.add_cell(rtbl)
         bay_sel = SelectWdg('bay_select')
-        bay_sel.add_attr('id', 'bay')
+        bay_sel.add_attr('id','bay')
         bay_sel.add_style('width: 135px;')
         bay_sel.append_option('--Select--', '')
         for i in range(1, 13):
             bay_sel.append_option('Bay %s' % i, 'Bay %s' % i)
-        if prequal.get('bay'):
+        if prequal.get('bay') not in [None,'']:
             bay_sel.set_value(prequal.get('bay'))
 
         style_sel = SelectWdg('style_select')
@@ -754,8 +469,8 @@ class PreQualEvalWdg(BaseTableElementWdg):
         style_sel.add_style('width: 135px;')
         style_sel.append_option('--Select--', '')
         for s in my.styles:
-            style_sel.append_option(s, s)
-        if prequal.get('style'):
+            style_sel.append_option(s,s)
+        if prequal.get('style') not in [None, '']:
             style_sel.set_value(prequal.get('style'))
 
         machine_sel = SelectWdg('machine_select')
@@ -763,48 +478,48 @@ class PreQualEvalWdg(BaseTableElementWdg):
         machine_sel.add_style('width: 135px;')
         machine_sel.append_option('--Select--', '')
         for m in my.machines:
-            machine_sel.append_option(m, m)
-        if prequal.get('machine_number'):
+            machine_sel.append_option(m,m)
+        if prequal.get('machine_number') not in [None,'']:
             machine_sel.set_value(prequal.get('machine_number'))
 
         format_sel = SelectWdg('format_select')
         format_sel.add_attr('id', 'format')
-        format_sel.add_style('width', '153px')
+        format_sel.add_style('width: 153px;')
         format_sel.append_option('--Select--', '')
         for f in my.formats:
             format_sel.append_option(f, f)
-        if prequal.get('format'):
+        if prequal.get('format') not in [None,'']:
             format_sel.set_value(prequal.get('format'))
 
         ar_select = SelectWdg('aspect_ratio_select')
         ar_select.add_attr('id', 'aspect_ratio')
-        ar_select.add_style('width', '153px')
+        ar_select.add_style('width: 153px;')
         ar_select.append_option('--Select--', '')
         for a in my.aspect_ratios:
-            ar_select.append_option(a, a)
-        if prequal.get('aspect_ratio'):
+            ar_select.append_option(a,a)
+        if prequal.get('aspect_ratio') not in [None,'']:
             ar_select.set_value(prequal.get('aspect_ratio'))
 
         frame_rate_sel = SelectWdg('frame_rate_select')
         frame_rate_sel.add_attr('id', 'frame_rate')
         frame_rate_sel.add_style('width: 153px;')
-        frame_rate_sel.append_option('--Select--', '')
+        frame_rate_sel.append_option('--Select--','')
         for f in my.frame_rates:
-            frame_rate_sel.append_option(f, f)
-        if prequal.get('frame_rate'):
+            frame_rate_sel.append_option(f,f)
+        if prequal.get('frame_rate') not in [None,'']:
             frame_rate_sel.set_value(prequal.get('frame_rate'))
 
         standard_sel = SelectWdg('standard_select')
-        standard_sel.add_attr('id', 'standard')
-        standard_sel.add_style('width', '153px')
-        standard_sel.append_option('--Select--', '')
+        standard_sel.add_attr('id','standard')
+        standard_sel.add_style('width: 153px;')
+        standard_sel.append_option('--Select--','')
         for s in my.standards:
-            standard_sel.append_option(s, s)
-        if prequal.get('standard'):
+            standard_sel.append_option(s,s)
+        if prequal.get('standard') not in [None,'']:
             standard_sel.set_value(prequal.get('standard'))
 
         majtbl = Table()
-        majtbl.add_attr('class', 'majtbl')
+        majtbl.add_attr('class','majtbl')
         majtbl.add_row()
         majtbl.add_cell('DATE')
         majtbl.add_cell('OPERATOR')
@@ -813,7 +528,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
         majtbl.add_cell('MACHINE #')
         majtbl.add_row()
         majtbl.add_cell('<input type="text" id="timestamp" value="%s"/>' % prequal.get('timestamp'))
-        if prequal.get('operator'):
+        if prequal.get('operator') not in [None,'']:
             that_login = server.eval("@SOBJECT(sthpw/login['login','%s'])" % prequal.get('operator'))
             if that_login:
                 that_login = that_login[0]
@@ -821,62 +536,65 @@ class PreQualEvalWdg(BaseTableElementWdg):
                 prequal['operator'] = that_login_name
         majtbl.add_cell('<input type="text" id="operator" value="%s"/>' % prequal.get('operator'))
         mm1 = majtbl.add_cell(style_sel)
-        mm1.add_attr('class', 'select_cell')
+        mm1.add_attr('class','select_cell')
         mm2 = majtbl.add_cell(bay_sel)
-        mm2.add_attr('class', 'select_cell')
+        mm2.add_attr('class','select_cell')
         mm3 = majtbl.add_cell(machine_sel)
-        mm3.add_attr('class', 'select_cell')
+        mm3.add_attr('class','select_cell')
         tittbl = Table()
         tittbl.add_row()
         tittbl.add_cell('CLIENT:')
         tittbl.add_cell('<input type="text" id="client_name" value="%s" style="width: 400px;"/>' % prequal.get('client_name'))
         tittbl.add_cell('&nbsp;&nbsp;&nbsp;FORMAT:')
         mm4 = tittbl.add_cell(format_sel)
-        mm4.add_attr('class', 'select_cell')
+        mm4.add_attr('class','select_cell')
         tittbl.add_row()
         tittbl.add_cell('TITLE:')
         tittbl.add_cell('<input type="text" id="title" value="%s" style="width: 400px;"/>' % prequal.get('title'))
         tittbl.add_cell('&nbsp;&nbsp;&nbsp;STANDARD:')
         mm5 = tittbl.add_cell(standard_sel)
-        mm5.add_attr('class', 'select_cell')
+        mm5.add_attr('class','select_cell')
         tittbl.add_row()
         tittbl.add_cell('EPISODE:')
         tittbl.add_cell('<input type="text" id="episode" value="%s" style="width: 400px;"/>' % prequal.get('episode'))
         ffr = tittbl.add_cell('&nbsp;&nbsp;&nbsp;FRAME RATE:')
-        ffr.add_attr('nowrap', 'nowrap')
+        ffr.add_attr('nowrap','nowrap')
         mm6 = tittbl.add_cell(frame_rate_sel)
-        mm6.add_attr('class', 'select_cell')
+        mm6.add_attr('class','select_cell')
         tittbl.add_row()
         tittbl.add_cell('VERSION:')
         tittbl.add_cell('<input type="text" id="version" value="%s" style="width: 400px;"/>' % prequal.get('version'))
         tittbl.add_cell('&nbsp;&nbsp;&nbsp;PO #:')
         tittbl.add_cell('<input type="text" id="po_number" value="%s" style="width: 151px;"/>' % prequal.get('po_number'))
         tittbl.add_row()
-
+        #tittbl.add_cell('TYPE:')
+        #tittbl.add_cell('<input type="text" id="title_type" value="%s" style="width: 400px;"/>' % prequal.get('title_type'))
         tittbl.add_cell('')
         tittbl.add_cell('')
         frr = tittbl.add_cell('&nbsp;&nbsp;&nbsp;ASPECT RATIO:')
-        frr.add_attr('nowrap', 'nowrap')
+        frr.add_attr('nowrap','nowrap')
         mm7 = tittbl.add_cell(ar_select)
-        mm7.add_attr('class', 'select_cell')
+        mm7.add_attr('class','select_cell')
 
         ktbl = Table()
         ktbl.add_row()
         k1 = ktbl.add_cell('<i>Code Definitions: F=Film V=Video T=Telecine A=Audio</i>')
-        k1.add_attr('align', 'left')
+        k1.add_attr('align','left')
         k = ktbl.add_cell('&nbsp;&nbsp;&nbsp;')
-        k.add_attr('align', 'right')
+        k.add_attr('align','right')
         k2 = ktbl.add_cell('<i>Severity Scale: 1=Minor 2=Marginal 3=Severe</i>')
-        k2.add_attr('align', 'right')
+        k2.add_attr('align','right')
 
-        linestbl = PreQualEvalLinesWdg(code=prequal.get('code'), wo_code=code)
+        linestbl = PreQualEvalLinesWdg(code=prequal.get('code'),wo_code=code)
 
         fulllines = Table()
-        fulllines.add_attr('border', '2')
+        fulllines.add_attr('border','2')
         fulllines.add_row()
         fulllines.add_cell(ktbl)
         fulllines.add_row()
         fulllines.add_cell(linestbl)
+
+
 
         table.add_row()
         table.add_cell(toptbl)
@@ -886,60 +604,62 @@ class PreQualEvalWdg(BaseTableElementWdg):
         table.add_cell(tittbl)
 
         darktbl = Table()
-        darktbl.add_attr('id', 'darktbl')
+        darktbl.add_attr('id','darktbl')
         darktbl.add_style('padding-right: 10px;')
-
+        #darktbl.add_style('width: 100%s;' % '%')
         darkrow = darktbl.add_row()
-        darkrow.add_attr('id', 'darkrow')
+        darkrow.add_attr('id','darkrow')
         dkcell = darktbl.add_cell('<b><font color="#FFFFFF">GENERAL COMMENTS</font></b>')
-        dkcell.add_attr('id', 'darkcell')
-        dkcell.add_attr('width', '700px')
-        dkcell.set_style('background-color', '#040404;')
+        dkcell.add_attr('id','darkcell')
+        dkcell.add_attr('width','700px')
+        dkcell.set_style('background-color: #040404;')
         dk2 = darktbl.add_cell(' ')
-        dk2.add_attr('width', '20px')
+        dk2.add_attr('width','20px')
         darktbl.add_row()
         darktbl.add_cell('''<textarea cols="160" rows="10" class="description" id="description" style="font-family: 'Arial, Helvetica, sans-serif'; font-size: 14px;">%s</textarea>''' % (prequal.get('description')))
+        #darktbl.add_cell('''<textarea cols="160" rows="10" class="description" id="description">%s</textarea>''' % (prequal.get('description')))
         darktbl.add_cell(' ')
 
         table.add_row()
         table.add_cell(darktbl)
 
         printtbl = Table()
-        printtbl.add_style('background-color: #528B8B; width: 100%s')
+        printtbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
         printtbl.add_row()
         p1 = printtbl.add_cell(' ')
-        p1.add_style('width', '40%')
+        p1.add_style('width: 40%s;' % '%')
         p2 = printtbl.add_cell('<u><b>Print This Report</b></u>')
-        p2.add_attr('nowrap', 'nowrap')
+        p2.add_attr('nowrap','nowrap')
         p2.add_style('cursor: pointer;')
         p2.add_behavior(my.get_print_bvr(code, prequal.get('code'), 'prequal'))
         p3 = printtbl.add_cell(' ')
-        p3.add_style('width', '40%')
+        p3.add_style('width: 40%s;' % '%')
 
         table.add_row()
         table.add_cell(fulllines)
 
+
         stbl = Table()
         stbl.add_row()
         s1 = stbl.add_cell(' ')
-        s1.add_style('width', '40%')
+        s1.add_style('width: 40%s;' % '%')
         s2 = stbl.add_cell('<input type="button" value="Save"/>')
         s2.add_behavior(my.get_save_bvr(code, prequal_code))
         s3 = stbl.add_cell(' ')
-        s3.add_style('width', '40%')
-        if prequal.get('code'):
+        s3.add_style('width: 40%s;' % '%')
+        if prequal.get('code') not in [None,'']:
             s33 = stbl.add_cell('<input type="button" value="Clone This Report"/>')
             s33.add_behavior(my.get_clone_report(code, prequal.get('code')))
             s4 = stbl.add_cell('<input type="button" value="Delete This Report"/>')
             s4.add_behavior(my.get_delete_report(code, prequal.get('code')))
         ttbl = Table()
-        ttbl.add_style('background-color: #528B8B; width: 100%;')
+        ttbl.add_style('background-color: #528B8B; width: 100%s;' % '%')
         ttbl.add_row()
         tt1 = ttbl.add_cell(others)
-        tt1.add_attr('width', '100%')
+        tt1.add_attr('width','100%s' % '%')
         ttbl.add_row()
         tt2 = ttbl.add_cell(printtbl)
-        tt2.add_attr('width', '100%')
+        tt2.add_attr('width','100%s' % '%')
         widget.add(ttbl)
         widget.add(table)
         widget.add_style("font-family: Arial, Helvetica, sans-serif;")
@@ -948,3 +668,291 @@ class PreQualEvalWdg(BaseTableElementWdg):
             widget.add(stbl)
 
         return widget
+
+
+class PreQualEvalLinesWdg(BaseTableElementWdg):
+    def init(my):
+        nothing = 'true'
+
+    def get_kill_bvr(my, rowct, wo_code, pl_code, pq_code):
+        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                        try{
+                            var rowct = Number('%s');
+                            var wo_code = '%s';
+                            var pl_code = '%s';
+                            var pq_code = '%s';
+                            if(confirm("Do you really want to delete this evaluation line?")){
+                                server = TacticServerStub.get();
+                                server.retire_sobject(server.build_search_key('twog/prequal_eval_lines',pl_code));
+                                top_els = document.getElementsByClassName('printable_prequal_form_' + wo_code);
+                                top_el = null;
+                                for(var r = 0; r < top_els.length; r++){
+                                    if(top_els[r].getAttribute('prequal_code') == pq_code){
+                                        top_el = top_els[r];
+                                    }
+                                }
+                                linestbl = top_el.getElementsByClassName('linestbl')[0];
+                                pq_lines = linestbl.getElementsByClassName('pq_lines');
+                                pqer = null;
+                                for(var r = 0; r < pq_lines.length; r++){
+                                    if(pq_lines[r].getAttribute('line') == rowct){
+                                        pq_lines[r].innerHTML = '';
+                                        pq_lines[r].style.display = 'none';
+                                    }
+                                }
+                                send_data = {'rowct': rowct, 'wo_code': wo_code, 'code': pl_code};
+                                //spt.api.load_panel(linestbl, 'qc_reports.qc_reports.PreQualEvalLinesWdg', send_data);
+                            }
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                }
+         ''' % (rowct, wo_code, pl_code, pq_code)}
+        return behavior
+
+    def get_add_line(my, rowct, wo_code, prequal_code):
+        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                        try{
+                            var rowct = Number('%s');
+                            var wo_code = '%s';
+                            var pq_code = '%s';
+                            top_els = document.getElementsByClassName('printable_prequal_form_' + wo_code);
+                            top_el = null;
+                            for(var r = 0; r < top_els.length; r++){
+                                if(top_els[r].getAttribute('prequal_code') == pq_code){
+                                    top_el = top_els[r];
+                                }
+                            }
+                            linestbl = top_el.getElementsByClassName('linestbl');
+                            lastlinestbl = linestbl[linestbl.length - 1];
+                            addportions = top_el.getElementsByClassName('new_pq_line');
+                            addportion = addportions[addportions.length - 1];
+                            addportion.setAttribute('class','pq_lines');
+                            addportion.setAttribute('line',Number(rowct) + 1);
+                            addportion.setAttribute('code','');
+                            send_data = {'rowct': rowct + 1, 'wo_code': wo_code};
+                            spt.api.load_panel(addportion, 'qc_reports.qc_reports.PreQualEvalLinesWdg', send_data);
+                            newrow = lastlinestbl.insertRow(-1);
+                            newrow.setAttribute('class','new_pq_line');
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                }
+         ''' % (rowct, wo_code, prequal_code)}
+        return behavior
+
+    def get_select_fillin(my, wo_code, rowct, prequal_code):
+        behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
+                try{
+                   wo_code = '%s';
+                   rowct = '%s';
+                   pq_code = '%s';
+                   top_els = document.getElementsByClassName('printable_prequal_form_' + wo_code);
+                   top_el = null;
+                   for(var r = 0; r < top_els.length; r++){
+                       if(top_els[r].getAttribute('prequal_code') == pq_code){
+                           top_el = top_els[r];
+                       }
+                   }
+                   this_sel = top_el.getElementById('description-' + rowct);
+                   val = this_sel.value;
+                   if(val.indexOf('( )') != -1){
+                       deets = prompt("Please enter more detail for: " + val);
+                       newval = val.replace('( )','(' + deets + ')');
+                       inner = this_sel.innerHTML;
+                       newinner = inner + '<option value="' + newval + '" selected="selected">' + newval + '</option>';
+                       this_sel.innerHTML = newinner;
+                   }else if(val.indexOf('...') != -1){
+                       deets = prompt("Please enter the new description.");
+                       newval = deets;
+                       if(val.indexOf('V -') != -1){
+                           newval = 'V - ' + newval;
+                       }else{
+                           newval = 'A - ' + newval;
+                       }
+                       inner = this_sel.innerHTML;
+                       newinner = inner + '<option value="' + newval + '" selected="selected">' + newval + '</option>';
+                       this_sel.innerHTML = newinner;
+                       //bottom lines would insert it into qc_report_vars to be remembered for future use in the pulldowns
+                       //server = TacticServerStub.get();
+                       //server.insert('twog/qc_report_vars', {'type': 'prequal', 'description': newval});
+                   }
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                }
+         ''' % (wo_code, rowct, prequal_code)}
+        return behavior
+
+    def get_add_dots(my):
+        behavior = {'css_class': 'clickme', 'type': 'keyup', 'cbjs_action': '''
+                try{
+                    var entered = bvr.src_el.value;
+                    var new_str = '';
+                    entered = entered.replace(/:/g,'');
+                    for(var r = 0; r < entered.length; r++){
+                        if(r % 2 == 0 && r != 0){
+                            new_str = new_str + ':';
+                        }
+                        new_str = new_str + entered[r];
+                    }
+                    bvr.src_el.value = new_str;
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                }
+         '''}
+        return behavior
+
+    def txtbox(my, name, val, width='200px', js='no'):
+        txt = TextWdg(name)
+        txt.add_attr('id',name)
+        txt.add_style('width: %s;' % width)
+        txt.set_value(val)
+        if js in ['Yes','yes']:
+            txt.add_behavior(my.get_add_dots())
+        return txt
+
+    def get_display(my):
+        from tactic_client_lib import TacticServerStub
+        from pyasm.common import Environment
+        login = Environment.get_login()
+        this_user = login.get_login()
+        code = ''
+        prequal_lines = None
+        rowct = 0
+        server = TacticServerStub.get()
+        descriptions = server.eval("@SOBJECT(twog/qc_report_vars['type','prequal']['@ORDER_BY','description'])")
+        type_codes = ['F','A','T','V']
+        scales = ['1','2','3','FYI']
+        insrc = ['No','Yes']
+        wo_code = str(my.kwargs.get('wo_code'))
+        if 'code' in my.kwargs.keys():
+            code = my.kwargs.get('code')
+            prequal_lines = server.eval("@SOBJECT(twog/prequal_eval_lines['prequal_eval_code','%s']['@ORDER_BY','timecode'])" % code)
+        elif 'rowct' in my.kwargs.keys():
+            rowct = int(my.kwargs.get('rowct'))
+        linestbl = Table()
+        linestbl.add_attr('class','linestbl')
+        longest_len = 0
+        for d in descriptions:
+            desc = d.get('description')
+            lendesc = len(desc)
+            if lendesc > longest_len:
+                longest_len = lendesc
+        if code not in [None,'']:
+            for pl in prequal_lines:
+                if len(pl.get('description')) > longest_len:
+                    longest_len = len(pl.get('description'))
+        if code not in [None,'']:
+            linestbl.add_row()
+            linestbl.add_cell("Timecode")
+            linestbl.add_cell("F")
+            linestbl.add_cell("Description")
+            linestbl.add_cell("Code")
+            linestbl.add_cell("Scale")
+            linestbl.add_cell("Sector/Ch")
+            linestbl.add_cell("In Source")
+            plus_butt = linestbl.add_cell(" ")
+            #plus_butt.add_style('cursor: pointer;')
+            #plus_butt.add_behavior(my.get_add_line())
+            for pl in prequal_lines:
+                seen_descs = []
+                if pl.get('code') != '':
+                    row = linestbl.add_row()
+                    row.add_attr('line',rowct)
+                    row.add_attr('code',pl.get('code'))
+                    row.add_attr('class','pq_lines')
+                    #linestbl.add_cell('<input type="text" id="timecode-%s" name="timecode" value="%s" style="width: 75px;"/>' % (rowct, pl.get('timecode')))
+                    linestbl.add_cell(my.txtbox('timecode-%s' % rowct, pl.get('timecode'),width='75px',js='yes'))
+                    linestbl.add_cell('<input type="text" id="media_type-%s" name="media_type" value="%s" style="width: 20px;"/>' % (rowct, pl.get('media_type')))
+                    desc_select = SelectWdg('description')
+                    desc_select.append_option('--Select--','')
+                    for d in descriptions:
+                        desc = d.get('description')
+                        desc_select.append_option(desc,desc)
+                        seen_descs.append(desc)
+                    desc_select.add_style('width: %spx;' % int(float(longest_len * 7.5)))
+                    if pl.get('description') not in seen_descs:
+                        desc_select.append_option(pl.get('description'), pl.get('description'))
+                    desc_select.set_value(pl.get('description'))
+                    desc_select.add_attr('id','description-%s' % rowct)
+                    desc_select.add_behavior(my.get_select_fillin(wo_code, rowct, code))
+                    mm1 = linestbl.add_cell(desc_select)
+                    mm1.add_attr('class','select_cell')
+                    type_code_select = SelectWdg('type_code')
+                    type_code_select.append_option('-','')
+                    for tc in type_codes:
+                        type_code_select.append_option(tc,tc)
+                    type_code_select.set_value(pl.get('type_code'))
+                    type_code_select.add_attr('id','type_code-%s' % rowct)
+                    mm2 = linestbl.add_cell(type_code_select)
+                    mm2.add_attr('class','select_cell')
+                    scale_select = SelectWdg('scale')
+                    scale_select.append_option('-','')
+                    for s in scales:
+                        scale_select.append_option(s,s)
+                    scale_select.set_value(pl.get('scale'))
+                    scale_select.add_attr('id','scale-%s' % rowct)
+                    mm3 = linestbl.add_cell(scale_select)
+                    mm3.add_attr('class','select_cell')
+                    linestbl.add_cell('<input type="text" id="sector_or_channel-%s" value="%s" style="width: 75px;"/>' % (rowct, pl.get('sector_or_channel')))
+                    insrc_select = SelectWdg('in_source')
+                    insrc_select.append_option('-','')
+                    for i in insrc:
+                        insrc_select.append_option(i,i)
+                    insrc_select.set_value(pl.get('in_source'))
+                    insrc_select.add_attr('id','in_source-%s' % rowct)
+                    mm4 = linestbl.add_cell(insrc_select)
+                    mm4.add_attr('class','select_cell')
+                    killer = linestbl.add_cell('<b>X</b>')#This must delete the entry
+                    killer.add_style('cursor: pointer;')
+                    killer.add_behavior(my.get_kill_bvr(rowct, wo_code, pl.get('code'), code))
+                    rowct = rowct + 1
+
+        erow = linestbl.add_row()
+        erow.add_attr('line',rowct)
+        erow.add_attr('code','')
+        erow.add_attr('class','pq_lines')
+        #linestbl.add_cell('<input type="text" id="timecode-%s" name="timecode" value="" style="width: 75px;"/>' % (rowct))
+        linestbl.add_cell(my.txtbox('timecode-%s' % rowct, '',width='75px',js='yes'))
+        linestbl.add_cell('<input type="text" id="media_type-%s" name="media_type" value="" style="width: 20px;"/>' % (rowct))
+        desc_select = SelectWdg('description')
+        desc_select.append_option('--Select--','')
+        desc_select.add_style('width: %spx;' % (longest_len * 7.5))
+        for d in descriptions:
+            desc = d.get('description')
+            desc_select.append_option(desc,desc)
+        desc_select.set_value('')
+        desc_select.add_attr('id','description-%s' % rowct)
+        desc_select.add_behavior(my.get_select_fillin(wo_code, rowct, code))
+        linestbl.add_cell(desc_select)
+        type_code_select = SelectWdg('type_code')
+        type_code_select.append_option('-','')
+        for tc in type_codes:
+            type_code_select.append_option(tc,tc)
+        type_code_select.add_attr('id','type_code-%s' % rowct)
+        linestbl.add_cell(type_code_select)
+        scale_select = SelectWdg('scale')
+        scale_select.append_option('-','')
+        for s in scales:
+            scale_select.append_option(s,s)
+        scale_select.add_attr('id','scale-%s' % rowct)
+        linestbl.add_cell(scale_select)
+        linestbl.add_cell('<input type="text" id="sector_or_channel-%s" value="" style="width: 75px;"/>' % rowct)
+        insrc_select = SelectWdg('in_source')
+        insrc_select.append_option('-','')
+        for i in insrc:
+            insrc_select.append_option(i,i)
+        insrc_select.add_attr('id','in_source-%s' % rowct)
+        linestbl.add_cell(insrc_select)
+        addnew = linestbl.add_cell('<b>+</b>')#This must add new entry
+        addnew.add_style('cursor: pointer;')
+        addnew.add_behavior(my.get_add_line(rowct,wo_code,code))
+        erow2 = linestbl.add_row()
+        erow2.add_attr('class','new_pq_line')
+        return linestbl
