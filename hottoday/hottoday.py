@@ -331,10 +331,25 @@ class HotTodayWdg(BaseRefreshWdg):
         title_cell.add_style('padding', '4px')
         title_cell.add_style('width', '24%')
 
+        dictionary_of_column_tasks = {}
+
+        # for task in tasks:
+        #     column_name = task.get_value('assigned_login_group')
+        #     if column_name not in dictionary_of_column_tasks:
+        #         dictionary_of_column_tasks[column_name] = [task]
+        #     else:
+        #         dictionary_of_column_tasks[column_name].append(task)
+
         # Now add the cells for each column. Add the data in each column as necessary, or just add a blank cell
         # if no data exists.
         for column in header_groups:
-            column_tasks = (task for task in tasks if task.get_value('assigned_login_group') == column)
+            # column_tasks = (task for task in tasks if task.get_value('assigned_login_group') == column)
+            # column_tasks = dictionary_of_column_tasks.get(column)
+
+            if tasks:
+                column_tasks = tasks.get(column)
+            else:
+                column_tasks = []
             if column_tasks:
                 # Fill the cell with the tasks on this title
                 task_table = Table()
@@ -546,25 +561,68 @@ class HotTodayWdg(BaseRefreshWdg):
         hotlist_body.add_style('width', '100%')
         hotlist_body.add_attr('id', 'hotlist-body')
 
+        f.write("BEGIN ASSMEBLING DICTIONARIES {0}".format(datetime.datetime.now()))
+
+        dictionary_of_tasks = {}
+        dictionary_of_external_rejection_tasks = {}
+
+        for task in external_rejection_tasks:
+            task_title_code = task.get_value('title_code')
+            task_header = task.get_value('assigned_login_group')
+
+            if task_title_code not in dictionary_of_external_rejection_tasks.keys():
+                dictionary_of_external_rejection_tasks[task_title_code] = {task_header: None}
+
+            if not dictionary_of_external_rejection_tasks[task_title_code].get(task_header):
+                dictionary_of_external_rejection_tasks[task_title_code][task_header] = [task]
+            else:
+                dictionary_of_external_rejection_tasks[task_title_code][task_header].append(task)
+
+        for task in tasks:
+            task_title_code = task.get_value('title_code')
+            task_header = task.get_value('assigned_login_group')
+
+            if task_title_code not in dictionary_of_tasks.keys():
+                dictionary_of_tasks[task_title_code] = {task_header: None}
+
+            if not dictionary_of_tasks[task_title_code].get(task_header):
+                dictionary_of_tasks[task_title_code][task_header] = [task]
+            else:
+                dictionary_of_tasks[task_title_code][task_header].append(task)
+
+        f.write("END ASSMEBLING DICTIONARIES {0}".format(datetime.datetime.now()))
+
         f.write("BEGIN EXT REJECTIONS ON BOARD {0}\n".format(datetime.datetime.now()))
 
         # Put external rejections on the board first
         for external_rejection in external_rejections:
-            item_tasks = [task for task in external_rejection_tasks if task.get_value('title_code') == external_rejection.get_value('code')]
+            # item_tasks = [task for task in external_rejection_tasks if task.get_value('title_code') == external_rejection.get_value('code')]
+            item_tasks = dictionary_of_external_rejection_tasks.get(external_rejection.get_value('code'))
             self.set_row(external_rejection, table, title_counter, header_groups, item_tasks, current_priority, is_admin_user)
 
             title_counter += 1
 
         # dictionary_of_tasks = dict((task.get_value('title_code'), task) for task in tasks)
 
-        dictionary_of_tasks = {}
+        # for task in tasks:
+        #     task_title_code = task.get_value('title_code')
+        #     if task_title_code not in dictionary_of_tasks:
+        #         dictionary_of_tasks[task_title_code] = [task]
+        #     else:
+        #         dictionary_of_tasks[task_title_code].append(task)
 
-        for task in tasks:
-            task_title_code = task.get_value('title_code')
-            if task_title_code not in dictionary_of_tasks:
-                dictionary_of_tasks[task_title_code] = [task]
-            else:
-                dictionary_of_tasks[task_title_code].append(task)
+
+        from pprint import pprint
+        f.write("DICT: {0}".format(dictionary_of_tasks))
+        pprint(dictionary_of_tasks)
+
+            # for header in header_groups:
+            #     task_header = task.get_value('assigned_login_group')
+
+            #     if task_header not in dictionary_of_tasks[task_title_code]:
+            #         dictionary_of_tasks[task_title_code][header] = [task]
+            #     else:
+            #         dictionary_of_tasks[task_title_code][header].append(task)
 
         f.write("BEGIN HOT ITEMS ON BOARD {0}\n".format(datetime.datetime.now()))
 
