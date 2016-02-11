@@ -334,7 +334,11 @@ class HotTodayWdg(BaseRefreshWdg):
         # Now add the cells for each column. Add the data in each column as necessary, or just add a blank cell
         # if no data exists.
         for column in header_groups:
-            column_tasks = [task for task in tasks if task.get_value('assigned_login_group') == column]
+            if tasks:
+                column_tasks = tasks.get(column)
+            else:
+                column_tasks = []
+
             if column_tasks:
                 # Fill the cell with the tasks on this title
                 task_table = Table()
@@ -465,10 +469,6 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_style('font-family', 'Helvetica')
         table.add_border(style='solid', color='#F2F2F2', size='1px')
 
-        # print("GETGROUPNAMES: %s" % Environment.get_group_names())
-        # if 'client' in Environment.get_group_names():
-        #     return table
-
         # Because Tactic doesn't allow for the <thead> element (that I know of), the table header has to be split
         # into it's own <tbody>. Highly inelegant, but I don't have a choice.
         header_body = table.add_tbody()
@@ -489,6 +489,7 @@ class HotTodayWdg(BaseRefreshWdg):
         hot_items_sobjects = search_for_hot_items.get_sobjects()
 
         external_rejections = [hot_item for hot_item in external_rejections_sobjects if hot_item.get_value('status') != 'Completed']
+        # external_rejections = external_rejections_sobjects
         hot_items = [hot_item for hot_item in hot_items_sobjects if hot_item.get_value('status') != 'Completed']
 
         external_rejection_tasks = self.get_tasks(external_rejections)
@@ -527,9 +528,36 @@ class HotTodayWdg(BaseRefreshWdg):
         hotlist_body.add_style('width', '100%')
         hotlist_body.add_attr('id', 'hotlist-body')
 
+        dictionary_of_tasks = {}
+        dictionary_of_external_rejection_tasks = {}
+
+        for task in external_rejection_tasks:
+            task_title_code = task.get_value('title_code')
+            task_header = task.get_value('assigned_login_group')
+
+            if task_title_code not in dictionary_of_external_rejection_tasks.keys():
+                dictionary_of_external_rejection_tasks[task_title_code] = {task_header: None}
+
+            if not dictionary_of_external_rejection_tasks[task_title_code].get(task_header):
+                dictionary_of_external_rejection_tasks[task_title_code][task_header] = [task]
+            else:
+                dictionary_of_external_rejection_tasks[task_title_code][task_header].append(task)
+
+        for task in tasks:
+            task_title_code = task.get_value('title_code')
+            task_header = task.get_value('assigned_login_group')
+
+            if task_title_code not in dictionary_of_tasks.keys():
+                dictionary_of_tasks[task_title_code] = {task_header: None}
+
+            if not dictionary_of_tasks[task_title_code].get(task_header):
+                dictionary_of_tasks[task_title_code][task_header] = [task]
+            else:
+                dictionary_of_tasks[task_title_code][task_header].append(task)
+
         # Put external rejections on the board first
         for external_rejection in external_rejections:
-            item_tasks = [task for task in external_rejection_tasks if task.get_value('title_code') == external_rejection.get_value('code')]
+            item_tasks = dictionary_of_external_rejection_tasks.get(external_rejection.get_value('code'))
             self.set_row(external_rejection, table, title_counter, header_groups, item_tasks, current_priority, is_admin_user)
 
             title_counter += 1
@@ -538,7 +566,8 @@ class HotTodayWdg(BaseRefreshWdg):
             hot_item_priority = float(hot_item.get_value('priority'))
 
             # Get the tasks that correspond to a title by comparing the task's title_code to the title's code
-            item_tasks = [task for task in tasks if task.get_value('title_code') == hot_item.get_value('code')]
+            # item_tasks = (task for task in tasks if task.get_value('title_code') == hot_item.get_value('code'))
+            item_tasks = dictionary_of_tasks.get(hot_item.get_value('code'))
 
             # If an item requires QC Mastering, it should go on the hot board, regardless of if it has tasks or not
             requires_mastering_qc = hot_item.get_value('requires_mastering_qc', False)
