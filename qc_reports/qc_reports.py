@@ -1,6 +1,8 @@
 __all__ = ["QCReportLauncherWdg", "QCReportClonerWdg", "QCReportSelectorWdg", "PrintQCReportWdg",
            "ElementEvalBarcodesWdg", "ReportTimecodeShifterWdg"]
 
+import os
+
 from tactic_client_lib import TacticServerStub
 from tactic.ui.common import BaseTableElementWdg
 
