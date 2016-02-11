@@ -981,7 +981,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
         s1_tbl.add_row()
         s1_tbl.add_cell(s1)
         s1_tbl.add_attr('border', '1')
-        s1_tbl.add_style('border-width' '5px')
+        s1_tbl.add_style('border-width', '5px')
 
         s2 = Table()
         s2.add_attr('class', 'section2')
