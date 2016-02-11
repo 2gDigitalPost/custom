@@ -555,13 +555,25 @@ class HotTodayWdg(BaseRefreshWdg):
 
             title_counter += 1
 
+        # dictionary_of_tasks = dict((task.get_value('title_code'), task) for task in tasks)
+
+        dictionary_of_tasks = {}
+
+        for task in tasks:
+            task_title_code = task.get_value('title_code')
+            if task_title_code not in dictionary_of_tasks:
+                dictionary_of_tasks[task_title_code] = [task]
+            else:
+                dictionary_of_tasks[task_title_code].append(task)
+
         f.write("BEGIN HOT ITEMS ON BOARD {0}\n".format(datetime.datetime.now()))
 
         for hot_item in hot_items:
             hot_item_priority = float(hot_item.get_value('priority'))
 
             # Get the tasks that correspond to a title by comparing the task's title_code to the title's code
-            item_tasks = (task for task in tasks if task.get_value('title_code') == hot_item.get_value('code'))
+            # item_tasks = (task for task in tasks if task.get_value('title_code') == hot_item.get_value('code'))
+            item_tasks = dictionary_of_tasks.get(hot_item.get_value('code'))
 
             # If an item requires QC Mastering, it should go on the hot board, regardless of if it has tasks or not
             requires_mastering_qc = hot_item.get_value('requires_mastering_qc', False)
