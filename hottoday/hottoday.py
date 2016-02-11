@@ -489,7 +489,15 @@ class HotTodayWdg(BaseRefreshWdg):
         hot_items_sobjects = search_for_hot_items.get_sobjects()
 
         external_rejections = [hot_item for hot_item in external_rejections_sobjects if hot_item.get_value('status') != 'Completed']
-        # external_rejections = external_rejections_sobjects
+
+        search_in_external_rejection_database = Search('twog/external_rejection')
+        search_in_external_rejection_database.add_filter('status', 'Open')
+        external_rejection_title_codes = [item.get_value('code') for item in search_in_external_rejection_database.get_sobjects()]
+
+        search_for_external_rejection_extra_titles = Search('twog/title')
+        search_for_external_rejection_extra_titles.add_filters('code', external_rejection_title_codes)
+        external_rejections.extend([item for item in search_for_external_rejection_extra_titles.get_sobjects()])
+
         hot_items = [hot_item for hot_item in hot_items_sobjects if hot_item.get_value('status') != 'Completed']
 
         external_rejection_tasks = self.get_tasks(external_rejections)
