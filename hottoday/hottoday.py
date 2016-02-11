@@ -334,7 +334,7 @@ class HotTodayWdg(BaseRefreshWdg):
         # Now add the cells for each column. Add the data in each column as necessary, or just add a blank cell
         # if no data exists.
         for column in header_groups:
-            column_tasks = [task for task in tasks if task.get_value('assigned_login_group') == column]
+            column_tasks = (task for task in tasks if task.get_value('assigned_login_group') == column)
             if column_tasks:
                 # Fill the cell with the tasks on this title
                 task_table = Table()
@@ -457,6 +457,9 @@ class HotTodayWdg(BaseRefreshWdg):
         return btns
 
     def get_display(self):
+        f = open('/var/www/html/qc_reports/work_orders/hottodaylogfile.txt', 'w')
+        print("HOTLIST GENERATION STARTED {0}".format(datetime.datetime.now()))
+        f.write("HOTLIST GENERATION STARTED {0}\n".format(datetime.datetime.now()))
         table = Table()
         table.add_attr('id', 'bigboard')
         table.add_style('width', '100%')
@@ -465,20 +468,24 @@ class HotTodayWdg(BaseRefreshWdg):
         table.add_style('font-family', 'Helvetica')
         table.add_border(style='solid', color='#F2F2F2', size='1px')
 
-        # print("GETGROUPNAMES: %s" % Environment.get_group_names())
-        # if 'client' in Environment.get_group_names():
-        #     return table
-
         # Because Tactic doesn't allow for the <thead> element (that I know of), the table header has to be split
         # into it's own <tbody>. Highly inelegant, but I don't have a choice.
         header_body = table.add_tbody()
         header_body.add_style('display', 'block')
         header_body.add_attr('id', 'thead-section')
 
+        print("BEGIN EXT REJECTION SEARCH {0}".format(datetime.datetime.now()))
+        f.write("BEGIN EXT REJECTION SEARCH {0}\n".format(datetime.datetime.now()))
+
         # Get the titles that fall under 'external rejection' (they need to be on the top of the board)
         search_for_external_rejections = Search('twog/title')
         search_for_external_rejections.add_filter('is_external_rejection', 'true')
         external_rejections_sobjects = search_for_external_rejections.get_sobjects()
+
+        print("END EXT REJECTION SEARCH {0}".format(datetime.datetime.now()))
+        print("BEGIN HOT ITEMS SEARCH {0}".format(datetime.datetime.now()))
+        f.write("END EXT REJECTION SEARCH {0}\n".format(datetime.datetime.now()))
+        f.write("BEGIN HOT ITEMS SEARCH {0}\n".format(datetime.datetime.now()))
 
         # Search for titles that are marked as 'hot'
         search_for_hot_items = Search('twog/title')
@@ -488,11 +495,23 @@ class HotTodayWdg(BaseRefreshWdg):
         search_for_hot_items.add_order_by('expected_delivery_date')
         hot_items_sobjects = search_for_hot_items.get_sobjects()
 
+        print("END HOT ITEMS SEARCH {0}".format(datetime.datetime.now()))
+        f.write("END HOT ITEMS SEARCH {0}\n".format(datetime.datetime.now()))
+
         external_rejections = [hot_item for hot_item in external_rejections_sobjects if hot_item.get_value('status') != 'Completed']
+        # external_rejections = external_rejections_sobjects
         hot_items = [hot_item for hot_item in hot_items_sobjects if hot_item.get_value('status') != 'Completed']
 
+        print("BEGIN EXT REJECTION TASKS SEARCH {0}".format(datetime.datetime.now()))
+        f.write("BEGIN EXT REJECTION TASKS SEARCH {0}\n".format(datetime.datetime.now()))
         external_rejection_tasks = self.get_tasks(external_rejections)
+        print("BEGIN TASKS SEARCH {0}".format(datetime.datetime.now()))
+        f.write("BEGIN TASKS SEARCH {0}\n".format(datetime.datetime.now()))
         tasks = self.get_tasks(hot_items)
+        print("END TASKS SEARCH {0}".format(datetime.datetime.now()))
+        f.write("END TASKS SEARCH {0}\n".format(datetime.datetime.now()))
+
+        hot_items = [hot_item for hot_item in hot_items if hot_item.get_value('code') in (task.get_value('title_code') for task in tasks)]
 
         # Current priority will be updated each time a title has a different priority from the last value
         current_priority = 0
@@ -527,6 +546,8 @@ class HotTodayWdg(BaseRefreshWdg):
         hotlist_body.add_style('width', '100%')
         hotlist_body.add_attr('id', 'hotlist-body')
 
+        f.write("BEGIN EXT REJECTIONS ON BOARD {0}\n".format(datetime.datetime.now()))
+
         # Put external rejections on the board first
         for external_rejection in external_rejections:
             item_tasks = [task for task in external_rejection_tasks if task.get_value('title_code') == external_rejection.get_value('code')]
@@ -534,11 +555,13 @@ class HotTodayWdg(BaseRefreshWdg):
 
             title_counter += 1
 
+        f.write("BEGIN HOT ITEMS ON BOARD {0}\n".format(datetime.datetime.now()))
+
         for hot_item in hot_items:
             hot_item_priority = float(hot_item.get_value('priority'))
 
             # Get the tasks that correspond to a title by comparing the task's title_code to the title's code
-            item_tasks = [task for task in tasks if task.get_value('title_code') == hot_item.get_value('code')]
+            item_tasks = (task for task in tasks if task.get_value('title_code') == hot_item.get_value('code'))
 
             # If an item requires QC Mastering, it should go on the hot board, regardless of if it has tasks or not
             requires_mastering_qc = hot_item.get_value('requires_mastering_qc', False)
@@ -553,6 +576,8 @@ class HotTodayWdg(BaseRefreshWdg):
 
                 title_counter += 1
 
+            f.write("HOT ITEM {0} ON BOARD {1}\n".format(title_counter, datetime.datetime.now()))
+
         # Put the table in a DivWdg, makes it fit better with the Tactic side bar
         hotlist_div = DivWdg()
         hotlist_div.add_attr('id', 'hotlist_div')
@@ -566,5 +591,8 @@ class HotTodayWdg(BaseRefreshWdg):
         outer_div.add(hotlist_div)
         outer_div.add(self.get_buttons(is_admin_user))
         outer_div.add_behavior(get_scrollbar_width())
+
+        f.write("FINISHED {0}\n".format(datetime.datetime.now()))
+        f.close()
 
         return outer_div
