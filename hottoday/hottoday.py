@@ -526,8 +526,6 @@ class HotTodayWdg(BaseRefreshWdg):
         print("END TASKS SEARCH {0}".format(datetime.datetime.now()))
         f.write("END TASKS SEARCH {0}\n".format(datetime.datetime.now()))
 
-        hot_items = [hot_item for hot_item in hot_items if hot_item.get_value('code') in (task.get_value('title_code') for task in tasks)]
-
         # Current priority will be updated each time a title has a different priority from the last value
         current_priority = 0
         title_counter = 1
