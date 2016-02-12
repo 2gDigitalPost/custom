@@ -16,7 +16,7 @@ class ElementEvalWdg(BaseTableElementWdg):
         nothing = 'true'
         my.formats = ['Electronic/File', 'File - ProRes', 'File - MXF', 'File - MPEG', 'File - WAV','DBC', 'D5',
                       'HDCAM SR', 'NTSC', 'PAL']
-        my.frame_rates = ['23.98fps', '59.94i', '50i', '29.97fps', '59.94p', 'DFTC', 'NDFTC', 'PAL/EBU', '-']
+        my.frame_rates = ['23.98fps', '59.94i', '50i', '29.97fps', '24p', '59.94p', 'DFTC', 'NDFTC', 'PAL/EBU', '-']
         my.machines = ['VTR221', 'VTR222', 'VTR223', 'VTR224', 'VTR225', 'VTR231', 'VTR232', 'VTR233', 'VTR234',
                        'VTR235', 'VTR251', 'VTR252', 'VTR253', 'VTR254', 'VTR255', 'VTR261', 'VTR262', 'VTR263',
                        'VTR264', 'VTR265', 'VTR281', 'VTR282', 'VTR283', 'VTR284', 'VTR285', 'FCP01', 'FCP02', 'FCP03',
@@ -581,7 +581,7 @@ class ElementEvalWdg(BaseTableElementWdg):
             title_cell.add_style('text-align', 'center')
             title_cell.add_style('padding', '4px')
 
-            columns = ('Code', 'Language', 'Operator', 'Conclusion', 'Timestamp')
+            columns = ('Code', 'Language', 'Operator', 'Conclusion', 'Format', 'Standard', 'Frame Rate', 'Timestamp')
             header_row = other_reports_table.add_row()
 
             for column in columns:
@@ -595,6 +595,9 @@ class ElementEvalWdg(BaseTableElementWdg):
                 language = report.get('language')
                 operator = report.get('operator')
                 conclusion = report.get('conclusion')
+                file_format = report.get('format')
+                standard = report.get('standard')
+                frame_rate = report.get('frame_rate')
                 timestamp = report.get('timestamp')
 
                 click_row = other_reports_table.add_row()
@@ -603,7 +606,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                 click_row.add_style('cursor', 'pointer')
                 click_row.add_behavior(self.get_click_row(work_order_code, code))
 
-                for cell_data in [code, language, operator, conclusion, timestamp]:
+                for cell_data in [code, language, operator, conclusion, file_format, standard, frame_rate, timestamp]:
                     table_body_cell = other_reports_table.add_cell(data=cell_data, row=click_row)
                     table_body_cell.add_style('border', '1px solid gray')
                     table_body_cell.add_style('padding', '4px')
@@ -1290,6 +1293,7 @@ class ElementEvalWdg(BaseTableElementWdg):
 
         widget.add(ttbl)
         widget.add(table)
+
         if show_save and 'TITLE' not in original_code:
             widget.add(stbl)
 
