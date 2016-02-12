@@ -1363,7 +1363,7 @@ class ElementEvalLinesWdg(BaseTableElementWdg):
                             addportion.setAttribute('code','');
                             send_data = {'rowct': rowct + 1, 'wo_code': wo_code, 'code': ell_code, 'reload': 'true'};
                             //send_data = {'rowct': rowct + 1, 'wo_code': wo_code};
-                            spt.api.load_panel(addportion, 'qc_reports.qc_reports.ElementEvalLinesWdg', send_data);
+                            spt.api.load_panel(addportion, 'qc_reports.ElementEvalLinesWdg', send_data);
                             newrow = lastlinestbl.insertRow(-1);
                             newrow.setAttribute('class','new_element_line');
                 }
