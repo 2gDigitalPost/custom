@@ -415,7 +415,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                           new_html = top_el.innerHTML;
                           //thing = server.execute_cmd('qc_reports.qc_reports.PrintQCReportWdg', {'html': '<table>' + top_el.innerHTML + '</table>','wo_code': wo_code, 'type': type});
                           thing = server.execute_cmd('qc_reports.qc_reports.PrintQCReportWdg', {'html': '<table>' + new_html + '</table>','preppend_file_name': file_name_str, 'type': ''});
-                          var url = 'http://tactic01/qc_reports/work_orders/' + file_name_str + '.html';
+                          var url = '/qc_reports/work_orders/' + file_name_str + '.html';
                           printExternal(url);
                           if(element_code != '' && element_code != null){
                               //close, then reload page
