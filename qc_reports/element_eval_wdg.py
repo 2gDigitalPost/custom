@@ -565,6 +565,51 @@ class ElementEvalWdg(BaseTableElementWdg):
 
         return txt
 
+    def set_other_reports_table(self, other_reports, table_title):
+        other_reports_table = Table()
+
+        if other_reports:
+            other_reports_table.add_style('width', '100%')
+            other_reports_table.add_style('border', '1px solid gray')
+            other_reports_table.add_style('margin', '3px')
+
+            other_reports_table.add_row()
+
+            title_cell = other_reports_table.add_cell(table_title)
+            title_cell.add_style('font-weight', 'bold')
+            title_cell.add_style('text-decoration', 'underline')
+            title_cell.add_style('text-align', 'center')
+            title_cell.add_style('padding', '4px')
+
+            columns = ('Code', 'Language', 'Operator', 'Conclusion', 'Timestamp')
+            header_row = other_reports_table.add_row()
+
+            for column in columns:
+                header_cell = other_reports_table.add_header(data=column, row=header_row)
+                header_cell.add_style('border', '1px solid gray')
+                header_cell.add_style('padding', '4px')
+
+            for report in other_reports:
+                code = report.get('code')
+                work_order_code = report.get('work_order_code')
+                language = report.get('language')
+                operator = report.get('operator')
+                conclusion = report.get('conclusion')
+                timestamp = report.get('timestamp')
+
+                click_row = other_reports_table.add_row()
+                click_row.add_attr('element_code', code)
+                click_row.add_attr('work_order_code', work_order_code)
+                click_row.add_style('cursor', 'pointer')
+                click_row.add_behavior(self.get_click_row(work_order_code, code))
+
+                for cell_data in [code, language, operator, conclusion, timestamp]:
+                    table_body_cell = other_reports_table.add_cell(data=cell_data, row=click_row)
+                    table_body_cell.add_style('border', '1px solid gray')
+                    table_body_cell.add_style('padding', '4px')
+
+        return other_reports_table
+
     def get_display(my):
         login = Environment.get_login()
         this_user = login.get_login()
@@ -736,45 +781,13 @@ class ElementEvalWdg(BaseTableElementWdg):
 
         wo_pevals = server.eval("@SOBJECT(twog/element_eval['work_order_code','%s']['code','!=','%s'])" % (code, element_code))
         title_pevals = server.eval("@SOBJECT(twog/element_eval['title_code','%s']['work_order_code','!=','%s']['code','!=','%s'])" % (work_order.get('title_code'), work_order.get('code'), element_code))
-        others = Table()
-        others.add_style('background-color: #528B8B; width: 100%;')
-        cols = ['#537072', '#518A1A']
-        colsct = 0
 
-        if len(title_pevals) > 0:
-            trrr = others.add_row()
-            trrr.add_style('background-color: #50EDA1;')
-            others.add_cell('<b>Other Element Evals for Title</b>')
-            for t in title_pevals:
-                click_row = others.add_row()
-                click_row.add_attr('element_code', t.get('code'))
-                click_row.add_attr('work_order_code', t.get('work_order_code'))
-                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct % 2])
-                click_row.add_behavior(my.get_click_row(t.get('work_order_code'), t.get('code')))
-                others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (t.get('wo_name'), t.get('work_order_code')))
-                others.add_cell('<b>LANGUAGE:</b> %s' % (t.get('language')))
-                others.add_cell('<b>OPERATOR:</b> %s' % t.get('operator'))
-                others.add_cell('<b>STYLE:</b> %s' % t.get('style'))
-                others.add_cell('<b>CONCLUSION:</b> %s' % t.get('conclusion'))
-                others.add_cell('<b>DATETIME:</b> %s' % t.get('timestamp'))
-                colsct += 1
-        if len(wo_pevals) > 0:
-            wrrr = others.add_row()
-            wrrr.add_style('background-color: #50EDA1;')
-            others.add_cell('<b>Other Element Evals for Work Order</b>')
-            for w in wo_pevals:
-                click_row = others.add_row()
-                click_row.add_attr('element_code', w.get('code'))
-                click_row.add_attr('work_order_code', w.get('work_order_code'))
-                click_row.set_style('cursor: pointer; background-color: %s;' % cols[colsct % 2])
-                click_row.add_behavior(my.get_click_row(w.get('work_order_code'), w.get('code')))
-                others.add_cell('<b>WO:</b> %s, <b>CODE:</b> %s' % (w.get('wo_name'), w.get('work_order_code')))
-                others.add_cell('<b>LANGUAGE:</b> %s' % (w.get('language')))
-                others.add_cell('<b>OPERATOR:</b> %s' % w.get('operator'))
-                others.add_cell('<b>STYLE:</b> %s' % w.get('style'))
-                others.add_cell('<b>CONCLUSION:</b> %s' % w.get('conclusion'))
-                others.add_cell('<b>DATETIME:</b> %s' % w.get('timestamp'))
-                colsct += 1
+        other_title_reports_table = my.set_other_reports_table(title_pevals, 'Other Element Evals for Title')
+        other_work_orders_reports_table = my.set_other_reports_table(wo_pevals, 'Other Element Evals for Work Order')
+
+        other_reports_table = Table()
+        other_reports_table.add_cell(other_title_reports_table)
+        other_reports_table.add_cell(other_work_orders_reports_table)
 
         widget.add_attr('class', 'big_ol_element_wdg_%s' % code)
         widget.add_attr('element_code', my.element.get('code'))
@@ -1241,17 +1254,10 @@ class ElementEvalWdg(BaseTableElementWdg):
         table.add_row()
         table.add_cell('<textarea cols="194" rows="10" class="description" id="description">%s</textarea>' % my.element.get('description'))
 
-        printtbl = Table()
-        printtbl.add_style('background-color: #528B8B; width: 100%;')
-        printtbl.add_row()
-        p1 = printtbl.add_cell(' ')
-        p1.add_style('width: 40%;')
-        p2 = printtbl.add_cell('<u><b>Print This Report</b></u>')
-        p2.add_attr('nowrap', 'nowrap')
-        p2.add_style('cursor: pointer;')
-        p2.add_behavior(my.get_print_bvr(code, my.element.get('code'), 'element'))
-        p3 = printtbl.add_cell(' ')
-        p3.add_style('width: 40%;')
+        print_button_table = Table()
+
+        print_button = print_button_table.add_cell('<button style="margin: 3px;">Print This Report</button>')
+        print_button.add_behavior(my.get_print_bvr(code, my.element.get('code'), 'element'))
 
         table.add_row()
         table.add_cell(fulllines)
@@ -1259,7 +1265,7 @@ class ElementEvalWdg(BaseTableElementWdg):
         stbl = Table()
         stbl.add_row()
         s1 = stbl.add_cell(' ')
-        s1.add_style('width: 40%;')
+        s1.add_style('width', '40%')
         s2 = stbl.add_cell('<input type="button" value="Save"/>')
         s2.add_behavior(my.get_save_bvr(code, my.element.get('code')))
         s3 = stbl.add_cell(' ')
@@ -1273,14 +1279,13 @@ class ElementEvalWdg(BaseTableElementWdg):
             s4.add_behavior(my.get_delete_report(code, my.element.get('code')))
 
         ttbl = Table()
-        ttbl.add_style('background-color: #528B8B; width: 100%;')
         ttbl.add_row()
 
-        tt1 = ttbl.add_cell(others)
+        tt1 = ttbl.add_cell(other_reports_table)
         tt1.add_attr('width', '100%')
         ttbl.add_row()
 
-        tt2 = ttbl.add_cell(printtbl)
+        tt2 = ttbl.add_cell(print_button_table)
         tt2.add_attr('width', '100%')
 
         widget.add(ttbl)
@@ -1490,7 +1495,8 @@ class ElementEvalLinesWdg(BaseTableElementWdg):
         type_codes = ['F', 'A', 'T', 'V']
         scales = ['1', '2', '3', 'FYI']
         in_safe = ['No', 'Yes']
-        insrc = ['No', 'Yes', 'New', 'Approved', 'Fixed', 'Not Fixed']
+        insrc = ['No', 'Yes', 'New', 'Approved', 'Fixed', 'Not Fixed', 'Approved by Production', 'Approved by Client',
+                 'Approved as is']
         wo_code = str(my.kwargs.get('wo_code'))
         reloaded = False
         if 'reload' in my.kwargs.keys():
