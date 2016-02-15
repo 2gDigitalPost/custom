@@ -517,7 +517,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                               audio_table = big_el.getElementById('audio_table');
                               element_eval_code = audio_table.getAttribute('code');
                               send_data = {'code': element_eval_code, 'wo_code': wo_code, 'channels': entered, 'force_it': 'true'};
-                              spt.api.load_panel(audio_table, 'qc_reports.qc_reports.ElementEvalAudioWdg', send_data);
+                              spt.api.load_panel(audio_table, 'qc_reports.ElementEvalAudioWdg', send_data);
                           }
                 }
                 catch(err){
@@ -533,7 +533,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                         try{
                           wo_code = '%s';
                           ell_code = '%s';
-                          var class_name = 'qc_reports.qc_reports.ReportTimecodeShifterWdg';
+                          var class_name = 'qc_reports.ReportTimecodeShifterWdg';
                           kwargs = {
                                            'wo_code': wo_code,
                                            'ell_code': ell_code
