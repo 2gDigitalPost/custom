@@ -206,8 +206,8 @@ class PreQualEvalWdg(BaseTableElementWdg):
                               }
                           }
                           new_html = top_el.innerHTML;
-                          //thing = server.execute_cmd('qc_reports.qc_reports.PrintQCReportWdg', {'html': '<table>' + top_el.innerHTML + '</table>','wo_code': wo_code, 'type': type});
-                          thing = server.execute_cmd('qc_reports.qc_reports.PrintQCReportWdg', {'html': '<table>' + new_html + '</table>','preppend_file_name': wo_code, 'type': type});
+
+                          thing = server.execute_cmd('qc_reports.PrintQCReportWdg', {'html': '<table>' + new_html + '</table>','preppend_file_name': wo_code, 'type': type});
                           var url = 'http://tactic01/qc_reports/work_orders/' + wo_code + '_prequal.html';
                           printExternal(url);
                           if(pq_code != '' && pq_code != null){
@@ -251,7 +251,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
                         try{
                           var work_order_code = '%s';
                           var report_code = '%s';
-                          var class_name = 'qc_reports.qc_reports.QCReportClonerWdg';
+                          var class_name = 'qc_reports.QCReportClonerWdg';
                           kwargs = {'wo_code': work_order_code, 'report_code': report_code, 'type': 'prequal'}
                           //spt.popup.close(spt.popup.get_popup(bvr.src_el));
                           spt.app_busy.show("Collecting related qc work orders...");
@@ -701,7 +701,6 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
                                     }
                                 }
                                 send_data = {'rowct': rowct, 'wo_code': wo_code, 'code': pl_code};
-                                //spt.api.load_panel(linestbl, 'qc_reports.qc_reports.PreQualEvalLinesWdg', send_data);
                             }
                 }
                 catch(err){
@@ -732,7 +731,7 @@ class PreQualEvalLinesWdg(BaseTableElementWdg):
                             addportion.setAttribute('line',Number(rowct) + 1);
                             addportion.setAttribute('code','');
                             send_data = {'rowct': rowct + 1, 'wo_code': wo_code};
-                            spt.api.load_panel(addportion, 'qc_reports.qc_reports.PreQualEvalLinesWdg', send_data);
+                            spt.api.load_panel(addportion, 'qc_reports.PreQualEvalLinesWdg', send_data);
                             newrow = lastlinestbl.insertRow(-1);
                             newrow.setAttribute('class','new_pq_line');
                 }

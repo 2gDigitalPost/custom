@@ -31,7 +31,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
                         try{
                           var work_order_code = '%s';
                           var report_code = '%s';
-                          var class_name = 'qc_reports.qc_reports.QCReportClonerWdg';
+                          var class_name = 'qc_reports.QCReportClonerWdg';
                           kwargs = {'wo_code': work_order_code, 'report_code': report_code, 'type': 'metadata'}
                           spt.panel.load_popup('Clone Report To ... ', class_name, kwargs);
                 }
@@ -192,7 +192,7 @@ class MetaDataReportWdg(BaseTableElementWdg):
 //                          }
 //                          new_html = new_new_html;
                           //END MTM
-                          thing = server.execute_cmd('qc_reports.qc_reports.PrintQCReportWdg', {'html': '<table style="font-family: Calibri, sans-serif;">' + new_html + '</table>','preppend_file_name': wo_code, 'type': type});
+                          thing = server.execute_cmd('qc_reports.PrintQCReportWdg', {'html': '<table style="font-family: Calibri, sans-serif;">' + new_html + '</table>','preppend_file_name': wo_code, 'type': type});
                           var url = 'http://tactic01/qc_reports/work_orders/' + wo_code + '_metadata.html';
                           printExternal(url);
                           if(meta_code != '' && meta_code != null){

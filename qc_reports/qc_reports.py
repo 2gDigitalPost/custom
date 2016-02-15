@@ -22,7 +22,7 @@ class QCReportLauncherWdg(BaseTableElementWdg):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
                           var code = '%s';
-                          var class_name = 'qc_reports.qc_reports.QCReportSelectorWdg';
+                          var class_name = 'qc_reports.QCReportSelectorWdg';
                           kwargs = {
                                            'code': code
                                    };
@@ -713,7 +713,7 @@ class QCReportClonerWdg(BaseTableElementWdg):
                           loader_el = top_el.getElementById('new_titles');
                           loader_el.setAttribute('id','added_titles');
                           spt.app_busy.show('Adding title(s) to list...');
-                          spt.api.load_panel(loader_el, 'qc_reports.qc_reports.QCReportClonerWdg', {'type': type, 'wo_code': wo_code, 'report_code': report_code, 'new_titles': title_codes}); 
+                          spt.api.load_panel(loader_el, 'qc_reports.QCReportClonerWdg', {'type': type, 'wo_code': wo_code, 'report_code': report_code, 'new_titles': title_codes});
                           spt.app_busy.hide();
                           
                 }
@@ -1028,8 +1028,6 @@ class ElementEvalBarcodesWdg(BaseTableElementWdg):
                                         element_barcodes[r].style.display = 'none';
                                     }
                                 }
-                                //send_data = {'rowct': rowct, 'wo_code': wo_code, 'code': ell_code};
-                                //spt.api.load_panel(bctable, 'qc_reports.qc_reports.ElementEvalLinesWdg', send_data); 
                             }
                 }
                 catch(err){
@@ -1061,7 +1059,7 @@ class ElementEvalBarcodesWdg(BaseTableElementWdg):
                             addportion.setAttribute('line',Number(rowct) + 1);
                             addportion.setAttribute('code','');
                             send_data = {'rowct': rowct + 1, 'wo_code': wo_code};
-                            spt.api.load_panel(addportion, 'qc_reports.qc_reports.ElementEvalBarcodesWdg', send_data); 
+                            spt.api.load_panel(addportion, 'qc_reports.ElementEvalBarcodesWdg', send_data); 
                             newrow = lastbctable.insertRow(-1);
                             newrow.setAttribute('class','new_barcode_line');
                 }
