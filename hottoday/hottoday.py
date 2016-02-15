@@ -168,7 +168,8 @@ class HotTodayWdg(BaseRefreshWdg):
             group_cell.add_style('border', '1px solid #E0E0E0')
             group_cell.add_style('width', '{0}%'.format(76.0 / len(groups)))
 
-    def set_row(self, title, table, counter, header_groups, tasks, current_priority, is_admin_user):
+    def set_row(self, title, table, counter, header_groups, tasks, current_priority, is_admin_user,
+                is_external_rejection=False):
         """
         Construct a row in the Hot Today list and add it to the table.
 
@@ -179,6 +180,7 @@ class HotTodayWdg(BaseRefreshWdg):
         :param tasks: List of task objects
         :param current_priority: Decimal
         :param is_admin_user: Boolean
+        :param is_external_rejection: Boolean (False by default)
         :return: None
         """
 
@@ -192,19 +194,21 @@ class HotTodayWdg(BaseRefreshWdg):
         expected_delivery_date = datetime.datetime.strptime(title.get_value('expected_delivery_date'),
                                                             '%Y-%m-%d %H:%M:%S')
         requires_mastering_qc = title.get_value('requires_mastering_qc', False)
-        is_external_rejection = title.get_value('is_external_rejection', False)
         is_redo = title.get_value('redo', False)
 
         # If there is an 'episode', append it to the title's name
         if episode:
             name += ' Episode ' + episode
 
-        # TODO: Apparently is_external_rejection is either 'true' or 'false', Javascript style. Fix that.
-        if is_external_rejection:
-            if is_external_rejection == 'true':
-                is_external_rejection = True
-            elif is_external_rejection == 'false':
-                is_external_rejection = False
+        # TODO: The way external rejections are recorded in the database is painfully stupid. Because of this, we're
+        # passing in is_external_rejection into the function, rather than checking the title for the
+        # is_external_rejection column. This should be fixed sooner rather than later.
+        # is_external_rejection = title.get_value('is_external_rejection', False)
+        # if is_external_rejection:
+            # if is_external_rejection == 'true':
+                # is_external_rejection = True
+            # elif is_external_rejection == 'false':
+                # is_external_rejection = False
 
         # Set the row's background color. Different statuses require different colors. The statuses are not necessarily
         # mutually exclusive, but they are ordered by priority.
@@ -480,6 +484,17 @@ class HotTodayWdg(BaseRefreshWdg):
         search_for_external_rejections.add_filter('is_external_rejection', 'true')
         external_rejections_sobjects = search_for_external_rejections.get_sobjects()
 
+        external_rejections = [hot_item for hot_item in external_rejections_sobjects if hot_item.get_value('status') != 'Completed']
+
+        search_in_external_rejection_database = Search('twog/external_rejection')
+        search_in_external_rejection_database.add_filter('status', 'Open')
+        external_rejection_title_codes = [item.get_value('title_code') for item in search_in_external_rejection_database.get_sobjects()]
+        external_rejection_title_codes = [code for code in external_rejection_title_codes if code not in [item.get_value('code') for item in external_rejections]]
+
+        search_for_external_rejection_extra_titles = Search('twog/title')
+        search_for_external_rejection_extra_titles.add_filters('code', external_rejection_title_codes)
+        external_rejections.extend([item for item in search_for_external_rejection_extra_titles.get_sobjects()])
+
         # Search for titles that are marked as 'hot'
         search_for_hot_items = Search('twog/title')
         search_for_hot_items.add_filter('bigboard', True)
@@ -488,8 +503,6 @@ class HotTodayWdg(BaseRefreshWdg):
         search_for_hot_items.add_order_by('expected_delivery_date')
         hot_items_sobjects = search_for_hot_items.get_sobjects()
 
-        external_rejections = [hot_item for hot_item in external_rejections_sobjects if hot_item.get_value('status') != 'Completed']
-        # external_rejections = external_rejections_sobjects
         hot_items = [hot_item for hot_item in hot_items_sobjects if hot_item.get_value('status') != 'Completed']
 
         external_rejection_tasks = self.get_tasks(external_rejections)
@@ -558,7 +571,8 @@ class HotTodayWdg(BaseRefreshWdg):
         # Put external rejections on the board first
         for external_rejection in external_rejections:
             item_tasks = dictionary_of_external_rejection_tasks.get(external_rejection.get_value('code'))
-            self.set_row(external_rejection, table, title_counter, header_groups, item_tasks, current_priority, is_admin_user)
+            self.set_row(external_rejection, table, title_counter, header_groups, item_tasks, current_priority,
+                         is_admin_user, True)
 
             title_counter += 1
 
