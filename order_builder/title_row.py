@@ -480,6 +480,62 @@ catch(err){
     return behavior
 
 
+def set_repurpose(title_code, order_sk):
+    """
+    Toggles 'repurpose' on an order (repurposed titles are moved to the top of the priority queue)
+
+    :param title_code: The title code
+    :param order_sk: The order's search key
+    :return: Javascript behavior
+    """
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try{
+    var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+    var server = TacticServerStub.get();
+    var title_code = '%s';
+    var order_sk = '%s';
+    var title_sk = server.build_search_key('twog/title', title_code);
+    var repurpose_button = top_el.getElementById('repurpose_button_' + title_code).getElementsByClassName("spt_button_icon")[0];
+    var inner = repurpose_button.innerHTML;
+    var is_currently_on = false;
+    var confirm_text = "Are you sure you want to set this title as a 'repurpose'?";
+
+    if(inner.indexOf('mastering_lilac.png') != -1) {
+        is_currently_on = true;
+        confirm_text = "Are you sure you want to unset this title as a 'repurpose'?";
+    }
+
+    if(confirm(confirm_text)) {
+        if(!is_currently_on) {
+            spt.app_busy.show("Setting 'Repurpose'...");
+            server.update(title_sk, {'repurpose': true});
+        } else {
+            spt.app_busy.show("Removing 'Repurpose'...");
+            server.update(title_sk, {'repurpose': false});
+        }
+
+        order_sk = top_el.getAttribute('order_sk');
+        var display_mode = top_el.getAttribute('display_mode');
+        var user = top_el.getAttribute('user');
+        var groups_str = top_el.get('groups_str');
+        var is_master_str = top_el.getAttribute('is_master_str');
+        var allowed_titles = top_el.getAttribute('allowed_titles');
+        var title_el = top_el.getElementsByClassName('cell_' + title_sk)[0];
+        var found_parent_sk = title_el.get('parent_sk');
+        var found_parent_sid = title_el.get('parent_sid');
+        var send_data =  {sk: title_sk, parent_sid: found_parent_sid, parent_sk: found_parent_sk, order_sk: order_sk, display_mode: display_mode, user: user, groups_str: groups_str, allowed_titles: allowed_titles, is_master: is_master_str};
+        spt.api.load_panel(title_el, 'order_builder.TitleRow', send_data);
+        spt.app_busy.hide();
+    }
+}
+catch(err){
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % (title_code, order_sk)}
+    return behavior
+
+
 def get_set_external_rejection(title_code, order_sk):
     behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
 try {
