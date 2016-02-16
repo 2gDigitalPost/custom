@@ -267,7 +267,7 @@ class HotTodayWdg(BaseRefreshWdg):
         else:
             platform_image = '<i>{0}</i>'.format(platform)
 
-        platform_data = '<i>Platform: </i>{0}'.format(platform_image)
+        platform_data = '<b>Platform: </b>{0}'.format(platform_image)
 
         code_cell = title_table.add_cell(data=code, row=code_row)
         client_cell = title_table.add_cell(data=client_data, row=code_row)
