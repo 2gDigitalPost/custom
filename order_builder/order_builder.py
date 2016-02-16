@@ -13,7 +13,7 @@ from tactic_client_lib import TacticServerStub
 from pyasm.common import Environment
 from pyasm.biz import *
 from pyasm.web import Table, DivWdg
-from pyasm.widget import SelectWdg, IconWdg, TextWdg, CheckboxWdg
+from pyasm.widget import SelectWdg, TextWdg, CheckboxWdg
 from pyasm.search import Search
 
 from tactic.ui.common import BaseTableElementWdg
@@ -25,6 +25,7 @@ from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg, ButtonRowWdg
 from work_order_printer import WorkOrderPrintLauncherWdg
 from order_checker import OrderCheckerLauncherWdg
 from alternative_elements.customcheckbox import *
+from widget.new_icon_wdg import CustomIconWdg
 
 from common_tools.full_instructions import FullInstructionsLauncherWdg
 from common_tools.common_functions import fix_date
@@ -2214,39 +2215,39 @@ class OrderTable(BaseRefreshWdg):
         instructions_cell.add_attr('align', 'right')
 
         if user_is_scheduler:
-            tcloner = ButtonSmallNewWdg(title="Title Cloner", icon=IconWdg.STAR)
+            tcloner = ButtonSmallNewWdg(title="Title Cloner", icon=CustomIconWdg.icons.get('STAR'))
             tcloner.add_behavior(obs.get_launch_title_cloner_behavior(my.sk, main_obj.get_value('name'), my.user))
             dcl = bottom_buttons.add_cell(tcloner)
             dcl.add_attr('align','right')
     
-            tchanger = ButtonSmallNewWdg(title="Title Changer", icon=IconWdg.CALENDAR)
+            tchanger = ButtonSmallNewWdg(title="Title Changer", icon=CustomIconWdg.icons.get('CALENDAR'))
             tchanger.add_behavior(obs.get_launch_title_changer_behavior(my.sk, main_obj.get_value('name'), my.user))
             dcal = bottom_buttons.add_cell(tchanger)
             dcal.add_attr('align','right')
     
-            tdeletor = ButtonSmallNewWdg(title="Title Deletor", icon=IconWdg.TABLE_ROW_DELETE)
+            tdeletor = ButtonSmallNewWdg(title="Title Deletor", icon=CustomIconWdg.icons.get('TABLE_ROW_DELETE'))
             tdeletor.add_behavior(obs.get_launch_title_deletor_behavior(my.sk, main_obj.get_value('name'), my.user))
             dfilt = bottom_buttons.add_cell(tdeletor)
             dfilt.add_attr('align','right')
 
-        tfilter = ButtonSmallNewWdg(title="Filter Titles", icon=IconWdg.CONTENTS)
+        tfilter = ButtonSmallNewWdg(title="Filter Titles", icon=CustomIconWdg.icons.get('CONTENTS'))
         tfilter.add_behavior(obs.get_launch_title_filter_behavior(my.sk, main_obj.get_value('name'), my.user))
         filt = bottom_buttons.add_cell(tfilter)
         filt.add_attr('align','right')
 
-        upload = ButtonSmallNewWdg(title="Upload", icon=IconWdg.PUBLISH)
+        upload = ButtonSmallNewWdg(title="Upload", icon=CustomIconWdg.icons.get('PUBLISH'))
         upload.add_behavior(get_upload_behavior(my.sk))
         up = bottom_buttons.add_cell(upload)
         up.add_attr('align','right')
 
-        note_adder = ButtonSmallNewWdg(title="Add Note", icon=IconWdg.NOTE_ADD)
+        note_adder = ButtonSmallNewWdg(title="Add Note", icon=CustomIconWdg.icons.get('NOTE_ADD'))
         note_adder.add_behavior(obs.get_launch_note_behavior(my.sk, main_obj.get_value('name')))
         nadd = bottom_buttons.add_cell(note_adder)
         nadd.add_attr('align','right')
         nadd.add_style('cursor: pointer;')
         
         if user_is_scheduler:
-            title_adder = ButtonSmallNewWdg(title="Add Titles", icon=IconWdg.INSERT_MULTI)
+            title_adder = ButtonSmallNewWdg(title="Add Titles", icon=CustomIconWdg.icons.get('INSERT_MULTI'))
             title_adder.add_behavior(obs.get_title_add_behavior(my.sk, my.sid, main_obj.get_value('client_code'), main_obj.get_value('name')))
             tadd = bottom_buttons.add_cell(title_adder)
             tadd.add_attr('align','right')
@@ -3281,7 +3282,7 @@ class PreReqWdg(BaseRefreshWdg):
                     templ_rez = templ_search.get_sobjects()
                     templ_count = len(templ_rez)
                     if templ_count == 0:
-                        template_button = ButtonSmallNewWdg(title="Template This PreReq", icon=IconWdg.TEMPLATE)
+                        template_button = ButtonSmallNewWdg(title="Template This PreReq", icon=CustomIconWdg.icons.get('TEMPLATE'))
                         if my.is_master and user_is_scheduler:
                             template_button.add_behavior(obs.get_template_prereq_behavior(my.sob_code, my.pipeline, my.prereq_st, p.get_value('code')))
                     else:
@@ -3300,7 +3301,7 @@ class PreReqWdg(BaseRefreshWdg):
                     templ_rez = templ_search.get_sobjects()
                     templ_count = len(templ_rez)
                     if templ_count == 0:
-                        template_button = ButtonSmallNewWdg(title="Template This PreReq", icon=IconWdg.TEMPLATE)
+                        template_button = ButtonSmallNewWdg(title="Template This PreReq", icon=CustomIconWdg.icons.get('TEMPLATE'))
                         if my.is_master:
                             template_button.add_behavior(obs.get_template_wo_prereq_behavior(my.sob_code, my.prereq_st, p.get_value('code'), work_order_templ_code))
                     else:
@@ -3855,7 +3856,7 @@ class OutFilesWdg(BaseRefreshWdg):
             inters_tbl.add_cell(' &nbsp; ')
             if my.is_master:
                 if inter.get_value('intermediate_file_templ_code') in [None,'']:
-                    template_button = ButtonSmallNewWdg(title="Template This Intermediate File", icon=IconWdg.TEMPLATE)
+                    template_button = ButtonSmallNewWdg(title="Template This Intermediate File", icon=CustomIconWdg.icons.get('TEMPLATE'))
                     template_button.add_behavior(obs.get_template_intermediate_behavior(inter.get_value('code'), my.work_order_code))
                 else:
                     template_button = '<img border="0" style="vertical-align: middle" title="Templated" name="Templated" src="/context/icons/silk/tick.png">'
@@ -3911,7 +3912,7 @@ class OutFilesWdg(BaseRefreshWdg):
             delv_tbl.add_cell(' &nbsp; ')
             if my.is_master:
                 if deliv.get_value('templ_code') in [None,'']:
-                    template_button = ButtonSmallNewWdg(title="Template This Intermediate File", icon=IconWdg.TEMPLATE)
+                    template_button = ButtonSmallNewWdg(title="Template This Intermediate File", icon=CustomIconWdg.icons.get('TEMPLATE'))
                     template_button.add_behavior(obs.get_template_deliverable_behavior(deliv1.get_value('code'), work_order.get_value('work_order_templ_code'), deliv1.get_value('deliverable_source_code'), my.work_order_code))
                 else:
                     template_button = '<img border="0" style="vertical-align: middle" title="Templated" name="Templated" src="/context/icons/silk/tick.png">'
@@ -4070,7 +4071,7 @@ class SourcePortalWdg(BaseRefreshWdg):
                     popper.add_behavior(obs.get_launch_wo_source_behavior(my.work_order_code, wo_sk, d_source.get_value('code')))
                     if my.is_master in [True,'true','True',1,'t']:
                         if p.get_value('passin_templ_code') in [None,'']:
-                            template_button = ButtonSmallNewWdg(title="Template This Passed-in Source", icon=IconWdg.TEMPLATE)
+                            template_button = ButtonSmallNewWdg(title="Template This Passed-in Source", icon=CustomIconWdg.icons.get('TEMPLATE'))
                             if my.is_master == 'true':
                                 template_button.add_behavior(obs.get_template_deliverable_passin_behavior(my.work_order_code, wo_templ_code, p.get_value('code')))
                         else:
@@ -4111,7 +4112,7 @@ class SourcePortalWdg(BaseRefreshWdg):
                     popper.add_behavior(obs.get_open_intermediate_behavior(inter_f.get_value('code'),my.work_order_code, my.client_code))
                     if my.is_master in [True,'true','True',1,'t']:
                         if p.get_value('passin_templ_code') in [None,'']:
-                            template_button = ButtonSmallNewWdg(title="Template This Passed-in Intermediate File", icon=IconWdg.TEMPLATE)
+                            template_button = ButtonSmallNewWdg(title="Template This Passed-in Intermediate File", icon=CustomIconWdg.icons.get('TEMPLATE'))
                         if my.is_master == 'true':
                             template_button.add_behavior(obs.get_template_intermediate_passin_behavior(my.work_order_code, wo_templ_code, p.get_value('code')))
                         else:

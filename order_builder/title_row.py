@@ -4,7 +4,7 @@ from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg
 from pyasm.common import Environment
 from pyasm.search import Search
 from pyasm.web import Table
-from pyasm.widget import IconWdg
+from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
@@ -236,7 +236,7 @@ class TitleRow(BaseRefreshWdg):
                 bboc = bottom_buttons.add_cell(bbo)
                 bboc.add_attr('align', 'right')
 
-                adder = ButtonSmallNewWdg(title="Add A Project", icon=IconWdg.icons.get('ADD'))
+                adder = ButtonSmallNewWdg(title="Add A Project", icon=CustomIconWdg.icons.get('ADD'))
                 adder.add_behavior(get_multi_add_projs_behavior(my.order_sk, my.sk))
                 add = bottom_buttons.add_cell(adder)
                 add.add_attr('align', 'right')
@@ -263,10 +263,10 @@ class TitleRow(BaseRefreshWdg):
                 mb.add_attr('id', 'mastering_button_%s' % my.code)
                 mb.add_attr('align', 'right')
 
-                face_icon = IconWdg.icons.get('GRAY_BOMB')
+                face_icon = CustomIconWdg.icons.get('GRAY_BOMB')
                 face_text = "All is Ok - Set External Rejection?"
                 if main_obj.get('is_external_rejection') == 'true':
-                    face_icon = IconWdg.icons.get('RED_BOMB')
+                    face_icon = CustomIconWdg.icons.get('RED_BOMB')
                     face_text = "This is an External Rejection!!!"
 
                 panic_button = ButtonSmallNewWdg(title=face_text, icon=face_icon)
@@ -287,34 +287,34 @@ class TitleRow(BaseRefreshWdg):
                 rb.add_attr('id','redo_button_%s' % my.code)
                 rb.add_attr('align', 'right')
 
-                prio_reset = ButtonSmallNewWdg(title="Reset Dept Priorities", icon=IconWdg.icons.get('UNDO'))
+                prio_reset = ButtonSmallNewWdg(title="Reset Dept Priorities", icon=CustomIconWdg.icons.get('UNDO'))
                 prio_reset.add_behavior(get_reset_dept_prios(main_obj.get_value('code')))
                 pr = bottom_buttons.add_cell(prio_reset)
                 pr.add_attr('align', 'right')
 
-                sts_launcher = ButtonSmallNewWdg(title="Set Status Triggers", icon=IconWdg.icons.get('LINK'))
+                sts_launcher = ButtonSmallNewWdg(title="Set Status Triggers", icon=CustomIconWdg.icons.get('LINK'))
                 sts_launcher.add_behavior(get_launch_title_proj_sts_behavior(main_obj.get_value('code')))
                 stsl = bottom_buttons.add_cell(sts_launcher)
                 stsl.add_attr('align', 'right')
 
-            source_inspector = ButtonSmallNewWdg(title="Inspect Sources", icon=IconWdg.icons.get('SOURCE_PORTAL'))
+            source_inspector = ButtonSmallNewWdg(title="Inspect Sources", icon=CustomIconWdg.icons.get('SOURCE_PORTAL'))
             source_inspector.add_behavior(get_source_inspector_behavior(my.sk, '%s: %s' % (main_obj.get_value('title'), main_obj.get_value('episode'))))
             si = bottom_buttons.add_cell(source_inspector)
             si.add_attr('align', 'right')
 
-            upload = ButtonSmallNewWdg(title="Upload", icon=IconWdg.icons.get('PUBLISH'))
+            upload = ButtonSmallNewWdg(title="Upload", icon=CustomIconWdg.icons.get('PUBLISH'))
             upload.add_behavior(get_upload_behavior(my.sk))
             up = bottom_buttons.add_cell(upload)
             up.add_attr('align', 'right')
 
-            note_adder = ButtonSmallNewWdg(title="Add Note", icon=IconWdg.icons.get('NOTE_ADD'))
+            note_adder = ButtonSmallNewWdg(title="Add Note", icon=CustomIconWdg.icons.get('NOTE_ADD'))
             note_adder.add_behavior(obs.get_launch_note_behavior(my.sk, main_obj.get_value('title')))
             nadd = bottom_buttons.add_cell(note_adder)
             nadd.add_attr('align', 'right')
             nadd.add_style('cursor: pointer;')
 
             if user_is_scheduler:
-                pipe_button = ButtonSmallNewWdg(title="Assign Pipeline", icon=IconWdg.icons.get('PIPELINE'))
+                pipe_button = ButtonSmallNewWdg(title="Assign Pipeline", icon=CustomIconWdg.icons.get('PIPELINE'))
                 pipe_button.add_behavior(obs.get_scratch_pipe_behavior('twog/title', my.search_id, my.parent_sid,
                                                                        my.width, my.height,
                                                                        main_obj.get_value('pipeline_code'),
@@ -323,7 +323,7 @@ class TitleRow(BaseRefreshWdg):
                 bottom_buttons.add_cell(pipe_button)
 
             if my.is_master and user_is_scheduler:
-                templer = ButtonSmallNewWdg(title="Template All", icon=IconWdg.icons.get('TEMPLATE_DOWN'))
+                templer = ButtonSmallNewWdg(title="Template All", icon=CustomIconWdg.icons.get('TEMPLATE_DOWN'))
                 templer.add_behavior(get_template_all_behavior(my.order_sk, my.code, my.is_master_str))
                 tem = bottom_buttons.add_cell(templer)
                 tem.add_attr('align', 'right')

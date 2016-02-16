@@ -3,11 +3,12 @@ import tacticenv
 from pyasm.common import Environment
 from pyasm.biz import *
 from pyasm.web import Table, DivWdg
-from pyasm.widget import SelectWdg, IconWdg, TextWdg, CheckboxWdg
+from pyasm.widget import SelectWdg, TextWdg, CheckboxWdg
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
 from tactic.ui.panel import EditWdg
 from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg, ButtonRowWdg
+from widget.new_icon_wdg import CustomIconWdg
 
 class CostBuilderLauncherWdg(BaseTableElementWdg):
 
@@ -1732,22 +1733,22 @@ class CostTools(BaseRefreshWdg):
             rate_card_sel.append_option(rate_card.get('name'),rate_card.get('code'))
         rc = table.add_cell(rate_card_sel)
         rc.add_attr('align','right') 
-        eq_exp = ButtonSmallNewWdg(title="Show Equipment", icon=IconWdg.ARROW_OUT_EQUIPMENT)
+        eq_exp = ButtonSmallNewWdg(title="Show Equipment", icon=CustomIconWdg.icons.get('ARROW_OUT_EQUIPMENT'))
         eq_exp.add_behavior(my.get_equipment_expander_behavior())
         eqb = table.add_cell(eq_exp)
         eqb.add_attr('align','right')
 
-        eq_coll = ButtonSmallNewWdg(title="Hide Equipment", icon=IconWdg.ARROW_UP_EQUIPMENT)
+        eq_coll = ButtonSmallNewWdg(title="Hide Equipment", icon=CustomIconWdg.icons.get('ARROW_UP_EQUIPMENT'))
         eq_coll.add_behavior(my.get_equipment_collapser_behavior())
         eqlb = table.add_cell(eq_coll)
         eqlb.add_attr('align','right')
 
-        expander_button = ButtonSmallNewWdg(title="Expand All", icon=IconWdg.ARROW_OUT)
+        expander_button = ButtonSmallNewWdg(title="Expand All", icon=CustomIconWdg.icons.get('ARROW_OUT'))
         expander_button.add_behavior(my.get_expander_behavior())
         exb = table.add_cell(expander_button)
         exb.add_attr('align','right')
 
-        collapser_button = ButtonSmallNewWdg(title="Collapse All", icon=IconWdg.ARROW_UP_GREEN)
+        collapser_button = ButtonSmallNewWdg(title="Collapse All", icon=CustomIconWdg.icons.get('ARROW_UP_GREEN'))
         collapser_button.add_behavior(my.get_collapser_behavior())
         clb = table.add_cell(collapser_button)
         clb.add_attr('align','right')
