@@ -1059,7 +1059,7 @@ class ElementEvalBarcodesWdg(BaseTableElementWdg):
                             addportion.setAttribute('line',Number(rowct) + 1);
                             addportion.setAttribute('code','');
                             send_data = {'rowct': rowct + 1, 'wo_code': wo_code};
-                            spt.api.load_panel(addportion, 'qc_reports.ElementEvalBarcodesWdg', send_data); 
+                            spt.api.load_panel(addportion, 'qc_reports.ElementEvalBarcodesWdg', send_data);
                             newrow = lastbctable.insertRow(-1);
                             newrow.setAttribute('class','new_barcode_line');
                 }

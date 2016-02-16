@@ -4,7 +4,7 @@ from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg
 
 from pyasm.common import Environment
 from pyasm.web import Table
-from pyasm.widget import IconWdg
+from widget.new_icon_wdg import CustomIconWdg
 
 from order_checker import OrderCheckerLauncherWdg
 
@@ -90,7 +90,7 @@ class BuilderTools(BaseRefreshWdg):
         lnk.add_attr('nowrap', 'nowrap')
         table.add_cell('&nbsp;&nbsp;&nbsp;&nbsp;')
 
-        refresher = ButtonSmallNewWdg(title="Refresh", icon=IconWdg.icons.get('REFRESH'))
+        refresher = ButtonSmallNewWdg(title="Refresh", icon=CustomIconWdg.icons.get('REFRESH'))
         refresher.add_behavior(get_refresh_behavior(my.order_sk, my.user))
         refr = table.add_cell(refresher)
         refr.add_attr('align', 'right')
@@ -100,58 +100,58 @@ class BuilderTools(BaseRefreshWdg):
         checker.add_attr('align', 'right')
 
         if user_is_scheduler:
-            global_replacer = ButtonSmallNewWdg(title="Global Replacer", icon=IconWdg.icons.get('DEPENDENCY'))
+            global_replacer = ButtonSmallNewWdg(title="Global Replacer", icon=CustomIconWdg.icons.get('DEPENDENCY'))
             global_replacer.add_behavior(get_global_replacer_wdg(my.order_sk, my.user))
             globalr = table.add_cell(global_replacer)
             globalr.add_attr('align', 'right')
 
             if my.small:
-                normal_edit = ButtonSmallNewWdg(title="Normal Edit", icon=IconWdg.icons.get('NORMAL_EDIT'))
+                normal_edit = ButtonSmallNewWdg(title="Normal Edit", icon=CustomIconWdg.icons.get('NORMAL_EDIT'))
                 normal_edit.add_behavior(get_quick_edit_behavior(my.order_sk, my.user))
                 normr = table.add_cell(normal_edit)
                 normr.add_attr('align', 'right')
             else:
-                quick_edit = ButtonSmallNewWdg(title="Quick Edit", icon=IconWdg.icons.get('QUICK_EDIT'))
+                quick_edit = ButtonSmallNewWdg(title="Quick Edit", icon=CustomIconWdg.icons.get('QUICK_EDIT'))
                 quick_edit.add_behavior(get_quick_edit_behavior(my.order_sk, my.user))
                 quickr = table.add_cell(quick_edit)
                 quickr.add_attr('align', 'right')
 
-            clear_cache = ButtonSmallNewWdg(title="Clear Cache", icon=IconWdg.icons.get('TRASH'))
+            clear_cache = ButtonSmallNewWdg(title="Clear Cache", icon=CustomIconWdg.icons.get('TRASH'))
             clear_cache.add_behavior(get_clear_cache_behavior(my.order_sk, my.user))
             clearc = table.add_cell(clear_cache)
             clearc.add_attr('align', 'right')
 
-            source_adder = ButtonSmallNewWdg(title="Create New Source", icon=IconWdg.icons.get('SOURCE_ADD_TAPE'))
+            source_adder = ButtonSmallNewWdg(title="Create New Source", icon=CustomIconWdg.icons.get('SOURCE_ADD_TAPE'))
             source_adder.add_behavior(get_create_source_behavior(my.order_sk))
             sexa = table.add_cell(source_adder)
             sexa.add_attr('align', 'right')
 
-        eq_exp = ButtonSmallNewWdg(title="Show Equipment", icon=IconWdg.icons.get('ARROW_OUT_EQUIPMENT'))
+        eq_exp = ButtonSmallNewWdg(title="Show Equipment", icon=CustomIconWdg.icons.get('ARROW_OUT_EQUIPMENT'))
         eq_exp.add_behavior(get_equipment_expander_behavior(my.order_sk))
         eqb = table.add_cell(eq_exp)
         eqb.add_attr('align', 'right')
 
-        eq_coll = ButtonSmallNewWdg(title="Hide Equipment", icon=IconWdg.icons.get('ARROW_UP_EQUIPMENT'))
+        eq_coll = ButtonSmallNewWdg(title="Hide Equipment", icon=CustomIconWdg.icons.get('ARROW_UP_EQUIPMENT'))
         eq_coll.add_behavior(get_equipment_collapser_behavior(my.order_sk))
         eqlb = table.add_cell(eq_coll)
         eqlb.add_attr('align', 'right')
 
-        source_exp = ButtonSmallNewWdg(title="Show Sources", icon=IconWdg.icons.get('ARROW_OUT_SOURCE'))
+        source_exp = ButtonSmallNewWdg(title="Show Sources", icon=CustomIconWdg.icons.get('ARROW_OUT_SOURCE'))
         source_exp.add_behavior(get_source_expander_behavior(my.order_sk))
         sexb = table.add_cell(source_exp)
         sexb.add_attr('align', 'right')
 
-        source_coll = ButtonSmallNewWdg(title="Hide Sources", icon=IconWdg.icons.get('ARROW_UP_SOURCE'))
+        source_coll = ButtonSmallNewWdg(title="Hide Sources", icon=CustomIconWdg.icons.get('ARROW_UP_SOURCE'))
         source_coll.add_behavior(get_source_collapser_behavior(my.order_sk))
         sclb = table.add_cell(source_coll)
         sclb.add_attr('align', 'right')
 
-        expander_button = ButtonSmallNewWdg(title="Expand All", icon=IconWdg.icons.get('ARROW_OUT'))
+        expander_button = ButtonSmallNewWdg(title="Expand All", icon=CustomIconWdg.icons.get('ARROW_OUT'))
         expander_button.add_behavior(get_expander_behavior(my.order_sk))
         exb = table.add_cell(expander_button)
         exb.add_attr('align', 'right')
 
-        collapser_button = ButtonSmallNewWdg(title="Collapse All", icon=IconWdg.icons.get('ARROW_UP_GREEN'))
+        collapser_button = ButtonSmallNewWdg(title="Collapse All", icon=CustomIconWdg.icons.get('ARROW_UP_GREEN'))
         collapser_button.add_behavior(get_collapser_behavior(my.order_sk))
         clb = table.add_cell(collapser_button)
         clb.add_attr('align', 'right')

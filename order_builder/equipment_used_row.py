@@ -4,7 +4,7 @@ from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg
 from pyasm.common import Environment
 from pyasm.search import Search
 from pyasm.web import Table
-from pyasm.widget import IconWdg
+from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 
@@ -107,10 +107,10 @@ class EquipmentUsedRow(BaseRefreshWdg):
         top_buttons = Table()
         top_buttons.add_row()
         if my.is_master and not my.small:
-            which_icon = IconWdg.TEMPLATE
+            which_icon = CustomIconWdg.icons.get('TEMPLATE')
             which_title = 'Template This Equipment'
             if main_obj.get_value('equipment_used_templ_code') not in ['', None]:
-                which_icon = IconWdg.CHECK
+                which_icon = CustomIconWdg.icons.get('CHECK')
                 which_title = 'Un-Template This Equipment'
             button = ButtonSmallNewWdg(title=which_title, icon=which_icon)
             eq_templ_code = main_obj.get_value('equipment_used_templ_code')

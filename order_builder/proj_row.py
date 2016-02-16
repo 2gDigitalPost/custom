@@ -5,7 +5,8 @@ from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg
 from pyasm.common import Environment
 from pyasm.search import Search
 from pyasm.web import Table
-from pyasm.widget import IconWdg, TextWdg
+from pyasm.widget import TextWdg
+from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
@@ -237,38 +238,38 @@ class ProjRow(BaseRefreshWdg):
 
             if not my.is_master:
                 if main_obj.get_value('creation_type') == 'hackup':# and my.user in ['admin','philip.rowe']:
-                    hack_edit = ButtonSmallNewWdg(title="Edit Connections", icon=IconWdg.HACKUP)
+                    hack_edit = ButtonSmallNewWdg(title="Edit Connections", icon=CustomIconWdg.icons.get('HACKUP'))
                     hack_edit.add_behavior(obs.get_edit_hackup_connections(my.code, main_obj.get_value('process')))
                     he = bottom_buttons.add_cell(hack_edit)
                     he.add_attr('align','right')
                     he.add_attr('valign','bottom')
                 if user_is_scheduler:
-                    adder = ButtonSmallNewWdg(title="Add A Work Order", icon=IconWdg.ADD)
+                    adder = ButtonSmallNewWdg(title="Add A Work Order", icon=CustomIconWdg.icons.get('ADD'))
                     adder.add_behavior(obs.get_multi_add_wos_behavior(my.sk))
                     add = bottom_buttons.add_cell(adder)
                     add.add_attr('align','right')
-                    priority = ButtonSmallNewWdg(title="Change Priority", icon=IconWdg.PRIORITY)
+                    priority = ButtonSmallNewWdg(title="Change Priority", icon=CustomIconWdg.icons.get('PRIORITY'))
                     priority.add_behavior(obs.get_change_priority_behavior(main_obj.get_value('code'), main_obj.get_value('process')))
                     prio = bottom_buttons.add_cell(priority)
                     prio.add_attr('align','right')
-                    duedate = ButtonSmallNewWdg(title="Change Due Date", icon=IconWdg.CALENDAR)
+                    duedate = ButtonSmallNewWdg(title="Change Due Date", icon=CustomIconWdg.icons.get('CALENDAR'))
                     duedate.add_behavior(obs.get_change_due_date_behavior(main_obj.get_value('code'), main_obj.get_value('process')))
                     due = bottom_buttons.add_cell(duedate)
                     due.add_attr('align','right')
 
-            upload = ButtonSmallNewWdg(title="Upload", icon=IconWdg.PUBLISH)
+            upload = ButtonSmallNewWdg(title="Upload", icon=CustomIconWdg.icons.get('PUBLISH'))
             upload.add_behavior(get_upload_behavior(my.sk))
             up = bottom_buttons.add_cell(upload)
             up.add_attr('align','right')
 
-            note_adder = ButtonSmallNewWdg(title="Add Note", icon=IconWdg.NOTE_ADD)
+            note_adder = ButtonSmallNewWdg(title="Add Note", icon=CustomIconWdg.icons.get('NOTE_ADD'))
             note_adder.add_behavior(obs.get_launch_note_behavior(my.sk, main_obj.get_value('process')))
             nadd = bottom_buttons.add_cell(note_adder)
             nadd.add_attr('align','right')
             nadd.add_style('cursor: pointer;')
 
             if user_is_scheduler:
-                pipe_button = ButtonSmallNewWdg(title="Assign Pipeline", icon=IconWdg.PIPELINE)
+                pipe_button = ButtonSmallNewWdg(title="Assign Pipeline", icon=CustomIconWdg.icons.get('PIPELINE'))
                 pipe_button.add_behavior(obs.get_scratch_pipe_behavior('twog/proj',my.search_id,my.parent_sid,my.width,my.height, main_obj.get_value('pipeline_code'),main_obj.get_search_key(),'ProjRow',main_obj.get_value('process')))
                 scratch = bottom_buttons.add_cell(pipe_button)
 
@@ -276,10 +277,10 @@ class ProjRow(BaseRefreshWdg):
             templ_title = ''
             if my.is_master:
                 if main_obj.get_value('templ_me') == True:
-                    templ_icon = IconWdg.CHECK
+                    templ_icon = CustomIconWdg.icons.get('CHECK')
                     templ_title = "This is the Templating Project"
                 else:
-                   templ_icon = IconWdg.TEMPLATE
+                   templ_icon = CustomIconWdg.icons.get('TEMPLATE')
                    templ_title = "Use This as Template for Parent Pipeline"
                 templ_button = ButtonSmallNewWdg(title="Template Me", icon=templ_icon)
                 if main_obj.get_value('templ_me') == False:

@@ -5,7 +5,7 @@ from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg
 from pyasm.common import Environment
 from pyasm.search import Search
 from pyasm.web import Table
-from pyasm.widget import IconWdg
+from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
@@ -265,7 +265,7 @@ class WorkOrderRow(BaseRefreshWdg):
             prereq_launcher.add_attr('colspan','2')
 
             if main_obj.get_value('creation_type') == 'hackup' and user_is_scheduler:# and my.user in ['admin','philip.rowe']:
-                hack_edit = ButtonSmallNewWdg(title="Edit Connections", icon=IconWdg.HACKUP)
+                hack_edit = ButtonSmallNewWdg(title="Edit Connections", icon=CustomIconWdg.icons.get('HACKUP'))
                 hack_edit.add_behavior(obs.get_edit_hackup_connections(my.code, main_obj.get_value('process')))
                 he = bbr.add_cell(hack_edit)
                 he.add_attr('align','right')
@@ -274,7 +274,7 @@ class WorkOrderRow(BaseRefreshWdg):
                 blah = bbr.add_cell('')
 
             if user_is_scheduler:
-                error_edit = ButtonSmallNewWdg(title="Report Error", icon=IconWdg.REPORT_ERROR)
+                error_edit = ButtonSmallNewWdg(title="Report Error", icon=CustomIconWdg.icons.get('REPORT_ERROR'))
                 error_edit.add_behavior(obs.get_add_wo_error_behavior(my.code))
                 uno = bbr.add_cell('&nbsp;')
                 er = bbr.add_cell(error_edit)
@@ -301,13 +301,13 @@ class WorkOrderRow(BaseRefreshWdg):
             prnt.add_attr('align','right')
             prnt.add_attr('valign','bottom')
 
-            upload = ButtonSmallNewWdg(title="Upload", icon=IconWdg.PUBLISH)
+            upload = ButtonSmallNewWdg(title="Upload", icon=CustomIconWdg.icons.get('PUBLISH'))
             upload.add_behavior(get_upload_behavior(my.sk))
             up = bbr.add_cell(upload)
             up.add_attr('align','right')
             up.add_attr('valign','bottom')
 
-            note_adder = ButtonSmallNewWdg(title="Add Note", icon=IconWdg.NOTE_ADD)
+            note_adder = ButtonSmallNewWdg(title="Add Note", icon=CustomIconWdg.icons.get('NOTE_ADD'))
             note_adder.add_behavior(obs.get_launch_note_behavior(my.parent_sk, parent_obj.get_value('process')))
             nadd = bbr.add_cell(note_adder)
             nadd.add_attr('align', 'right')
@@ -315,7 +315,7 @@ class WorkOrderRow(BaseRefreshWdg):
             nadd.add_style('cursor: pointer;')
 
             if user_is_scheduler:
-                add_eq_used_butt = ButtonSmallNewWdg(title="Add Equipment", icon=IconWdg.EQUIPMENT_ADD)
+                add_eq_used_butt = ButtonSmallNewWdg(title="Add Equipment", icon=CustomIconWdg.icons.get('EQUIPMENT_ADD'))
                 add_eq_used_butt.add_behavior(obs.get_eu_add_behavior(main_obj.get_value('process'),main_obj.get_search_key(), main_obj.get_value('code')))
                 eu_adder = bbr.add_cell(add_eq_used_butt)
                 eu_adder.add_attr('width','100%')
@@ -323,13 +323,13 @@ class WorkOrderRow(BaseRefreshWdg):
                 eu_adder.add_attr('valign', 'bottom')
                 eu_adder.add_style('cursor: pointer;')
 
-                source_portal = ButtonSmallNewWdg(title="Passed in Result(s) or Source(s)", icon=IconWdg.SOURCE_PORTAL)
+                source_portal = ButtonSmallNewWdg(title="Passed in Result(s) or Source(s)", icon=CustomIconWdg.icons.get('SOURCE_PORTAL'))
                 source_portal.add_behavior(obs.get_launch_source_portal_behavior(main_obj.get_value('process'), main_obj.get_search_key(), main_obj.get_value('code'), parent_obj.get_value('pipeline_code'), my.is_master_str))
                 sp = bbr.add_cell(source_portal)
                 sp.add_attr('align','right')
                 sp.add_attr('valign','bottom')
 
-                file_add = ButtonSmallNewWdg(title="Intermediate File(s) or Permanent Element(s)", icon=IconWdg.FILE_ADD)
+                file_add = ButtonSmallNewWdg(title="Intermediate File(s) or Permanent Element(s)", icon=CustomIconWdg.icons.get('FILE_ADD'))
                 file_add.add_behavior(obs.get_launch_out_files_behavior(main_obj.get_value('process'), main_obj.get_search_key(), main_obj.get_value('code')))
                 fa = bbr.add_cell(file_add)
                 fa.add_attr('align','right')
@@ -339,10 +339,10 @@ class WorkOrderRow(BaseRefreshWdg):
             templ_title = ''
             if my.is_master:
                 if main_obj.get_value('templ_me') == True:
-                    templ_icon = IconWdg.CHECK
+                    templ_icon = CustomIconWdg.icons.get('CHECK')
                     templ_title = "This is the Templating Work Order"
                 else:
-                    templ_icon = IconWdg.TEMPLATE
+                    templ_icon = CustomIconWdg.icons.get('TEMPLATE')
                     templ_title = "Use This as Template for Parent Pipeline"
                 templ_button = ButtonSmallNewWdg(title=templ_title, icon=templ_icon)
                 if main_obj.get_value('templ_me') == False:
