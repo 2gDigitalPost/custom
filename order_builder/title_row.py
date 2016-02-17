@@ -287,6 +287,17 @@ class TitleRow(BaseRefreshWdg):
                 rb.add_attr('id','redo_button_%s' % my.code)
                 rb.add_attr('align', 'right')
 
+                if main_obj.get('repurpose'):
+                    repurpose_button_text = 'Title is set as a &#34;Repurpose&#34;, do you want to remove this?'
+                else:
+                    repurpose_button_text = 'Set title as a &#34;Repurpose&#34;?'
+
+                repurpose_button = ButtonSmallNewWdg(title=repurpose_button_text, icon=CustomIconWdg.icons.get('REDO'))
+                repurpose_button.add_behavior(set_repurpose(main_obj.get_value('code'), my.order_sk, main_obj.get_value('repurpose')))
+                repurpose_button_cell = bottom_buttons.add_cell(repurpose_button)
+                repurpose_button_cell.add_attr('id', 'repurpose_button_{0}'.format(my.code))
+                repurpose_button_cell.add_attr('align', 'right')
+
                 prio_reset = ButtonSmallNewWdg(title="Reset Dept Priorities", icon=CustomIconWdg.icons.get('UNDO'))
                 prio_reset.add_behavior(get_reset_dept_prios(main_obj.get_value('code')))
                 pr = bottom_buttons.add_cell(prio_reset)
@@ -480,7 +491,7 @@ catch(err){
     return behavior
 
 
-def set_repurpose(title_code, order_sk):
+def set_repurpose(title_code, order_sk, is_repurpose):
     """
     Toggles 'repurpose' on an order (repurposed titles are moved to the top of the priority queue)
 
@@ -489,20 +500,24 @@ def set_repurpose(title_code, order_sk):
     :return: Javascript behavior
     """
     behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-try{
+try {
     var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
     var server = TacticServerStub.get();
     var title_code = '%s';
     var order_sk = '%s';
+    var is_currently_repurpose = '%s';
     var title_sk = server.build_search_key('twog/title', title_code);
     var repurpose_button = top_el.getElementById('repurpose_button_' + title_code).getElementsByClassName("spt_button_icon")[0];
-    var inner = repurpose_button.innerHTML;
-    var is_currently_on = false;
-    var confirm_text = "Are you sure you want to set this title as a 'repurpose'?";
 
-    if(inner.indexOf('mastering_lilac.png') != -1) {
+    var is_currently_on;
+    var confirm_text;
+
+    if(is_currently_repurpose == 'True') {
         is_currently_on = true;
         confirm_text = "Are you sure you want to unset this title as a 'repurpose'?";
+    } else {
+        is_currently_on = false;
+        confirm_text = "Are you sure you want to set this title as a 'repurpose'?";
     }
 
     if(confirm(confirm_text)) {
@@ -528,11 +543,11 @@ try{
         spt.app_busy.hide();
     }
 }
-catch(err){
+catch(err) {
     spt.app_busy.hide();
     spt.alert(spt.exception.handler(err));
 }
-     ''' % (title_code, order_sk)}
+     ''' % (title_code, order_sk, is_repurpose)}
     return behavior
 
 

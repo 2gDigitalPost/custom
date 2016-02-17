@@ -195,6 +195,7 @@ class HotTodayWdg(BaseRefreshWdg):
                                                             '%Y-%m-%d %H:%M:%S')
         requires_mastering_qc = title.get_value('requires_mastering_qc', False)
         is_redo = title.get_value('redo', False)
+        is_repurpose = title.get_value('repurpose', False)
 
         # If there is an 'episode', append it to the title's name
         if episode:
@@ -216,6 +217,8 @@ class HotTodayWdg(BaseRefreshWdg):
             title_cell_background_color = '#B55252'
         elif is_redo:
             title_cell_background_color = '#FFCC00'
+        elif is_repurpose:
+            title_cell_background_color = '#4190B7'
         elif requires_mastering_qc:
             title_cell_background_color = '#C8A2C8'
         else:
