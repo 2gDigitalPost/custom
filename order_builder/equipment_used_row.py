@@ -1,5 +1,4 @@
 from tactic.ui.common import BaseRefreshWdg
-from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg
 
 from pyasm.common import Environment
 from pyasm.search import Search
@@ -9,6 +8,7 @@ from widget.new_icon_wdg import CustomIconWdg
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 
 from order_builder_utils import OBScripts, get_selected_color_behavior
+from widget.button_small_new_wdg import ButtonSmallNewWdg
 
 
 class EquipmentUsedRow(BaseRefreshWdg):

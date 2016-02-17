@@ -21,11 +21,12 @@ from tactic.ui.common import BaseRefreshWdg
 from tactic.ui.panel import EditWdg
 from custom_piper import CustomPipelineToolWdg
 from tactic.ui.widget import CalendarInputWdg, ActionButtonWdg
-from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg, ButtonRowWdg
+from tactic.ui.widget.button_new_wdg import ButtonRowWdg
 from work_order_printer import WorkOrderPrintLauncherWdg
 from order_checker import OrderCheckerLauncherWdg
 from alternative_elements.customcheckbox import *
 from widget.new_icon_wdg import CustomIconWdg
+from widget.button_small_new_wdg import ButtonSmallNewWdg
 
 from common_tools.full_instructions import FullInstructionsLauncherWdg
 from common_tools.common_functions import fix_date

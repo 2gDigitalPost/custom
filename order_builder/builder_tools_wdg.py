@@ -1,12 +1,12 @@
 from client.tactic_client_lib import TacticServerStub
 from tactic.ui.common import BaseRefreshWdg
-from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg
 
 from pyasm.common import Environment
 from pyasm.web import Table
 from widget.new_icon_wdg import CustomIconWdg
 
 from order_checker import OrderCheckerLauncherWdg
+from widget.button_small_new_wdg import ButtonSmallNewWdg
 
 
 class BuilderTools(BaseRefreshWdg):

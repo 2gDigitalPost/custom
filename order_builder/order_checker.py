@@ -5,7 +5,8 @@ from pyasm.web import Table, DivWdg
 from pyasm.widget import IconWdg
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
-from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg, ButtonRowWdg
+from widget.button_small_new_wdg import ButtonSmallNewWdg
+
 
 class OrderCheckerLauncherWdg(BaseTableElementWdg):
 

@@ -7,7 +7,7 @@ from pyasm.web import Table, DivWdg
 from pyasm.widget import SelectWdg, IconWdg, TextWdg, CheckboxWdg
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
-from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg
+from widget.button_small_new_wdg import ButtonSmallNewWdg
 from qc_reports import QCReportLauncherWdg
 from pyasm.search import SearchType, Search
 from alternative_elements.customcheckbox import * 

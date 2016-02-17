@@ -1,6 +1,6 @@
 from client.tactic_client_lib import TacticServerStub
 from tactic.ui.common import BaseRefreshWdg
-from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg
+from widget.button_small_new_wdg import ButtonSmallNewWdg
 
 from pyasm.common import Environment
 from pyasm.search import Search

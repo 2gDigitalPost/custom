@@ -9,7 +9,6 @@ from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
 from tactic.ui.panel import EditWdg
 from custom_piper import CustomPipelineToolWdg
-from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg, ButtonRowWdg
 
 class  SourceCloneLauncherWdg(BaseTableElementWdg):
     '''Launches a popup with the CustomSaatchiCheckin widget '''

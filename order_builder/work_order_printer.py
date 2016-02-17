@@ -7,8 +7,10 @@ from pyasm.widget import SelectWdg, IconWdg
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
 from tactic.ui.panel import EditWdg
-from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg, ButtonRowWdg
+from tactic.ui.widget.button_new_wdg import ButtonRowWdg
 from pyasm.command import *
+from widget.button_small_new_wdg import ButtonSmallNewWdg
+
 
 class WorkOrderPrintLauncherWdg(BaseTableElementWdg):
 
