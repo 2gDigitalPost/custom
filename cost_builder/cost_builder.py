@@ -7,7 +7,7 @@ from pyasm.widget import SelectWdg, TextWdg, CheckboxWdg
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
 from tactic.ui.panel import EditWdg
-from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg, ButtonRowWdg
+from widget.button_small_new_wdg import ButtonSmallNewWdg
 from widget.new_icon_wdg import CustomIconWdg
 
 class CostBuilderLauncherWdg(BaseTableElementWdg):

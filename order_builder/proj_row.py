@@ -1,6 +1,5 @@
 from client.tactic_client_lib import TacticServerStub
 from tactic.ui.common import BaseRefreshWdg
-from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg
 
 from pyasm.common import Environment
 from pyasm.search import Search
@@ -11,6 +10,7 @@ from widget.new_icon_wdg import CustomIconWdg
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
 from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior
+from widget.button_small_new_wdg import ButtonSmallNewWdg
 
 from work_order_row import WorkOrderRow
 

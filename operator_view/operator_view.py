@@ -8,7 +8,6 @@ from pyasm.widget import SelectWdg, IconWdg, TextWdg, CheckboxWdg
 from tactic.ui.common import BaseTableElementWdg
 from tactic.ui.common import BaseRefreshWdg
 from tactic.ui.panel import EditWdg
-from tactic.ui.widget.button_new_wdg import ButtonSmallNewWdg, ButtonRowWdg
 from tactic.ui.widget import DiscussionWdg
 from source_issues import SourceDisplayWdg
 
