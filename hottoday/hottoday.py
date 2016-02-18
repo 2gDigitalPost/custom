@@ -168,6 +168,15 @@ class HotTodayWdg(BaseRefreshWdg):
             group_cell.add_style('border', '1px solid #E0E0E0')
             group_cell.add_style('width', '{0}%'.format(76.0 / len(groups)))
 
+    @staticmethod
+    def set_extra_info_row(info_text, color, table):
+        extra_info_row = table.add_row()
+        extra_info_row.add_style('color', color)
+        extra_info_row.add_style('font-size', '14px')
+        extra_info_row.add_style('font-weight', 'bold')
+
+        table.add_cell(data=info_text, row=extra_info_row)
+
     def set_row(self, title, table, counter, header_groups, tasks, current_priority, is_admin_user,
                 is_external_rejection=False):
         """
@@ -212,15 +221,15 @@ class HotTodayWdg(BaseRefreshWdg):
                 # is_external_rejection = False
 
         # Set the row's background color. Different statuses require different colors. The statuses are not necessarily
-        # mutually exclusive, but they are ordered by priority.
+        # mutually exclusive, but since we can only have one background color, they are ordered by priority.
         if is_external_rejection:
             title_cell_background_color = '#B55252'
         elif is_redo:
             title_cell_background_color = '#FFCC00'
-        elif is_repurpose:
-            title_cell_background_color = '#4190B7'
         elif requires_mastering_qc:
             title_cell_background_color = '#C8A2C8'
+        elif is_repurpose:
+            title_cell_background_color = '#4190B7'
         else:
             title_cell_background_color = '#D7D7D7'
 
@@ -228,14 +237,12 @@ class HotTodayWdg(BaseRefreshWdg):
         title_table = Table()
         title_table.add_style('width', '100%')
 
-        # If the order requires QC Mastering, add that above the first row
+        # Repurposed titles and titles requiring Mastering QC need another row at the top of their table denoting
+        # their special status
+        if is_repurpose:
+            self.set_extra_info_row('Repurposed Title', '#0C2FB7', title_table)
         if requires_mastering_qc:
-            mastering_qc_row = title_table.add_row()
-            mastering_qc_row.add_style('color', 'red')
-            mastering_qc_row.add_style('font-size', '14px')
-            mastering_qc_row.add_style('font-weight', 'bold')
-
-            title_table.add_cell(data='Requires QC Mastering', row=mastering_qc_row)
+            self.set_extra_info_row('Requires Mastering QC', 'red', title_table)
 
         # First row: Number (counter) and name
         name_row = title_table.add_row()
