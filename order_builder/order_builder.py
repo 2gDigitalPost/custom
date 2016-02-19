@@ -1166,14 +1166,14 @@ class TitleProjStatusTriggerWdg(BaseTableElementWdg):
         projs = server.eval("@SOBJECT(twog/proj['title_code','%s'])" % title_code)
         widget = DivWdg()
         table = Table()
-        table.add_attr('id','title_st_wdg_%s' % title_code)
+        table.add_attr('id', 'title_st_wdg_%s' % title_code)
         table.add_row()
         tc = table.add_cell('<b><u>Status Triggers on Title:</u></b> ')
-        tc.add_attr('nowrap','nowrap')
+        tc.add_attr('nowrap', 'nowrap')
         # Create a selection for the whole title
         title_sel = SelectWdg("title_st_sel_%s" % title_code)
-        title_sel.append_option('Yes','Yes')
-        title_sel.append_option('No','No')
+        title_sel.append_option('Yes', 'Yes')
+        title_sel.append_option('No', 'No')
         title_sel.set_value(title.get('status_triggers'),title.get('status_triggers'))
         title_sel.add_behavior(my.set_status_triggers(title_code))
         table.add_cell(title_sel)
@@ -1181,10 +1181,10 @@ class TitleProjStatusTriggerWdg(BaseTableElementWdg):
         for proj in projs:
             table.add_row()
             guy = table.add_cell('&nbsp;&nbsp;&nbsp;%s (%s))' % (proj.get('process'), proj.get('code')))
-            guy.add_attr('nowrap','nowrap')
+            guy.add_attr('nowrap', 'nowrap')
             p_sel = SelectWdg('proj_st_sel_%s' % proj.get('code'))
-            p_sel.append_option('Yes','Yes')
-            p_sel.append_option('No','No')
+            p_sel.append_option('Yes', 'Yes')
+            p_sel.append_option('No', 'No')
             # Preset the value on the select
             p_sel.set_value(proj.get('status_triggers'),proj.get('status_triggers'))
             p_sel.add_behavior(my.set_status_triggers(proj.get('code')))
@@ -1192,6 +1192,7 @@ class TitleProjStatusTriggerWdg(BaseTableElementWdg):
 
         widget.add(table)
         return widget
+
 
 class OrderBuilder(BaseRefreshWdg):
     # This is the top level widget, containing the whole order builder
@@ -1280,27 +1281,27 @@ class OrderBuilder(BaseRefreshWdg):
         #Might want to test speed differences of using this, vs the alternative
         obs = OBScripts(order_sk=my.sk,user=my.user,groups_str=my.groups_str,is_master=my.is_master_str,display_mode=my.disp_mode)
         table = Table()
-        table.add_attr('cellspacing','0')
-        table.add_attr('cellpadding','0')
-        table.add_attr('class','twog_order_builder twog_order_builder_%s' % my.sk)
+        table.add_attr('cellspacing', '0')
+        table.add_attr('cellpadding', '0')
+        table.add_attr('class', 'twog_order_builder twog_order_builder_%s' % my.sk)
         table.add_attr('classification', sob.get('classification'))
-        table.add_attr('order_sk',my.sk)
-        table.add_attr('pipefocus_class_type','')
-        table.add_attr('pipefocus_sob_sk','')
-        table.add_attr('pipefocus_name','')
-        table.add_attr('allowed_titles',my.allowed_titles_str)
-        table.add_attr('is_master_str',my.is_master_str)
-        table.add_attr('name',my.code)
-        table.add_attr('client',sob.get('client_code'))
-        table.add_attr('order_code',my.order_code)
-        table.add_attr('groups_str',my.groups_str)
-        table.add_attr('user',my.user)
-        table.add_attr('is_master',my.is_master)
-        table.add_attr('display_mode',my.disp_mode)
-        table.add_style('width: 100%s;' % '%')
+        table.add_attr('order_sk', my.sk)
+        table.add_attr('pipefocus_class_type', '')
+        table.add_attr('pipefocus_sob_sk', '')
+        table.add_attr('pipefocus_name', '')
+        table.add_attr('allowed_titles', my.allowed_titles_str)
+        table.add_attr('is_master_str', my.is_master_str)
+        table.add_attr('name', my.code)
+        table.add_attr('client', sob.get('client_code'))
+        table.add_attr('order_code', my.order_code)
+        table.add_attr('groups_str', my.groups_str)
+        table.add_attr('user', my.user)
+        table.add_attr('is_master', my.is_master)
+        table.add_attr('display_mode', my.disp_mode)
+        table.add_style('width: 100%;')
         inner_table = Table()
         xrow = inner_table.add_row()
-        xrow.add_attr('class','closer_row')
+        xrow.add_attr('class', 'closer_row')
         xrow.add_style('display: none;')
         closecell = inner_table.add_cell('CLOSE')
         closecell.add_attr('align','right')
@@ -1309,7 +1310,7 @@ class OrderBuilder(BaseRefreshWdg):
         piperow = inner_table.add_row()
         #Hide the section that contains the pipeline editor
         piperow.add_style('display: none;')
-        piperow.add_attr('class','pipe_row')
+        piperow.add_attr('class', 'pipe_row')
         pipe_editor = ''
         pipecell = inner_table.add_cell(pipe_editor)
         pipecell.add_attr('class','pipe_cell')
@@ -2215,69 +2216,70 @@ class OrderTable(BaseRefreshWdg):
             tcloner = ButtonSmallNewWdg(title="Title Cloner", icon=CustomIconWdg.icons.get('STAR'))
             tcloner.add_behavior(obs.get_launch_title_cloner_behavior(my.sk, main_obj.get_value('name'), my.user))
             dcl = bottom_buttons.add_cell(tcloner)
-            dcl.add_attr('align','right')
+            dcl.add_attr('align', 'right')
     
             tchanger = ButtonSmallNewWdg(title="Title Changer", icon=CustomIconWdg.icons.get('CALENDAR'))
             tchanger.add_behavior(obs.get_launch_title_changer_behavior(my.sk, main_obj.get_value('name'), my.user))
             dcal = bottom_buttons.add_cell(tchanger)
-            dcal.add_attr('align','right')
+            dcal.add_attr('align', 'right')
     
             tdeletor = ButtonSmallNewWdg(title="Title Deletor", icon=CustomIconWdg.icons.get('TABLE_ROW_DELETE'))
             tdeletor.add_behavior(obs.get_launch_title_deletor_behavior(my.sk, main_obj.get_value('name'), my.user))
             dfilt = bottom_buttons.add_cell(tdeletor)
-            dfilt.add_attr('align','right')
+            dfilt.add_attr('align', 'right')
 
         tfilter = ButtonSmallNewWdg(title="Filter Titles", icon=CustomIconWdg.icons.get('CONTENTS'))
         tfilter.add_behavior(obs.get_launch_title_filter_behavior(my.sk, main_obj.get_value('name'), my.user))
         filt = bottom_buttons.add_cell(tfilter)
-        filt.add_attr('align','right')
+        filt.add_attr('align', 'right')
 
         upload = ButtonSmallNewWdg(title="Upload", icon=CustomIconWdg.icons.get('PUBLISH'))
         upload.add_behavior(get_upload_behavior(my.sk))
         up = bottom_buttons.add_cell(upload)
-        up.add_attr('align','right')
+        up.add_attr('align', 'right')
 
         note_adder = ButtonSmallNewWdg(title="Add Note", icon=CustomIconWdg.icons.get('NOTE_ADD'))
         note_adder.add_behavior(obs.get_launch_note_behavior(my.sk, main_obj.get_value('name')))
         nadd = bottom_buttons.add_cell(note_adder)
-        nadd.add_attr('align','right')
+        nadd.add_attr('align', 'right')
         nadd.add_style('cursor: pointer;')
         
         if user_is_scheduler:
             title_adder = ButtonSmallNewWdg(title="Add Titles", icon=CustomIconWdg.icons.get('INSERT_MULTI'))
             title_adder.add_behavior(obs.get_title_add_behavior(my.sk, my.sid, main_obj.get_value('client_code'), main_obj.get_value('name')))
             tadd = bottom_buttons.add_cell(title_adder)
-            tadd.add_attr('align','right')
+            tadd.add_attr('align', 'right')
             tadd.add_style('cursor: pointer;')
 
 
         long_cell2 = table.add_cell(bottom_buttons)
-        long_cell2.add_attr('align','right')
-        long_cell2.add_attr('valign','bottom')
-        long_cell2.add_style('width: 100%s' % '%')
+        long_cell2.add_attr('align', 'right')
+        long_cell2.add_attr('valign', 'bottom')
+        long_cell2.add_style('width: 100%')
         bottom = Table()
-        bottom.add_attr('width','100%s' % '%')
-        bottom.add_attr('cellpadding','0')
-        bottom.add_attr('cellspacing','0')
+        bottom.add_attr('width', '100%')
+        bottom.add_attr('cellpadding', '0')
+        bottom.add_attr('cellspacing', '0')
         for title in titles:
             title_sk = title.get_search_key()
             title_row  = bottom.add_row()
-            title_row.add_attr('width', '100%s' % '%')
+            title_row.add_attr('width', '100%')
             title_row.add_attr('class','row_%s' % title_sk)
-            title_obj = TitleRow(sk=title_sk, parent_sk=my.sk, parent_sid=my.sid, groups_str=my.groups_str, user=my.user, display_mode=my.disp_mode, is_master=my.is_master_str,main_obj=title) 
+            title_obj = TitleRow(sk=title_sk, parent_sk=my.sk, parent_sid=my.sid, groups_str=my.groups_str,
+                                 user=my.user, display_mode=my.disp_mode, is_master=my.is_master_str, main_obj=title)
             content_cell = bottom.add_cell(title_obj)
-            content_cell.add_attr('width','100%s' % '%')
+            content_cell.add_attr('width', '100%')
             content_cell.add_attr('sk', title_sk)
             content_cell.add_attr('order_sk', my.sk)
             content_cell.add_attr('parent_sk', my.sk)
             content_cell.add_attr('parent_sid', my.sid)
             content_cell.add_attr('call_me', title.get_value('title'))
-            content_cell.add_attr('episode',title.get_value('episode'))
+            content_cell.add_attr('episode', title.get_value('episode'))
             content_cell.add_attr('my_class','TitleRow')
-            content_cell.add_attr('client_code',title.get_value('client_code'))
-            content_cell.add_attr('class','cell_%s' % title_sk)
+            content_cell.add_attr('client_code', title.get_value('client_code'))
+            content_cell.add_attr('class', 'cell_%s' % title_sk)
         tab2ret = Table()
-        tab2ret.add_attr('width','100%s' % '%')
+        tab2ret.add_attr('width', '100%')
         tab2ret.add_row()
         tab2ret.add_cell(table)
         tab2ret.add_row()
@@ -2376,22 +2378,21 @@ class AddWorkOrderWdg(BaseRefreshWdg):
          ''' % (my.proj_sk, my.order_sk, user_name)}
         return behavior
 
-    def get_display(my):   
-#        add_wo_time = time.time()
+    def get_display(my):
         user_name = Environment.get_user_name() 
         my.proj_sk = str(my.kwargs.get('proj_sk'))
         my.proj_code = my.proj_sk.split('code=')[1]
         my.order_sk = str(my.kwargs.get('order_sk'))
-        obs = OBScripts(order_sk=my.order_sk)
+
         table = Table()
-        table.add_attr('class','addwo_%s' % my.proj_code)
+        table.add_attr('class', 'addwo_%s' % my.proj_code)
         group_search = Search("sthpw/login_in_group")
-        group_search.add_filter('login',my.user)
+        group_search.add_filter('login', my.user)
         groups = group_search.get_sobjects()
         group_sel = SelectWdg('add_wo_work_group')
-        group_sel.append_option('--Select--','--Select--')
+        group_sel.append_option('--Select--', '--Select--')
         for group in groups:
-            group_sel.append_option(group.get_value('login_group'),group.get_value*('login_group'))
+            group_sel.append_option(group.get_value('login_group'), group.get_value*('login_group'))
         table.add_row()
         table.add_cell('Process: ')
         table.add_cell('<input type="text" class="add_wo_process"/>')
@@ -2409,24 +2410,26 @@ class AddWorkOrderWdg(BaseRefreshWdg):
         table2 = Table()
         table2.add_row()
         t1 = table2.add_cell(' ')
-        t1.add_attr('width', '100%s' % '%')
+        t1.add_attr('width', '100%')
         button = table2.add_cell('<input type="button" value="Create"/>')
         button.add_behavior(my.get_commit(user_name))
         t2 = table2.add_cell(' ')
-        t2.add_attr('width', '100%s' % '%')
+        t2.add_attr('width', '100%')
         table.add_cell(' ')
         table.add_cell(table2)
 
         return table
 
-class AddProjWdg(BaseRefreshWdg): 
+
+class AddProjWdg(BaseRefreshWdg):
 
     def init(my):
         my.title_sk = ''
         my.title_code = ''
         my.order_sk = ''
 
-    def get_commit(my, tsk, osk, user_name):
+    @staticmethod
+    def get_commit(tsk, osk, user_name):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         function encode_utf8( s )
                         {
@@ -2513,7 +2516,8 @@ class EditHackPipe(BaseRefreshWdg):
         my.server = TacticServerStub.get()
         my.sob = None
 
-    def get_connect(my, nsk, psk):
+    @staticmethod
+    def get_connect(nsk, psk):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
                           var server = TacticServerStub.get();
@@ -2597,7 +2601,8 @@ class EditHackPipe(BaseRefreshWdg):
          ''' % (nsk, psk)}
         return behavior
 
-    def get_selector_side(my, parent_sk, item_code, in_or_out):
+    @staticmethod
+    def get_selector_side(parent_sk, item_code, in_or_out):
         choices = []
         parent_code = parent_sk.split('code=')[1]
         parent_st = parent_sk.split('?')[0]
@@ -2618,7 +2623,7 @@ class EditHackPipe(BaseRefreshWdg):
         elif 'twog/title' in parent_sk:
             parent_name = '%s: %s' % (parent_obj.get_value('title'), parent_obj.get_value('episode'))
             proj_search = Search("twog/proj")
-            proj_search.add_filter('title_code',parent_code)
+            proj_search.add_filter('title_code', parent_code)
             proj_search.add_order_by('order_in_pipe')
             projs = proj_search.get_sobjects()
 
@@ -2628,22 +2633,22 @@ class EditHackPipe(BaseRefreshWdg):
         entries = []
         hack_search = Search("twog/hackpipe_out")
         if in_or_out == 'in':
-            hack_search.add_filter('out_to',item_code)
+            hack_search.add_filter('out_to', item_code)
             hacks = hack_search.get_sobjects()
             for hack in hacks:
                 entries.append(hack.get_value('lookup_code'))
 
         else:
-            hack_search.add_filter('lookup_code',item_code)
+            hack_search.add_filter('lookup_code', item_code)
             hacks = hack_search.get_sobjects()
             for hack in hacks:
                 entries.append(hack.get_value('out_to'))
 
         table = Table()
-        table.add_attr('class','selector_%s' % in_or_out)
+        table.add_attr('class', 'selector_%s' % in_or_out)
         table.add_row()
         t1 = table.add_cell(in_or_out.upper())
-        t1.add_attr('align','center')
+        t1.add_attr('align', 'center')
         if in_or_out == 'in':
 
             check_val = 'false'
@@ -2654,7 +2659,9 @@ class EditHackPipe(BaseRefreshWdg):
             else:
                 linked_val = 'NOPE'
                 check_val = 'true'
-            checkbox = CustomCheckboxWdg(name='parent_choice_%s_%s' % (in_or_out, parent_code),value_field=parent_code,checked=check_val,dom_class='hack_in_selector',code=parent_code,in_or_out=in_or_out,linked=linked_val) 
+            checkbox = CustomCheckboxWdg(name='parent_choice_%s_%s' % (in_or_out, parent_code), value_field=parent_code,
+                                         checked=check_val, dom_class='hack_in_selector',
+                                         code=parent_code, in_or_out=in_or_out, linked=linked_val)
 
             table2 = Table()
             table2.add_row()
@@ -2749,7 +2756,8 @@ class HackPipeConnectWdg(BaseRefreshWdg):
         my.task_sk = ''
         my.user_name = ''
 
-    def get_connect(my, nsk, psk, osk, user_name):
+    @staticmethod
+    def get_connect(nsk, psk, osk, user_name):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
                           var server = TacticServerStub.get();
@@ -2814,18 +2822,19 @@ class HackPipeConnectWdg(BaseRefreshWdg):
          ''' % (nsk, psk, osk, user_name)}
         return behavior
 
-    def get_selector_side(my, parent_sk, item_code, in_or_out):
+    @staticmethod
+    def get_selector_side(parent_sk, item_code, in_or_out):
         choices = []
         parent_code = parent_sk.split('code=')[1]
         parent_st = parent_sk.split('?')[0]
         parent_search = Search(parent_st)
-        parent_search.add_filter('code',parent_code)
+        parent_search.add_filter('code', parent_code)
         parent_obj = parent_search.get_sobject()
         parent_name = ''
         if 'twog/proj' in parent_sk:
             parent_name = parent_obj.get_value('process')
             wo_search = Search("twog/work_order")
-            wo_search.add_filter('proj_code',parent_code)
+            wo_search.add_filter('proj_code', parent_code)
             wo_search.add_order_by("order_in_pipe")
             wos = wo_search.get_sobjects()
             for wo in wos:
@@ -2834,7 +2843,7 @@ class HackPipeConnectWdg(BaseRefreshWdg):
         elif 'twog/title' in parent_sk:
             parent_name = '%s: %s' % (parent_obj.get_value('title'), parent_obj.get_value('episode'))
             proj_search = Search("twog/proj")
-            proj_search.add_filter('title_code',parent_code)
+            proj_search.add_filter('title_code', parent_code)
             proj_search.add_order_by('order_in_pipe')
             projs = proj_search.get_sobjects()
             for proj in projs:
@@ -2847,12 +2856,14 @@ class HackPipeConnectWdg(BaseRefreshWdg):
         t1 = table.add_cell(in_or_out.upper())
         t1.add_attr('align','center')
         if in_or_out == 'in':
-            checkbox = CustomCheckboxWdg(name='parent_choice_%s_%s' % (in_or_out, parent_code),value_field=parent_code,checked='false',dom_class='hack_in_selector',code=parent_code,in_or_out=in_or_out)
+            checkbox = CustomCheckboxWdg(name='parent_choice_%s_%s' % (in_or_out, parent_code), value_field=parent_code,
+                                         checked='false', dom_class='hack_in_selector', code=parent_code,
+                                         in_or_out=in_or_out)
             table2 = Table()
             table2.add_row()
             table2.add_cell(checkbox)
             nw0 = table2.add_cell('%s [%s]' % (parent_name, parent_code))
-            nw0.add_attr('nowrap','nowrap')
+            nw0.add_attr('nowrap', 'nowrap')
             table.add_row()
             table.add_cell(table2)
 
@@ -2860,7 +2871,8 @@ class HackPipeConnectWdg(BaseRefreshWdg):
         for choice in choices:
             table3.add_row()
 
-            chk = CustomCheckboxWdg(name='child_choice_%s_%s' % (in_or_out, choice[0]),value_field=choice[0],checked='false',dom_class='hack_in_selector',code=choice[0],in_or_out=in_or_out)
+            chk = CustomCheckboxWdg(name='child_choice_%s_%s' % (in_or_out, choice[0]), value_field=choice[0],
+                                    checked='false', dom_class='hack_in_selector', code=choice[0], in_or_out=in_or_out)
             table3.add_cell(chk)
             nw = table3.add_cell('%s [%s]' % (choice[1], choice[0]))
             nw.add_attr('nowrap','nowrap')
@@ -2900,12 +2912,12 @@ class HackPipeConnectWdg(BaseRefreshWdg):
         mtable.add_style('background-color: #e4e4e4;')
         mtable.add_row()
         m1 = mtable.add_cell('New %s:' % child_type) 
-        m1.add_attr('align','center')
+        m1.add_attr('align', 'center')
         mtable.add_row()
         m2 = mtable.add_cell('%s [%s]' % (child.get_value('process'), child.get_value('code'))) 
-        m2.add_attr('align','center')
+        m2.add_attr('align', 'center')
         mid = table.add_cell(mtable)
-        mid.add_attr('align','right')
+        mid.add_attr('align', 'right')
         table.add_cell(right)
         table.add_row()
         table.add_cell(' ')
@@ -3280,7 +3292,7 @@ class WorkOrderSourceAddWdg(BaseRefreshWdg):
         my.title_code = ''
         my.order_sk = ''
 
-    def get_snapshot_file(my,snapshot_code):
+    def get_snapshot_file(my, snapshot_code):
         what_to_ret = ''
         base = '/volumes'
         rel_paths = my.server.get_all_paths_from_snapshot(snapshot_code, mode='relative')
@@ -3601,7 +3613,8 @@ class ProjDueDateChanger(BaseRefreshWdg):
     def init(my):
         nothing = True
 
-    def get_change_dates_behavior(my, proj_code, proj_name, order_sk, send_wdg): 
+    @staticmethod
+    def get_change_dates_behavior(proj_code, proj_name, order_sk, send_wdg):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
                            var server = TacticServerStub.get();
@@ -4350,7 +4363,7 @@ class TitleAdderWdg(BaseRefreshWdg):
         clients = client_search.get_sobjects()
 
         pipe_search = Search("sthpw/pipeline")
-        pipe_search.add_filter('search_type','twog/title')
+        pipe_search.add_filter('search_type', 'twog/title')
         pipelines = pipe_search.get_sobjects()
         client_pull = SelectWdg('tadd_client_pull')
         client_name = ''
@@ -4376,98 +4389,98 @@ class TitleAdderWdg(BaseRefreshWdg):
             for pipe in pipelines:
                 if not pipe.get_value('hide'):
                     if pipe.get_value('code').split('_')[0] == client_name:
-                        pipe_pull.append_option(pipe.get_value('code'),pipe.get_value('code'))
+                        pipe_pull.append_option(pipe.get_value('code'), pipe.get_value('code'))
             for pipe in pipelines:
                 if not pipe.get_value('hide'):
                     if pipe.get_value('code').split('_')[0] != client_name:
-                        pipe_pull.append_option(pipe.get_value('code'),pipe.get_value('code'))
+                        pipe_pull.append_option(pipe.get_value('code'), pipe.get_value('code'))
         pipe_pull.add_behavior(obs.get_pipeline_change_behavior(my.order_sk))
 
 
         dlv_standard_pull = SelectWdg('tadd_deliverable_standard')
-        dlv_standard_pull.append_option('--Select--','NOTHINGXsXNOTHING')
+        dlv_standard_pull.append_option('--Select--', 'NOTHINGXsXNOTHING')
         for s in my.standards:
-            dlv_standard_pull.append_option(s,s)
+            dlv_standard_pull.append_option(s, s)
         dlv_format_pull = SelectWdg('tadd_deliverable_format')
-        dlv_format_pull.append_option('--Select--','NOTHINGXsXNOTHING')
+        dlv_format_pull.append_option('--Select--', 'NOTHINGXsXNOTHING')
         for f in my.formats:
-            dlv_format_pull.append_option(f,f)
+            dlv_format_pull.append_option(f, f)
         dlv_aspect_ratio_pull = SelectWdg('tadd_deliverable_aspect_ratio')
-        dlv_aspect_ratio_pull.append_option('--Select--','NOTHINGXsXNOTHING')
+        dlv_aspect_ratio_pull.append_option('--Select--', 'NOTHINGXsXNOTHING')
         for a in my.aspect_ratios:
-            dlv_aspect_ratio_pull.append_option(a,a)
+            dlv_aspect_ratio_pull.append_option(a, a)
         dlv_frame_rate_pull = SelectWdg('tadd_deliverable_frame_rate')
-        dlv_frame_rate_pull.append_option('--Select--','NOTHINGXsXNOTHING')
+        dlv_frame_rate_pull.append_option('--Select--', 'NOTHINGXsXNOTHING')
         for f in my.frame_rates:
-            dlv_frame_rate_pull.append_option(f,f)
+            dlv_frame_rate_pull.append_option(f, f)
 
         status_triggers_pull = SelectWdg('tadd_status_triggers')
-        for f in ['Yes','No']:
-            status_triggers_pull.append_option(f,f)
+        for f in ['Yes', 'No']:
+            status_triggers_pull.append_option(f, f)
 
         priority_triggers_pull = SelectWdg('tadd_priority_triggers')
-        for f in ['Yes','No']:
-            priority_triggers_pull.append_option(f,f)
+        for f in ['Yes', 'No']:
+            priority_triggers_pull.append_option(f, f)
 
         table.add_row()
         t1 = table.add_cell('Territory: ')
         t2 = table.add_cell(territory_sel)
-        t1.add_attr('align','left')
-        t2.add_attr('colspan','6')
-        t2.add_attr('align','left')
+        t1.add_attr('align', 'left')
+        t2.add_attr('colspan', '6')
+        t2.add_attr('align', 'left')
 
         table.add_row()
         t1 = table.add_cell('Language: ')
         t2 = table.add_cell(language_sel)
-        t1.add_attr('align','left')
-        t2.add_attr('colspan','6')
-        t2.add_attr('align','left')
+        t1.add_attr('align', 'left')
+        t2.add_attr('colspan', '6')
+        t2.add_attr('align', 'left')
         
         table.add_row()
         c1 = table.add_cell('Client: ')
         c2 = table.add_cell(client_pull)
-        c1.add_attr('align','left')
-        c2.add_attr('colspan','6')
-        c2.add_attr('align','left')
+        c1.add_attr('align', 'left')
+        c2.add_attr('colspan', '6')
+        c2.add_attr('align', 'left')
 
         table.add_row()
         o1 = table.add_cell('Platform: ')
         o2 = table.add_cell(outlet_pull)
-        o1.add_attr('align','left')
-        o2.add_attr('colspan','6')
-        o2.add_attr('align','left')
+        o1.add_attr('align', 'left')
+        o2.add_attr('colspan', '6')
+        o2.add_attr('align', 'left')
 
         table.add_row()
         r1 = table.add_cell('Title Id Num: ')
         r2 = table.add_cell('<input type="text" class="tadd_title_id_number"/>')
-        r1.add_attr('align','left')
-        r2.add_attr('colspan','6')
-        r2.add_attr('align','left')
+        r1.add_attr('align', 'left')
+        r2.add_attr('colspan', '6')
+        r2.add_attr('align', 'left')
 
         table.add_row()
         w1 = table.add_cell('Total Program Run Time: ')
         w2 = table.add_cell('<input type="text" class="tadd_total_program_run_time"/>')
-        w1.add_attr('align','left')
-        w2.add_attr('colspan','6')
-        w2.add_attr('align','left')
+        w1.add_attr('align', 'left')
+        w2.add_attr('colspan', '6')
+        w2.add_attr('align', 'left')
 
         table.add_row()
         z1 = table.add_cell('Total Run Time w/ Textless: ')
         z2 = table.add_cell('<input type="text" class="tadd_total_run_time_with_textless"/>')
-        z1.add_attr('align','left')
-        z2.add_attr('colspan','6')
-        z2.add_attr('align','left')
+        z1.add_attr('align', 'left')
+        z2.add_attr('colspan', '6')
+        z2.add_attr('align', 'left')
 
         table.add_row()
         p1 = table.add_cell('Pipeline: ')
         p2 = table.add_cell(pipe_pull)
-        p1.add_attr('align','left')
-        p2.add_attr('colspan','6')
-        p2.add_attr('align','left')
+        p1.add_attr('align', 'left')
+        p2.add_attr('colspan', '6')
+        p2.add_attr('align', 'left')
 
         table.add_row()
         sd = table.add_cell('Start Date: ')
-        sd.add_attr('nowrap','nowrap')
+        sd.add_attr('nowrap', 'nowrap')
         start = CalendarInputWdg("tadd_start_date")
         if the_order.get_value('start_date') not in [None,'']:
             start.set_option('default', fix_date(the_order.get_value('start_date')))
@@ -4513,83 +4526,84 @@ class TitleAdderWdg(BaseRefreshWdg):
         rem.get_top().add_style('width: 150px')
         rem.set_persist_on_submit()
         rem_date = table.add_cell(rem)
-        rem_date.add_attr('colspan','7')
-        rem_date.add_attr('nowrap','nowrap')
+        rem_date.add_attr('colspan', '7')
+        rem_date.add_attr('nowrap', 'nowrap')
 
         table.add_row()
         r8 = table.add_cell('Expected Price: ')
         r9 = table.add_cell('<input type="text" class="tadd_expected_price"/>')
-        r8.add_attr('align','left')
-        r9.add_attr('colspan','6')
-        r9.add_attr('align','left')
+        r8.add_attr('align', 'left')
+        r9.add_attr('colspan', '6')
+        r9.add_attr('align', 'left')
 
         table.add_row()
         taa = table.add_cell('Description')
-        taa.add_attr('valign','top')
+        taa.add_attr('valign', 'top')
         ta1 = table.add_cell('<textarea cols="50" rows="10" class="tadd_description"></textarea>')
-        ta1.add_attr('colspan','6')
+        ta1.add_attr('colspan', '6')
         
         table.add_row()
         s1 = table.add_cell('Deliverable Standard: ')
         s2 = table.add_cell(dlv_standard_pull)
-        s1.add_attr('align','left')
-        s2.add_attr('colspan','6')
-        s2.add_attr('align','left')
+        s1.add_attr('align', 'left')
+        s2.add_attr('colspan', '6')
+        s2.add_attr('align', 'left')
 
         table.add_row()
         s1 = table.add_cell('Deliverable Aspect Ratio: ')
         s2 = table.add_cell(dlv_aspect_ratio_pull)
-        s1.add_attr('align','left')
-        s2.add_attr('colspan','6')
-        s2.add_attr('align','left')
+        s1.add_attr('align', 'left')
+        s2.add_attr('colspan', '6')
+        s2.add_attr('align', 'left')
 
         table.add_row()
         s1 = table.add_cell('Deliverable Frame Rate: ')
         s2 = table.add_cell(dlv_frame_rate_pull)
-        s1.add_attr('align','left')
-        s2.add_attr('colspan','6')
-        s2.add_attr('align','left')
+        s1.add_attr('align', 'left')
+        s2.add_attr('colspan', '6')
+        s2.add_attr('align', 'left')
 
         table.add_row()
         s1 = table.add_cell('Deliverable Format: ')
         s2 = table.add_cell(dlv_format_pull)
-        s1.add_attr('align','left')
-        s2.add_attr('colspan','6')
-        s2.add_attr('align','left')
+        s1.add_attr('align', 'left')
+        s2.add_attr('colspan', '6')
+        s2.add_attr('align', 'left')
 
         table.add_row()
         s1 = table.add_cell('Status Triggers?: ')
         s2 = table.add_cell(status_triggers_pull)
-        s1.add_attr('align','left')
-        s2.add_attr('colspan','6')
-        s2.add_attr('align','left')
+        s1.add_attr('align', 'left')
+        s2.add_attr('colspan', '6')
+        s2.add_attr('align', 'left')
 
         table.add_row()
         s1 = table.add_cell('Priority Triggers?: ')
         s2 = table.add_cell(priority_triggers_pull)
-        s1.add_attr('align','left')
-        s2.add_attr('colspan','6')
-        s2.add_attr('align','left')
+        s1.add_attr('align', 'left')
+        s2.add_attr('colspan', '6')
+        s2.add_attr('align', 'left')
 
         table.add_row()
         tca = table.add_cell('Deliverable Specs')
-        tca.add_attr('valign','top')
+        tca.add_attr('valign', 'top')
         ta8 = table.add_cell('<textarea cols="50" rows="10" class="tadd_delivery_specs"></textarea>')
-        ta8.add_attr('colspan','6')
+        ta8.add_attr('colspan', '6')
 
         table.add_row()
         table.add_cell('Keywords')
         ta2 = table.add_cell('<textarea cols="50" class="tadd_keywords"></textarea>')
-        ta2.add_attr('colspan','6')
+        ta2.add_attr('colspan', '6')
 
-        go_butt = ActionButtonWdg(tip='Create',title='Create')
+        go_butt = ActionButtonWdg(tip='Create', title='Create')
         go_butt.add_behavior(obs.get_create_titles_behavior(my.order_sk,my.order_sid,my.user))
         table.add_row()
         bottom_butt = table.add_cell(go_butt)
-        bottom_butt.add_attr('colspan','7')
-        bottom_butt.add_attr('align','center')
+        bottom_butt.add_attr('colspan', '7')
+        bottom_butt.add_attr('align', 'center')
 
         return table
+
 
 class EquipmentUsedAdderWdg(BaseRefreshWdg):
     def init(my):
@@ -4675,6 +4689,7 @@ class EquipmentUsedAdderWdg(BaseRefreshWdg):
 
         return table
 
+
 class EquipmentUsedMultiAdderWdg(BaseRefreshWdg):
     def init(my):
         my.server = TacticServerStub.get()
@@ -4689,7 +4704,6 @@ class EquipmentUsedMultiAdderWdg(BaseRefreshWdg):
         my.x_butt = "<img src='/context/icons/common/BtnKill_Black.gif' title='Delete' name='Delete'/>" 
         my.is_master = False
         my.sks = []
-    
 
     def get_eq(my, sks):
         #THIS NEEDS TO USE TACTIC SERVER STUB, NOT SEARCH, BECAUSE OF KEYS
@@ -4946,7 +4960,7 @@ class OperatorErrorDescriptPopupWdg(BaseRefreshWdg):
     def get_display(my):   
         my.production_error_code = str(my.kwargs.get('production_error_code'))
         table = Table()
-        table.add_attr('class','prod_error_%s' % my.production_error_code)
+        table.add_attr('class', 'prod_error_%s' % my.production_error_code)
         table.add_row()
         table.add_cell('Please explain what created the error and whatever you think may have contributed to it so we can resolve this issue. Thanks')
         table.add_row()
@@ -4955,11 +4969,11 @@ class OperatorErrorDescriptPopupWdg(BaseRefreshWdg):
         little_table = Table()
         little_table.add_row()
         w1 = little_table.add_cell(' ')
-        w1.add_attr('width','50%s' % '%')
+        w1.add_attr('width', '50%')
         action_button = little_table.add_cell('<input type="button" value="Submit"/>')
         action_button.add_behavior(my.get_submit_description_behavior(my.production_error_code))
         w2 = little_table.add_cell(' ')
-        w2.add_attr('width','50%s' % '%')
+        w2.add_attr('width', '50%')
         table.add_cell(little_table)
         return table
 
@@ -5019,7 +5033,7 @@ class ExternalRejectionReasonWdg(BaseRefreshWdg):
         my.title_sk = str(my.kwargs.get('title_sk'))
         my.order_sk = str(my.kwargs.get('order_sk'))
         table = Table()
-        table.add_attr('class','external_reject_%s' % my.title_sk)
+        table.add_attr('class', 'external_reject_%s' % my.title_sk)
         table.add_row()
         table.add_cell('Please tell us what created the external rejection. Thank you.')
         table.add_row()
@@ -5028,20 +5042,22 @@ class ExternalRejectionReasonWdg(BaseRefreshWdg):
         little_table = Table()
         little_table.add_row()
         w1 = little_table.add_cell(' ')
-        w1.add_attr('width','50%s' % '%')
+        w1.add_attr('width', '50%')
         action_button = little_table.add_cell('<input type="button" value="Submit"/>')
         action_button.add_behavior(my.get_submit_description_behavior(my.title_sk, my.order_sk))
         w2 = little_table.add_cell(' ')
-        w2.add_attr('width','50%s' % '%')
+        w2.add_attr('width', '50%')
         table.add_cell(little_table)
         return table
+
 
 class TitleRedoWdg(BaseRefreshWdg): 
     def init(my):
         my.title_sk = ''
         my.order_k = ''
 
-    def get_submit(my, title_sk, order_sk): 
+    @staticmethod
+    def get_submit(title_sk, order_sk):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
                            var server = TacticServerStub.get();
