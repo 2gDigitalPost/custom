@@ -35,6 +35,8 @@ class IncompleteWOWdg(BaseTableElementWdg):
         my.file_size = None
         my.show_all = 'false'
         my.requires_mastering = False
+        is_repurpose = False
+
         if 'show_all' in my.kwargs.keys():
             my.show_all = my.kwargs.get('show_all')
         if 'parent_view' in my.kwargs.keys():
@@ -75,7 +77,9 @@ class IncompleteWOWdg(BaseTableElementWdg):
                     my.file_size = sobject.get_value('file_size')
                     ffound = True
                 if sobject.get_value('requires_mastering_qc') not in ['False','false','0',None,False]:
-                    my.requires_mastering = True 
+                    my.requires_mastering = True
+                if sobject.get_value('repurpose'):
+                    is_repurpose = True
                 
         if not tfound:
             if 'trt' in my.kwargs.keys():
@@ -91,6 +95,13 @@ class IncompleteWOWdg(BaseTableElementWdg):
         widget = DivWdg()
         table = Table()
         table.add_attr('class','%s_innerds_%s operator_view_titles_innerds_%s' % (my.parent_view, class_code, class_code))
+
+        if is_repurpose:
+            widget.add_style('background-color', '#4190B7')
+            table.add_row()
+            repurpose_text = table.add_cell('<span style="color: #0C2FB7"><b>Repurposed Title</b></span>')
+            repurpose_text.add_style('text-align', 'center')
+
         if my.requires_mastering:
             widget.add_style('background-color: #c8a2c8;')
             table.add_row()

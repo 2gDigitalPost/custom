@@ -292,7 +292,7 @@ class TitleRow(BaseRefreshWdg):
                 else:
                     repurpose_button_text = 'Set title as a &#34;Repurpose&#34;?'
 
-                repurpose_button = ButtonSmallNewWdg(title=repurpose_button_text, icon=CustomIconWdg.icons.get('REDO'))
+                repurpose_button = ButtonSmallNewWdg(title=repurpose_button_text, icon=CustomIconWdg.icons.get('REPURPOSE'))
                 repurpose_button.add_behavior(set_repurpose(main_obj.get_value('code'), my.order_sk, main_obj.get_value('repurpose')))
                 repurpose_button_cell = bottom_buttons.add_cell(repurpose_button)
                 repurpose_button_cell.add_attr('id', 'repurpose_button_{0}'.format(my.code))

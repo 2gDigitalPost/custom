@@ -23,6 +23,7 @@ class CustomIconWdg(IconWdg):
         'QUICK_EDIT':          "/context/icons/custom/quick_edit.png",
         'RED_BOMB':            "/context/icons/custom/red_bomb.png",
         'REPORT_ERROR':        "/context/icons/custom/report_error.png",
+        'REPURPOSE':           "/context/icons/custom/repurpose.png",
         'SOURCE_ADD_TAPE':     "/context/icons/custom/source_add_tape.png",
         'SOURCE_PORTAL':       "/context/icons/custom/source_portal.png",
         'TEMPLATE':            "/context/icons/custom/template.png",
