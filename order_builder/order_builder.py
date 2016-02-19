@@ -4289,7 +4289,7 @@ class TitleAdderWdg(BaseRefreshWdg):
         my.order_sid = ''
         my.client_code = ''
         my.formats = ['Electronic/File', 'HDCAM SR', 'NTSC', 'PAL']
-        my.frame_rates = ['23.98fps', '59.94i', '50i', '29.97fps', '59.94p', 'DFTC', 'NDFTC', 'PAL/EBU']
+        my.frame_rates = ProdSetting.get_seq_by_key('frame_rates')
         my.aspect_ratios = ['16x9 1.33', '16x9 1.33 Pan & Scan', '16x9 1.78 Anamorphic', '16x9 1.78 Full Frame',
                             '16x9 1.85 Letterbox', '16x9 1.85 Matted', '16x9 1.85 Matted Anamorphic', '16x9 2.20',
                             '16x9 2.20 Letterbox', '16x9 2.35 Anamorphic', '16x9 2.35 Letterbox', '16x9 2.40 Letterbox',

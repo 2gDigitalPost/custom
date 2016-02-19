@@ -925,12 +925,12 @@ class MetaDataReportWdg(BaseTableElementWdg):
             '&nbsp;&nbsp;&nbsp;PROGRAM ENDS WITH AT LEAST ONE BLACK FRAME?': 'program_ends_with_black_frame_f'
         }
         s1_listc2 = [
-            'FILE STARTS @ 00:01:00:00 WITH FADE UP/DOWN?',
+            'FILE STARTS @ 01:00:00:00 WITH FADE UP/DOWN?',
             'PROGRAM BEGINS WITH AT LEAST ONE BLACK FRAME?',
             '&nbsp;&nbsp;&nbsp;PROGRAM ENDS WITH FADE DOWN (WITH AT LEAST ONCE BLACK FRAME)?'
         ]
         s1_dictc2 = {
-            'FILE STARTS @ 00:01:00:00 WITH FADE UP/DOWN?': 'file_starts_at_1hr_w_fade_p',
+            'FILE STARTS @ 01:00:00:00 WITH FADE UP/DOWN?': 'file_starts_at_1hr_w_fade_p',
             'PROGRAM BEGINS WITH AT LEAST ONE BLACK FRAME?': 'program_begins_with_black_frame_p',
             '&nbsp;&nbsp;&nbsp;PROGRAM ENDS WITH FADE DOWN (WITH AT LEAST ONCE BLACK FRAME)?': 'program_ends_with_fade_p'
         }

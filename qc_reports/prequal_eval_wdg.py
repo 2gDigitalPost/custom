@@ -4,6 +4,7 @@ from tactic_client_lib import TacticServerStub
 from tactic.ui.common import BaseTableElementWdg
 
 from pyasm.common import Environment
+from pyasm.prod.biz import ProdSetting
 from pyasm.widget import SelectWdg, TextWdg, CheckboxWdg
 from pyasm.web import Table, DivWdg
 
@@ -13,7 +14,7 @@ class PreQualEvalWdg(BaseTableElementWdg):
     def init(my):
         nothing = 'true'
         my.formats = ['Electronic/File', 'DBC', 'D5', 'HDCAM SR', 'NTSC', 'PAL']
-        my.frame_rates = ['23.98fps', '59.94i', '50i', '29.97fps', '59.94p', 'DFTC', 'NDFTC', 'PAL/EBU']
+        my.frame_rates = ProdSetting.get_seq_by_key('frame_rates')
         my.machines = ['VTR221', 'VTR222', 'VTR223', 'VTR224', 'VTR225', 'VTR231', 'VTR232', 'VTR233', 'VTR234',
                        'VTR235', 'VTR251', 'VTR252', 'VTR253', 'VTR254', 'VTR255', 'VTR261', 'VTR262', 'VTR263',
                        'VTR264', 'VTR265', 'VTR281', 'VTR282', 'VTR283', 'VTR284', 'VTR285', 'FCP01', 'FCP02', 'FCP03',
