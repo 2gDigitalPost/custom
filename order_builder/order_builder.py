@@ -66,7 +66,6 @@ class OrderBuilderLauncherWdg(BaseTableElementWdg):
         return behavior
 
     def get_display(my):
-        code = ''
         if 'code' in my.kwargs.keys():
             code = my.kwargs.get('code') 
         else: 
@@ -97,7 +96,14 @@ class TitleSelectorWdg(BaseTableElementWdg):
 
     def get_display(my):
         user_name = Environment.get_user_name() 
-        expression_lookup = {'twog/order': "@SOBJECT(twog/order['code','REPLACE_ME'])", 'twog/title': "@SOBJECT(twog/title['code','REPLACE_ME'].twog/order)", 'twog/proj': "@SOBJECT(twog/proj['code','REPLACE_ME'].twog/title.twog/order)", 'twog/work_order': "@SOBJECT(twog/work_order['code','REPLACE_ME'].twog/proj.twog/title.twog/order)", 'twog/equipment_used': "@SOBJECT(twog/equipment_used['code','REPLACE_ME'].twog/work_order.twog/proj.twog/title.twog/order)", 'twog/status_log': "@SOBJECT(twog/order['code','REPLACE_ME'])"}
+        expression_lookup = {
+            'twog/order': "@SOBJECT(twog/order['code','REPLACE_ME'])",
+            'twog/title': "@SOBJECT(twog/title['code','REPLACE_ME'].twog/order)",
+            'twog/proj': "@SOBJECT(twog/proj['code','REPLACE_ME'].twog/title.twog/order)",
+            'twog/work_order': "@SOBJECT(twog/work_order['code','REPLACE_ME'].twog/proj.twog/title.twog/order)",
+            'twog/equipment_used': "@SOBJECT(twog/equipment_used['code','REPLACE_ME'].twog/work_order.twog/proj.twog/title.twog/order)",
+            'twog/status_log': "@SOBJECT(twog/order['code','REPLACE_ME'])"
+        }
         server = TacticServerStub.get()
         code = my.kwargs.get('code')
         order_code = ''
@@ -420,41 +426,41 @@ class TitleDuePrioBBWdg(BaseTableElementWdg):
             name.add_attr('nowrap','nowrap')
 
             start = CalendarInputWdg('start_dateFORMRSK%s' % tisk)
-            start.set_option('show_time','true')
-            start.set_option('show_activator','true')
-            start.set_option('display_format','MM/DD/YYYY HH:MM')
+            start.set_option('show_time', 'true')
+            start.set_option('show_activator', 'true')
+            start.set_option('display_format', 'MM/DD/YYYY HH:MM')
             start.set_option('time_input_default','5:00 PM')
             sd_fixed = fix_date(title.get_value('start_date'))
             if title.get_value('start_date') not in [None,'']:
                 start.set_option('default', sd_fixed)
 
             due = CalendarInputWdg('due_dateFORMRSK%s' % tisk)
-            due.set_option('show_time','true')
-            due.set_option('show_activator','true')
-            due.set_option('display_format','MM/DD/YYYY HH:MM')
+            due.set_option('show_time', 'true')
+            due.set_option('show_activator', 'true')
+            due.set_option('display_format', 'MM/DD/YYYY HH:MM')
             due.set_option('time_input_default','5:00 PM')
             dd_fixed = fix_date(title.get_value('due_date'))
             if title.get_value('due_date') not in [None,'']:
                 due.set_option('default', dd_fixed)
 
             expected_delivery = CalendarInputWdg('expected_delivery_dateFORMRSK%s' % tisk)
-            expected_delivery.set_option('show_time','true')
-            expected_delivery.set_option('show_activator','true')
-            expected_delivery.set_option('display_format','MM/DD/YYYY HH:MM')
-            expected_delivery.set_option('time_input_default','5:00 PM')
+            expected_delivery.set_option('show_time', 'true')
+            expected_delivery.set_option('show_activator', 'true')
+            expected_delivery.set_option('display_format', 'MM/DD/YYYY HH:MM')
+            expected_delivery.set_option('time_input_default', '5:00 PM')
             ed_fixed = fix_date(title.get_value('expected_delivery_date'))
             if title.get_value('expected_delivery_date') not in [None,'']:
                 expected_delivery.set_option('default', ed_fixed)
 
             d1 = table.add_cell(start)
-            d1.add_attr('valign','top')
+            d1.add_attr('valign', 'top')
             d2 = table.add_cell(due)
-            d2.add_attr('valign','top')
+            d2.add_attr('valign', 'top')
             d3 = table.add_cell(expected_delivery)
-            d3.add_attr('valign','top')
+            d3.add_attr('valign', 'top')
 
             pr = table.add_cell('<input type="text" value="%s" current_val="%s" name="priorityFORMRSK%s" class="priority"/>' % (title.get_value('priority'), title.get_value('priority'), title.get_search_key()))
-            pr.add_attr('valign','top')
+            pr.add_attr('valign', 'top')
 
             check_val = 'false'
             if title.get_value('bigboard') in [True,'1','t','true','yes','Yes']:
@@ -964,7 +970,7 @@ class TitleDeletorWdg(BaseTableElementWdg):
         widget = DivWdg()
         table = Table()
         table.add_style('background-color: #FF0000;')
-        table.add_attr('class','del_titles_selector')
+        table.add_attr('class', 'del_titles_selector')
 
         toggle_behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
                         try{
@@ -1208,7 +1214,7 @@ class OrderBuilder(BaseRefreshWdg):
         #The sloppiness is due to a few years of adding to, repurposing, and tweaking various classes of the order builder
         my.is_master = False
         my.is_master_str = 'false'
-        #from pyasm.common import Environment
+
         my.user_group_names = Environment.get_group_names()
         my.user_is_scheduler = False
         my.g_edit_mode = 'view'
@@ -1496,7 +1502,6 @@ class QuickEditWdg(BaseRefreshWdg):
         if 'groups_str' in my.kwargs.keys():
             my.groups_str = my.kwargs.get('groups_str')
         if my.groups_str in [None,'']:
-            #from pyasm.common import Environment
             user_group_names = Environment.get_group_names()
             for mg in user_group_names:
                 if my.groups_str == '':
@@ -1603,11 +1608,11 @@ class QuickEditWdg(BaseRefreshWdg):
         start.get_top().add_style('width: 150px')
         start.set_persist_on_submit()
         start_date = table.add_cell(start)
-        start_date.add_attr('nowrap','nowrap')
+        start_date.add_attr('nowrap', 'nowrap')
 
         # Create calendar input for due date
         dd = table.add_cell('Due Date: ')
-        dd.add_attr('nowrap','nowrap')
+        dd.add_attr('nowrap', 'nowrap')
         due = CalendarInputWdg("qe_due_date_%s" % my.order_sk)
         due.set_option('show_activator', True)
         due.set_option('show_confirm', False)
@@ -1617,7 +1622,7 @@ class QuickEditWdg(BaseRefreshWdg):
         due.get_top().add_style('width: 150px')
         due.set_persist_on_submit()
         due_date = table.add_cell(due)
-        due_date.add_attr('nowrap','nowrap')
+        due_date.add_attr('nowrap', 'nowrap')
 
         table.add_cell('Priority: ')
         table.add_cell('<input type="text" name="qe_priority_%s"/>' % my.order_sk)
@@ -1637,26 +1642,26 @@ class QuickEditWdg(BaseRefreshWdg):
 
         assigned_group_select = my.get_assigned_group_select(None, 'assigned_group_select')
         ag = table.add_cell('Assigned Group: ')
-        ag.add_attr('nowrap','nowrap')
+        ag.add_attr('nowrap', 'nowrap')
         table.add_cell(assigned_group_select)
 
         assigned_select = my.get_assigned_select(None)
         ad = table.add_cell('Assigned: ')
-        ad.add_attr('nowrap','nowrap')
+        ad.add_attr('nowrap', 'nowrap')
         table.add_cell(assigned_select)
 
         ewh = table.add_cell('Estimated Work Hours: ')
-        ewh.add_attr('nowrap','nowrap')
+        ewh.add_attr('nowrap', 'nowrap')
         table.add_cell('<input type="text" name="qe_ewh_%s"/>' % my.order_sk)
       
         table.add_row()
 
         ed = table.add_cell('Expected Duration: ')
-        ed.add_attr('nowrap','nowrap')
+        ed.add_attr('nowrap', 'nowrap')
         table.add_cell('<input type="text" name="qe_ex_dur_%s"/>' % my.order_sk)
 
         exq = table.add_cell('Expected Quantity: ')
-        exq.add_attr('nowrap','nowrap')
+        exq.add_attr('nowrap', 'nowrap')
         table.add_cell('<input type="text" name="qe_ex_quan_%s"/>' % my.order_sk)
 
         #Submit button applies changes to everything in the order builder that is selected
@@ -1666,7 +1671,7 @@ class QuickEditWdg(BaseRefreshWdg):
         add_eq_button = table.add_cell('<input type="button" name="add_eq_button" value="Edit Equipment"/>')
         add_eq_button.add_behavior(obs.get_eq_edit_behavior())
         last_chunk = table.add_cell(' ')
-        last_chunk.add_attr('width','100%s' % '%')
+        last_chunk.add_attr('width', '100%')
         open_errors = table.add_cell('<u>Document Errors</u>')
         open_errors.add_attr('name','qe_error_opener_%s' % my.order_sk)
         open_errors.add_style('cursor: pointer;')
@@ -1904,11 +1909,9 @@ class ErrorEntryWdg(BaseRefreshWdg):
         for u in users:
             if count % max_width == 0:
                 table.add_row()
-            #checker = CheckboxWdg('responsible_%s' % u.get('login'))
+
             checker = CustomCheckboxWdg(name='responsible_%s' % u.get('login'),value_field=u.get('login'),checked='false',dom_class='check_table_selector') 
-            #checker.add_attr('login',u.get('login'))
-            #checker.set_persistence()
-            #checker.set_value(False)
+
             table.add_cell(checker)
             label = table.add_cell(u.get('login'))
             label.add_attr('nowrap','nowrap')
@@ -1932,19 +1935,13 @@ class ErrorEntryWdg(BaseRefreshWdg):
             if count % max_width == 0:
                 table.add_row()
             #Create textbox
-            #checker = CheckboxWdg('errcheck_%s_%s' % (dictoid[entry], sk))
-            #checker.add_attr('field', dictoid[entry])
-            #checker.set_persistence()
             check_bool = 'false'
             if sob:
                 if sob.get(dictoid[entry]):
-                    #checker.set_value(True)
                     check_bool = 'true'
                 else:
-                    #checker.set_value(False)
                     check_bool = 'false'
             else:
-                #checker.set_value(False)
                 check_bool = 'false'
             checker = CustomCheckboxWdg(name='errcheck_%s_%s' % (dictoid[entry], sk),value_field=dictoid[entry],checked=check_bool,dom_class='check_table_selector',field=dictoid[entry]) 
             check_hold = table.add_cell(checker)
@@ -1979,7 +1976,6 @@ class ErrorEntryWdg(BaseRefreshWdg):
             my.groups_str = my.kwargs.get('groups_str')
         user_group_names = Environment.get_group_names()
         if my.groups_str in [None,'']:
-            #from pyasm.common import Environment
             for mg in user_group_names:
                 if my.groups_str == '':
                     my.groups_str = mg
@@ -2010,11 +2006,11 @@ class ErrorEntryWdg(BaseRefreshWdg):
         cc_tbl =  my.make_check_table(my.cc_reasons, my.cc_reasons_arr, None, my.order_sk, 'CC', '#ffefd1')
 
         cause_sel = SelectWdg('rejection_cause_%s' % my.order_sk)
-        cause_sel.append_option('--Select--','--Select--')
+        cause_sel.append_option('--Select--', '--Select--')
         for cause in my.rejection_causes:
             cause_sel.append_option(cause, cause)
 
-        error_types = ['Internal Error','External Error']
+        error_types = ['Internal Error', 'External Error']
         type_sel = SelectWdg('err_type_sel_%s' % my.order_sk)
         for error_type in error_types:
             type_sel.append_option(error_type, error_type)
@@ -2098,7 +2094,7 @@ class OrderTable(BaseRefreshWdg):
     def get_display(my):
         import common_tools.utils as ctu
         from common_tools.copy_url_button import CopyUrlButton
-#        order_table_time = time.time()
+
         my.sk = str(my.kwargs.get('sk'))
         my.sid = str(my.kwargs.get('search_id'))
         allowed_search_titles = ''
@@ -2287,7 +2283,7 @@ class OrderTable(BaseRefreshWdg):
         tab2ret.add_row()
         bot = tab2ret.add_cell(bottom)
         bot.add_style('padding-left: 40px;')
-#        print "ORDER TABLE TIME = %s" % (time.time() - order_table_time)
+
         return tab2ret
 
 
@@ -2420,8 +2416,7 @@ class AddWorkOrderWdg(BaseRefreshWdg):
         t2.add_attr('width', '100%s' % '%')
         table.add_cell(' ')
         table.add_cell(table2)
-        
-#        print "ADD WO TIME = %s" % (time.time() - add_wo_time)
+
         return table
 
 class AddProjWdg(BaseRefreshWdg): 
@@ -2484,13 +2479,11 @@ class AddProjWdg(BaseRefreshWdg):
          ''' % (tsk, osk, user_name)}
         return behavior
     
-    def get_display(my):   
-#        add_proj_time = time.time()
+    def get_display(my):
         user_name = Environment.get_user_name() 
         my.title_sk = str(my.kwargs.get('title_sk'))
         my.title_code = my.title_sk.split('code=')[1]
         my.order_sk = str(my.kwargs.get('order_sk'))
-        obs = OBScripts(order_sk=my.order_sk)
         table = Table()
         table.add_attr('class','addproj_%s' % my.title_code)
         table.add_row()
@@ -2510,9 +2503,7 @@ class AddProjWdg(BaseRefreshWdg):
         t2.add_attr('width', '100%s' % '%')
         table.add_cell(' ')
         table.add_cell(table2)
-        
-       
-#        print "ADD PROJ TIME = %s" % (time.time() - add_proj_time)
+
         return table
 
 
@@ -2610,7 +2601,6 @@ class EditHackPipe(BaseRefreshWdg):
         choices = []
         parent_code = parent_sk.split('code=')[1]
         parent_st = parent_sk.split('?')[0]
-        #parent_obj = my.server.eval("@SOBJECT(%s['code','%s'])" % (parent_st, parent_code))[0]
         parent_search = Search(parent_st)
         parent_search.add_filter('code',parent_code)
         parent_obj = parent_search.get_sobject()
@@ -2621,7 +2611,7 @@ class EditHackPipe(BaseRefreshWdg):
             wo_search.add_filter('proj_code',parent_code)
             wo_search.add_order_by("order_in_pipe")
             wos = wo_search.get_sobjects()
-            #wos = my.server.eval("@SOBJECT(twog/work_order['proj_code','%s']['@ORDER_BY','order_in_pipe'])" % parent_code)
+
             for wo in wos:
                 if wo.get_value('code') != item_code:
                     choices.append([wo.get_value('code'), wo.get_value('process')])
@@ -2631,7 +2621,7 @@ class EditHackPipe(BaseRefreshWdg):
             proj_search.add_filter('title_code',parent_code)
             proj_search.add_order_by('order_in_pipe')
             projs = proj_search.get_sobjects()
-            #projs = my.server.eval("@SOBJECT(twog/proj['title_code','%s']['@ORDER_BY','order_in_pipe'])" % parent_code)
+
             for proj in projs:
                 if proj.get_value('code') != item_code:
                     choices.append([proj.get_value('code'), proj.get_value('process')])
@@ -2642,37 +2632,30 @@ class EditHackPipe(BaseRefreshWdg):
             hacks = hack_search.get_sobjects()
             for hack in hacks:
                 entries.append(hack.get_value('lookup_code'))
-            #entries =  my.server.eval("@GET(twog/hackpipe_out['out_to','%s'].lookup_code)" % item_code)
+
         else:
             hack_search.add_filter('lookup_code',item_code)
             hacks = hack_search.get_sobjects()
             for hack in hacks:
                 entries.append(hack.get_value('out_to'))
-            #entries = my.server.eval("@GET(twog/hackpipe_out['lookup_code','%s'].out_to)" % item_code)
-        #print "ENTRIES = %s" % entries
+
         table = Table()
         table.add_attr('class','selector_%s' % in_or_out)
         table.add_row()
         t1 = table.add_cell(in_or_out.upper())
         t1.add_attr('align','center')
         if in_or_out == 'in':
-            #checkbox = CheckboxWdg('parent_choice_%s_%s' % (in_or_out, parent_code))
-            #checkbox.set_persistence()
+
             check_val = 'false'
             linked_val = 'NOPE'
             if parent_code in entries:
-                #checkbox.set_value(True)
-                #checkbox.add_attr('linked','in')
                 linked_val = 'in'
                 check_val = 'false'
             else:
-                #checkbox.set_value(False)
-                #checkbox.add_attr('linked','NOPE')
                 linked_val = 'NOPE'
                 check_val = 'true'
             checkbox = CustomCheckboxWdg(name='parent_choice_%s_%s' % (in_or_out, parent_code),value_field=parent_code,checked=check_val,dom_class='hack_in_selector',code=parent_code,in_or_out=in_or_out,linked=linked_val) 
-            #checkbox.add_attr('in_or_out', in_or_out)
-            #checkbox.add_attr('code', parent_code)
+
             table2 = Table()
             table2.add_row()
             table2.add_cell(checkbox)
@@ -2684,20 +2667,13 @@ class EditHackPipe(BaseRefreshWdg):
         table3 = Table()
         for choice in choices:
             table3.add_row()
-            #chk = CheckboxWdg('child_choice_%s_%s' % (in_or_out, choice[0]))
-            #chk.add_attr('in_or_out', in_or_out)
-            #chk.add_attr('code', choice[0])
-            #chk.set_persistence()
+
             linked_val = ''
             check_val = ''
             if choice[0] in entries:
-                #chk.set_value(True)
-                #chk.add_attr('linked', in_or_out)
                 linked_val = in_or_out
                 check_val = 'true'
             else:
-                #chk.set_value(False)
-                #chk.add_attr('linked','NOPE')
                 check_val = 'false'
                 linked_val = 'NOPE'
             chk = CustomCheckboxWdg(name='child_choice_%s_%s' % (in_or_out, choice[0]),value_field=choice[0],checked=check_val,dom_class='hack_in_selector',code=choice[0],in_or_out=in_or_out,linked=linked_val) 
@@ -2712,16 +2688,13 @@ class EditHackPipe(BaseRefreshWdg):
         c1 = contain_tbl.add_cell(table)
         c1.add_attr('align','center')
         return contain_tbl
-        
          
-    def get_display(my):   
-#        edit_hackpipe_time = time.time()
+    def get_display(my):
         my.code = str(my.kwargs.get('code'))
         parent_sk = ''
         child_st = ''
         child_type = ''
         if 'PROJ' in my.code:
-            #my.sob = my.server.eval("@SOBJECT(twog/proj['code','%s'])" % my.code)[0]
             sob_search = Search("twog/proj")
             sob_search.add_filter('code',my.code)
             my.sob = sob_search.get_sobject()
@@ -2729,7 +2702,6 @@ class EditHackPipe(BaseRefreshWdg):
             child_st = 'twog/proj'
             child_type = 'Project'
         elif 'WORK_ORDER' in my.code:
-            #my.sob = my.server.eval("@SOBJECT(twog/work_order['code','%s'])" % my.code)[0]
             sob_search = Search("twog/work_order")
             sob_search.add_filter('code',my.code)
             my.sob = sob_search.get_sobject()
@@ -2875,12 +2847,7 @@ class HackPipeConnectWdg(BaseRefreshWdg):
         t1 = table.add_cell(in_or_out.upper())
         t1.add_attr('align','center')
         if in_or_out == 'in':
-            #checkbox = CheckboxWdg('parent_choice_%s_%s' % (in_or_out, parent_code))
-            checkbox = CustomCheckboxWdg(name='parent_choice_%s_%s' % (in_or_out, parent_code),value_field=parent_code,checked='false',dom_class='hack_in_selector',code=parent_code,in_or_out=in_or_out) 
-            #checkbox.set_persistence()
-            #checkbox.set_value(False)
-            #checkbox.add_attr('in_or_out', in_or_out)
-            #checkbox.add_attr('code', parent_code)
+            checkbox = CustomCheckboxWdg(name='parent_choice_%s_%s' % (in_or_out, parent_code),value_field=parent_code,checked='false',dom_class='hack_in_selector',code=parent_code,in_or_out=in_or_out)
             table2 = Table()
             table2.add_row()
             table2.add_cell(checkbox)
@@ -2892,12 +2859,8 @@ class HackPipeConnectWdg(BaseRefreshWdg):
         table3 = Table()
         for choice in choices:
             table3.add_row()
-            #chk = CheckboxWdg('child_choice_%s_%s' % (in_or_out, choice[0]))
-            chk = CustomCheckboxWdg(name='child_choice_%s_%s' % (in_or_out, choice[0]),value_field=choice[0],checked='false',dom_class='hack_in_selector',code=choice[0],in_or_out=in_or_out) 
-            #chk.add_attr('in_or_out', in_or_out)
-            #chk.add_attr('code', choice[0])
-            #chk.set_persistence()
-            #chk.set_value(False)
+
+            chk = CustomCheckboxWdg(name='child_choice_%s_%s' % (in_or_out, choice[0]),value_field=choice[0],checked='false',dom_class='hack_in_selector',code=choice[0],in_or_out=in_or_out)
             table3.add_cell(chk)
             nw = table3.add_cell('%s [%s]' % (choice[1], choice[0]))
             nw.add_attr('nowrap','nowrap')
@@ -2909,10 +2872,8 @@ class HackPipeConnectWdg(BaseRefreshWdg):
         c1 = contain_tbl.add_cell(table)
         c1.add_attr('align','center')
         return contain_tbl
-        
-         
-    def get_display(my):   
-#        hackpipe_connect_time = time.time()
+
+    def get_display(my):
         my.order_sk = str(my.kwargs.get('order_sk'))
         my.parent_sk = str(my.kwargs.get('parent_sk'))
         my.new_item_sk = str(my.kwargs.get('new_item_sk'))
@@ -2969,11 +2930,8 @@ class TitleSourceInspectorWdg(BaseRefreshWdg):
         my.sk = ''
         my.code = ''
         my.x_butt = "<img src='/context/icons/common/BtnKill_Black.gif' title='Delete' name='Delete'/>" 
-        #my.x_butt = "<img src='/context/icons/common/BtnKill.gif' title='Delete' name='Delete'/>" 
 
-    
-    def get_display(my):   
-#        title_source_inspector_time = time.time()
+    def get_display(my):
         my.sk = str(my.kwargs.get('search_key'))
         my.code = my.sk.split('code=')[1]
         user_group_names = Environment.get_group_names()
@@ -3013,7 +2971,7 @@ class TitleSourceInspectorWdg(BaseRefreshWdg):
                 name.add_attr('nowrap','nowrap')
                 name.add_style('cursor: pointer;')
                 name.add_behavior(obs.get_launch_source_behavior(my.code,my.sk,source.get_value('code'),source.get_search_key()))
-#        print "TITLE SOURCE INSPECTOR TIME = %s" % (time.time() - title_source_inspector_time)
+
         return table
 
 
@@ -3023,8 +2981,7 @@ class DeliverableWdg(BaseRefreshWdg):
         my.title_code = ''
         my.order_sk = ''
 
-    def get_display(my):   
-#        deliverable_time = time.time()
+    def get_display(my):
         my.title_code = str(my.kwargs.get('title_code'))
         my.order_sk = str(my.kwargs.get('order_sk'))
         
@@ -3072,8 +3029,7 @@ class DeliverableWdg(BaseRefreshWdg):
         overhead.add_row()
         oh_cell = overhead.add_cell(table)
         oh_cell.add_attr('class','deliverable_list_cell')
-        #--print "LEAVING DELIVERABLE WDG"
-#        print "DELIVERABLE TIME = %s" % (time.time() - deliverable_time)
+
         return overhead
 
 class IntermediateEditWdg(BaseRefreshWdg): 
@@ -3086,15 +3042,14 @@ class IntermediateEditWdg(BaseRefreshWdg):
         my.client_code = ''
 
     def get_display(my):   
-#        intermediate_edit_time = time.time()
         from tactic.ui.widget import SObjectCheckinHistoryWdg
-        #--print "IN INTERMEDIATE EDIT WDG"
+
         my.order_sk = str(my.kwargs.get('order_sk'))
         my.client_code = str(my.kwargs.get('client_code'))
         my.intermediate_code = str(my.kwargs.get('intermediate_code'))
         intermediate_sk = my.server.build_search_key('twog/intermediate_file', my.intermediate_code)
         my.work_order_code = str(my.kwargs.get('work_order_code'))
-        obs = OBScripts(order_sk=my.order_sk)
+
         edit_wdg = EditWdg(element_name='general', mode='edit', search_type='twog/intermediate_file', code=my.intermediate_code, title='Modify Permanent Element', view='edit', widget_key='edit_layout', cbjs_edit_path='builder/reload_from_inter_save')
         table = Table()
         table.add_attr('class','intermediate_edit_top')
@@ -3118,7 +3073,6 @@ class IntermediateEditWdg(BaseRefreshWdg):
         checkin_cell.add_attr('width','100%s' % '%')
         checkin_cell.add_attr('align','center')
 
-#        print "INTERMEDIATE EDIT TIME = %s" % (time.time() - intermediate_edit_time)
         return table
 
 class DeliverableEditWdg(BaseRefreshWdg): 
@@ -3129,24 +3083,19 @@ class DeliverableEditWdg(BaseRefreshWdg):
         my.order_sk = ''
         my.deliverable_source_code = ''
 
-    def get_display(my):   
-#        deliverable_edit_time = time.time()
+    def get_display(my):
         from tactic.ui.widget import SObjectCheckinHistoryWdg
         from source_security_wdg import SourceSecurityEditWdg
-        #--print "IN DELIVERAVLE EDIT WDG"
+
         my.title_code = str(my.kwargs.get('title_code'))
         my.order_sk = str(my.kwargs.get('order_sk'))
         my.deliverable_source_code = str(my.kwargs.get('deliverable_source_code'))
         deliverable_sk = my.server.build_search_key('twog/source', my.deliverable_source_code)
-        obs = OBScripts(order_sk=my.order_sk)
-        #MTM This is preferable, but for some reason it is losing the template portion after you hit save. Dont know why, but I have to keep moving...come back to it later MTM
-        #edit_wdg = EditWdg(element_name='general', mode='edit', search_type='twog/deliverable', code=my.deliverable_code, title='Modify Deliverable',view='edit', widget_key='edit_layout', cbjs_edit_path='builder/reload_deliverable_table_from_edit')
-        #print "DELIVERABLE SOURCE CODE = %s" % my.deliverable_source_code
-        #main_sob = my.server.eval("@SOBJECT(twog/source['code','%s'])" % my.deliverable_source_code)[0]
+
         main_search = Search("twog/source")
         main_search.add_filter('code',my.deliverable_source_code)
         main_sob = main_search.get_sobject()
-        edit_wdg = None
+
         if main_sob.get_value('high_security'):
             edit_wdg = SourceSecurityEditWdg(source_code=my.deliverable_source_code)
         else:
@@ -3170,8 +3119,6 @@ class DeliverableEditWdg(BaseRefreshWdg):
         checkin_cell.add_attr('width','100%s' % '%')
         checkin_cell.add_attr('align','center')
 
-        #--print "LEAVING DELIVERAVLE EDIT WDG"
-#        print "DELIVERABLE EDIT TIME = %s" % (time.time() - deliverable_edit_time)
         return table
 
 
@@ -3189,8 +3136,7 @@ class PreReqWdg(BaseRefreshWdg):
         my.x_butt = "<img src='/context/icons/common/BtnKill_Black.gif' title='Delete' name='Delete'/>" 
         my.is_master = False
 
-    def get_display(my):   
-#        prereq_time = time.time()
+    def get_display(my):
         my.sob_code = str(my.kwargs.get('sob_code'))
         my.sob_sk = str(my.kwargs.get('sob_sk'))
         my.sob_st = str(my.kwargs.get('sob_st'))
@@ -3261,17 +3207,14 @@ class PreReqWdg(BaseRefreshWdg):
             table.add_cell('<input type="text" class="prereq_%s" value="%s" style="width: 500px;"/>' % (p.get_value('code'), p.get_value('prereq')))
             save_butt = table.add_cell('<input type="button" class="save_%s" value="Save"/>' % (p.get_value('code')))
             save_butt.add_behavior(obs.get_save_prereq_behavior(p.get_value('code'), my.prereq_st, my.sob_code, my.pipeline))
-            #checkbox = CheckboxWdg('satisfied_%s' % p.get_value('code'))
-            #checkbox.set_persistence()
+
             check_val = ''
             if p.get_value('satisfied') == True:
-                #checkbox.set_value(True)
                 check_val = 'true'
             else:
-                #checkbox.set_value(False)
                 check_val = 'false'
             checkbox = CustomCheckboxWdg(name='satisfied_%s' % p.get_value('code'),value_field=p.get_value('code'),checked=check_val,dom_class='prereq_selector',code=p.get_value('code'),additional_js=obs.get_change_satisfied_behavior(p.get_value('code'), my.prereq_st, my.sob_code, p.get_value('satisfied'), my.sob_sk, my.sob_st, my.sob_name, my.pipeline)) 
-            #checkbox.add_behavior(obs.get_change_satisfied_behavior(p.get_value('code'), my.prereq_st, my.sob_code, p.get_value('satisfied'), my.sob_sk, my.sob_st, my.sob_name, my.pipeline))
+
             ck = table.add_cell(checkbox)
             ck.add_attr('align','center')
             if my.is_master:
@@ -3324,7 +3267,7 @@ class PreReqWdg(BaseRefreshWdg):
         overhead.add_row()
         oh_cell = overhead.add_cell(table)
         oh_cell.add_attr('class','prereq_adder_cell')
-#        print "PREREQ TIME = %s" % (time.time() - prereq_time)
+
         return overhead
 
 
@@ -3350,8 +3293,7 @@ class WorkOrderSourceAddWdg(BaseRefreshWdg):
             file_only = splits[len(splits) - 1]
         return file_only 
 
-    def get_display(my):   
-#        wo_source_add_time = time.time()
+    def get_display(my):
         my.work_order_code = str(my.kwargs.get('work_order_code'))
         my.work_order_sk = str(my.kwargs.get('work_order_sk'))
         my.title_code = str(my.kwargs.get('title_code'))
@@ -3419,18 +3361,16 @@ class WorkOrderSourceAddWdg(BaseRefreshWdg):
             table.add_row()
         save_tbl = Table()
         noth_1 = save_tbl.add_cell(' ')
-        noth_1.add_attr('width','100%s' % '%')
+        noth_1.add_attr('width', '100%')
         save_line = save_tbl.add_cell('<input type="button" value="Commit Changes"/>')
-        save_line.add_attr('align','center')
+        save_line.add_attr('align', 'center')
         save_line.add_style('cursor: pointer;')
         save_line.add_behavior(obs.get_attach_sources_to_wo_behavior(my.work_order_code, my.work_order_sk, my.call_me))
         noth_2 = save_tbl.add_cell(' ')
-        noth_2.add_attr('width','100%s' % '%')
+        noth_2.add_attr('width', '100%')
         dbl = table.add_cell(save_tbl)
-        dbl.add_attr('colspan','2')
-            
-            
-#        print "WO SOURCE ADD TIME = %s" % (time.time() - wo_source_add_time)
+        dbl.add_attr('colspan', '2')
+
         return table
 
 
@@ -3441,8 +3381,7 @@ class TwogEasyCheckinWdg(BaseRefreshWdg):
         my.source_contexts = []
         my.order_sk = ''
 
-    def get_display(my):   
-#        twog_easy_checkin_time = time.time()
+    def get_display(my):
         from pyasm.prod.biz import ProdSetting
         my.code = str(my.kwargs.get('code'))
         my.sk = str(my.kwargs.get('sk'))
@@ -3480,7 +3419,7 @@ class TwogEasyCheckinWdg(BaseRefreshWdg):
         big_button.add_style('cursor: pointer;')
         big_button.add_behavior(obs.get_easy_checkin_commit_behavior(my.sk))
         table.add_cell(mini1)
-#        print "TWOG EASY CHECKIN TIME = %s" % (time.time() - twog_easy_checkin_time)
+
         return table
     
 class OutsideBarcodesListWdg(BaseRefreshWdg):
@@ -3488,9 +3427,7 @@ class OutsideBarcodesListWdg(BaseRefreshWdg):
         my.source_code = ''
         my.order_sk = ''
 
-    def get_display(my):   
-#        outside_barcodes_time = time.time()
-        from pyasm.prod.biz import ProdSetting
+    def get_display(my):
         if 'order_sk' in my.kwargs.keys():
             my.order_sk = str(my.kwargs.get('order_sk'))
         if 'source_code' in my.kwargs.keys():
@@ -3535,7 +3472,7 @@ class OutsideBarcodesListWdg(BaseRefreshWdg):
                 new_sel = new_sel.replace('OUT_CODE',out.get_value('code'))
                 new_sel = new_sel.replace('value="%s"' % out.get_value('client_code'), 'value="%s" selected="selected"' % out.get_value('client_code'))
                 obc.add_cell(new_sel)
-                this_count = this_count + 1
+                this_count += 1
                 
         additional_count = [0, 1, 2, 3, 4, 5]
         for n in additional_count:
@@ -3549,13 +3486,13 @@ class OutsideBarcodesListWdg(BaseRefreshWdg):
                 obc.add_cell(new_sel)
         obc.add_row()
         widhun = obc.add_cell()
-        widhun.add_style('width: 100%s;' % '%s')
+        widhun.add_style('width: 100%;')
         create_butt = obc.add_cell('<input type="button" value="Assign"/>')
         create_butt.add_behavior(obs.get_save_outside_barcodes_behavior(my.source_code))
         widhun = obc.add_cell()
-        widhun.add_style('width: 100%s;' % '%s')
+        widhun.add_style('width: 100%;')
         table.add_cell(obc)
-#        print "OUTSIDE BARCODES TIME = %s" % (time.time() - outside_barcodes_time)
+
         return table
 
 class NewSourceWdg(BaseRefreshWdg):
@@ -3564,10 +3501,7 @@ class NewSourceWdg(BaseRefreshWdg):
         my.source_code = ''
         my.order_sk = ''
 
-    def get_display(my):   
-#        new_source_time = time.time()
-        from pyasm.prod.biz import ProdSetting
-        #THIS NEEDS TO USE THE TACTIC SERVER STUB, NOT SEARCH
+    def get_display(my):
         default = {}
         if 'order_sk' in my.kwargs.keys():
             my.order_sk = str(my.kwargs.get('order_sk'))
@@ -3607,8 +3541,7 @@ class NewSourceWdg(BaseRefreshWdg):
         obc_cell = table.add_cell(obc) 
         obc_cell.add_attr('class','obc_cell')
         tables.add_cell(table)
-        #--print "LEAVING NEW SOURCE WDG"
-#        print "NEW SOURCE TIME = %s" % (time.time() - new_source_time)
+
         return tables
  
 class SourceEditWdg(BaseRefreshWdg): 
@@ -3621,19 +3554,16 @@ class SourceEditWdg(BaseRefreshWdg):
         my.sk = ''
         my.order_sk = ''
 
-    def get_display(my):   
-#        source_edit_time = time.time()
+    def get_display(my):
         from tactic.ui.widget import SObjectCheckinHistoryWdg
         from source_cloner import SourceCloneLauncherWdg
         from source_security_wdg import SourceSecurityEditWdg
-        #KEEP USING THE TACTIC SERVER STUB, NOT SOURCE
+
         my.code = str(my.kwargs.get('code'))
         my.sk = my.server.build_search_key('twog/source', my.code)
         my.order_sk = str(my.kwargs.get('order_sk'))
         main_obj = my.server.eval("@SOBJECT(twog/source['code','%s'])" % my.code)[0]
-        
-        obs = OBScripts(order_sk=my.order_sk)
-        edit_wdg = None
+
         if not main_obj.get('high_security'):
             edit_wdg = EditWdg(element_name='general', mode='edit', search_type='twog/source', code=my.code, title='Modify Source',view='edit', widget_key='edit_layout')
         else:
@@ -3659,11 +3589,10 @@ class SourceEditWdg(BaseRefreshWdg):
 
         checkin = TwogEasyCheckinWdg(sk=my.sk,code=my.code,order_sk=my.order_sk)
         checkin_cell = table.add_cell(checkin)
-        checkin_cell.add_attr('class','checkin_source_cell')
-        checkin_cell.add_attr('width','100%s' % '%')
-        checkin_cell.add_attr('align','center')
-        #--print "LEAVING SOURCE EDIT WDG"
-#        print "SOURCE EDIT TIME = %s" % (time.time() - source_edit_time)
+        checkin_cell.add_attr('class', 'checkin_source_cell')
+        checkin_cell.add_attr('width', '100%')
+        checkin_cell.add_attr('align', 'center')
+
         return table
 
 
@@ -3725,19 +3654,17 @@ class ProjDueDateChanger(BaseRefreshWdg):
          ''' % (proj_code, proj_name, order_sk, send_wdg)}
         return behavior
 
-    def get_display(my):   
-        #from tactic.ui.widget import CalendarTimeInputWdg #3.9
-#        proj_due_date_time = time.time()
+    def get_display(my):
         proj_code = str(my.kwargs.get('proj_code'))
         proj_name = str(my.kwargs.get('proj_name'))
         order_sk = str(my.kwargs.get('order_sk'))
         send_wdg = str(my.kwargs.get('send_wdg'))
-        #calendar = CalendarTimeInputWdg('due_date_calendar') #3.9
+
         calendar = CalendarInputWdg('due_date_calendar')
-        calendar.set_option('show_time','true')
-        calendar.set_option('show_activator','true')
-        calendar.set_option('display_format','MM/DD/YYYY HH:MM')
-        calendar.set_option('time_input_default','5:00 PM')
+        calendar.set_option('show_time', 'true')
+        calendar.set_option('show_activator', 'true')
+        calendar.set_option('display_format', 'MM/DD/YYYY HH:MM')
+        calendar.set_option('time_input_default', '5:00 PM')
         proj_search = Search("twog/proj")
         proj_search.add_filter('code',proj_code)
         proj = proj_search.get_sobject()
@@ -3751,15 +3678,14 @@ class ProjDueDateChanger(BaseRefreshWdg):
         inner_table = Table()
         inner_table.add_row()
         t1 = inner_table.add_cell(' ')
-        t1.add_attr('width','100%s' % '%')
+        t1.add_attr('width', '100%')
         action = inner_table.add_cell('<input type="button" value="Update Due Dates" />')
         action.add_behavior(my.get_change_dates_behavior(proj_code, proj_name, order_sk, send_wdg))
         t2 = inner_table.add_cell(' ')
-        t2.add_attr('width','100%s' % '%')
+        t2.add_attr('width', '100%')
         table.add_row()
         table.add_cell(inner_table)
 
-#        print "PROJ DUE DATE TIME = %s" % (time.time() - proj_due_date_time)
         return table
 
 
@@ -3774,8 +3700,7 @@ class OutFilesWdg(BaseRefreshWdg):
         my.is_master = False
         my.is_master_str = 'false'
 
-    def get_display(my):   
-#        outfiles_time = time.time()
+    def get_display(my):
         my.work_order_sk = str(my.kwargs.get('work_order_sk'))
         my.work_order_code = str(my.kwargs.get('work_order_code'))
         my.client_code = str(my.kwargs.get('client_code'))
@@ -3841,17 +3766,13 @@ class OutFilesWdg(BaseRefreshWdg):
             popper.add_attr('nowrap','nowrap')
             popper.add_style('cursor: pointer;')
             popper.add_behavior(obs.get_open_intermediate_behavior(inter.get_value('code'),my.work_order_code, my.client_code))
-            #checkbox = CheckboxWdg('satisfied_%s' % inter.get_value('code'))
-            #checkbox.set_persistence()
-            check_val = ''
+
             if str(inter1.get_value('satisfied')) == 'True':
-                #checkbox.set_value(True)
                 check_val = 'true'
             else:
-                #checkbox.set_value(False)
                 check_val = 'false'
             checkbox = CustomCheckboxWdg(name='satisfied_%s' % inter.get_value('code'),value_field=inter.get_value('code'),checked=check_val,dom_class='inter_selector',code=inter.get_value('code'),additional_js=obs.get_change_inter_satisfied_behavior(inter1.get_value('code'), my.work_order_code, my.client_code, str(inter1.get_value('satisfied'))))
-            #checkbox.add_behavior(obs.get_change_inter_satisfied_behavior(inter1.get_value('code'), my.work_order_code, my.client_code, str(inter1.get_value('satisfied'))))
+
             ck = inters_tbl.add_cell(checkbox)
             ck.add_attr('align','center')
             inters_tbl.add_cell(' &nbsp; ')
@@ -3897,17 +3818,13 @@ class OutFilesWdg(BaseRefreshWdg):
             popper.add_attr('nowrap','nowrap')
             popper.add_style('cursor: pointer;')
             popper.add_behavior(obs.get_open_deliverable_behavior(deliv.get_value('code'), my.work_order_code, deliv1.get_value('title_code'), my.client_code))
-            #checkbox = CheckboxWdg('satisfied_%s' % deliv.get_value('code'))
-            #checkbox.set_persistence()
-            check_val = ''
+
             if str(deliv1.get_value('satisfied')) == 'True':
-                #checkbox.set_value(True)
                 check_val = 'true'
             else:
-                #checkbox.set_value(False)
                 check_val = 'false'
             checkbox = CustomCheckboxWdg(name='satisfied_%s' % deliv.get_value('code'),value_field=deliv.get_value('code'),checked=check_val,dom_class='deliv_selector',code=deliv.get_value('code'),additional_js=obs.get_change_deliverable_satisfied_behavior(deliv1.get_value('code'), my.work_order_code, deliv1.get_value('title_code'), str(deliv1.get_value('satisfied')), my.client_code))
-            #checkbox.add_behavior(obs.get_change_deliverable_satisfied_behavior(deliv1.get_value('code'), my.work_order_code, deliv1.get_value('title_code'), str(deliv1.get_value('satisfied')), my.client_code))
+
             ck = delv_tbl.add_cell(checkbox)
             ck.add_attr('align','center')
             delv_tbl.add_cell(' &nbsp; ')
@@ -3945,7 +3862,6 @@ class OutFilesWdg(BaseRefreshWdg):
         overhead.add_row()
         oh_cell = overhead.add_cell(table)
         oh_cell.add_attr('class','out_list_cell')
-#        print "OUTFILES TIME = %s" % (time.time() - outfiles_time)
         return overhead
 
 class SourcePortalWdg(BaseRefreshWdg): 
@@ -3958,8 +3874,7 @@ class SourcePortalWdg(BaseRefreshWdg):
         my.is_master = ''
         my.x_butt = "<img src='/context/icons/common/BtnKill_Black.gif' title='Delete' name='Delete'/>" 
 
-    def get_display(my):   
-#        source_portal_time = time.time()
+    def get_display(my):
         my.work_order_code = str(my.kwargs.get('work_order_code'))
         my.client_code = str(my.kwargs.get('client_code'))
         my.parent_pipe = str(my.kwargs.get('parent_pipe'))
@@ -4006,9 +3921,6 @@ class SourcePortalWdg(BaseRefreshWdg):
                 if other.get_value('code') not in all_other_interms.keys():
                     all_other_interms[other.get_value('code')] = []
                 all_other_interms[other.get_value('code')].append([inter_title, intermediate_file.get_value('code')])
-
-
-
          
         order_code = my.order_sk.split('code=')[1]
         overhead = Table()
@@ -4042,7 +3954,6 @@ class SourcePortalWdg(BaseRefreshWdg):
         pass_search = Search("twog/work_order_passin")
         pass_search.add_filter('work_order_code',my.work_order_code)
         passins = pass_search.get_sobjects()
-        
 
         table.add_row()
         table.add_cell(' ')
@@ -4124,12 +4035,11 @@ class SourcePortalWdg(BaseRefreshWdg):
                      
         table.add_row()
         table.add_cell(inter_tbl)
-         
 
         overhead.add_row()
         oh_cell = overhead.add_cell(table)
-        oh_cell.add_attr('class','sp_list_cell')
-#        print "SOURCE PORTAL TIME = %s" % (time.time() - source_portal_time)
+        oh_cell.add_attr('class', 'sp_list_cell')
+
         return overhead
 
 class IntermediatePassinAddWdg(BaseRefreshWdg): 
@@ -4140,8 +4050,7 @@ class IntermediatePassinAddWdg(BaseRefreshWdg):
         my.proj_code = ''
         my.wo_templ_code = ''
 
-    def get_display(my):   
-#        inter_passin_add_time = time.time()
+    def get_display(my):
         my.work_order_code = str(my.kwargs.get('work_order_code'))
         my.proj_code = str(my.kwargs.get('proj_code'))
         my.wo_templ_code = str(my.kwargs.get('wo_templ_code'))
@@ -4166,12 +4075,9 @@ class IntermediatePassinAddWdg(BaseRefreshWdg):
                 all_wo_is.append([a.get_value('code'), woi.get_value('code'), woi.get_value('title'), '%s: %s' % (inter.get_value('title'), inter.get_value('episode')), inter.get_value('code')])
         for b in all_wo_is:
             table.add_row()
-            #checkbox = CheckboxWdg('selecta_perm_%s' % b[1])
+
             checkbox = CustomCheckboxWdg(name='selecta_perm_%s' % b[1],value_field=b[1],checked='false',dom_class='inter_passin_selector',code=b[1],woi_code=b[1],inter_code=b[4])
-            #checkbox.set_persistence()
-            #checkbox.set_value(False)
-            #checkbox.add_attr('woi_code',b[1])
-            #checkbox.add_attr('inter_code',b[4])
+
             ck = table.add_cell(checkbox)
             ck.add_attr('align','center')
             nw1 = table.add_cell('From Work Order: %s' % b[0])
@@ -4182,7 +4088,7 @@ class IntermediatePassinAddWdg(BaseRefreshWdg):
         table.add_row()
         passin_butt = table.add_cell('<input type="button" value="Add As Pass-in(s) to Work Order"/>')
         passin_butt.add_behavior(obs.get_assign_intermediate_passins_behavior(my.work_order_code))
-#        print "INTER PASSIN ADD TIME = %s" % (time.time() - inter_passin_add_time)
+
         return table
 
 class DeliverablePassinAddWdg(BaseRefreshWdg): 
@@ -4193,15 +4099,14 @@ class DeliverablePassinAddWdg(BaseRefreshWdg):
         my.proj_code = ''
         my.wo_templ_code = ''
 
-    def get_display(my):   
-#        deliverable_passin_add_time = time.time()
+    def get_display(my):
         my.work_order_code = str(my.kwargs.get('work_order_code'))
         my.proj_code = str(my.kwargs.get('proj_code'))
         my.wo_templ_code = str(my.kwargs.get('wo_templ_code'))
         my.order_sk = str(my.kwargs.get('order_sk'))
         obs = OBScripts(order_sk=my.order_sk)
         table = Table()
-        table.add_attr('class','deliverable_passin_add_wdg')
+        table.add_attr('class', 'deliverable_passin_add_wdg')
         wo_search = Search("twog/work_order")
         wo_search.add_filter('proj_code',my.proj_code)
         wo_search.add_filter('code',my.work_order_code,op="!=")
@@ -4219,12 +4124,9 @@ class DeliverablePassinAddWdg(BaseRefreshWdg):
                 all_wo_ds.append([a.get_value('code'), wod.get_value('code'), wod.get_value('name'), '%s: %s' % (src.get_value('title'), src.get_value('episode')), src.get_value('code')])
         for b in all_wo_ds:
             table.add_row()
-            #checkbox = CheckboxWdg('selecta_perm_%s' % b[1])
+
             checkbox = CustomCheckboxWdg(name='selecta_perm_%s' % b[1],value_field=b[1],checked='false',dom_class='deliverable_passin_selector',code=b[1],wod_code=b[1],src_code=b[4])
-            #checkbox.set_persistence()
-            #checkbox.set_value(False)
-            #checkbox.add_attr('wod_code',b[1])
-            #checkbox.add_attr('src_code',b[4])
+
             ck = table.add_cell(checkbox)
             ck.add_attr('align','center')
             nw1 = table.add_cell('From Work Order: %s' % b[0])
@@ -4235,7 +4137,7 @@ class DeliverablePassinAddWdg(BaseRefreshWdg):
         table.add_row()
         passin_butt = table.add_cell('<input type="button" value="Add As Pass-in(s) to Work Order"/>')
         passin_butt.add_behavior(obs.get_assign_deliverable_passins_behavior(my.work_order_code))
-#        print "DELIVERABLE PASSIN ADD TIME = %s" % (time.time() - deliverable_passin_add_time)
+
         return table
 
 class DeliverableAddWdg(BaseRefreshWdg): 
@@ -4246,8 +4148,7 @@ class DeliverableAddWdg(BaseRefreshWdg):
         my.order_sk = ''
         my.client_code = ''
 
-    def get_display(my):   
-#        deliverable_add_time = time.time()
+    def get_display(my):
         my.work_order_code = str(my.kwargs.get('work_order_code'))
         my.order_sk = str(my.kwargs.get('order_sk'))
         switching = False
@@ -4280,8 +4181,7 @@ class DeliverableAddWdg(BaseRefreshWdg):
         delv_tbl.add_row()
         delv_tbl.add_cell('Name: ') 
         name_cell = delv_tbl.add_cell('<input type="text" class="deliverable_name" value="%s"/>' % deliverable_name)
-        #clients_expr = "@SOBJECT(twog/client['@ORDER_BY','name desc'])" 
-        #clients = my.server.eval(clients_expr)
+
         client_search = Search("twog/client")
         client_search.add_order_by('name desc')
         clients = client_search.get_sobjects()
@@ -4333,7 +4233,7 @@ class DeliverableAddWdg(BaseRefreshWdg):
         else:
             insert_wdg = EditWdg(element_name='general', mode='edit', search_type='twog/source', code=switch_code, title='Create Permanent Element', view='edit', widget_key='edit_layout', cbjs_edit_path='builder/new_deliverable')
         table.add_cell(insert_wdg)
-#        print "DELIVERABLE ADD TIME = %s" % (time.time() - deliverable_add_time)
+
         return table
 
 class IntermediateFileAddWdg(BaseRefreshWdg): 
@@ -4344,8 +4244,7 @@ class IntermediateFileAddWdg(BaseRefreshWdg):
         my.client_code = ''
         my.is_master = ''
 
-    def get_display(my):   
-#        inter_file_add_time = time.time()
+    def get_display(my):
         my.work_order_code = str(my.kwargs.get('work_order_code'))
         my.order_sk = str(my.kwargs.get('order_sk'))
         my.client_code = str(my.kwargs.get('client_code'))
@@ -4357,11 +4256,10 @@ class IntermediateFileAddWdg(BaseRefreshWdg):
         table.add_attr('client_code',my.client_code)
         table.add_attr('is_master',my.is_master)
         table.add_row()
-        #insert_wdg = EditWdg(element_name='general', mode='insert', search_type='twog/intermediate_file', title='Create Intermediate File',view='insert', widget_key='edit_layout', cbjs_insert_path='builder/new_inter_file')
+
         insert_wdg = EditWdg(element_name='general', mode='insert', search_type='twog/intermediate_file', title='Create Intermediate File', view='insert', widget_key='edit_layout', cbjs_insert_path='builder/new_inter_file')
         table.add_cell(insert_wdg)
-        #--print "LEAVING INTERMEDIATE FILE ADD WDG"
-#        print "INTER FILE ADD TIME = %s" % (time.time() - inter_file_add_time)
+
         return table
 
 
@@ -4378,12 +4276,15 @@ class TitleAdderWdg(BaseRefreshWdg):
         my.order_sid = ''
         my.client_code = ''
         my.formats = ['Electronic/File', 'HDCAM SR', 'NTSC', 'PAL']
-        my.frame_rates = ['23.98fps','59.94i','50i','29.97fps','59.94p','DFTC','NDFTC','PAL/EBU']
-        my.aspect_ratios = ['16x9 1.33','16x9 1.33 Pan & Scan','16x9 1.78 Anamorphic','16x9 1.78 Full Frame','16x9 1.85 Letterbox','16x9 1.85 Matted','16x9 1.85 Matted Anamorphic','16x9 2.20','16x9 2.20 Letterbox','16x9 2.35 Anamorphic','16x9 2.35 Letterbox','16x9 2.40 Letterbox','16x9 2.55 Letterbox','4x3 1.33 Full Frame','4x3 1.78 Letterbox','4x3 1.85 Letterbox','4x3 2.35 Letterbox','4x3 2.40 Letterbox']
-        my.standards = ['625','525','720','1080 (4:4:4)','1080','PAL','NTSC']
+        my.frame_rates = ['23.98fps', '59.94i', '50i', '29.97fps', '59.94p', 'DFTC', 'NDFTC', 'PAL/EBU']
+        my.aspect_ratios = ['16x9 1.33', '16x9 1.33 Pan & Scan', '16x9 1.78 Anamorphic', '16x9 1.78 Full Frame',
+                            '16x9 1.85 Letterbox', '16x9 1.85 Matted', '16x9 1.85 Matted Anamorphic', '16x9 2.20',
+                            '16x9 2.20 Letterbox', '16x9 2.35 Anamorphic', '16x9 2.35 Letterbox', '16x9 2.40 Letterbox',
+                            '16x9 2.55 Letterbox', '4x3 1.33 Full Frame', '4x3 1.78 Letterbox', '4x3 1.85 Letterbox',
+                            '4x3 2.35 Letterbox', '4x3 2.40 Letterbox']
+        my.standards = ['625', '525', '720', '1080 (4:4:4)', '1080', 'PAL', 'NTSC']
 
-    def get_display(my):   
-#        title_adder_time = time.time()
+    def get_display(my):
         my.client_code = str(my.kwargs.get('client_code'))
         my.order_sk = str(my.kwargs.get('order_sk'))
         my.order_sid = str(my.kwargs.get('order_sid'))
@@ -4407,18 +4308,18 @@ class TitleAdderWdg(BaseRefreshWdg):
         end = table.add_cell('Range End')
         formatter = table.add_cell('# Formatter')
         empt = table.add_cell(' ')
-        beg.add_attr('nowrap','nowrap')
-        beg.add_attr('valign','bottom')
-        end.add_attr('nowrap','nowrap')
-        end.add_attr('valign','bottom')
-        formatter.add_attr('nowrap','nowrap')
-        formatter.add_attr('valign','bottom')
-        beg.add_style('font-size: 50%s;' % '%')
-        end.add_style('font-size: 50%s;' % '%')
-        formatter.add_style('font-size: 50%s;' % '%')
+        beg.add_attr('nowrap', 'nowrap')
+        beg.add_attr('valign', 'bottom')
+        end.add_attr('nowrap', 'nowrap')
+        end.add_attr('valign', 'bottom')
+        formatter.add_attr('nowrap', 'nowrap')
+        formatter.add_attr('valign', 'bottom')
+        beg.add_style('font-size: 50%;')
+        end.add_style('font-size: 50%;')
+        formatter.add_style('font-size: 50%;')
         singl = table.add_cell('Single Episode Name, or Comma Seperated Episode Names')
         singl.add_attr('valign','bottom')
-        singl.add_style('font-size: 50%s;' % '%')
+        singl.add_style('font-size: 50%;')
         table.add_row()
         table.add_cell('Episode: ')
         table.add_cell('<input class="tadd_epi_range_1" type="text" style="width: 35px;"/>')
@@ -4440,7 +4341,7 @@ class TitleAdderWdg(BaseRefreshWdg):
 
         languages = language_str.split('|')
         language_sel = SelectWdg('tadd_language')
-        language_sel.append_option('--Select--','--Select--')
+        language_sel.append_option('--Select--', '--Select--')
         for language in languages:
             language_sel.append_option(language, language)
 
@@ -4454,7 +4355,7 @@ class TitleAdderWdg(BaseRefreshWdg):
         client_pull = SelectWdg('tadd_client_pull')
         client_name = ''
         if len(clients) > 0:
-            client_pull.append_option('--Select--','NOTHINGXsXNOTHING')
+            client_pull.append_option('--Select--', 'NOTHINGXsXNOTHING')
             for client in clients:
                 client_pull.append_option(client.get_value('name'), '%sXsX%s' % (client.get_value('code'),client.get_value('name'))) 
                 if client.get_value('code') == my.client_code:
@@ -4466,12 +4367,12 @@ class TitleAdderWdg(BaseRefreshWdg):
         platform_search.add_order_by('name desc')
         outlet_list = platform_search.get_sobjects()
         outlet_pull = SelectWdg('tadd_outlet_pull')
-        outlet_pull.append_option('--Select--','NOTHINGXsXNOTHING')
+        outlet_pull.append_option('--Select--', 'NOTHINGXsXNOTHING')
         for outlet in outlet_list:
             outlet_pull.append_option(outlet.get_value('name'), outlet.get_value('name'))
         pipe_pull = SelectWdg('tadd_pipe_pull')
         if len(pipelines) > 0:
-            pipe_pull.append_option('--Select--','NOTHINGXsXNOTHING')
+            pipe_pull.append_option('--Select--', 'NOTHINGXsXNOTHING')
             for pipe in pipelines:
                 if not pipe.get_value('hide'):
                     if pipe.get_value('code').split('_')[0] == client_name:
@@ -4595,8 +4496,8 @@ class TitleAdderWdg(BaseRefreshWdg):
         end.get_top().add_style('width: 150px')
         end.set_persist_on_submit()
         end_date = table.add_cell(end)
-        end_date.add_attr('colspan','7')
-        end_date.add_attr('nowrap','nowrap')
+        end_date.add_attr('colspan', '7')
+        end_date.add_attr('nowrap', 'nowrap')
 
         table.add_row()
         rm = table.add_cell('Revenue Month: ')
@@ -4687,7 +4588,7 @@ class TitleAdderWdg(BaseRefreshWdg):
         bottom_butt = table.add_cell(go_butt)
         bottom_butt.add_attr('colspan','7')
         bottom_butt.add_attr('align','center')
-#        print "TITLE ADDER TIME = %s" % (time.time() - title_adder_time)
+
         return table
 
 class EquipmentUsedAdderWdg(BaseRefreshWdg):
@@ -4703,9 +4604,7 @@ class EquipmentUsedAdderWdg(BaseRefreshWdg):
         my.height = '300px'
         my.submit_eu = "<input type='button' value='Submit'/>"
     
-    def get_display(my):   
-        #--print "IN EQUIPMENT USED ADDER WDG"
-#        eq_used_adder_time = time.time()
+    def get_display(my):
         my.work_order_sk = str(my.kwargs.get('work_order_sk'))
         my.work_order_code = str(my.kwargs.get('work_order_code'))
         my.client_code = str(my.kwargs.get('client_code'))
@@ -4725,7 +4624,7 @@ class EquipmentUsedAdderWdg(BaseRefreshWdg):
         table.add_cell('Equipment: ')
         puller = SelectWdg('equipment_changer')
         if len(all_equip) > 0:
-            puller.append_option('--Select--','NOTHINGXsXNOTHING')
+            puller.append_option('--Select--', 'NOTHINGXsXNOTHING')
             for equip in all_equip:
                 puller.append_option(equip.get_value('name'), '%sXsX%s' % (equip.get_value('code'), equip.get_value('name')))
         puller.add_behavior(obs.get_eq_change_behavior(my.work_order_code))
@@ -4735,12 +4634,11 @@ class EquipmentUsedAdderWdg(BaseRefreshWdg):
         table.add_cell("Client's Template-Used Equipment: ")
         puller2 = SelectWdg('client_eu_changer')
         if len(all_client_equip) > 0:
-            puller2.append_option('--Select--','NOTHINGXsXNOTHING')
+            puller2.append_option('--Select--', 'NOTHINGXsXNOTHING')
             for equip in all_client_equip:
                 puller2.append_option('%s: Quant: %s, Units: %s, Dur: %s' % (equip.get_value('name'), equip.get_value('expected_quantity'), equip.get_value('units'), equip.get_value('expected_duration')), '%sXsX%s' % (equip.get_value('code'), equip.get_value('name')))
         puller2.add_behavior(obs.get_client_eq_change_behavior(my.work_order_code))
         table.add_cell(puller2)
-
 
         table.add_row()
         hr = table.add_cell('<hr/>')
@@ -4774,7 +4672,7 @@ class EquipmentUsedAdderWdg(BaseRefreshWdg):
         saver.add_attr('colspan','2')
         saver.add_attr('align','right')
         saver.add_behavior(obs.get_eu_submit_behavior(my.work_order_code, my.parent_pyclass))
-#        print "EQ USED ADDER TIME = %s" % (time.time() - eq_used_adder_time)
+
         return table
 
 class EquipmentUsedMultiAdderWdg(BaseRefreshWdg):
@@ -4812,9 +4710,7 @@ class EquipmentUsedMultiAdderWdg(BaseRefreshWdg):
                 
         query = "@SOBJECT(twog/equipment_used['work_order_code','in','%s'])" % qstr
         eqs = my.server.eval(query)
-        #eq_search = Search("twog/equipment_used")
-        #eq_search.add_where("\"work_order_code\" in %s" % qq_str)
-        #eqs = eq_search.get_sobjects()
+
         for eq in eqs:
             eq_code = eq.get('equipment_code')
             expected_quan = eq.get('expected_quantity')
@@ -5048,7 +4944,6 @@ class OperatorErrorDescriptPopupWdg(BaseRefreshWdg):
         return behavior
 
     def get_display(my):   
-        #--print "IN PREREQ WDG"
         my.production_error_code = str(my.kwargs.get('production_error_code'))
         table = Table()
         table.add_attr('class','prod_error_%s' % my.production_error_code)
@@ -5563,7 +5458,6 @@ class MultiManualAdderWdg(BaseRefreshWdg):
         return behavior
 
     def get_display(my):
-        #from tactic.ui.widget import CalendarTimeInputWdg #3.9
         table = Table()
         tbl_id = 'manual_wo_adder_top_%s' % my.order_sk
         if 'proj' in my.search_type:
