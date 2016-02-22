@@ -16,7 +16,9 @@ from builder_tools_wdg import *
 from global_replacer_wdg import *
 
 from equipment_used_row import *
+from error_entry_wdg import *
 from proj_row import *
+from quick_edit_wdg import *
 from sources_row import *
 from title_row import *
 from work_order_row import *
