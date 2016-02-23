@@ -262,7 +262,7 @@ def get_launch_title_changer_behavior(sk, name, user_name):
                                    'code': sk.split('code=')[1],
                                    'user': user
                                };
-                      spt.panel.load_popup('Change Values on Titles...', 'order_builder.order_builder.TitleDuePrioBBWdg', kwargs);
+                      spt.panel.load_popup('Change Values on Titles...', 'order_builder.TitleDuePrioBBWdg', kwargs);
             }
             catch(err){
                       spt.app_busy.hide();
