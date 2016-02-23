@@ -95,8 +95,8 @@ class OrderTable(BaseRefreshWdg):
         sales_full_name = ''
         if main_obj.get_value('sales_rep') not in [None,'']:
             sales_s = Search('sthpw/login')
-            sales_s.add_filter('location','internal')
-            sales_s.add_filter('login',main_obj.get_value('sales_rep'))
+            sales_s.add_filter('location', 'internal')
+            sales_s.add_filter('login', main_obj.get_value('sales_rep'))
             sales = sales_s.get_sobject()
             if sales:
                 sales_full_name = '%s %s' % (sales.get_value('first_name'), sales.get_value('last_name'))
@@ -133,14 +133,14 @@ class OrderTable(BaseRefreshWdg):
         order_name_cell.add_style('cursor: pointer;')
         order_name_cell.add_behavior(obs.get_panel_change_behavior(my.search_type, my.code, my.sk, my.sk, my.title, '', 'builder/refresh_from_save', '',my.sk,main_obj.get_value('name'), user_is_scheduler))
         order_due_cell = table.add_cell("Due: %s" % fix_date(main_obj.get_value('due_date')).split(' ')[0])
-        order_due_cell.add_attr('nowrap','nowrap')
+        order_due_cell.add_attr('nowrap', 'nowrap')
         long_cell1 = table.add_cell('Scheduler: %s' % sched_full_name)
-        long_cell1.add_style('width: 100%s' % '%')
+        long_cell1.add_style('width: 100%')
         order_sales_row = table.add_row()
         order_po_cell = table.add_cell("Code: %s &nbsp; &nbsp; PO Number: %s" % (my.code, main_obj.get_value('po_number')))
-        order_po_cell.add_attr('nowrap','nowrap')
+        order_po_cell.add_attr('nowrap', 'nowrap')
         order_sales_cell = table.add_cell('Sales Rep: %s' % sales_full_name)
-        order_sales_cell.add_attr('nowrap','nowrap')
+        order_sales_cell.add_attr('nowrap', 'nowrap')
         bottom_buttons = Table()
         bottom_buttons.add_row()
 
@@ -155,22 +155,22 @@ class OrderTable(BaseRefreshWdg):
 
         if user_is_scheduler:
             tcloner = ButtonSmallNewWdg(title="Title Cloner", icon=CustomIconWdg.icons.get('STAR'))
-            tcloner.add_behavior(obs.get_launch_title_cloner_behavior(my.sk, main_obj.get_value('name'), my.user))
+            tcloner.add_behavior(get_launch_title_cloner_behavior(my.sk, main_obj.get_value('name'), my.user))
             dcl = bottom_buttons.add_cell(tcloner)
             dcl.add_attr('align', 'right')
 
             tchanger = ButtonSmallNewWdg(title="Title Changer", icon=CustomIconWdg.icons.get('CALENDAR'))
-            tchanger.add_behavior(obs.get_launch_title_changer_behavior(my.sk, main_obj.get_value('name'), my.user))
+            tchanger.add_behavior(get_launch_title_changer_behavior(my.sk, main_obj.get_value('name'), my.user))
             dcal = bottom_buttons.add_cell(tchanger)
             dcal.add_attr('align', 'right')
 
             tdeletor = ButtonSmallNewWdg(title="Title Deletor", icon=CustomIconWdg.icons.get('TABLE_ROW_DELETE'))
-            tdeletor.add_behavior(obs.get_launch_title_deletor_behavior(my.sk, main_obj.get_value('name'), my.user))
+            tdeletor.add_behavior(get_launch_title_deletor_behavior(my.sk, main_obj.get_value('name'), my.user))
             dfilt = bottom_buttons.add_cell(tdeletor)
             dfilt.add_attr('align', 'right')
 
         tfilter = ButtonSmallNewWdg(title="Filter Titles", icon=CustomIconWdg.icons.get('CONTENTS'))
-        tfilter.add_behavior(obs.get_launch_title_filter_behavior(my.sk, main_obj.get_value('name'), my.user))
+        tfilter.add_behavior(get_launch_title_filter_behavior(my.sk, main_obj.get_value('name'), my.user))
         filt = bottom_buttons.add_cell(tfilter)
         filt.add_attr('align', 'right')
 
@@ -187,7 +187,7 @@ class OrderTable(BaseRefreshWdg):
 
         if user_is_scheduler:
             title_adder = ButtonSmallNewWdg(title="Add Titles", icon=CustomIconWdg.icons.get('INSERT_MULTI'))
-            title_adder.add_behavior(obs.get_title_add_behavior(my.sk, my.sid, main_obj.get_value('client_code'), main_obj.get_value('name')))
+            title_adder.add_behavior(get_title_add_behavior(my.sk, my.sid, main_obj.get_value('client_code'), main_obj.get_value('name')))
             tadd = bottom_buttons.add_cell(title_adder)
             tadd.add_attr('align', 'right')
             tadd.add_style('cursor: pointer;')
@@ -204,7 +204,7 @@ class OrderTable(BaseRefreshWdg):
             title_sk = title.get_search_key()
             title_row  = bottom.add_row()
             title_row.add_attr('width', '100%')
-            title_row.add_attr('class','row_%s' % title_sk)
+            title_row.add_attr('class', 'row_%s' % title_sk)
             title_obj = TitleRow(sk=title_sk, parent_sk=my.sk, parent_sid=my.sid, groups_str=my.groups_str,
                                  user=my.user, display_mode=my.disp_mode, is_master=my.is_master_str, main_obj=title)
             content_cell = bottom.add_cell(title_obj)
@@ -227,3 +227,113 @@ class OrderTable(BaseRefreshWdg):
         bot.add_style('padding-left: 40px;')
 
         return tab2ret
+
+
+def get_launch_title_cloner_behavior(sk, name, user_name):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      var sk = '%s';
+                      var name = '%s';
+                      var user = '%s';
+                      kwargs = {
+                                   'sk': sk,
+                                   'code': sk.split('code=')[1],
+                                   'user': user
+                               };
+                      spt.panel.load_popup('Clone Selected Titles to New Order...', 'order_builder.order_builder.TitleCloneSelectorWdg', kwargs);
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (sk, name, user_name)}
+    return behavior
+
+
+def get_launch_title_changer_behavior(sk, name, user_name):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      var sk = '%s';
+                      var name = '%s';
+                      var user = '%s';
+                      kwargs = {
+                                   'sk': sk,
+                                   'code': sk.split('code=')[1],
+                                   'user': user
+                               };
+                      spt.panel.load_popup('Change Values on Titles...', 'order_builder.order_builder.TitleDuePrioBBWdg', kwargs);
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (sk, name, user_name)}
+    return behavior
+
+
+def get_launch_title_deletor_behavior(sk, name, user_name):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      var sk = '%s';
+                      var name = '%s';
+                      var user = '%s';
+                      var top_el = document.getElementsByClassName('twog_order_builder_' + sk)[0];
+                      allowed_titles = top_el.getAttribute('allowed_titles');
+                      kwargs = {
+                                   'sk': sk,
+                                   'code': sk.split('code=')[1],
+                                   'allowed_titles_str': allowed_titles,
+                                   'user': user
+                               };
+                      spt.panel.load_popup('Delete Titles in ' + name, 'order_builder.order_builder.TitleDeletorWdg', kwargs);
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (sk, name, user_name)}
+    return behavior
+
+
+def get_launch_title_filter_behavior(sk, name, user_name):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      var sk = '%s';
+                      var name = '%s';
+                      var user = '%s';
+                      kwargs = {
+                                   'sk': sk,
+                                   'code': sk.split('code=')[1],
+                                   'user': user
+                               };
+                      spt.panel.load_popup('Select Titles for ' + name, 'order_builder.order_builder.TitleSelectorWdg', kwargs);
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (sk, name, user_name)}
+    return behavior
+
+
+def get_title_add_behavior(order_sk, order_sid, client_code, work_order_name): # SIDDED
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m62');
+                      var order_sk = '%s';
+                      var order_sid = '%s';
+                      var client_code = '%s';
+                      var work_order_name = '%s';
+                      spt.panel.load_popup('Add Titles to ' + work_order_name, 'order_builder.TitleAdderWdg', {'order_sk': order_sk, 'client_code': client_code, 'order_sid': order_sid, 'order_sk': order_sk});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (order_sk, order_sid, client_code, work_order_name)}
+    return behavior

@@ -3207,94 +3207,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % my.order_sk}
         return behavior
 
-    def get_launch_title_changer_behavior(my, sk, name, user_name):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var sk = '%s';
-                          var name = '%s';
-                          var user = '%s';
-                          kwargs = {
-                                       'sk': sk,
-                                       'code': sk.split('code=')[1],
-                                       'user': user
-                                   };
-                          spt.panel.load_popup('Change Values on Titles...', 'order_builder.order_builder.TitleDuePrioBBWdg', kwargs);
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sk, name, user_name)}
-        return behavior
-
-    def get_launch_title_cloner_behavior(my, sk, name, user_name):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var sk = '%s';
-                          var name = '%s';
-                          var user = '%s';
-                          kwargs = {
-                                       'sk': sk,
-                                       'code': sk.split('code=')[1],
-                                       'user': user
-                                   };
-                          spt.panel.load_popup('Clone Selected Titles to New Order...', 'order_builder.order_builder.TitleCloneSelectorWdg', kwargs);
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sk, name, user_name)}
-        return behavior
-
-
-    def get_launch_title_deletor_behavior(my, sk, name, user_name):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var sk = '%s';
-                          var name = '%s';
-                          var user = '%s';
-                          var top_el = document.getElementsByClassName('twog_order_builder_' + sk)[0];
-                          allowed_titles = top_el.getAttribute('allowed_titles');
-                          kwargs = {
-                                       'sk': sk,
-                                       'code': sk.split('code=')[1],
-                                       'allowed_titles_str': allowed_titles,
-                                       'user': user
-                                   };
-                          spt.panel.load_popup('Delete Titles in ' + name, 'order_builder.order_builder.TitleDeletorWdg', kwargs);
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sk, name, user_name)}
-        return behavior
-
-    def get_launch_title_filter_behavior(my, sk, name, user_name):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var sk = '%s';
-                          var name = '%s';
-                          var user = '%s';
-                          kwargs = {
-                                       'sk': sk,
-                                       'code': sk.split('code=')[1],
-                                       'user': user
-                                   };
-                          spt.panel.load_popup('Select Titles for ' + name, 'order_builder.order_builder.TitleSelectorWdg', kwargs);
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sk, name, user_name)}
-        return behavior
-
     def get_launch_note_behavior(my, sk, name):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
@@ -3314,24 +3226,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (sk, name)}
-        return behavior
-
-    def get_title_add_behavior(my, order_sk, order_sid, client_code, work_order_name): # SIDDED
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m62');
-                          var order_sk = '%s';
-                          var order_sid = '%s';
-                          var client_code = '%s';
-                          var work_order_name = '%s';
-                          spt.panel.load_popup('Add Titles to ' + work_order_name, 'order_builder.TitleAdderWdg', {'order_sk': order_sk, 'client_code': client_code, 'order_sid': order_sid, 'order_sk': order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (order_sk, order_sid, client_code, work_order_name)}
         return behavior
 
     def get_create_titles_behavior(my, order_sk, order_sid, login): #SIDDED
