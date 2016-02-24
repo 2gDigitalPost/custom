@@ -515,7 +515,13 @@ class HotTodayWdg(BaseRefreshWdg):
 
         hot_items = [hot_item for hot_item in hot_items_sobjects if hot_item.get_value('status') != 'Completed']
 
-        external_rejection_tasks = self.get_tasks(external_rejections)
+        # The database query for tasks will fail if there are no external rejections being passed in, causing the
+        # whole hotlist to crash. This if/else prevents that.
+        if external_rejections:
+            external_rejection_tasks = self.get_tasks(external_rejections)
+        else:
+            external_rejection_tasks = []
+
         tasks = self.get_tasks(hot_items)
 
         # Current priority will be updated each time a title has a different priority from the last value
