@@ -136,7 +136,7 @@ class TitleRow(BaseRefreshWdg):
             main_obj = main_search.get_sobject()
         my.search_id = main_obj.get_value('id')
         proj_search = Search("twog/proj")
-        proj_search.add_filter('title_code',my.code)
+        proj_search.add_filter('title_code', my.code)
         proj_search.add_order_by('order_in_pipe')
         projs = proj_search.get_sobjects()
         table = Table()
@@ -159,11 +159,15 @@ class TitleRow(BaseRefreshWdg):
             epis = ' Episode: %s' % main_obj.get_value('episode')
             full_title_name = '%s: %s' % (full_title_name, main_obj.get_value('episode'))
         title_cell = table.add_cell('<b><u>Title: %s%s</u></b>' % (main_obj.get_value('title'), epis))
-        title_cell.add_attr('nowrap','nowrap')
+        title_cell.add_attr('nowrap', 'nowrap')
         title_cell.add_style('cursor: pointer;')
-        title_cell.add_behavior(obs.get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title, '', 'builder/refresh_from_save', '', my.parent_sk, '%s: %s' % (main_obj.get_value('title'),main_obj.get_value('episode')), user_is_scheduler))
+        title_cell.add_behavior(obs.get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title, '',
+                                                              'builder/refresh_from_save', '', my.parent_sk,
+                                                              '%s: %s' % (main_obj.get_value('title'),
+                                                                          main_obj.get_value('episode')),
+                                                              user_is_scheduler))
         due_cell = table.add_cell('Due: %s' % fix_date(main_obj.get_value('due_date')).split(' ')[0])
-        due_cell.add_attr('nowrap','nowrap')
+        due_cell.add_attr('nowrap', 'nowrap')
         pipe_disp = main_obj.get_value('pipeline_code')
         if 'XsX' in pipe_disp:
             pipe_disp = 'Not Assigned'
@@ -187,7 +191,9 @@ class TitleRow(BaseRefreshWdg):
             xb = table.add_cell(my.x_butt)
             xb.add_attr('align', 'right')
             xb.add_style('cursor: pointer;')
-            xb.add_behavior(obs.get_killer_behavior(my.sk, my.parent_sk, 'OrderTable', '%s: %s' % (main_obj.get_value('title'),main_obj.get_value('episode'))))
+            xb.add_behavior(obs.get_killer_behavior(my.sk, my.parent_sk, 'OrderTable',
+                                                    '%s: %s' % (main_obj.get_value('title'),
+                                                                main_obj.get_value('episode'))))
         table.add_row()
         long_cell2 = table.add_cell('Code: %s' % my.code)
         long_cell2.add_style('width: 100%')
@@ -225,8 +231,8 @@ class TitleRow(BaseRefreshWdg):
                                                               main_obj.get_value('episode')),
                                           pipeline=main_obj.get_value('pipeline_code'), order_sk=my.order_sk)
             prereq_launcher = bottom_buttons.add_cell(prereq_count)
-            prereq_launcher.add_attr('class','prereq_count_%s' % my.code)
-            prereq_launcher.add_attr('valign','bottom')
+            prereq_launcher.add_attr('class', 'prereq_count_%s' % my.code)
+            prereq_launcher.add_attr('valign', 'bottom')
 
             if not my.is_master and user_is_scheduler:
                 in_bigboard = 'Nope'
@@ -246,7 +252,8 @@ class TitleRow(BaseRefreshWdg):
             qcl.add_attr('align', 'right')
 
             if user_is_scheduler:
-                stop_button = ButtonSmallNewWdg(title='Deactivate Title - Remove from Operator Views', icon='/context/icons/custom/stopsmall.png')
+                stop_button = ButtonSmallNewWdg(title='Deactivate Title - Remove from Operator Views',
+                                                icon='/context/icons/custom/stopsmall.png')
                 stop_button.add_behavior(get_deactivate_behavior(my.code))
                 sb = bottom_buttons.add_cell(stop_button)
                 sb.add_attr('id', 'stop_button_%s' % my.code)
@@ -284,7 +291,7 @@ class TitleRow(BaseRefreshWdg):
                 redo_button = ButtonSmallNewWdg(title=redo_text, icon=redo_icon)
                 redo_button.add_behavior(get_set_redo(main_obj.get_value('code'), my.order_sk))
                 rb = bottom_buttons.add_cell(redo_button)
-                rb.add_attr('id','redo_button_%s' % my.code)
+                rb.add_attr('id', 'redo_button_%s' % my.code)
                 rb.add_attr('align', 'right')
 
                 if main_obj.get('repurpose'):
@@ -292,8 +299,10 @@ class TitleRow(BaseRefreshWdg):
                 else:
                     repurpose_button_text = 'Set title as a &#34;Repurpose&#34;?'
 
-                repurpose_button = ButtonSmallNewWdg(title=repurpose_button_text, icon=CustomIconWdg.icons.get('REPURPOSE'))
-                repurpose_button.add_behavior(set_repurpose(main_obj.get_value('code'), my.order_sk, main_obj.get_value('repurpose')))
+                repurpose_button = ButtonSmallNewWdg(title=repurpose_button_text,
+                                                     icon=CustomIconWdg.icons.get('REPURPOSE'))
+                repurpose_button.add_behavior(set_repurpose(main_obj.get_value('code'), my.order_sk,
+                                                            main_obj.get_value('repurpose')))
                 repurpose_button_cell = bottom_buttons.add_cell(repurpose_button)
                 repurpose_button_cell.add_attr('id', 'repurpose_button_{0}'.format(my.code))
                 repurpose_button_cell.add_attr('align', 'right')
@@ -309,7 +318,9 @@ class TitleRow(BaseRefreshWdg):
                 stsl.add_attr('align', 'right')
 
             source_inspector = ButtonSmallNewWdg(title="Inspect Sources", icon=CustomIconWdg.icons.get('SOURCE_PORTAL'))
-            source_inspector.add_behavior(get_source_inspector_behavior(my.sk, '%s: %s' % (main_obj.get_value('title'), main_obj.get_value('episode'))))
+            source_inspector.add_behavior(get_source_inspector_behavior(my.sk,
+                                                                        '%s: %s' % (main_obj.get_value('title'),
+                                                                                    main_obj.get_value('episode'))))
             si = bottom_buttons.add_cell(source_inspector)
             si.add_attr('align', 'right')
 
@@ -330,7 +341,9 @@ class TitleRow(BaseRefreshWdg):
                                                                        my.width, my.height,
                                                                        main_obj.get_value('pipeline_code'),
                                                                        main_obj.get_search_key(),
-                                                                       'TitleRow','%s: %s' % (main_obj.get_value('title'),main_obj.get_value('episode'))))
+                                                                       'TitleRow',
+                                                                       '%s: %s' % (main_obj.get_value('title'),
+                                                                                   main_obj.get_value('episode'))))
                 bottom_buttons.add_cell(pipe_button)
 
             if my.is_master and user_is_scheduler:

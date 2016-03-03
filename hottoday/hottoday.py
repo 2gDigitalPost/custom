@@ -288,10 +288,10 @@ class HotTodayWdg(BaseRefreshWdg):
         platform_cell.add_style('padding-left', '3px')
 
         # Third Row: Deliver By Date
-        self.set_date_row(title_table, expected_delivery_date, 'Deliver By')
+        self.set_date_row(title_table, expected_delivery_date, 'Client Deliver By')
 
         # Fourth Row: Due Date
-        self.set_date_row(title_table, due_date, 'Due Date')
+        self.set_date_row(title_table, due_date, 'Expected Due Date')
 
         # Last Row: Order Builder and Notes Widgets
         editing_row = title_table.add_row()

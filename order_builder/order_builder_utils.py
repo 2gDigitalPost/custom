@@ -3468,7 +3468,7 @@ class OBScripts(BaseRefreshWdg):
                           order_el.setAttribute('allowed_titles', allowed_titles);
                           display_mode = order_el.getAttribute('display_mode');
                           user = order_el.getAttribute('user');
-                          //spt.api.load_panel(loader_cell, 'order_builder.OrderTable', {'sk': order_sk,'search_id': order_sid, 'allowed_titles': allowed_titles, display_mode: display_mode, user: user, groups_str: groups_str, allowed_titles: allowed_titles, is_master: is_master_str});
+
                           kwargs = {
                                        'sk': order_sk,
                                        'display_mode': display_mode,

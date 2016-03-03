@@ -48,7 +48,7 @@ class OperatorViewWdg(BaseRefreshWdg):
         if mw:
             my.main_wo = mw[0]
             my.work_order_code = my.main_wo.get('code')
-            table.add_attr('class','panel_%s' % my.main_wo.get('code'))
+            table.add_attr('class', 'panel_%s' % my.main_wo.get('code'))
             mt = my.server.eval("@SOBJECT(twog/title['code','%s'])" % my.main_wo.get('title_code'))
             if mt:
                 my.main_title = mt[0]
@@ -61,25 +61,19 @@ class OperatorViewWdg(BaseRefreshWdg):
                         my.main_proj = proj
                     
                 menu_cell = table.add_cell(menu)
-                #Don't need this, because reloading the TitleSidebar doesn't work..
-#                menu_cell.add_attr('id','ov_title_bar_%s' % my.main_title.get('code'))
-#                menu_cell.add_attr('title_code', my.main_title.get('code'))
-#                menu_cell.add_attr('user_name', my.user_name)
-#                menu_cell.add_attr('groups_str', my.groups_str)
-#                menu_cell.add_attr('work_order_code', my.work_order_code)
-                
+
                 right_table = Table()
-                right_table.add_attr('cellspacing','0px')
-                right_table.add_attr('cellpadding','0px')
+                right_table.add_attr('cellspacing', '0px')
+                right_table.add_attr('cellpadding', '0px')
                 right_table.add_row()
                 h2 = table.h2('WO# %s: %s' % (my.main_wo.get('id'), my.main_wo.get('process')))
-                h2.add_attr('width','100%%')
+                h2.add_attr('width', '100%')
                 top_cell = right_table.add_cell(h2)
-                top_cell.add_attr('class','ovw_main_title')
-                top_cell.add_attr('colspan','4')
-                top_cell.add_attr('valign','top')
-                top_cell.add_attr('align','center')
-                top_cell.add_attr('width','100%%')
+                top_cell.add_attr('class', 'ovw_main_title')
+                top_cell.add_attr('colspan', '4')
+                top_cell.add_attr('valign', 'top')
+                top_cell.add_attr('align', 'center')
+                top_cell.add_attr('width', '100%')
 
                 first_tbl = Table()
                 first_tbl.add_row()
@@ -96,8 +90,8 @@ class OperatorViewWdg(BaseRefreshWdg):
                 second_tbl.add_row()
                 stass = StatusAndAssignmentWdg(task=my.task, work_order_code=my.work_order_code, requires_mastering=requires_mastering)
                 status_reloader = second_tbl.add_cell(stass)
-                status_reloader.add_attr('class','status_panel_%s' % my.work_order_code)
-                status_reloader.add_attr('requires_mastering',requires_mastering)
+                status_reloader.add_attr('class', 'status_panel_%s' % my.work_order_code)
+                status_reloader.add_attr('requires_mastering', requires_mastering)
                 instructions = InstructionsWdg(instructions='%s\n\nDELIVERABLE SPECS:\n%s' % (my.main_wo.get('instructions'), my.main_title.get('delivery_specs')))
                 second_tbl.add_row()
                 second_tbl.add_cell(instructions)
@@ -109,7 +103,7 @@ class OperatorViewWdg(BaseRefreshWdg):
                 third_tbl.add_row()
                 eq = WorkOrderEquipmentWdg(work_order_code=my.work_order_code,work_order_name=my.main_wo.get('name'))
                 eq_reloader = third_tbl.add_cell(eq)
-                eq_reloader.add_attr('class','eq_panel_%s' % my.work_order_code)
+                eq_reloader.add_attr('class', 'eq_panel_%s' % my.work_order_code)
                 
 
                 right_table.add_row()
@@ -123,16 +117,16 @@ class OperatorViewWdg(BaseRefreshWdg):
                 
 
                 tc1 = table.add_cell(right_table)
-                tc1.add_attr('colspan','2')
+                tc1.add_attr('colspan', '2')
                 #Get the sidebar menu here
             else:
                 table.add_cell("Important connections are broken. Title not found. Please contact the Admin.") 
         else:
             table.add_cell("Important connections are broken. Please contact the Admin.") 
-        table.add_attr('cellspacing','0px')
-        table.add_attr('cellpadding','0px')
+        table.add_attr('cellspacing', '0px')
+        table.add_attr('cellpadding', '0px')
         widget.add(table)
-        widget.add_attr('id','OVPanel_%s' % (my.main_title.get('code')))
+        widget.add_attr('id', 'OVPanel_%s' % (my.main_title.get('code')))
         return widget
 
 class TitleSidebarWdg(BaseRefreshWdg):
@@ -756,44 +750,42 @@ class WorkOrderHoursWdg(BaseRefreshWdg):
             small_tbl = Table()
             small_tbl.add_row()
             user_hr = small_tbl.add_cell('%s Hrs: %s' % (user_name, user_hours))
-            user_hr.add_attr('id','user_hr')
+            user_hr.add_attr('id', 'user_hr')
             user_hr.add_style('font-size: 9px;')
             small_tbl.add_row()
             total_hr = small_tbl.add_cell('Total Hrs: %s' % (total_hours)) 
-            total_hr.add_attr('id','total_hr')
+            total_hr.add_attr('id', 'total_hr')
             total_hr.add_style('font-size: 9px;')
             crunch_tbl.add_cell('&nbsp;&nbsp;')
             crunch_tbl.add_cell(small_tbl)
         adh = table.add_cell('Add Hours: ')
-        adh.add_attr('nowrap','nowrap')
+        adh.add_attr('nowrap', 'nowrap')
         ll = table.add_cell(crunch_tbl)
         wdrow = table.add_row()
-        wdrow.add_attr('id','wdrow')
+        wdrow.add_attr('id', 'wdrow')
         wd = table.add_cell('Work Description: ')
-        wd.add_attr('nowrap','nowrap')
+        wd.add_attr('nowrap', 'nowrap')
         table.add_cell('<input type="text" value="%s" id="summary_txt"/>' % work_summary)
         orow = table.add_row()
-        orow.add_attr('id','orow')
+        orow.add_attr('id', 'orow')
         opn = table.add_cell('Explanation (if needed): ')
-        opn.add_attr('nowrap','nowrap')
+        opn.add_attr('nowrap', 'nowrap')
         table.add_cell('<textarea id="op_note" cols="25" rows="3" ></textarea>')
         subrow = table.add_row()
-        subrow.add_attr('id','subrow')
+        subrow.add_attr('id', 'subrow')
         lil_tbl = Table()
         lil_tbl.add_row()
         one = lil_tbl.add_cell()
-        one.add_attr('width','40%%')
+        one.add_attr('width', '40%')
         submit_cell = lil_tbl.add_cell('<input type="button" value="Submit"/>') 
         submit_cell.add_attr('align','center')
         submit_behavior = my.get_submit_behavior(title_code, task_code, search_id, user_name, pop) 
-        #submit_change = submit_behavior
-        #submit_change['type'] = 'change'
-        #hrtxt.add_behavior(submit_change)
+
         submit_cell.add_behavior(submit_behavior)
         two = lil_tbl.add_cell()
-        two.add_attr('width','40%%')
+        two.add_attr('width', '40%')
         longboy = table.add_cell(lil_tbl)
-        longboy.add_attr('colspan','2')
+        longboy.add_attr('colspan', '2')
         if 'popup' not in my.kwargs.keys():
             trow.add_style('display: none;')
             crow.add_style('display: none;')
@@ -803,11 +795,11 @@ class WorkOrderHoursWdg(BaseRefreshWdg):
             table = wrapped.get_title_wrap('Work Order Hours')
         else:
             eq_row = table.add_row()
-            eq_row.add_attr('id','eq_row')
+            eq_row.add_attr('id', 'eq_row')
             eq_row.add_style('display: none;')
             eq_cell = table.add_cell()
-            eq_cell.add_attr('id','eq_cell')
-            eq_cell.add_attr('colspan','2')
+            eq_cell.add_attr('id', 'eq_cell')
+            eq_cell.add_attr('colspan', '2')
         
         return table
 
@@ -981,13 +973,13 @@ class WorkOrderEquipmentWdg(BaseRefreshWdg):
             hour = my.server.eval("@SOBJECT(sthpw/work_hour['code','%s'])" % my.wh_code)[0]
             table.add_row()
             c1 = table.add_cell('')
-            c1.add_attr('width','20%%')
+            c1.add_attr('width', '20%%')
             title_cell = table.add_cell('<b>Add Equipment to the %s hours you just added?</b>' % hour.get('straight_time'))
-            title_cell.add_attr('nowrap','nowrap')
-            title_cell.add_attr('align','center')
-            title_cell.add_attr('width','60%%')
+            title_cell.add_attr('nowrap', 'nowrap')
+            title_cell.add_attr('align', 'center')
+            title_cell.add_attr('width', '60%%')
             c2 = table.add_cell('')
-            c2.add_attr('width','20%%')
+            c2.add_attr('width', '20%')
             
         for eq in my.equipment:
             eq_sk = eq.get('__search_key__')
@@ -996,8 +988,8 @@ class WorkOrderEquipmentWdg(BaseRefreshWdg):
                 units = 'hr'
             table.add_row()
             top_cell = table.add_cell('%s | Quantity: %s' % (eq.get('name'), int(eq.get('expected_quantity'))))
-            top_cell.add_attr('colspan','5')
-            top_cell.add_attr('align','left')
+            top_cell.add_attr('colspan', '5')
+            top_cell.add_attr('align', 'left')
             top_cell.add_style('background-color: #bbbbbb;')
             table.add_row()
             dur = eq.get('actual_duration')
@@ -1008,15 +1000,15 @@ class WorkOrderEquipmentWdg(BaseRefreshWdg):
                 ad = table.add_cell('Length: %s' % eq.get('length'))
             else:
                 ad = table.add_cell('Actual %ss: %s' % (unit_lookup[units] , dur))
-            ad.add_attr('id','actual_%s' % eq_sk)
-            ad.add_attr('nowrap','nowrap')
+            ad.add_attr('id', 'actual_%s' % eq_sk)
+            ad.add_attr('nowrap', 'nowrap')
             spacer = table.add_cell('&nbsp;')
-            spacer.add_attr('width','100%%')
+            spacer.add_attr('width', '100%%')
             if units != 'length':
                 ah = table.add_cell("Add %ss: " % unit_lookup[units])
-                ah.add_attr('nowrap','nowrap')
+                ah.add_attr('nowrap', 'nowrap')
                 txt = TextWdg('eq_hours_%s' % eq.get('code'))
-                txt.add_attr('id','add_%s' % eq_sk)
+                txt.add_attr('id', 'add_%s' % eq_sk)
                 change_behavior = my.get_change_behavior(eq_sk)
                 txt.add_behavior(change_behavior)
                 hour_txt = table.add_cell(txt)
@@ -1026,15 +1018,15 @@ class WorkOrderEquipmentWdg(BaseRefreshWdg):
                 action_bttn.add_behavior(click_behavior)
         table.add_row()
         fc = table.add_cell('&nbsp;')
-        fc.add_attr('width', '20%%')
+        fc.add_attr('width', '20%')
         middle_cell = table.add_cell('<input type="button" value="Add/Edit Equipment" />')
-        middle_cell.add_attr('colspan','3')
-        middle_cell.add_attr('align','center')
+        middle_cell.add_attr('colspan', '3')
+        middle_cell.add_attr('align', 'center')
         if my.wh_code != '':
             my.wo_code = my.wh_code
         middle_cell.add_behavior(my.get_add_behavior(my.wo_code, my.wo_name, my.is_popup)) 
         lc = table.add_cell('&nbsp;')
-        lc.add_attr('width', '20%%')
+        lc.add_attr('width', '20%')
         if my.is_popup == 'true':
             table.add_row()
             table.add_cell('&nbsp;')
@@ -1042,10 +1034,10 @@ class WorkOrderEquipmentWdg(BaseRefreshWdg):
             table.add_cell('&nbsp;')
             table.add_row()
             pad1 = table.add_cell(' ')
-            pad1.add_attr('width', '20%%')
+            pad1.add_attr('width', '20%')
             donebutt = table.add_cell('<input type="button" value="Done With Equipment" />')
-            donebutt.add_attr('colspan','3')
-            donebutt.add_attr('align','center')
+            donebutt.add_attr('colspan', '3')
+            donebutt.add_attr('align', 'center')
             donebutt.add_behavior(my.get_done_behavior())
             pad2 = table.add_cell(' ')
             pad2.add_attr('width', '20%%')
