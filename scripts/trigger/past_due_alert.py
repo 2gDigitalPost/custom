@@ -1,6 +1,8 @@
 import traceback
 from datetime import date, timedelta
 
+from pyasm.prod.biz import ProdSetting
+
 
 def main(server=None, input=None):
     """
@@ -23,16 +25,22 @@ def main(server=None, input=None):
         message = "The following titles are past due.<br/><br/>{0}<br/><br/>Please log into Tactic and change the " \
                   "due date on these Titles. If you don't know when that's supposed to be, you can just change it " \
                   "to today's date.".format(', '.join(past_due_titles))
-        recipients = ['tyler.standridge@2gdigital.com']
+
+        recipients = ProdSetting.get_seq_by_key('past_due_alert_recipients')
+
+        if not recipients:
+            return
 
         context_data = {
-            'to_email': 'Tyler.Standridge@2gdigital.com',
+            'to_email': recipients[0],
             'subject': email_subject,
             'message': message,
-            'from_email': 'Tyler.Standridge@2gdigital.com',
+            'from_email': 'TacticDebug@2gdigital.com',
             'from_name': 'Tactic',
-            'ccs': ';'.join(recipients)
         }
+
+        if len(recipients) > 1:
+            context_data.update({'ccs', ';'.join(recipients[1:])})
 
         internal_template_file = '/opt/spt/custom/formatted_emailer/templates/past_due_title_notification.html'
 
