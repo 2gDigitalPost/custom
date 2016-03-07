@@ -163,7 +163,7 @@ class TaskInspectWdg(BaseRefreshWdg):
         else:
             proj_link = links_table.add_cell(proj.get('process'))
         lynx = table.add_cell(links_table)
-        lynx.add_attr('align','center')
+        lynx.add_attr('align', 'center')
         if my.st == 'twog/work_order':
             # Need to get the previous work_order's file location here
             proj_pipe = proj.get('pipeline_code')
@@ -172,7 +172,9 @@ class TaskInspectWdg(BaseRefreshWdg):
             info = my.server.get_pipeline_processes_info(proj.get('__search_key__'), related_process=wo_process)
             input_processes = info.get('input_processes')
             input_processes.append(wo_process)
-            input_tasks = my.server.query('sthpw/task', filters=[('search_type', wo_task.get('search_type')), ('search_id', wo_task.get('search_id')),('process',input_processes)])
+            input_tasks = my.server.query('sthpw/task', filters=[('search_type', wo_task.get('search_type')),
+                                                                 ('search_id', wo_task.get('search_id')),
+                                                                 ('process',input_processes)])
             lead_in_files = []
 
             for t in input_tasks:
@@ -187,7 +189,7 @@ class TaskInspectWdg(BaseRefreshWdg):
             if len(wo_sources) > 0:
                 table.add_row()
                 celly0 = table.add_cell('<b><u>Sources</u></b>')
-                celly0.add_attr('align','center')
+                celly0.add_attr('align', 'center')
                 celly0.add_style('background-color: #cedb3a;')
             seen_srcs = []
             srcs = []
@@ -236,24 +238,24 @@ class TaskInspectWdg(BaseRefreshWdg):
             if len(prereqs) > 0:
                 table.add_row()
                 celly = table.add_cell('<b><u>PreReqs</u></b>')
-                celly.add_attr('align','center')
+                celly.add_attr('align', 'center')
                 celly.add_style('background-color: #ce4444;')
             for prereq in prereqs:
                 pre_table = Table()
                 pre_table.add_style('background-color: #ce4444;')
                 pre_table.add_row()
                 celly2 = pre_table.add_cell('%s: ' % prereq.get('prereq'))
-                celly2.add_attr('align','left')
+                celly2.add_attr('align', 'left')
                 sat = ''
                 if prereq.get('satisfied') == True:
                     sat = 'Satisfied'
                 else:
                     sat = 'Not Fulfilled'
                 celly3 = pre_table.add_cell(sat)
-                celly3.add_attr('align','left')
+                celly3.add_attr('align', 'left')
                 table.add_row()
                 main_celly = table.add_cell(pre_table)
-                main_celly.add_attr('align','center')
+                main_celly.add_attr('align', 'center')
         sources_expr = "@SOBJECT(twog/work_order_sources['work_order_code','%s'])" % my.code
         sources = my.server.eval(sources_expr)
   
@@ -261,12 +263,16 @@ class TaskInspectWdg(BaseRefreshWdg):
         mo = 'view'
         if my.is_scheduler:
             mo = 'edit'
-        view_edit_wdg = EditWdg(element_name='general',mode=mo,search_type=my.st,code=my.code,title="Info for %s: %s" % (st_name, my.code),view='edit',widget_key='edit_layout',search_key=my.sk)
+        view_edit_wdg = EditWdg(element_name='general', mode=mo, search_type=my.st, code=my.code,
+                                title="Info for %s: %s" % (st_name, my.code), view='edit', widget_key='edit_layout',
+                                search_key=my.sk)
         table.add_cell(view_edit_wdg)
         table.add_row()
         table.add_cell('<textarea rows=10 cols=92 readonly>DELIVERY SPECS (View Only):\n%s</textarea>' % title.get('delivery_specs'))
         incomplete_task_wdg = IncompleteWOWdg(search_type='twog/work_order',code=my.code,parent_view='task_view')
-        notes_wdg = DiscussionWdg(search_key=title.get('__search_key__'),append_process='Client Services,Redelivery/Rejection Request,Redelivery/Rejection Completed',chronological=True)
+        notes_wdg = DiscussionWdg(search_key=title.get('__search_key__'),
+                                  append_process='Client Services,Redelivery/Rejection Request,Redelivery/Rejection Completed',
+                                  chronological=True)
         ta2 = Table()
         ta2.add_style('background-color: #bcbccc;')
         ta2.add_style('border-bottom-right-radius', '10px')
@@ -282,7 +288,7 @@ class TaskInspectWdg(BaseRefreshWdg):
         table.add_row()
         hours = WorkHoursDisplayWdg(code=my.code)
         table.add_cell(hours) 
-        table.add_attr('class','taskinspect_%s' % my.code)
+        table.add_attr('class', 'taskinspect_%s' % my.code)
         return table
 
 class InstructionsWdg(BaseTableElementWdg):
@@ -329,7 +335,7 @@ class TitleViewWdg(BaseTableElementWdg):
         for src in sources:
             src_tbl.add_row()
             source_look = src_tbl.add_cell('<u>Title: %s, Type: %s</u>' % (src.get('title'), src.get('source_type')))
-            source_look.add_attr('nowrap','nowrap')
+            source_look.add_attr('nowrap', 'nowrap')
             source_look.add_style('cursor: pointer;')
             source_look.add_behavior(get_open_sob_behavior(src.get('code'), 'twog/source', 'view'))
         view_edit_wdg = EditWdg(element_name='general',mode='view',search_type='twog/title',code=my.code,title="Info for %s" % my.name,view='edit',widget_key='edit_layout',search_key=my.sk)

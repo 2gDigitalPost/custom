@@ -62,7 +62,6 @@ class WorkOrderRow(BaseRefreshWdg):
         return what_to_ret
 
     def get_display(my):
-#        wo_row_time = time.time()
         my.sk = str(my.kwargs.get('sk'))
         my.code = my.sk.split('code=')[1]
         my.parent_sk = str(my.kwargs.get('parent_sk'))
@@ -93,7 +92,7 @@ class WorkOrderRow(BaseRefreshWdg):
             my.small = True
         if 'is_master' in my.kwargs.keys():
             my.is_master_str = my.kwargs.get('is_master')
-            if my.is_master_str in [True,'true','t',1]:
+            if my.is_master_str in [True, 'true', 't', 1]:
                 my.is_master = True
                 my.is_master_str = 'true'
         else:
@@ -101,13 +100,13 @@ class WorkOrderRow(BaseRefreshWdg):
             order_search.add_filter('code',order_code)
             order = order_search.get_sobject()
             order_classification = order.get_value('classification')
-            if order_classification in ['master','Master']:
+            if order_classification in ['master', 'Master']:
                 my.is_master = True
                 my.is_master_str = 'false'
         open_bottom = False
         if 'open_bottom' in my.kwargs.keys():
             ob_text = my.kwargs.get('open_bottom')
-            if ob_text in [True,'true','t','1',1]:
+            if ob_text in [True, 'true', 't', '1', 1]:
                 open_bottom = True
 
         obs = OBScripts(order_sk=my.order_sk, user=my.user, groups_str=my.groups_str, is_master=my.is_master)
@@ -116,7 +115,7 @@ class WorkOrderRow(BaseRefreshWdg):
             main_obj = my.kwargs.get('main_obj')
         else:
             main_search = Search("twog/work_order")
-            main_search.add_filter('code',my.code)
+            main_search.add_filter('code', my.code)
             main_obj = main_search.get_sobject()
         parent_obj = None
         if 'parent_obj' in my.kwargs.keys():
@@ -126,17 +125,13 @@ class WorkOrderRow(BaseRefreshWdg):
             parent_search.add_filter('code',main_obj.get_value('proj_code'))
             parent_obj = parent_search.get_sobject()
 
-#        eq_search_time = time.time()
         eu_search = Search("twog/equipment_used")
-        eu_search.add_filter('work_order_code',my.code)
+        eu_search.add_filter('work_order_code', my.code)
         eus = eu_search.get_sobjects()
-#        print "EQ SEARCH TIME = %s" % (time.time() - eq_search_time)
 
-#        task_search_time = time.time()
         task_search = Search("sthpw/task")
         task_search.add_filter('code',main_obj.get_value('task_code'))
         task = task_search.get_sobjects()
-#        print "TASK SEARCH TIME = %s" % (time.time() - task_search_time)
 
         my.search_id = main_obj.get_value('id')
         due_date = ''
@@ -160,7 +155,7 @@ class WorkOrderRow(BaseRefreshWdg):
             priority = task.get_value('priority')
             task_sk = task.get_search_key()
             active_bool = task.get_value('active')
-            if active_bool in [True,'true','t',1,'1']:
+            if active_bool in [True, 'true', 't', 1, '1']:
                 active_status = '<font color="#0ff000">Active</font>'
             else:
                 active_status = '<font color="#ff0000">Inactive</font>'
@@ -169,8 +164,8 @@ class WorkOrderRow(BaseRefreshWdg):
             bgcol = '#FFFFFF'
         if assigned not in [None,'']:
             assigned_s = Search('sthpw/login')
-            assigned_s.add_filter('location','internal')
-            assigned_s.add_filter('login',assigned)
+            assigned_s.add_filter('location', 'internal')
+            assigned_s.add_filter('login', assigned)
             assigned_o = assigned_s.get_sobject()
             assigned = ''
             if assigned_o:
@@ -178,15 +173,15 @@ class WorkOrderRow(BaseRefreshWdg):
 
         table = Table()
         table.add_attr('id', main_obj.get_value('code'))
-        table.add_attr('cellpadding','0')
-        table.add_attr('cellspacing','0')
-        table.add_attr('class','WorkOrderRow_%s' % my.code)
-        table.add_attr('width','100%s' % '%')
+        table.add_attr('cellpadding', '0')
+        table.add_attr('cellspacing', '0')
+        table.add_attr('class', 'WorkOrderRow_%s' % my.code)
+        table.add_attr('width', '100%')
         table.add_style('border-collapse', 'separate')
         table.add_style('border-spacing', '25px 0px')
         table.add_style('color: #373a6a;')
         table.add_style('background-color: %s;' % bgcol)
-        table.add_style('width: 100%s;' % '%')
+        table.add_style('width', '100%')
         table.add_style('border-bottom-right-radius', '10px')
         table.add_style('border-bottom-left-radius', '10px')
         table.add_style('border-top-right-radius', '10px')
@@ -195,23 +190,38 @@ class WorkOrderRow(BaseRefreshWdg):
         row1.add_attr('width', '100%')
         row1.add_style('width: 100%;')
         wo_cell = table.add_cell('<b><u>Work Order: %s</u></b>' % main_obj.get_value('process'))
-        wo_cell.add_attr('nowrap','nowrap')
+        wo_cell.add_attr('nowrap', 'nowrap')
         wo_cell.add_style('cursor: pointer;')
-        wo_cell.add_behavior(obs.get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title, main_obj.get_value('work_order_templ_code'), 'builder/refresh_from_save',main_obj.get_value('task_code'),my.parent_sk,main_obj.get_value('process'), user_is_scheduler))
+        wo_cell.add_behavior(obs.get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title,
+                                                           main_obj.get_value('work_order_templ_code'),
+                                                           'builder/refresh_from_save',
+                                                           main_obj.get_value('task_code'),
+                                                           my.parent_sk,main_obj.get_value('process'),
+                                                           user_is_scheduler))
         stat_cell = table.add_cell('Status: %s' % status)
-        stat_cell.add_attr('nowrap','nowrap')
+        stat_cell.add_attr('nowrap', 'nowrap')
         if status not in [None,'']:
             stat_cell.add_style('background-color: %s;' % my.stat_colors[status])
         priority_cell = table.add_cell('Priority: %s' % priority)
-        priority_cell.add_attr('nowrap','nowrap')
+        priority_cell.add_attr('nowrap', 'nowrap')
         assigned_cell = table.add_cell('Assigned to: %s' % assigned)
-        assigned_cell.add_attr('nowrap','nowrap')
+        assigned_cell.add_attr('nowrap', 'nowrap')
         due_cell = table.add_cell('Due: %s' % fix_date(due_date))
-        due_cell.add_attr('nowrap','nowrap')
+        due_cell.add_attr('nowrap', 'nowrap')
         top_buttons = Table()
         top_buttons.add_row()
         if my.small:
-            select_check = CustomCheckboxWdg(name='select_%s' % my.code, value_field=my.code, checked='false', dom_class='ob_selector', parent_table="WorkOrderRow_%s" % my.code, process=main_obj.get_value('process'), work_group=main_obj.get_value('work_group'), proj_code=main_obj.get_value('proj_code'), title_code=main_obj.get_value('title_code'), order_code=order_code, task_code=main_obj.get_value('task_code'), normal_color=my.off_color, selected_color=my.on_color, code=my.code, ntype='work_order', search_key=my.sk, task_sk=task_sk, additional_js=get_selected_color_behavior(my.code, 'WorkOrderRow', my.on_color, my.off_color))
+            select_check = CustomCheckboxWdg(name='select_%s' % my.code, value_field=my.code, checked='false',
+                                             dom_class='ob_selector', parent_table="WorkOrderRow_%s" % my.code,
+                                             process=main_obj.get_value('process'),
+                                             work_group=main_obj.get_value('work_group'),
+                                             proj_code=main_obj.get_value('proj_code'),
+                                             title_code=main_obj.get_value('title_code'), order_code=order_code,
+                                             task_code=main_obj.get_value('task_code'), normal_color=my.off_color,
+                                             selected_color=my.on_color, code=my.code, ntype='work_order',
+                                             search_key=my.sk, task_sk=task_sk,
+                                             additional_js=get_selected_color_behavior(my.code, 'WorkOrderRow',
+                                                                                       my.on_color, my.off_color))
             cb = top_buttons.add_cell(select_check)
         elif user_is_scheduler:
             xb = top_buttons.add_cell(my.x_butt)
@@ -224,9 +234,9 @@ class WorkOrderRow(BaseRefreshWdg):
         long_cell1.add_style('width: 100%')
         table.add_row()
         ccel = table.add_cell('Code: %s' % my.code)
-        ccel.add_attr('nowrap','nowrap')
+        ccel.add_attr('nowrap', 'nowrap')
         start_cell = table.add_cell('Start: %s' % fix_date(start_date))
-        start_cell.add_attr('nowrap','nowrap')
+        start_cell.add_attr('nowrap', 'nowrap')
         end_cell = table.add_cell('End: %s' % fix_date(end_date))
         end_cell.add_attr('nowrap', 'nowrap')
         active_cell = table.add_cell(active_status)
@@ -250,21 +260,23 @@ class WorkOrderRow(BaseRefreshWdg):
             bottom_buttons.add_row()
             bbl = Table()
             bbl.add_row()
-            ins = bbl.add_cell(main_obj.get_value('instructions').replace('<','&lt;').replace('>','&gt;'))
-            ins.add_attr('align','left')
-            ins.add_attr('colspan','5')
-            ins.add_attr('width','100%s' % '%')
+            ins = bbl.add_cell(main_obj.get_value('instructions').replace('<', '&lt;').replace('>', '&gt;'))
+            ins.add_attr('align', 'left')
+            ins.add_attr('colspan', '5')
+            ins.add_attr('width', '100%')
             empt = bbl.add_cell(' ')
-            empt.add_attr('width', '100%s' % '%')
+            empt.add_attr('width', '100%')
             bbr = Table()
             bbr.add_row()
-            prereq_count = PreReqCountWdg(sob_code=my.code, sob_st='twog/work_order', sob_sk=my.sk, prereq_st='twog/work_order_prereq', sob_name=main_obj.get_value('process'), pipeline='nothing', order_sk=my.order_sk)
+            prereq_count = PreReqCountWdg(sob_code=my.code, sob_st='twog/work_order', sob_sk=my.sk,
+                                          prereq_st='twog/work_order_prereq', sob_name=main_obj.get_value('process'),
+                                          pipeline='nothing', order_sk=my.order_sk)
             prereq_launcher = bbr.add_cell(prereq_count)
             prereq_launcher.add_attr('class','prereq_count_%s' % my.code)
             prereq_launcher.add_attr('valign','bottom')
             prereq_launcher.add_attr('colspan','2')
 
-            if main_obj.get_value('creation_type') == 'hackup' and user_is_scheduler:# and my.user in ['admin','philip.rowe']:
+            if main_obj.get_value('creation_type') == 'hackup' and user_is_scheduler:
                 hack_edit = ButtonSmallNewWdg(title="Edit Connections", icon=CustomIconWdg.icons.get('HACKUP'))
                 hack_edit.add_behavior(obs.get_edit_hackup_connections(my.code, main_obj.get_value('process')))
                 he = bbr.add_cell(hack_edit)
@@ -286,26 +298,32 @@ class WorkOrderRow(BaseRefreshWdg):
             bbr.add_row()
 
             if not my.is_master and user_is_scheduler and task_exists:
-                indie_button = IndieBigBoardSelectWdg(search_key=task.get_search_key(),indie_bigboard=task.get_value('indie_bigboard'),title_code=parent_obj.get_value('title_code'),lookup_code=my.code)
+                indie_button = IndieBigBoardSelectWdg(search_key=task.get_search_key(),
+                                                      indie_bigboard=task.get_value('indie_bigboard'),
+                                                      title_code=parent_obj.get_value('title_code'),
+                                                      lookup_code=my.code)
                 indie = bbr.add_cell(indie_button)
-                indie.add_attr('align','right')
-                indie.add_attr('valign','bottom')
+                indie.add_attr('align', 'right')
+                indie.add_attr('valign', 'bottom')
 
-                big_button = BigBoardSingleWOSelectWdg(search_key=task.get_search_key(),bigboard=task.get_value('bigboard'),title_code=parent_obj.get_value('title_code'),lookup_code=my.code)
+                big_button = BigBoardSingleWOSelectWdg(search_key=task.get_search_key(),
+                                                       bigboard=task.get_value('bigboard'),
+                                                       title_code=parent_obj.get_value('title_code'),
+                                                       lookup_code=my.code)
                 bbw = bbr.add_cell(big_button)
-                bbw.add_attr('align','right')
-                bbw.add_attr('valign','bottom')
+                bbw.add_attr('align', 'right')
+                bbw.add_attr('valign', 'bottom')
 
             print_button = WorkOrderPrintLauncherWdg(work_order_code=my.code)
             prnt = bbr.add_cell(print_button)
-            prnt.add_attr('align','right')
-            prnt.add_attr('valign','bottom')
+            prnt.add_attr('align', 'right')
+            prnt.add_attr('valign', 'bottom')
 
             upload = ButtonSmallNewWdg(title="Upload", icon=CustomIconWdg.icons.get('PUBLISH'))
             upload.add_behavior(get_upload_behavior(my.sk))
             up = bbr.add_cell(upload)
-            up.add_attr('align','right')
-            up.add_attr('valign','bottom')
+            up.add_attr('align', 'right')
+            up.add_attr('valign', 'bottom')
 
             note_adder = ButtonSmallNewWdg(title="Add Note", icon=CustomIconWdg.icons.get('NOTE_ADD'))
             note_adder.add_behavior(obs.get_launch_note_behavior(my.parent_sk, parent_obj.get_value('process')))
@@ -315,28 +333,36 @@ class WorkOrderRow(BaseRefreshWdg):
             nadd.add_style('cursor: pointer;')
 
             if user_is_scheduler:
-                add_eq_used_butt = ButtonSmallNewWdg(title="Add Equipment", icon=CustomIconWdg.icons.get('EQUIPMENT_ADD'))
-                add_eq_used_butt.add_behavior(obs.get_eu_add_behavior(main_obj.get_value('process'),main_obj.get_search_key(), main_obj.get_value('code')))
+                add_eq_used_butt = ButtonSmallNewWdg(title="Add Equipment",
+                                                     icon=CustomIconWdg.icons.get('EQUIPMENT_ADD'))
+                add_eq_used_butt.add_behavior(obs.get_eu_add_behavior(main_obj.get_value('process'),
+                                                                      main_obj.get_search_key(),
+                                                                      main_obj.get_value('code')))
                 eu_adder = bbr.add_cell(add_eq_used_butt)
                 eu_adder.add_attr('width','100%')
                 eu_adder.add_attr('align', 'right')
                 eu_adder.add_attr('valign', 'bottom')
                 eu_adder.add_style('cursor: pointer;')
 
-                source_portal = ButtonSmallNewWdg(title="Passed in Result(s) or Source(s)", icon=CustomIconWdg.icons.get('SOURCE_PORTAL'))
-                source_portal.add_behavior(obs.get_launch_source_portal_behavior(main_obj.get_value('process'), main_obj.get_search_key(), main_obj.get_value('code'), parent_obj.get_value('pipeline_code'), my.is_master_str))
+                source_portal = ButtonSmallNewWdg(title="Passed in Result(s) or Source(s)",
+                                                  icon=CustomIconWdg.icons.get('SOURCE_PORTAL'))
+                source_portal.add_behavior(obs.get_launch_source_portal_behavior(main_obj.get_value('process'),
+                                                                                 main_obj.get_search_key(),
+                                                                                 main_obj.get_value('code'),
+                                                                                 parent_obj.get_value('pipeline_code'),
+                                                                                 my.is_master_str))
                 sp = bbr.add_cell(source_portal)
-                sp.add_attr('align','right')
-                sp.add_attr('valign','bottom')
+                sp.add_attr('align', 'right')
+                sp.add_attr('valign', 'bottom')
 
                 file_add = ButtonSmallNewWdg(title="Intermediate File(s) or Permanent Element(s)", icon=CustomIconWdg.icons.get('FILE_ADD'))
-                file_add.add_behavior(obs.get_launch_out_files_behavior(main_obj.get_value('process'), main_obj.get_search_key(), main_obj.get_value('code')))
+                file_add.add_behavior(obs.get_launch_out_files_behavior(main_obj.get_value('process'),
+                                                                        main_obj.get_search_key(),
+                                                                        main_obj.get_value('code')))
                 fa = bbr.add_cell(file_add)
-                fa.add_attr('align','right')
-                fa.add_attr('valign','bottom')
+                fa.add_attr('align', 'right')
+                fa.add_attr('valign', 'bottom')
 
-            templ_icon = None
-            templ_title = ''
             if my.is_master:
                 if main_obj.get_value('templ_me') == True:
                     templ_icon = CustomIconWdg.icons.get('CHECK')
@@ -346,7 +372,9 @@ class WorkOrderRow(BaseRefreshWdg):
                     templ_title = "Use This as Template for Parent Pipeline"
                 templ_button = ButtonSmallNewWdg(title=templ_title, icon=templ_icon)
                 if main_obj.get_value('templ_me') == False:
-                    templ_button.add_behavior(obs.get_templ_wo_behavior(main_obj.get_value('templ_me'),main_obj.get_value('work_order_templ_code'),main_obj.get_search_key()))
+                    templ_button.add_behavior(obs.get_templ_wo_behavior(main_obj.get_value('templ_me'),
+                                                                        main_obj.get_value('work_order_templ_code'),
+                                                                        main_obj.get_search_key()))
                 templ_butt = bbr.add_cell(templ_button)
                 templ_butt.add_attr('class', 'templ_butt_%s' % my.sk)
                 templ_butt.add_attr('width', '100%')
@@ -382,7 +410,9 @@ class WorkOrderRow(BaseRefreshWdg):
                 my.server.update(eu_sk, {'client_code': main_obj.get_value('client_code')}, triggers=False)
             eu_row = bottom.add_row()
             eu_row.add_attr('class', 'EquipmentUsedRowRow row_%s' % eu_sk)
-            eu_obj = EquipmentUsedRow(sk=eu_sk, parent_sk=my.sk, order_sk=my.order_sk, parent_sid=my.search_id, groups_str=my.groups_str, user=my.user, display_mode=my.disp_mode, is_master=my.is_master_str,main_obj=eu)
+            eu_obj = EquipmentUsedRow(sk=eu_sk, parent_sk=my.sk, order_sk=my.order_sk, parent_sid=my.search_id,
+                                      groups_str=my.groups_str, user=my.user, display_mode=my.disp_mode,
+                                      is_master=my.is_master_str, main_obj=eu)
             eu_cell = bottom.add_cell(eu_obj)
             eu_cell.add_attr('width', '100%')
             eu_cell.add_attr('sk', eu_sk)
