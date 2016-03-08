@@ -416,7 +416,7 @@ try {
     title_sk = '%s';
     order_sk = '%s';
     kwargs = {'parent_sk': title_sk, 'order_sk': order_sk, 'search_type': 'twog/proj'};
-    spt.panel.load_popup('Add Proj(s)', 'order_builder.order_builder.MultiManualAdderWdg', kwargs);
+    spt.panel.load_popup('Add Proj(s)', 'order_builder.MultiManualAdderWdg', kwargs);
 }
 catch(err){
     spt.app_busy.hide();

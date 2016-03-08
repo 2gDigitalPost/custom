@@ -2649,7 +2649,7 @@ class OBScripts(BaseRefreshWdg):
                             proj_sk = '%s';
                             order_sk = '%s';
                             kwargs = {'parent_sk': proj_sk, 'order_sk': order_sk, 'search_type': 'twog/work_order'};
-                            spt.panel.load_popup('Add Work Order(s)', 'order_builder.order_builder.MultiManualAdderWdg', kwargs);
+                            spt.panel.load_popup('Add Work Order(s)', 'order_builder.MultiManualAdderWdg', kwargs);
                 }
                 catch(err){
                           spt.app_busy.hide();
