@@ -1,6 +1,6 @@
 __all__ = ["OrderBuilderLauncherWdg", "TitleSelectorWdg", "TitleCloneSelectorWdg",
            "TitleDeletorWdg", "TitleProjStatusTriggerWdg", "OrderBuilder", "TitleRow", "AddWorkOrderWdg",
-           "AddProjWdg", "EditHackPipe", "HackPipeConnectWdg", "TitleSourceInspectorWdg", "DeliverableWdg",
+           "AddProjWdg", "EditHackPipe", "HackPipeConnectWdg", "DeliverableWdg",
            "IntermediateEditWdg", "DeliverableEditWdg", "WorkOrderSourceAddWdg", "TwogEasyCheckinWdg",
            "OutsideBarcodesListWdg", "NewSourceWdg", "SourceEditWdg", "ProjDueDateChanger", "OutFilesWdg",
            "SourcePortalWdg", "IntermediatePassinAddWdg", "DeliverablePassinAddWdg", "DeliverableAddWdg",
@@ -1754,58 +1754,6 @@ class HackPipeConnectWdg(BaseRefreshWdg):
         c2 = table.add_cell(inner_tbl)
         c2.add_attr('align','center')
         table.add_cell(' ')
-        return table
-
-class TitleSourceInspectorWdg(BaseRefreshWdg): 
-
-    def init(my):
-        my.search_type = 'twog/title'
-        my.title = 'Title'
-        my.sk = ''
-        my.code = ''
-        my.x_butt = "<img src='/context/icons/common/BtnKill_Black.gif' title='Delete' name='Delete'/>" 
-
-    def get_display(my):
-        my.sk = str(my.kwargs.get('search_key'))
-        my.code = my.sk.split('code=')[1]
-        user_group_names = Environment.get_group_names()
-        groups_str = ''
-        for mg in user_group_names:
-            if groups_str == '':
-                groups_str = mg
-            else:
-                groups_str = '%s,%s' % (groups_str, mg)
-        user_is_scheduler = False
-        if 'scheduling' in groups_str:
-            user_is_scheduler = True
-        sources_search = Search("twog/title_origin")
-        sources_search.add_filter('title_code',my.code)
-        sources_searched = sources_search.get_sobjects()
-        sources = []
-        for ss in sources_searched:
-            sources.append(ss.get_value('source_code'))
-        obs = OBScripts()
-        table = Table()
-        table.add_attr('class', 'titlesourceinspector_%s' % my.sk)
-        if sources in [None,[]]:
-            table.add_row()
-            table.add_cell('There are no sources attached to this Title')
-        else:
-            for source_link in sources:
-                source_search = Search("twog/source")
-                source_search.add_filter('code',source_link)
-                source = source_search.get_sobject()
-                row = table.add_row()
-                row.add_attr('class', 'titlesourceinspector_source_%s' % source.get_value('code'))
-                if user_is_scheduler:
-                    killer = table.add_cell(my.x_butt)
-                    killer.add_style('cursor: pointer;')
-                    killer.add_behavior(obs.get_kill_title_source_behavior(source.get_value('code'), '%s: %s' % (source.get_value('title'), source.get_value('episode')), my.sk))
-                name = table.add_cell('<b><u>Barcode: %s  Title: %s: %s, Code : %s</u></b>' % (source.get_value('barcode'), source.get_value('title'), source.get_value('episode'), source.get_value('code'))) 
-                name.add_attr('nowrap','nowrap')
-                name.add_style('cursor: pointer;')
-                name.add_behavior(obs.get_launch_source_behavior(my.code,my.sk,source.get_value('code'),source.get_search_key()))
-
         return table
 
 

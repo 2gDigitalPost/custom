@@ -714,7 +714,7 @@ try {
     search_key = '%s';
     name = '%s';
     kwargs = {'search_key': search_key};
-    spt.panel.load_popup('Source Inspector for ' + name, 'order_builder.order_builder.TitleSourceInspectorWdg', kwargs);
+    spt.panel.load_popup('Source Inspector for ' + name, 'order_builder.TitleSourceInspectorWdg', kwargs);
 }
 catch(err) {
     spt.app_busy.hide();

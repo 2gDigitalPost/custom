@@ -22,5 +22,6 @@ from quick_edit_wdg import *
 from sources_row import *
 from title_due_prio_bb_wdg import *
 from title_row import *
+from title_source_inspector_wdg import *
 from work_order_row import *
 from work_order_sources_row import *

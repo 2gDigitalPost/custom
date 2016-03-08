@@ -2426,60 +2426,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (work_order_code, work_order_sk, wo_source, my.order_sk)}
         return behavior
 
-    def get_kill_title_source_behavior(my, source_code, source_name, title_sk):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m43');
-                          var source_code = '%s';
-                          var source_name = '%s';
-                          var title_sk = '%s';
-                          var title_code = title_sk.split('code=')[1];
-                          var order_sk = '';
-                          if(confirm('Do you really want to delete ' + source_name + ' from this Title?')){
-                              var server = TacticServerStub.get();
-                              title_origin = server.eval("@SOBJECT(twog/title_origin['title_code','" + title_code + "']['source_code','" + source_code + "'])");
-                              if(title_origin.length > 0){
-                                  server.delete_sobject(title_origin[0].__search_key__);
-                                  var title_source_els = document.getElementsByClassName('sources_' + title_sk);
-                                  for(var d = 0; d < title_source_els.length; d++){
-                                      order_sk = title_source_els[d].getAttribute('order_sk');
-                                      spt.api.load_panel(title_source_els[d], 'order_builder.SourcesRow', {title_code: title_code, title_sk: title_sk, order_sk: order_sk});
-                                  }
-                              }
-                              reload_wos = [];
-                              projs = server.eval("@SOBJECT(twog/proj['title_code','" + title_code + "'])");
-                              for(var r = 0; r < projs.length; r++){
-                                  work_orders = server.eval("@SOBJECT(twog/work_order['proj_code','" + projs[r].code + "'])");
-                                  for(var k = 0; k < work_orders.length; k++){
-                                      wosses = server.eval("@SOBJECT(twog/work_order_sources['work_order_code','" + work_orders[k].code + "']['source_code','" + source_code + "'])");
-                                      if(wosses.length > 0){
-                                          reload_wos.push(work_orders[k].__search_key__);
-                                      }
-                                      for(var w = 0; w < wosses.length; w++){
-                                          server.delete_sobject(wosses[w].__search_key__);
-                                      }
-                                  }
-                              }
-                              for(var r = 0; r < reload_wos.length; r++){
-                                  var source_els = document.getElementsByClassName('wo_sources_' + reload_wos[r]);
-                                  for(var p = 0; p < source_els.length; p++){
-                                      spt.api.load_panel(source_els[p], 'order_builder.WorkOrderSourcesRow', {'work_order_code': reload_wos[r].split('code=')[1], 'work_order_sk': reload_wos[r], 'order_sk': order_sk});
-                                  }
-                              }
-                             this_els = document.getElementsByClassName('titlesourceinspector_' + title_sk);
-                             for(var r = 0; r < this_els.length; r++){
-                                 spt.api.load_panel(this_els[r], 'order_builder.TitleSourceInspectorWdg', {'search_key': title_sk});
-                             }
-                          }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (source_code, source_name, title_sk)}
-        return behavior
-
     def get_launch_source_behavior(my, title_code, title_sk, source_code, source_sk):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
