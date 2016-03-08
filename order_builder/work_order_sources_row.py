@@ -284,7 +284,7 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
         return two_gether
 
 
-def get_launch_wo_inter_behavior(order_sk, work_order_code, work_order_sk, wo_inter):
+def get_launch_wo_inter_behavior(work_order_code, work_order_sk, wo_inter, order_sk):
     behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                     try{
                       //alert('m41');

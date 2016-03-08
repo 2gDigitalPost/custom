@@ -292,7 +292,7 @@ catch(err) {
     return behavior
 
 
-def get_launch_wo_source_behavior(order_sk, work_order_code, work_order_sk, wo_source):
+def get_launch_wo_source_behavior(work_order_code, work_order_sk, wo_source, order_sk):
     behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                     try{
                       //alert('m42');
@@ -309,6 +309,26 @@ def get_launch_wo_source_behavior(order_sk, work_order_code, work_order_sk, wo_s
                       //alert(err);
             }
      ''' % (work_order_code, work_order_sk, wo_source, order_sk)}
+    return behavior
+
+
+def get_open_intermediate_behavior(intermediate_code, work_order_code, client_code, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m32');
+                      var server = TacticServerStub.get();
+                      intermediate_code = '%s';
+                      work_order_code = '%s';
+                      client_code = '%s';
+                      order_sk = '%s';
+                      spt.panel.load_popup('Intermediate File Portal', 'order_builder.IntermediateEditWdg', {'order_sk': order_sk, 'work_order_code': work_order_code, 'intermediate_code': intermediate_code, 'client_code': client_code});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (intermediate_code, work_order_code, client_code, order_sk)}
     return behavior
 
 
@@ -941,84 +961,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (eqsk, eqname, work_order_code)}
         return behavior
 
-    def get_deliverable_passin_killer_behavior(my, passin_code, work_order_code, wo_templ_code, parent_pipe, client_code, is_master, title):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                           //alert('m2');
-                           var server = TacticServerStub.get();
-                           var passin_code = '%s';
-                           var work_order_code = '%s';
-                           var wo_templ_code = '%s';
-                           var parent_pipe = '%s';
-                           client_code = '%s';
-                           is_master = '%s';
-                           title = '%s';
-                           var order_sk = '%s';
-                           if(confirm("Are you sure you want to delete '" + title + "' from this work order's Passed-in elements?")){
-                               passin = server.eval("@SOBJECT(twog/work_order_passin['code','" + passin_code + "'])")[0];
-                               if(is_master == 'true'){
-                                   if(passin.passin_templ_code != ''){
-                                       pass_templ_sk = server.build_search_key('twog/work_order_passin_templ', passin.passin_templ_code);
-                                       server.retire_sobject(pass_templ_sk);
-                                   }
-                               }
-                               server.retire_sobject(passin.__search_key__);
-                               var top_el = spt.api.get_parent(bvr.src_el, '.sp_overhead_' + work_order_code);
-                               reload_cell = top_el.getElementsByClassName('sp_list_cell')[0];
-                               spt.api.load_panel(reload_cell, 'order_builder.SourcePortalWdg', {'work_order_code': work_order_code, 'parent_pipe': parent_pipe, 'client_code': client_code, 'is_master': is_master, 'order_sk': order_sk});
-                               wo_sk = server.build_search_key('twog/work_order', work_order_code);
-                               var source_el = document.getElementsByClassName('wo_sources_' + wo_sk)[0];
-                               spt.api.load_panel(source_el, 'order_builder.WorkOrderSourcesRow', {'work_order_code': work_order_code, 'work_order_sk': wo_sk, 'order_sk': order_sk});
-                           }
-
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (passin_code, work_order_code, wo_templ_code, parent_pipe, client_code, is_master, title, my.order_sk)}
-        return behavior
-
-    def get_intermediate_passin_killer_behavior(my, passin_code, work_order_code, wo_templ_code, parent_pipe, client_code, is_master, title):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                           //alert('m3');
-                           var server = TacticServerStub.get();
-                           var passin_code = '%s';
-                           var work_order_code = '%s';
-                           var wo_templ_code = '%s';
-                           var parent_pipe = '%s';
-                           var client_code = '%s';
-                           var is_master = '%s';
-                           var title = '%s';
-                           var order_sk = '%s';
-                           //alert('got me');
-                           if(confirm("Are you sure you want to delete '" + title + "' from this work order's Passed-in elements?")){
-                               passin = server.eval("@SOBJECT(twog/work_order_passin['code','" + passin_code + "'])")[0];
-                               if(is_master == 'true'){
-                                   if(passin.passin_templ_code != ''){
-                                       pass_templ_sk = server.build_search_key('twog/work_order_passin_templ', passin.passin_templ_code);
-                                       server.retire_sobject(pass_templ_sk);
-                                   }
-                               }
-                               server.retire_sobject(passin.__search_key__);
-                               var top_el = spt.api.get_parent(bvr.src_el, '.sp_overhead_' + work_order_code);
-                               reload_cell = top_el.getElementsByClassName('sp_list_cell')[0];
-                               spt.api.load_panel(reload_cell, 'order_builder.SourcePortalWdg', {'work_order_code': work_order_code, 'parent_pipe': parent_pipe, 'client_code': client_code, 'is_master': is_master, 'order_sk': order_sk});
-                               wo_sk = server.build_search_key('twog/work_order', work_order_code);
-                               var source_el = document.getElementsByClassName('wo_sources_' + wo_sk)[0];
-                               spt.api.load_panel(source_el, 'order_builder.WorkOrderSourcesRow', {'work_order_code': work_order_code, 'work_order_sk': wo_sk, 'order_sk': order_sk});
-                           }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (passin_code, work_order_code, wo_templ_code, parent_pipe, client_code, is_master, title, my.order_sk)}
-        return behavior
-
     def get_assign_intermediate_passins_behavior(my, work_order_code):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
@@ -1092,42 +1034,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (work_order_code, my.order_sk)}
-        return behavior
-
-    def get_add_deliverable_passin_behavior(my, work_order_code, wo_templ_code, proj_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                           var server = TacticServerStub.get();
-                           var work_order_code = '%s';
-                           var wo_templ_code = '%s';
-                           var proj_code = '%s';
-                           var order_sk = '%s';
-                           spt.panel.load_popup('Choose a Permanent Element to Add as a Source', 'order_builder.DeliverablePassinAddWdg', {'work_order_code': work_order_code, 'order_sk': order_sk, 'wo_templ_code': wo_templ_code, 'proj_code': proj_code});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (work_order_code, wo_templ_code, proj_code, my.order_sk)}
-        return behavior
-
-    def get_add_intermediate_passin_behavior(my, work_order_code, wo_templ_code, proj_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                           var server = TacticServerStub.get();
-                           var work_order_code = '%s';
-                           var wo_templ_code = '%s';
-                           var proj_code = '%s';
-                           var order_sk = '%s';
-                           spt.panel.load_popup('Choose an Intermediate File to Add as a Source', 'order_builder.IntermediatePassinAddWdg', {'work_order_code': work_order_code, 'order_sk': order_sk, 'wo_templ_code': wo_templ_code, 'proj_code': proj_code});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (work_order_code, wo_templ_code, proj_code, my.order_sk)}
         return behavior
 
     def get_templ_proj_behavior(my, templ_me, proj_templ_code, sk):
@@ -1481,81 +1387,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (work_order_code, work_order_sk, call_me, my.order_sk)}
         return behavior
 
-    def get_template_intermediate_passin_behavior(my, work_order_code, work_order_templ_code, passin_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m22');
-                          var server = TacticServerStub.get();
-                          work_order_code = '%s';
-                          work_order_templ_code = '%s';
-                          passin_code = '%s';
-                          passin = server.eval("@SOBJECT(twog/work_order_passin['code','" + passin_code + "'])")[0];
-                          woi_code = passin.work_order_intermediate_code;
-                          woi = server.eval("@SOBJECT(twog/work_order_intermediate['code','" + woi_code + "'])")[0];
-                          intf = server.eval("@SOBJECT(twog/intermediate_file['code','" + woi.intermediate_file_code + "'])");
-                          intermediate_file_templ_code = '';
-                          if(intf.length > 0){
-                                  intermediate_file_templ_code = intf[0].intermediate_file_templ_code;
-                                  //alert(intermediate_file_templ_code);
-                                  if(intermediate_file_templ_code != ''){
-                                      var pt_ins = server.insert('twog/work_order_passin_templ', {'work_order_templ_code': work_order_templ_code, 'intermediate_file_templ_code': intermediate_file_templ_code});
-                                      server.update(passin.__search_key__, {'passin_templ_code': pt_ins.code});
-                                      var top_el = spt.api.get_parent(bvr.src_el, '.sp_overhead_' + work_order_code);
-                                      var cell = top_el.getElementsByClassName('sp_templ_' + passin_code)[0];
-                                      cell.innerHTML = '<img border="0" style="vertical-align: middle" title="Templated" name="Templated" src="/context/icons/silk/tick.png">';
-                                  }
-                          }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (work_order_code, work_order_templ_code, passin_code)}
-        return behavior
-
-    def get_template_deliverable_passin_behavior(my, work_order_code, work_order_templ_code, passin_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m23');
-                          var server = TacticServerStub.get();
-                          work_order_code = '%s';
-                          work_order_templ_code = '%s';
-                          passin_code = '%s';
-                          //alert(passin_code);
-                          passin = server.eval("@SOBJECT(twog/work_order_passin['code','" + passin_code + "'])")[0];
-                          //alert(passin);
-                          wod_code = passin.work_order_deliverables_code;
-                          //alert(wod_code);
-                          wod = server.eval("@SOBJECT(twog/work_order_deliverables['code','" + wod_code + "'])")[0];
-                          dts = server.eval("@SOBJECT(twog/deliverable_templ['work_order_deliverables_code','" + wod_code + "'])");
-                          deliverable_templ_code = '';
-                          //alert(wod);
-                          //alert(dts.length);
-                          for(var r = 0; r < dts.length; r++){
-                              //alert("dNAME = " + dts[r].name + " dATTN = " + dts[r].attn + " dDELIVER_TO = " + dts[r].deliver_to + " || wodNAME = " + wod.name + " wodATTN = " + wod.attn + " wodDELIVER_TO = " + wod.deliver_to);
-                              if(dts[r].name == wod.name && dts[r].attn == dts[r].attn && dts[r].deliver_to == wod.deliver_to){
-                                  deliverable_templ_code = dts[r].code;
-                              }
-                          }
-                          //alert(deliverable_templ_code);
-                          if(deliverable_templ_code != ''){
-                              //alert("poink");
-                              var pt_ins = server.insert('twog/work_order_passin_templ', {'work_order_templ_code': work_order_templ_code, 'deliverable_templ_code': deliverable_templ_code});
-                              server.update(passin.__search_key__, {'passin_templ_code': pt_ins.code});
-                              var top_el = spt.api.get_parent(bvr.src_el, '.sp_overhead_' + work_order_code);
-                              var cell = top_el.getElementsByClassName('sp_templ_' + passin_code)[0];
-                              cell.innerHTML = '<img border="0" style="vertical-align: middle" title="Templated" name="Templated" src="/context/icons/silk/tick.png">';
-                          }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (work_order_code, work_order_templ_code, passin_code)}
-        return behavior
-
     def get_template_deliverable_behavior(my, wo_deliverable_code, wo_templ_code, deliverable_source_code, work_order_code):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
@@ -1884,25 +1715,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (prereq_code, prereq_st, sob_code, pipeline)}
-        return behavior
-
-    def get_open_intermediate_behavior(my, intermediate_code, work_order_code, client_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m32');
-                          var server = TacticServerStub.get();
-                          intermediate_code = '%s';
-                          work_order_code = '%s';
-                          client_code = '%s';
-                          order_sk = '%s';
-                          spt.panel.load_popup('Intermediate File Portal', 'order_builder.IntermediateEditWdg', {'order_sk': order_sk, 'work_order_code': work_order_code, 'intermediate_code': intermediate_code, 'client_code': client_code});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (intermediate_code, work_order_code, client_code, my.order_sk)}
         return behavior
 
     def get_open_deliverable_behavior(my, deliverable_source_code, work_order_code, title_code, open_type):
@@ -2444,38 +2256,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (title_code, title_sk, source_code, source_sk, my.order_sk)}
-        return behavior
-
-    def get_source_killer_behavior(my, wo_source_code, work_order_code, parent_pipe, client_code, is_master, title): #SIDDED
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m44');
-                          var server = TacticServerStub.get();
-                          wo_source_code = '%s';
-                          work_order_code = '%s';
-                          parent_pipe = '%s';
-                          client_code = '%s';
-                          is_master = '%s';
-                          title = '%s';
-                          order_sk = '%s';
-                          if(confirm("Are you sure you want to delete " + title + " from this work order?")){
-                              wo_source_sk = server.build_search_key('twog/work_order_sources', wo_source_code);
-                              server.retire_sobject(wo_source_sk);
-                              var top_el = spt.api.get_parent(bvr.src_el, '.sp_overhead_' + work_order_code);
-                              reload_cell = top_el.getElementsByClassName('sp_list_cell')[0];
-                              spt.api.load_panel(reload_cell, 'order_builder.SourcePortalWdg', {'work_order_code': work_order_code, 'parent_pipe': parent_pipe, 'client_code': client_code, 'is_master': is_master, 'order_sk': order_sk});
-                              wo_sk = server.build_search_key('twog/work_order', work_order_code);
-                              var source_el = document.getElementsByClassName('wo_sources_' + wo_sk)[0];
-                              spt.api.load_panel(source_el, 'order_builder.WorkOrderSourcesRow', {'work_order_code': work_order_code, 'work_order_sk': wo_sk, 'order_sk': order_sk});
-                          }
-
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (wo_source_code, work_order_code, parent_pipe, client_code, is_master, title, my.order_sk)}
         return behavior
 
     def get_save_task_info_behavior(my, task_sk, parent_sk, parent_pyclass):

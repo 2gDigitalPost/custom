@@ -3,7 +3,7 @@ __all__ = ["OrderBuilderLauncherWdg", "TitleSelectorWdg", "TitleCloneSelectorWdg
            "AddProjWdg", "EditHackPipe", "HackPipeConnectWdg", "DeliverableWdg",
            "IntermediateEditWdg", "DeliverableEditWdg", "WorkOrderSourceAddWdg", "TwogEasyCheckinWdg",
            "OutsideBarcodesListWdg", "NewSourceWdg", "SourceEditWdg", "ProjDueDateChanger", "OutFilesWdg",
-           "SourcePortalWdg", "IntermediatePassinAddWdg", "DeliverablePassinAddWdg", "DeliverableAddWdg",
+           "IntermediatePassinAddWdg", "DeliverablePassinAddWdg", "DeliverableAddWdg",
            "IntermediateFileAddWdg", "TitleAdderWdg", "EquipmentUsedAdderWdg", "EquipmentUsedMultiAdderWdg",
            "OperatorErrorDescriptPopupWdg", "ExternalRejectionReasonWdg", "Barcoder", "TitleRedoWdg",
            "MultiManualAdderWdg"]
@@ -33,7 +33,7 @@ from common_tools.common_functions import fix_date
 from builder_tools_wdg import BuilderTools
 from task_edit_widget import TaskEditWdg
 from title_row import TitleRow
-from order_builder_utils import OBScripts, get_upload_behavior
+from order_builder_utils import OBScripts, get_upload_behavior, get_open_intermediate_behavior
 from order_table_wdg import OrderTable
 from quick_edit_wdg import QuickEditWdg
 
@@ -2399,7 +2399,8 @@ class OutFilesWdg(BaseRefreshWdg):
             popper = inters_tbl.add_cell('<u>%s</u>' % inter.get_value('title'))
             popper.add_attr('nowrap','nowrap')
             popper.add_style('cursor: pointer;')
-            popper.add_behavior(obs.get_open_intermediate_behavior(inter.get_value('code'),my.work_order_code, my.client_code))
+            popper.add_behavior(get_open_intermediate_behavior(inter.get_value('code'), my.work_order_code,
+                                                               my.client_code, my.order_sk))
 
             if str(inter1.get_value('satisfied')) == 'True':
                 check_val = 'true'
@@ -2498,183 +2499,6 @@ class OutFilesWdg(BaseRefreshWdg):
         oh_cell.add_attr('class','out_list_cell')
         return overhead
 
-class SourcePortalWdg(BaseRefreshWdg): 
-
-    def init(my):
-        my.work_order_code = ''
-        my.client_code = ''
-        my.parent_pipe = ''
-        my.order_sk = ''
-        my.is_master = ''
-        my.x_butt = "<img src='/context/icons/common/BtnKill_Black.gif' title='Delete' name='Delete'/>" 
-
-    def get_display(my):
-        my.work_order_code = str(my.kwargs.get('work_order_code'))
-        my.client_code = str(my.kwargs.get('client_code'))
-        my.parent_pipe = str(my.kwargs.get('parent_pipe'))
-        my.is_master = str(my.kwargs.get('is_master'))
-        my.order_sk = str(my.kwargs.get('order_sk'))
-        wo_search = Search("twog/work_order")
-        wo_search.add_filter('code',my.work_order_code)
-        work_order = wo_search.get_sobject()
-        wo_sk = work_order.get_search_key()
-        proj_code = work_order.get_value('proj_code')
-        wo_templ_code = work_order.get_value('work_order_templ_code')
-        ws_search = Search("twog/work_order_sources")
-        ws_search.add_filter("work_order_code",my.work_order_code)
-        work_order_sources = ws_search.get_sobjects()
-
-        user_group_names = Environment.get_group_names()
-        groups_str = ''
-        for mg in user_group_names:
-            if groups_str == '':
-                groups_str = mg
-            else:
-                groups_str = '%s,%s' % (groups_str, mg)
-        user_is_scheduler = False
-        if 'scheduling' in groups_str:
-            user_is_scheduler = True
-        
-        ignore_processes = work_order.get_value('process')
-        other_search = Search("twog/work_order")
-        other_search.add_filter('proj_code',work_order.get_value('proj_code'))
-        other_search.add_filter('process',ignore_processes, op="!=")
-        all_other_wos = other_search.get_sobjects()
-        
-        all_other_interms = {}
-        for other in all_other_wos:
-            or_search = Search("twog/work_order_intermediate")
-            or_search.add_filter('work_order_code',other.get_value('code'))
-            other_reals = or_search.get_sobjects()
-            for otr in other_reals:
-                intermediate_file_code = otr.get_value('intermediate_file_code')
-                inter_search = Search("twog/intermediate_file")
-                inter_search.add_filter('code',intermediate_file_code)
-                intermediate_file = inter_search.get_sobject()
-                inter_title = intermediate_file.get_value('inter_file') 
-                if other.get_value('code') not in all_other_interms.keys():
-                    all_other_interms[other.get_value('code')] = []
-                all_other_interms[other.get_value('code')].append([inter_title, intermediate_file.get_value('code')])
-         
-        order_code = my.order_sk.split('code=')[1]
-        overhead = Table()
-        overhead.add_attr('class','sp_overhead_%s' % my.work_order_code)
-        overhead.add_attr('client_code',my.client_code)
-        overhead.add_attr('is_master',my.is_master)
-        overhead.add_attr('parent_pipe',my.parent_pipe)
-        obs = OBScripts(order_sk=my.order_sk)
-        table = Table()
-        src_tbl = Table()
-        for sc in work_order_sources:
-            src_search = Search("twog/source")
-            src_search.add_filter('code',sc.get_value('source_code'))
-            src = src_search.get_sobjects()
-            if len(src) > 0:
-                src = src[0]
-                src_tbl.add_row()
-                if user_is_scheduler:
-                    killer = src_tbl.add_cell(my.x_butt)
-                    killer.add_style('cursor: pointer;')
-                    killer.add_behavior(obs.get_source_killer_behavior(sc.get_value('code'), my.work_order_code, my.parent_pipe, my.client_code, my.is_master, '%s: %s' % (src.get_value('title'), src.get_value('episode'))))
-                alabel = src_tbl.add_cell('Source: ')
-                alabel.add_attr('align','center')
-                popper = src_tbl.add_cell('<u>%s: %s</u>' % (src.get_value('title'), src.get_value('episode')))
-                popper.add_attr('nowrap','nowrap')
-                popper.add_style('cursor: pointer;')
-                popper.add_behavior(obs.get_launch_wo_source_behavior(my.work_order_code, wo_sk, src.get_value('code')))
-        table.add_row()
-        table.add_cell(src_tbl)
-
-        pass_search = Search("twog/work_order_passin")
-        pass_search.add_filter('work_order_code',my.work_order_code)
-        passins = pass_search.get_sobjects()
-
-        table.add_row()
-        table.add_cell(' ')
-        table.add_cell(' ')
-        add_deliv_passin_butt= table.add_cell('<input type="button" value="Add Permanent Element Pass-in"/>')
-        add_deliv_passin_butt.add_attr('colspan','2')
-        add_deliv_passin_butt.add_behavior(obs.get_add_deliverable_passin_behavior(my.work_order_code, wo_templ_code, proj_code))
-        # Now do passed in permanent sources, which can be templated
-        dsrc_tbl = Table()
-        for p in passins:
-            if p.get_value('deliverable_source_code') not in [None,'']:
-                ds_search = Search("twog/source")
-                ds_search.add_filter('code',p.get_value('deliverable_source_code'))
-                d_source = ds_search.get_sobjects()
-                if len(d_source) > 0: 
-                    d_source = d_source[0]
-                    dsrc_tbl.add_row()
-                    if user_is_scheduler:
-                        killer = dsrc_tbl.add_cell(my.x_butt)
-                        killer.add_style('cursor: pointer;')
-                        killer.add_behavior(obs.get_deliverable_passin_killer_behavior(p.get_value('code'), my.work_order_code, wo_templ_code, my.parent_pipe, my.client_code, my.is_master, '%s: %s' % (d_source.get_value('title'), d_source.get_value('episode'))))
-                    alabel = dsrc_tbl.add_cell('Source: ')
-                    alabel.add_attr('align','center')
-                    popper = dsrc_tbl.add_cell('<u>%s: %s</u>' % (d_source.get_value('title'), d_source.get_value('episode')))
-                    popper.add_attr('nowrap','nowrap')
-                    popper.add_style('cursor: pointer;')
-                    popper.add_behavior(obs.get_launch_wo_source_behavior(my.work_order_code, wo_sk, d_source.get_value('code')))
-                    if my.is_master in [True,'true','True',1,'t']:
-                        if p.get_value('passin_templ_code') in [None,'']:
-                            template_button = ButtonSmallNewWdg(title="Template This Passed-in Source", icon=CustomIconWdg.icons.get('TEMPLATE'))
-                            if my.is_master == 'true':
-                                template_button.add_behavior(obs.get_template_deliverable_passin_behavior(my.work_order_code, wo_templ_code, p.get_value('code')))
-                        else:
-                            template_button = '<img border="0" style="vertical-align: middle" title="Templated" name="Templated" src="/context/icons/silk/tick.png">'
-                        tb = dsrc_tbl.add_cell(template_button)
-                        tb.add_attr('class', 'sp_templ_%s' % p.get_value('code'))
-        if my.is_master in [True,'true','True',1,'t']:              
-            table.add_row()
-            table.add_cell(dsrc_tbl)
-
-        table.add_row()
-        divider = table.add_cell('<hr/>') 
-        divider.add_attr('colspan','4')
-        table.add_row()
-        table.add_cell(' ')
-        table.add_cell(' ')
-        adinter_fm_butt = table.add_cell('<input type="button" value="Add Intermediate Pass-in"/>')
-        adinter_fm_butt.add_attr('colspan','2')
-        adinter_fm_butt.add_behavior(obs.get_add_intermediate_passin_behavior(my.work_order_code, wo_templ_code, proj_code))
-        inter_tbl = Table()
-        for p in passins:
-            if p.get_value('intermediate_file_code') not in [None,'']:
-                in_search = Search("twog/intermediate_file")
-                in_search.add_filter('code',p.get_value('intermediate_file_code'))
-                inter_f = in_search.get_sobjects()
-                if len(inter_f) > 0: 
-                    inter_f = inter_f[0]
-                    inter_tbl.add_row()
-                    if user_is_scheduler:
-                        killer = inter_tbl.add_cell(my.x_butt)
-                        killer.add_style('cursor: pointer;')
-                        killer.add_behavior(obs.get_intermediate_passin_killer_behavior(p.get_value('code'), my.work_order_code, wo_templ_code, my.parent_pipe, my.client_code, my.is_master, inter_f.get_value('title')))
-                    alabel = inter_tbl.add_cell('Intermediate: ')
-                    alabel.add_attr('align','center')
-                    popper = inter_tbl.add_cell('<u>%s</u>' % (inter_f.get_value('title')))
-                    popper.add_attr('nowrap','nowrap')
-                    popper.add_style('cursor: pointer;')
-                    popper.add_behavior(obs.get_open_intermediate_behavior(inter_f.get_value('code'),my.work_order_code, my.client_code))
-                    if my.is_master in [True,'true','True',1,'t']:
-                        if p.get_value('passin_templ_code') in [None,'']:
-                            template_button = ButtonSmallNewWdg(title="Template This Passed-in Intermediate File", icon=CustomIconWdg.icons.get('TEMPLATE'))
-                        if my.is_master == 'true':
-                            template_button.add_behavior(obs.get_template_intermediate_passin_behavior(my.work_order_code, wo_templ_code, p.get_value('code')))
-                        else:
-                            template_button = '<img border="0" style="vertical-align: middle" title="Templated" name="Templated" src="/context/icons/silk/tick.png">'
-                        tb = inter_tbl.add_cell(template_button)
-                        tb.add_attr('class', 'sp_templ_%s' % p.get_value('code'))
-         
-                     
-        table.add_row()
-        table.add_cell(inter_tbl)
-
-        overhead.add_row()
-        oh_cell = overhead.add_cell(table)
-        oh_cell.add_attr('class', 'sp_list_cell')
-
-        return overhead
 
 class IntermediatePassinAddWdg(BaseRefreshWdg): 
 
