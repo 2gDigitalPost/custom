@@ -292,6 +292,26 @@ catch(err) {
     return behavior
 
 
+def get_launch_wo_source_behavior(order_sk, work_order_code, work_order_sk, wo_source):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m42');
+                      var server = TacticServerStub.get();
+                      var work_order_code = '%s';
+                      var work_order_sk = '%s';
+                      var wo_source = '%s';
+                      var order_sk = '%s';
+                      spt.panel.load_popup('Source Portal', 'order_builder.SourceEditWdg', {'code': wo_source, 'order_sk': order_sk});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (work_order_code, work_order_sk, wo_source, order_sk)}
+    return behavior
+
+
 class OBScripts(BaseRefreshWdg):
     def init(my):
         my.order_sk = ''
@@ -2385,33 +2405,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (work_order_code, work_order_sk, wo_deliv, my.order_sk)}
-        return behavior
-
-    def get_launch_wo_inter_behavior(my, work_order_code, work_order_sk, wo_inter):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m41');
-                          var server = TacticServerStub.get();
-                          var work_order_code = '%s';
-                          var work_order_sk = '%s';
-                          var wo_inter = '%s';
-                          var order_sk = '%s';
-                          var inter_sk = server.build_search_key('twog/intermediate_file',wo_inter);
-                          var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
-                          var wo_cell = top_el.getElementsByClassName('cell_' + work_order_sk)[0];
-                          var proj_cell = top_el.getElementsByClassName('cell_' + wo_cell.getAttribute('parent_sk'))[0];
-                          var title_sk = proj_cell.getAttribute('parent_sk');
-                          var title_cell = top_el.getElementsByClassName('cell_' + title_sk)[0];
-                          var client_code = top_el.getAttribute('client_code');
-                          var title_code = title_sk.split('code=')[1];
-                          spt.panel.load_popup('Intermediate File Portal', 'order_builder.IntermediateEditWdg', {'order_sk': order_sk, 'work_order_code': work_order_code, 'intermediate_code': wo_inter, 'client_code': client_code});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (work_order_code, work_order_sk, wo_inter, my.order_sk)}
         return behavior
 
     def get_launch_wo_source_behavior(my, work_order_code, work_order_sk, wo_source):

@@ -5,7 +5,7 @@ from pyasm.search import Search
 from pyasm.web import Table
 from pyasm.widget import TextWdg
 
-from order_builder_utils import OBScripts
+from order_builder_utils import OBScripts, get_launch_wo_source_behavior
 
 
 class WorkOrderSourcesRow(BaseRefreshWdg):
@@ -16,7 +16,7 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
         my.work_order_code = ''
         my.order_sk = ''
 
-    def get_snapshot_file_link(my,snapshot_code):
+    def get_snapshot_file_link(my, snapshot_code):
         what_to_ret = ''
         base = '/volumes'
         rel_paths = my.server.get_all_paths_from_snapshot(snapshot_code, mode='relative')
@@ -91,13 +91,14 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
             celly.add_attr('nowrap','nowrap')
             celly.add_style('cursor: pointer;')
             celly.add_style('font-size: 80%s;' % '%')
-            celly.add_behavior(obs.get_launch_wo_source_behavior(my.work_order_code, my.work_order_sk, source.get_value('code')))
+            celly.add_behavior(get_launch_wo_source_behavior(my.work_order_code, my.work_order_sk,
+                                                             source.get_value('code'), my.order_sk))
             if count % source_limit == 0:
                 table.add_row()
             inner_cell = table.add_cell(inner_table)
             inner_cell.add_attr('valign', 'top')
             table.add_cell(' &nbsp;&nbsp; ')
-            count = count + 1
+            count += 1
 
         inter_pass_table = Table()
         inter_pass_table.add_attr('width', '100%')
@@ -118,7 +119,8 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
             celly.add_attr('nowrap', 'nowrap')
             celly.add_style('cursor: pointer;')
             celly.add_style('font-size: 80%;')
-            celly.add_behavior(obs.get_launch_wo_inter_behavior(my.work_order_code,my.work_order_sk,intermediate.get_value('code')))
+            celly.add_behavior(get_launch_wo_inter_behavior(my.work_order_code, my.work_order_sk,
+                                                            intermediate.get_value('code'), my.order_sk))
             if count % source_limit == 0:
                 inter_pass_table.add_row()
             inner_cell = inter_pass_table.add_cell(inner_table)
@@ -129,10 +131,10 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
 
         # Need to enter Interims and Delivs Here
         inter_table = Table()
-        inter_table.add_attr('width','100%s' % '%')
-        inter_table.add_attr('bgcolor','#acbe49e')
+        inter_table.add_attr('width', '100%')
+        inter_table.add_attr('bgcolor', '#acbe49e')
         wointer_search = Search("twog/work_order_intermediate")
-        wointer_search.add_filter('work_order_code',my.work_order_code)
+        wointer_search.add_filter('work_order_code', my.work_order_code)
         wointers = wointer_search.get_sobjects()
         if len(wointers) > 0:
             inter_table.add_row()
@@ -156,7 +158,8 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
                 celly.add_attr('nowrap','nowrap')
                 celly.add_style('cursor: pointer;')
                 celly.add_style('font-size: 80%s;' % '%')
-                celly.add_behavior(obs.get_launch_wo_inter_behavior(my.work_order_code,my.work_order_sk,inter_code))
+                celly.add_behavior(get_launch_wo_inter_behavior(my.work_order_code, my.work_order_sk, inter_code,
+                                                                my.order_sk))
                 if count % source_limit == 0:
                     inter_table.add_row()
                 inner_cell = inter_table.add_cell(inner_table)
@@ -266,7 +269,7 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
                     else:
                         update_str = '%s,%s' % (update_str, wod.get_value('deliverable_source_code'))
                     d_search = Search("twog/source")
-                    d_search.add_filter('code',wod.get_value('deliverable_source_code'))
+                    d_search.add_filter('code', wod.get_value('deliverable_source_code'))
                     d_src = d_search.get_sobject()
                     ancestors = d_src.get_value('ancestors')
                     if ancestors.find(source.get_value('code')) == -1:
@@ -279,3 +282,31 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
                     my.server.update(source.get_search_key(), {'children': update_str})
 
         return two_gether
+
+
+def get_launch_wo_inter_behavior(order_sk, work_order_code, work_order_sk, wo_inter):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m41');
+                      var server = TacticServerStub.get();
+                      var work_order_code = '%s';
+                      var work_order_sk = '%s';
+                      var wo_inter = '%s';
+                      var order_sk = '%s';
+                      var inter_sk = server.build_search_key('twog/intermediate_file',wo_inter);
+                      var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                      var wo_cell = top_el.getElementsByClassName('cell_' + work_order_sk)[0];
+                      var proj_cell = top_el.getElementsByClassName('cell_' + wo_cell.getAttribute('parent_sk'))[0];
+                      var title_sk = proj_cell.getAttribute('parent_sk');
+                      var title_cell = top_el.getElementsByClassName('cell_' + title_sk)[0];
+                      var client_code = top_el.getAttribute('client_code');
+                      var title_code = title_sk.split('code=')[1];
+                      spt.panel.load_popup('Intermediate File Portal', 'order_builder.IntermediateEditWdg', {'order_sk': order_sk, 'work_order_code': work_order_code, 'intermediate_code': wo_inter, 'client_code': client_code});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (work_order_code, work_order_sk, wo_inter, order_sk)}
+    return behavior
