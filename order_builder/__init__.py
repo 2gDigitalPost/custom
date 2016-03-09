@@ -18,10 +18,12 @@ from equipment_used_row import *
 from error_entry_wdg import *
 from multi_manual_adder_wdg import *
 from order_table_wdg import *
+from prereq_wdg import *
 from proj_row import *
 from quick_edit_wdg import *
 from source_portal_wdg import *
 from sources_row import *
+from title_adder_wdg import *
 from title_due_prio_bb_wdg import *
 from title_row import *
 from title_source_inspector_wdg import *
