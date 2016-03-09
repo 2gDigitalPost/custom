@@ -418,265 +418,261 @@ def get_pipeline_change_behavior(order_sk):
 
 def get_create_titles_behavior(order_sk, order_sid, login):
     behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                    function oc(a){
-                        var o = {};
-                        for(var i=0;i<a.length;i++){
-                            o[a[i]]='';
-                        }
-                        return o;
-                    }
-                    function trim(stringToTrim) {
-                        return stringToTrim.replace(/^\s+|\s+$/g,"");
-                    }
-                    function format_replace(replacer, replace_char, format_string) {
-                        new_str = '';
-                        for(var r = 0; r < format_string.length; r++){
-                            if(format_string[r] == replace_char){
-                                new_str = new_str + replacer;
-                            }else{
-                                new_str = new_str + format_string[r];
-                            }
-                        }
-                        if(new_str == format_string){
-                            new_str = replacer;
-                        }
-                        return new_str;
-                    }
-                    try{
+function oc(a){
+    var o = {};
+    for(var i=0;i<a.length;i++){
+        o[a[i]]='';
+    }
+    return o;
+}
+function trim(stringToTrim) {
+    return stringToTrim.replace(/^\s+|\s+$/g,"");
+}
+function format_replace(replacer, replace_char, format_string) {
+    new_str = '';
+    for(var r = 0; r < format_string.length; r++){
+        if(format_string[r] == replace_char){
+            new_str = new_str + replacer;
+        }else{
+            new_str = new_str + format_string[r];
+        }
+    }
+    if(new_str == format_string){
+        new_str = replacer;
+    }
+    return new_str;
+}
+try{
 
-                      spt.app_busy.show('Creating Title(s)...');
-                      var server = TacticServerStub.get();
-                      var order_sk = '%s';
-                      var order_sid = '%s';
-                      var login = '%s';
+    spt.app_busy.show('Creating Title(s)...');
+    var server = TacticServerStub.get();
+    var order_sk = '%s';
+    var order_sid = '%s';
+    var login = '%s';
 
-                      var order_code = order_sk.split('code=')[1];
-                      var order_obj = server.eval("@SOBJECT(twog/order['code','" + order_code + "'])")[0];
-                      //alert('create');
-                      var order_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
-                      var allowed_titles = order_el.getAttribute('allowed_titles');
-                      if(allowed_titles == 'NOTHING|NOTHING'){
-                          allowed_titles = '';
-                      }
-                      allowed_titles_arr = allowed_titles.split('|')
-                      var top_el = document.getElementsByClassName('title_adder_top_' + order_sk)[0];
-                      var loader_cell = document.getElementsByClassName('cell_' + order_sk)[0];
-                      var title =  top_el.getElementsByClassName('tadd_title')[0];
-                      var range1 = top_el.getElementsByClassName('tadd_epi_range_1')[0];
-                      var range2 = top_el.getElementsByClassName('tadd_epi_range_2')[0];
-                      var formatter_el = top_el.getElementsByClassName('tadd_episode_format')[0];
-                      var epi_name = top_el.getElementsByClassName('tadd_epi_name')[0];
-                      var title_id_num_el = top_el.getElementsByClassName('tadd_title_id_number')[0];
-                      var total_program_run_time_el = top_el.getElementsByClassName('tadd_total_program_run_time')[0];
-                      var total_runtime_with_textless_el = top_el.getElementsByClassName('tadd_total_run_time_with_textless')[0];
-                      var expected_price_el = top_el.getElementsByClassName('tadd_expected_price')[0];
-                      var sels = top_el.getElementsByTagName('select');
-                      var client_pull = '';
-                      var pipe_pull = '';
-                      var terr_pull = '';
-                      var outlet_pull = '';
-                      var language_pull = '';
-                      var deliverable_standard = '';
-                      var deliverable_frame_rate = '';
-                      var deliverable_aspect_ratio = '';
-                      var deliverable_format = '';
-                      var status_triggers = '';
-                      var priority_triggers = '';
-                      for(var r = 0; r < sels.length; r++){
-                          if(sels[r].name == 'tadd_client_pull'){
-                              client_pull = sels[r];
-                          }else if(sels[r].name == 'tadd_pipe_pull'){
-                              pipe_pull = sels[r];
-                          }else if(sels[r].name == 'tadd_territory'){
-                              terr_pull = sels[r];
-                          }else if(sels[r].name == 'tadd_language'){
-                              language_pull = sels[r];
-                          }else if(sels[r].name == 'tadd_outlet_pull'){
-                              outlet_pull = sels[r];
-                          }else if(sels[r].name == 'tadd_deliverable_standard'){
-                              deliverable_standard = sels[r];
-                          }else if(sels[r].name == 'tadd_deliverable_frame_rate'){
-                              deliverable_frame_rate = sels[r];
-                          }else if(sels[r].name == 'tadd_deliverable_aspect_ratio'){
-                              deliverable_aspect_ratio = sels[r];
-                          }else if(sels[r].name == 'tadd_deliverable_format'){
-                              deliverable_format = sels[r];
-                          }else if(sels[r].name == 'tadd_status_triggers'){
-                              status_triggers = sels[r];
-                          }else if(sels[r].name == 'tadd_priority_triggers'){
-                              priority_triggers = sels[r];
-                          }
-                      }
-                      var start_date = '';
-                      var due_date = '';
-                      var revenue_month = '';
-                      var description = top_el.getElementsByClassName('tadd_description')[0];
-                      var deliverable_specs = top_el.getElementsByClassName('tadd_delivery_specs')[0];
-                      var keywords = top_el.getElementsByClassName('tadd_keywords')[0];
-                      var epi_val = epi_name.value
-                      var epis = epi_val.split(',')
+    var order_code = order_sk.split('code=')[1];
+    var order_obj = server.eval("@SOBJECT(twog/order['code','" + order_code + "'])")[0];
+    //alert('create');
+    var order_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
+    var allowed_titles = order_el.getAttribute('allowed_titles');
+    if(allowed_titles == 'NOTHING|NOTHING'){
+      allowed_titles = '';
+    }
+    allowed_titles_arr = allowed_titles.split('|')
+    var top_el = document.getElementsByClassName('title_adder_top_' + order_sk)[0];
+    var loader_cell = document.getElementsByClassName('cell_' + order_sk)[0];
+    var title =  top_el.getElementsByClassName('tadd_title')[0];
+    var range1 = top_el.getElementsByClassName('tadd_epi_range_1')[0];
+    var range2 = top_el.getElementsByClassName('tadd_epi_range_2')[0];
+    var formatter_el = top_el.getElementsByClassName('tadd_episode_format')[0];
+    var epi_name = top_el.getElementsByClassName('tadd_epi_name')[0];
+    var title_id_num_el = top_el.getElementsByClassName('tadd_title_id_number')[0];
+    var total_program_run_time_el = top_el.getElementsByClassName('tadd_total_program_run_time')[0];
+    var total_runtime_with_textless_el = top_el.getElementsByClassName('tadd_total_run_time_with_textless')[0];
+    var expected_price_el = top_el.getElementsByClassName('tadd_expected_price')[0];
+    var sels = top_el.getElementsByTagName('select');
+    var client_pull = '';
+    var pipe_pull = '';
+    var terr_pull = '';
+    var outlet_pull = '';
+    var language_pull = '';
+    var deliverable_standard = '';
+    var deliverable_frame_rate = '';
+    var deliverable_aspect_ratio = '';
+    var deliverable_format = '';
+    var status_triggers = '';
+    var priority_triggers = '';
+    for(var r = 0; r < sels.length; r++){
+      if(sels[r].name == 'tadd_client_pull'){
+          client_pull = sels[r];
+      }else if(sels[r].name == 'tadd_pipe_pull'){
+          pipe_pull = sels[r];
+      }else if(sels[r].name == 'tadd_territory'){
+          terr_pull = sels[r];
+      }else if(sels[r].name == 'tadd_language'){
+          language_pull = sels[r];
+      }else if(sels[r].name == 'tadd_outlet_pull'){
+          outlet_pull = sels[r];
+      }else if(sels[r].name == 'tadd_deliverable_standard'){
+          deliverable_standard = sels[r];
+      }else if(sels[r].name == 'tadd_deliverable_frame_rate'){
+          deliverable_frame_rate = sels[r];
+      }else if(sels[r].name == 'tadd_deliverable_aspect_ratio'){
+          deliverable_aspect_ratio = sels[r];
+      }else if(sels[r].name == 'tadd_deliverable_format'){
+          deliverable_format = sels[r];
+      }else if(sels[r].name == 'tadd_status_triggers'){
+          status_triggers = sels[r];
+      }else if(sels[r].name == 'tadd_priority_triggers'){
+          priority_triggers = sels[r];
+      }
+    }
+    var start_date = '';
+    var due_date = '';
+    var revenue_month = '';
+    var description = top_el.getElementsByClassName('tadd_description')[0];
+    var deliverable_specs = top_el.getElementsByClassName('tadd_delivery_specs')[0];
+    var keywords = top_el.getElementsByClassName('tadd_keywords')[0];
+    var epi_val = epi_name.value
+    var epis = epi_val.split(',')
 
-                      data = {'episode': epi_name.value, 'title': title.value, 'order_code': order_code,
-                              'description': description.value, 'keywords': keywords.value,
-                              'po_number': order_obj.po_number, 'order_name': order_obj.name,
-                              'title_id_number': title_id_num_el.value, 'priority': 100, 'audio_priority': 100,
-                              'compression_priority': 100, 'edeliveries_priority': 100, 'edit_priority': 100,
-                              'machine_room_priority': 100, 'media_vault_priority': 100, 'qc_priority': 100,
-                              'vault_priority': 100, 'pulled_blacks': '',
-                              'delivery_specs': deliverable_specs.value, 'status_triggers': status_triggers.value,
-                              'priority_triggers': priority_triggers.value, 'login': login}
-                      if(expected_price_el.value != '' && expected_price_el.value != null){
-                          data['expected_price'] = expected_price_el.value;
-                      }
-                      if(total_program_run_time_el.value != '' && total_program_run_time_el.value != null){
-                          data['total_program_runtime'] = total_program_run_time_el.value;
-                      }
-                      if(total_runtime_with_textless_el.value != '' && total_runtime_with_textless_el.value != null){
-                          data['total_runtime_w_textless'] = total_runtime_with_textless_el.value;
-                      }
-                      var dates = top_el.getElementsByTagName('input');
-                      for(var r = 0; r < dates.length; r++){
-                          //alert(dates[r].name);
-                          if(dates[r].name == 'tadd_start_date'){
-                              start_date = dates[r];
-                              //alert("START DATE: " + start_date.value);
-                              if(start_date.value != ''){
-                                  data['start_date'] = start_date.value;
-                              }
-                          }else if(dates[r].name == 'tadd_due_date'){
-                              due_date = dates[r];
-                              //alert("FOUND DUE DATE: " + due_date.value);
-                              if(due_date.value != ''){
-                                  data['due_date'] = due_date.value;
-                              }
-                          }else if(dates[r].name == 'tadd_rm_date'){
-                              revenue_month = dates[r];
-                              //alert("FOUND REVENUE MONTH: " + revenue_month.value);
-                              if(revenue_month.value != ''){
-                                  data['expected_delivery_date'] = revenue_month.value;
-                              }
-                          }
-                      }
-                      if(client_pull != ''){
-                          data['client_code'] = client_pull.value.split('XsX')[0];
-                      }
-                      if(data['client_code'] == 'NOTHING'){
-                          data['client_code'] = ''
-                      }
-                      if(terr_pull != ''){
-                          data['territory'] = terr_pull.value;
-                      }
-                      if(language_pull != ''){
-                          data['language'] = language_pull.value;
-                      }
-                      if(outlet_pull != ''){
-                          if(outlet_pull.value != 'NOTHINGXsXNOTHING'){
-                              data['platform'] = outlet_pull.value;
-                          }
-                      }
-                      if(deliverable_standard != ''){
-                          if(deliverable_standard != 'NOTHINGXsXNOTHING'){
-                              data['deliverable_standard'] = deliverable_standard.value;
-                          }
-                      }
-                      if(deliverable_aspect_ratio != ''){
-                          if(deliverable_aspect_ratio != 'NOTHINGXsXNOTHING'){
-                              data['deliverable_aspect_ratio'] = deliverable_aspect_ratio.value;
-                          }
-                      }
-                      if(deliverable_format != ''){
-                          if(deliverable_format != 'NOTHINGXsXNOTHING'){
-                              data['deliverable_format'] = deliverable_format.value;
-                          }
-                      }
-                      if(deliverable_frame_rate != ''){
-                          if(deliverable_frame_rate != 'NOTHINGXsXNOTHING'){
-                              data['deliverable_frame_rate'] = deliverable_frame_rate.value;
-                          }
-                      }
-                      begin = Number(range1.value);
-                      end = Number(range2.value);
-                      new_codes = [];
-                      old_codes = server.eval("@GET(twog/title['order_code','" + order_code + "'].code)");
-                      ban_codes = [];
-                      for(var p = 0; p < old_codes.length; p++){
-                          if(!(old_codes[p] in oc(allowed_titles_arr))){
-                              ban_codes.push(old_codes[p]);
-                          }
-                      }
-                      if(pipe_pull != ''){
-                          proj_trans = server.eval("@SOBJECT(twog/proj_transfer['login','" + login + "'])");
-                          wo_trans = server.eval("@SOBJECT(twog/work_order_transfer['login','" + login + "'])");
-                          for(var tt = 0; tt < proj_trans.length; tt++){
-                              server.delete_sobject(proj_trans[tt].__search_key__);
-                          }
-                          for(var tt = 0; tt < wo_trans.length; tt++){
-                              server.delete_sobject(wo_trans[tt].__search_key__);
-                          }
-                          clone_actions = server.eval("@SOBJECT(twog/action_tracker['login','" + login + "']['action','cloning'])");
-                          for(var r = 0; r < clone_actions.length; r++){
-                              server.delete_sobject(clone_actions[r].__search_key__);
-                          }
-                      }
-                      out_epis = [];
-                      if(!(isNaN(begin) || isNaN(end)) && end != 0 && epis.length < 2){
-                          for(var r = begin; r < end + 1; r++){
-                              //spt.app_busy.show('Creating Title ' + title.value, ' Episode ' + r + ' of ' + begin + ' - ' + end);
-                              if(formatter_el.value != '' && formatter_el.value != null){
-                                  data['episode'] = format_replace(r, '#', formatter_el.value);
-                                  out_epis.push(format_replace(r, '#', formatter_el.value));
-                              }else{
-                                  data['episode'] = r;
-                                  out_epis.push(r);
-                              }
-                          }
-                      }else{
-                          if(epis.length > 1){
-                              for(var z = 0; z < epis.length; z++){
-                                  out_epis.push(trim(epis[z]));
-                              }
-                          }else{
-                              out_epis.push(epi_name.value);
-                          }
-                      }
-                      data['pipeline_code'] = pipe_pull.value;
-                      spt.app_busy.show('Creating Titles');
-                      thing = server.execute_cmd('manual_updaters.CreateTitlesCmd', {'episodes': out_epis, 'data': data});
-                      new_codes = server.eval("@GET(twog/title['order_code','" + order_code + "'].code)");
-                      allowed_titles = '';
-                      for(var k = 0; k < new_codes.length; k++){
-                          if(!(new_codes[k] in oc(ban_codes))){
-                              if(allowed_titles == ''){
-                                  allowed_titles = new_codes[k];
-                              }else{
-                                  allowed_titles = allowed_titles + '|' + new_codes[k];
-                              }
-                          }
-                      }
-                      order_el.setAttribute('allowed_titles', allowed_titles);
-                      display_mode = order_el.getAttribute('display_mode');
-                      user = order_el.getAttribute('user');
-
-                      kwargs = {
-                                   'sk': order_sk,
-                                   'display_mode': display_mode,
-                                   'user': user,
-                                   'allowed_titles': allowed_titles
-                      };
-                      //if(current_titles == ''){
-                          spt.tab.add_new('order_builder_' + order_code, 'Order Builder For ' + order_obj.name, "order_builder.order_builder.OrderBuilder", kwargs);
-                      //}else{
-                      //    cover = document.getElementsByClassName('twog_order_builder_cover_' + order_sk)[0];
-                      //    cover_cell = cover.getElementsByClassName('cover_cell')[0];
-                      //    spt.api.load_panel(cover_cell, "order_builder.order_builder.OrderBuilder", kwargs);
-                      //}
-                      spt.popup.close(spt.popup.get_popup(bvr.src_el));
-                      spt.app_busy.hide()
+    data = {'episode': epi_name.value, 'title': title.value, 'order_code': order_code,
+          'description': description.value, 'keywords': keywords.value,
+          'po_number': order_obj.po_number, 'order_name': order_obj.name,
+          'title_id_number': title_id_num_el.value, 'priority': 100, 'audio_priority': 100,
+          'compression_priority': 100, 'edeliveries_priority': 100, 'edit_priority': 100,
+          'machine_room_priority': 100, 'media_vault_priority': 100, 'qc_priority': 100,
+          'vault_priority': 100, 'pulled_blacks': '',
+          'delivery_specs': deliverable_specs.value, 'status_triggers': status_triggers.value,
+          'priority_triggers': priority_triggers.value, 'login': login}
+    if(expected_price_el.value != '' && expected_price_el.value != null){
+      data['expected_price'] = expected_price_el.value;
+    }
+    if(total_program_run_time_el.value != '' && total_program_run_time_el.value != null){
+      data['total_program_runtime'] = total_program_run_time_el.value;
+    }
+    if(total_runtime_with_textless_el.value != '' && total_runtime_with_textless_el.value != null){
+      data['total_runtime_w_textless'] = total_runtime_with_textless_el.value;
+    }
+    var dates = top_el.getElementsByTagName('input');
+    for(var r = 0; r < dates.length; r++){
+      //alert(dates[r].name);
+      if(dates[r].name == 'tadd_start_date'){
+          start_date = dates[r];
+          //alert("START DATE: " + start_date.value);
+          if(start_date.value != ''){
+              data['start_date'] = start_date.value;
+          }
+      }else if(dates[r].name == 'tadd_due_date'){
+          due_date = dates[r];
+          //alert("FOUND DUE DATE: " + due_date.value);
+          if(due_date.value != ''){
+              data['due_date'] = due_date.value;
+          }
+      }else if(dates[r].name == 'tadd_rm_date'){
+          revenue_month = dates[r];
+          //alert("FOUND REVENUE MONTH: " + revenue_month.value);
+          if(revenue_month.value != ''){
+              data['expected_delivery_date'] = revenue_month.value;
+          }
+      }
+    }
+    if(client_pull != ''){
+      data['client_code'] = client_pull.value.split('XsX')[0];
+    }
+    if(data['client_code'] == 'NOTHING'){
+      data['client_code'] = ''
+    }
+    if(terr_pull != ''){
+      data['territory'] = terr_pull.value;
+    }
+    if(language_pull != ''){
+      data['language'] = language_pull.value;
+    }
+    if(outlet_pull != ''){
+      if(outlet_pull.value != 'NOTHINGXsXNOTHING'){
+          data['platform'] = outlet_pull.value;
+      }
+    }
+    if(deliverable_standard != ''){
+      if(deliverable_standard != 'NOTHINGXsXNOTHING'){
+          data['deliverable_standard'] = deliverable_standard.value;
+      }
+    }
+    if(deliverable_aspect_ratio != ''){
+      if(deliverable_aspect_ratio != 'NOTHINGXsXNOTHING'){
+          data['deliverable_aspect_ratio'] = deliverable_aspect_ratio.value;
+      }
+    }
+    if(deliverable_format != ''){
+      if(deliverable_format != 'NOTHINGXsXNOTHING'){
+          data['deliverable_format'] = deliverable_format.value;
+      }
+    }
+    if(deliverable_frame_rate != ''){
+      if(deliverable_frame_rate != 'NOTHINGXsXNOTHING'){
+          data['deliverable_frame_rate'] = deliverable_frame_rate.value;
+      }
+    }
+    begin = Number(range1.value);
+    end = Number(range2.value);
+    new_codes = [];
+    old_codes = server.eval("@GET(twog/title['order_code','" + order_code + "'].code)");
+    ban_codes = [];
+    for(var p = 0; p < old_codes.length; p++){
+      if(!(old_codes[p] in oc(allowed_titles_arr))){
+          ban_codes.push(old_codes[p]);
+      }
+    }
+    if(pipe_pull != ''){
+      proj_trans = server.eval("@SOBJECT(twog/proj_transfer['login','" + login + "'])");
+      wo_trans = server.eval("@SOBJECT(twog/work_order_transfer['login','" + login + "'])");
+      for(var tt = 0; tt < proj_trans.length; tt++){
+          server.delete_sobject(proj_trans[tt].__search_key__);
+      }
+      for(var tt = 0; tt < wo_trans.length; tt++){
+          server.delete_sobject(wo_trans[tt].__search_key__);
+      }
+      clone_actions = server.eval("@SOBJECT(twog/action_tracker['login','" + login + "']['action','cloning'])");
+      for(var r = 0; r < clone_actions.length; r++){
+          server.delete_sobject(clone_actions[r].__search_key__);
+      }
+    }
+    out_epis = [];
+    if(!(isNaN(begin) || isNaN(end)) && end != 0 && epis.length < 2){
+      for(var r = begin; r < end + 1; r++){
+          //spt.app_busy.show('Creating Title ' + title.value, ' Episode ' + r + ' of ' + begin + ' - ' + end);
+          if(formatter_el.value != '' && formatter_el.value != null){
+              data['episode'] = format_replace(r, '#', formatter_el.value);
+              out_epis.push(format_replace(r, '#', formatter_el.value));
+          }else{
+              data['episode'] = r;
+              out_epis.push(r);
+          }
+      }
+    }else{
+      if(epis.length > 1){
+          for(var z = 0; z < epis.length; z++){
+              out_epis.push(trim(epis[z]));
+          }
+      }else{
+          out_epis.push(epi_name.value);
+      }
+    }
+    data['pipeline_code'] = pipe_pull.value;
+    spt.app_busy.show('Creating Titles');
+    // thing = server.execute_cmd('manual_updaters.CreateTitlesCmd', {'episodes': out_epis, 'data': data});
+    thing = server.insert('twog/title', data)
+    new_codes = server.eval("@GET(twog/title['order_code','" + order_code + "'].code)");
+    allowed_titles = '';
+    for(var k = 0; k < new_codes.length; k++) {
+        if(!(new_codes[k] in oc(ban_codes))) {
+            if(allowed_titles == '') {
+                allowed_titles = new_codes[k];
+            } else {
+                allowed_titles = allowed_titles + '|' + new_codes[k];
             }
-            catch(err){
-                      spt.app_busy.hide();
-                      spt.alert(spt.exception.handler(err));
-                      //alert(err);
-            }
+        }
+    }
+    order_el.setAttribute('allowed_titles', allowed_titles);
+    display_mode = order_el.getAttribute('display_mode');
+    user = order_el.getAttribute('user');
+
+    kwargs = {
+               'sk': order_sk,
+               'display_mode': display_mode,
+               'user': user,
+               'allowed_titles': allowed_titles
+    };
+
+    spt.tab.add_new('order_builder_' + order_code, 'Order Builder For ' + order_obj.name, "order_builder.order_builder.OrderBuilder", kwargs);
+
+    spt.popup.close(spt.popup.get_popup(bvr.src_el));
+    spt.app_busy.hide();
+}
+catch(err) {
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
      ''' % (order_sk, order_sid, login)}
     return behavior

@@ -24,6 +24,10 @@ def main(server=None, trigger_input=None):
         platform_search_object = platform_id_search.get_sobject()
         platform_code = platform_search_object.get_id()
 
+        client_name_search = Search("twog/client")
+        client_name_search.add_filter('code', client_code)
+        client_name = client_name_search.get_sobject().get_value('name')
+
         client_platform_connection_search = Search("twog/client_platform")
         client_platform_connection_search.add_filter('client_code', client_code)
         client_platform_connection_search.add_filter('platform_code', platform_code)
@@ -34,7 +38,8 @@ def main(server=None, trigger_input=None):
         else:
             # Entry in twog/client_platform does not exist; create it
             server.insert('twog/client_platform', {'client_code': client_code, 'platform_code': platform_code,
-                                                   'name': '{0} to {1}'.format(platform, client_code)})
+                                                   'name': '{0} to {1}'.format(client_name, platform),
+                                                   'connection_status': 'disconnected'})
     except AttributeError as e:
         traceback.print_exc()
         print str(e) + '\nMost likely the server object does not exist.'
