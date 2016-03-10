@@ -426,12 +426,12 @@ class HotTodayWdg(BaseRefreshWdg):
 
         # Set the td's for Client Deliver By row, get the second cell for the padding-left function below
         date_table.add_cell(data='Client Deliver By:', row=client_deliver_by_row)
-        client_deliver_by_cell = date_table.add_cell(data=client_deliver_by_date.strftime('%m-%d-%Y %H:%M'),
+        client_deliver_by_cell = date_table.add_cell(data=client_deliver_by_date.strftime('%m-%d-%Y %I:%M %p'),
                                                      row=client_deliver_by_row)
 
         # Set the td's for Expected Due Date row, get the second cell for the padding-left function below
         date_table.add_cell(data='Expected Due Date:', row=expected_due_date_row)
-        expected_due_date_cell = date_table.add_cell(data=expected_due_date.strftime('%m-%d-%Y %H:%M'),
+        expected_due_date_cell = date_table.add_cell(data=expected_due_date.strftime('%m-%d-%Y %I:%M %p'),
                                                      row=expected_due_date_row)
 
         # Add left side padding to each of the td's with the dates (looks a little better when rendered)
