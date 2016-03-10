@@ -2687,23 +2687,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (proj_sk, my.order_sk)}
         return behavior
 
-    def get_multi_add_wos_behavior(my, proj_sk):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                            proj_sk = '%s';
-                            order_sk = '%s';
-                            kwargs = {'parent_sk': proj_sk, 'order_sk': order_sk, 'search_type': 'twog/work_order'};
-                            spt.panel.load_popup('Add Work Order(s)', 'order_builder.MultiManualAdderWdg', kwargs);
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (proj_sk, my.order_sk)}
-        return behavior
-
-
     def get_change_due_date_behavior(my, proj_code, proj_name): #PROBABLY NEED TO SID
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{

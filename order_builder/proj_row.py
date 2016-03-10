@@ -293,7 +293,7 @@ class ProjRow(BaseRefreshWdg):
                     he.add_attr('valign', 'bottom')
                 if user_is_scheduler:
                     adder = ButtonSmallNewWdg(title="Add A Work Order", icon=CustomIconWdg.icons.get('ADD'))
-                    adder.add_behavior(obs.get_multi_add_wos_behavior(my.sk))
+                    adder.add_behavior(get_multi_add_wos_behavior(my.sk, my.order_sk))
                     add = bottom_buttons.add_cell(adder)
                     add.add_attr('align', 'right')
                     priority = ButtonSmallNewWdg(title="Change Priority", icon=CustomIconWdg.icons.get('PRIORITY'))
@@ -321,11 +321,10 @@ class ProjRow(BaseRefreshWdg):
             if user_is_scheduler:
                 pipe_button = ButtonSmallNewWdg(title="Assign Pipeline", icon=CustomIconWdg.icons.get('PIPELINE'))
                 pipe_button.add_behavior(get_scratch_pipe_behavior('twog/proj', my.search_id, my.parent_sid,
-                                                                       my.width, my.height,
-                                                                       main_obj.get_value('pipeline_code'),
-                                                                       main_obj.get_search_key(),
-                                                                       'ProjRow', main_obj.get_value('process'),
-                                                                   my.order_sk))
+                                                                   my.width, my.height,
+                                                                   main_obj.get_value('pipeline_code'),
+                                                                   main_obj.get_search_key(), 'ProjRow',
+                                                                   main_obj.get_value('process'), my.order_sk))
                 scratch = bottom_buttons.add_cell(pipe_button)
 
             if my.is_master:
@@ -383,3 +382,20 @@ class ProjRow(BaseRefreshWdg):
         bot.add_style('padding-left: 40px;')
 
         return tab2ret
+
+
+def get_multi_add_wos_behavior(proj_sk, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                        proj_sk = '%s';
+                        order_sk = '%s';
+                        kwargs = {'parent_sk': proj_sk, 'order_sk': order_sk, 'search_type': 'twog/work_order'};
+                        spt.panel.load_popup('Add Work Order(s)', 'order_builder.MultiManualAdderWdg', kwargs);
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (proj_sk, order_sk)}
+    return behavior
