@@ -540,18 +540,14 @@ class MultiManualAdderWdg(BaseRefreshWdg):
 class ProjectAdderWdg(BaseRefreshWdg):
     def init(my):
         my.server = TacticServerStub.get()
-        my.order_sk = ''
-        if 'order_sk' in my.kwargs.keys():
-            my.order_sk = str(my.kwargs.get('order_sk'))
-
+        my.order_sk = str(my.kwargs.get('order_sk'))
         my.parent_sk = my.kwargs.get('parent_sk')
         my.parent_code = my.parent_sk.split('code=')[1]
-        my.title_code = ''
+
         if 'TITLE' in my.parent_code:
             my.title_code = my.parent_code
         else:
             my.title_code = my.server.eval("@GET(twog/proj['code','%s'].title_code)" % my.parent_code)[0]
-        my.user_name = Environment.get_user_name()
 
     def get_save(my):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
@@ -698,7 +694,6 @@ class ProjectAdderWdg(BaseRefreshWdg):
 
     def get_display(my):
         table = Table()
-        tbl_id = 'manual_wo_adder_top_%s' % my.order_sk
 
         tbl_id = 'manual_proj_adder_top_%s' % my.order_sk
 
@@ -707,7 +702,7 @@ class ProjectAdderWdg(BaseRefreshWdg):
         table.add_attr('order_sk', my.order_sk)
         table.add_attr('parent_sk', my.parent_sk)
         table.add_attr('title_code', my.title_code)
-        table.add_attr('user_name', my.user_name)
+        table.add_attr('user_name', Environment.get_user_name())
 
         ctbl = Table()
         ctbl.add_row()
