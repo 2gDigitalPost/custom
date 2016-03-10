@@ -332,6 +332,50 @@ def get_open_intermediate_behavior(intermediate_code, work_order_code, client_co
     return behavior
 
 
+def get_scratch_pipe_behavior(search_type, search_id, parent_sid, width, height, pipeline_code, sk, class_type, name,
+                              order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m59');
+                      spt.app_busy.show('Opening Pipeline Editor...');
+                      var search_type = '%s';
+                      var search_id = '%s';
+                      var parent_sid = '%s';
+                      var width = '%s';
+                      var height = '%s';
+                      var pipeline_code = '%s';
+                      var sob_sk = '%s';
+                      var class_type = '%s';
+                      var name = '%s';
+                      var order_sk = '%s';
+                      //var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder_' + order_sk);
+                      var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                      top_el.setAttribute('pipefocus_class_type',class_type);
+                      top_el.setAttribute('pipefocus_sob_sk',sob_sk)
+                      top_el.setAttribute('pipefocus_name',name)
+                      var sob_selected = top_el.getElementsByClassName('selected_sobject')[0];
+                      sob_selected.innerHTML = 'Selected: ' + name;
+                      var client_code = top_el.get('client');
+                      var order_code = top_el.get('order_code');
+                      var pipe_cell = top_el.getElementsByClassName('pipe_cell')[0];
+                      var pipe_row = top_el.getElementsByClassName('pipe_row')[0];
+                      var closer_row = top_el.getElementsByClassName('closer_row')[0];
+                      var pyclass = 'order_builder.CustomPipelineToolWdg';
+                      spt.api.load_panel(pipe_cell, pyclass, {search_type: search_type, search_id: search_id, parent_sid: parent_sid, width: width, height: height, client_code: client_code, order_code: order_code, order_sk: order_sk, pipeline_code: pipeline_code});
+                      pipe_row.style.display = 'table-row';
+                      closer_row.style.display = 'table-row';
+                      //spt.pipeline.import_pipeline(pipeline_code);
+                      spt.app_busy.hide();
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (search_type, search_id, parent_sid, width, height, pipeline_code, sk, class_type, name, order_sk)}
+    return behavior
+
+
 class OBScripts(BaseRefreshWdg):
     def init(my):
         my.order_sk = ''
@@ -2860,48 +2904,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % source_code}
-        return behavior
-
-    def get_scratch_pipe_behavior(my, search_type, search_id, parent_sid, width, height, pipeline_code, sk, class_type, name): #SIDDED
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m59');
-                          spt.app_busy.show('Opening Pipeline Editor...');
-                          var search_type = '%s';
-                          var search_id = '%s';
-                          var parent_sid = '%s';
-                          var width = '%s';
-                          var height = '%s';
-                          var pipeline_code = '%s';
-                          var sob_sk = '%s';
-                          var class_type = '%s';
-                          var name = '%s';
-                          var order_sk = '%s';
-                          //var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder_' + order_sk);
-                          var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
-                          top_el.setAttribute('pipefocus_class_type',class_type);
-                          top_el.setAttribute('pipefocus_sob_sk',sob_sk)
-                          top_el.setAttribute('pipefocus_name',name)
-                          var sob_selected = top_el.getElementsByClassName('selected_sobject')[0];
-                          sob_selected.innerHTML = 'Selected: ' + name;
-                          var client_code = top_el.get('client');
-                          var order_code = top_el.get('order_code');
-                          var pipe_cell = top_el.getElementsByClassName('pipe_cell')[0];
-                          var pipe_row = top_el.getElementsByClassName('pipe_row')[0];
-                          var closer_row = top_el.getElementsByClassName('closer_row')[0];
-                          var pyclass = 'order_builder.CustomPipelineToolWdg';
-                          spt.api.load_panel(pipe_cell, pyclass, {search_type: search_type, search_id: search_id, parent_sid: parent_sid, width: width, height: height, client_code: client_code, order_code: order_code, order_sk: order_sk, pipeline_code: pipeline_code});
-                          pipe_row.style.display = 'table-row';
-                          closer_row.style.display = 'table-row';
-                          //spt.pipeline.import_pipeline(pipeline_code);
-                          spt.app_busy.hide();
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (search_type, search_id, parent_sid, width, height, pipeline_code, sk, class_type, name, my.order_sk)}
         return behavior
 
     def get_close_piper_behavior(my): #NO SID NECC

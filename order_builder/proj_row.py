@@ -9,7 +9,7 @@ from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
-from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior
+from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior, get_scratch_pipe_behavior
 from widget.button_small_new_wdg import ButtonSmallNewWdg
 
 from work_order_row import WorkOrderRow
@@ -320,11 +320,12 @@ class ProjRow(BaseRefreshWdg):
 
             if user_is_scheduler:
                 pipe_button = ButtonSmallNewWdg(title="Assign Pipeline", icon=CustomIconWdg.icons.get('PIPELINE'))
-                pipe_button.add_behavior(obs.get_scratch_pipe_behavior('twog/proj', my.search_id, my.parent_sid,
+                pipe_button.add_behavior(get_scratch_pipe_behavior('twog/proj', my.search_id, my.parent_sid,
                                                                        my.width, my.height,
                                                                        main_obj.get_value('pipeline_code'),
                                                                        main_obj.get_search_key(),
-                                                                       'ProjRow', main_obj.get_value('process')))
+                                                                       'ProjRow', main_obj.get_value('process'),
+                                                                   my.order_sk))
                 scratch = bottom_buttons.add_cell(pipe_button)
 
             if my.is_master:
