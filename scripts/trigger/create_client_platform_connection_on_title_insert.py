@@ -22,7 +22,7 @@ def main(server=None, trigger_input=None):
         platform_id_search = Search("twog/platform")
         platform_id_search.add_filter('name', platform)
         platform_search_object = platform_id_search.get_sobject()
-        platform_code = platform_search_object.get_id()
+        platform_code = platform_search_object.get_value('code')
 
         client_name_search = Search("twog/client")
         client_name_search.add_filter('code', client_code)
@@ -33,9 +33,7 @@ def main(server=None, trigger_input=None):
         client_platform_connection_search.add_filter('platform_code', platform_code)
         client_platform_connection = client_platform_connection_search.get_sobject()
 
-        if client_platform_connection:
-            pass
-        else:
+        if not client_platform_connection:
             # Entry in twog/client_platform does not exist; create it
             server.insert('twog/client_platform', {'client_code': client_code, 'platform_code': platform_code,
                                                    'name': '{0} to {1}'.format(client_name, platform),
