@@ -287,11 +287,8 @@ class HotTodayWdg(BaseRefreshWdg):
         client_cell.add_style('padding-right', '3px')
         platform_cell.add_style('padding-left', '3px')
 
-        # Third Row: Deliver By Date
-        self.set_date_row(title_table, expected_delivery_date, 'Client Deliver By')
-
-        # Fourth Row: Due Date
-        self.set_date_row(title_table, due_date, 'Expected Due Date')
+        # Third Row: A table containing the Client Deliver By and Expected Due Date dates
+        self.set_dates_table(title_table, expected_delivery_date, due_date)
 
         # Last Row: Order Builder and Notes Widgets
         editing_row = title_table.add_row()
@@ -390,29 +387,58 @@ class HotTodayWdg(BaseRefreshWdg):
                 row_cell.add_style('border', '1px solid #EEE')
                 row_cell.add_style('width', '{0}%'.format(76.0 / len(header_groups)))
 
-    def set_date_row(self, table, date, row_text):
+    def set_dates_table(self, parent_table, client_deliver_by_date, expected_due_date):
         """
-        Given a table, set up a row to display the Deliver By or Due Date data. The rows are basically set up the
-        same way, only the dates given and the text to display differ.
+        Sets a table showing the Client Deliver By and Expected Due Date. Both rows have a color depending on whether
+        or not the title is past due, due today, or neither. Dates are displayed in a more human readable format.
 
-        :param table: The table to set the rows on.
-        :param date: Datetime in the format '%Y-%m-%d %H:%M:%S' (other formats might work, but that's untested)
-        :param row_text: String ('Deliver By'/'Due Date')
-        :return:
+        :param parent_table: The table containing the date table
+        :param client_deliver_by_date: Timestamp in '%Y-%m-%d %H:%M:%S' format
+        :param expected_due_date: Timestamp in '%Y-%m-%d %H:%M:%S' format
+        :return: None
         """
-        date_row = table.add_row()
 
-        date_status = get_date_status(date)
-        date_status_color = self.DATE_STATUS_COLOR.get(date_status, '#000000')
+        date_row = parent_table.add_row()
 
-        date_row.add_style('color', date_status_color)
-        date_row.add_style('font-size', '14px')
-        date_row.add_style('font-weight', 'bold')
-        date_row.add_style('text-shadow', '1px 1px #000000')
+        date_table = Table()
+        date_table.add_style('margin', '2px 0px')
 
-        delivery_date_data = '{0}: {1}'.format(row_text, date)
+        client_deliver_by_date_status = get_date_status(client_deliver_by_date)
+        expected_due_date_status = get_date_status(expected_due_date)
 
-        table.add_cell(data=delivery_date_data, row=date_row)
+        # Get the color statuses of each date. Set to black if no status found
+        client_deliver_by_date_status_color = self.DATE_STATUS_COLOR.get(client_deliver_by_date_status, '#000000')
+        expected_due_date_status_color = self.DATE_STATUS_COLOR.get(expected_due_date_status, '#000000')
+
+        # The tr's for our td's in the table
+        client_deliver_by_row = date_table.add_row()
+        expected_due_date_row = date_table.add_row()
+
+        # Set the row's color
+        client_deliver_by_row.add_style('color', client_deliver_by_date_status_color)
+        expected_due_date_row.add_style('color', expected_due_date_status_color)
+
+        # Both rows will have the following styles
+        for each_row in [client_deliver_by_row, expected_due_date_row]:
+            each_row.add_style('font-size', '14px')
+            each_row.add_style('font-weight', 'bold')
+            each_row.add_style('text-shadow', '1px 1px #000000')
+
+        # Set the td's for Client Deliver By row, get the second cell for the padding-left function below
+        date_table.add_cell(data='Client Deliver By:', row=client_deliver_by_row)
+        client_deliver_by_cell = date_table.add_cell(data=client_deliver_by_date.strftime('%m-%d-%Y %H:%M'),
+                                                     row=client_deliver_by_row)
+
+        # Set the td's for Expected Due Date row, get the second cell for the padding-left function below
+        date_table.add_cell(data='Expected Due Date:', row=expected_due_date_row)
+        expected_due_date_cell = date_table.add_cell(data=expected_due_date.strftime('%m-%d-%Y %H:%M'),
+                                                     row=expected_due_date_row)
+
+        # Add left side padding to each of the td's with the dates (looks a little better when rendered)
+        map(lambda x: x.add_style('padding-left', '5px'), [client_deliver_by_cell, expected_due_date_cell])
+
+        # Append the date table to the parent table and we're done
+        parent_table.add_cell(data=date_table, row=date_row)
 
     @staticmethod
     def set_priority_row(table, priority):
