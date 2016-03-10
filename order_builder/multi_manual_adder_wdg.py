@@ -543,7 +543,7 @@ class ProjectAdderWdg(BaseRefreshWdg):
         my.order_sk = ''
         if 'order_sk' in my.kwargs.keys():
             my.order_sk = str(my.kwargs.get('order_sk'))
-        my.search_type = my.kwargs.get('search_type')
+
         my.parent_sk = my.kwargs.get('parent_sk')
         my.parent_code = my.parent_sk.split('code=')[1]
         my.title_code = ''
@@ -699,10 +699,11 @@ class ProjectAdderWdg(BaseRefreshWdg):
     def get_display(my):
         table = Table()
         tbl_id = 'manual_wo_adder_top_%s' % my.order_sk
-        if 'proj' in my.search_type:
-            tbl_id = 'manual_proj_adder_top_%s' % my.order_sk
+
+        tbl_id = 'manual_proj_adder_top_%s' % my.order_sk
+
         table.add_attr("id", tbl_id)
-        table.add_attr('search_type', my.search_type)
+        table.add_attr('search_type', 'twog/proj')
         table.add_attr('order_sk', my.order_sk)
         table.add_attr('parent_sk', my.parent_sk)
         table.add_attr('title_code', my.title_code)

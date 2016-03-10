@@ -415,8 +415,8 @@ def get_multi_add_projs_behavior(order_sk, title_sk):
 try {
     title_sk = '%s';
     order_sk = '%s';
-    kwargs = {'parent_sk': title_sk, 'order_sk': order_sk, 'search_type': 'twog/proj'};
-    spt.panel.load_popup('Add Proj(s)', 'order_builder.ProjectAdderWdg', kwargs);
+    kwargs = {'parent_sk': title_sk, 'order_sk': order_sk};
+    spt.panel.load_popup('Add Project(s)', 'order_builder.ProjectAdderWdg', kwargs);
 }
 catch(err){
     spt.app_busy.hide();
