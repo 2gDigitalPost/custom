@@ -641,8 +641,8 @@ try{
     }
     data['pipeline_code'] = pipe_pull.value;
     spt.app_busy.show('Creating Titles');
-    // thing = server.execute_cmd('manual_updaters.CreateTitlesCmd', {'episodes': out_epis, 'data': data});
-    thing = server.insert('twog/title', data)
+    thing = server.execute_cmd('manual_updaters.CreateTitlesCmd', {'episodes': out_epis, 'data': data});
+    // thing = server.insert('twog/title', data)
     new_codes = server.eval("@GET(twog/title['order_code','" + order_code + "'].code)");
     allowed_titles = '';
     for(var k = 0; k < new_codes.length; k++) {
