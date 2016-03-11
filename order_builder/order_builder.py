@@ -32,7 +32,8 @@ from common_tools.common_functions import fix_date
 from builder_tools_wdg import BuilderTools
 from task_edit_widget import TaskEditWdg
 from title_row import TitleRow
-from order_builder_utils import OBScripts, get_upload_behavior, get_open_intermediate_behavior
+from order_builder_utils import OBScripts, get_upload_behavior, get_open_intermediate_behavior, \
+    get_open_deliverable_behavior
 from order_table_wdg import OrderTable
 from quick_edit_wdg import QuickEditWdg
 
@@ -1799,7 +1800,7 @@ class DeliverableWdg(BaseRefreshWdg):
             see_deets = table.add_cell('<u>%s, %s To: %s</u>' % (p.get_value('name'), dvbl.get_value('source_type'), p.get_value('deliver_to')))
             see_deets.add_attr('nowrap','nowrap')
             see_deets.add_style('cursor: pointer;')
-            see_deets.add_behavior(obs.get_open_deliverable_behavior(dvbl.get_value('code'),p.get_value('work_order_code'),my.title_code,'edit'))
+            see_deets.add_behavior(get_open_deliverable_behavior(dvbl.get_value('code'),p.get_value('work_order_code'),my.title_code,'edit', my.order_sk))
             table.add_cell(' ')
             ck = None
             if p.get_value('satisfied') == True:

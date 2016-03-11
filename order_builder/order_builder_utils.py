@@ -376,6 +376,27 @@ def get_scratch_pipe_behavior(search_type, search_id, parent_sid, width, height,
     return behavior
 
 
+def get_open_deliverable_behavior(deliverable_source_code, work_order_code, title_code, open_type, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m33');
+                      var server = TacticServerStub.get();
+                      deliverable_source_code = '%s';
+                      work_order_code = '%s';
+                      title_code = '%s';
+                      open_type = '%s';
+                      order_sk = '%s';
+                      spt.panel.load_popup('Permanent Element Portal', 'order_builder.DeliverableEditWdg', {'order_sk': order_sk, 'deliverable_source_code': deliverable_source_code, 'work_order_code': work_order_code, 'title_code': title_code});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (deliverable_source_code, work_order_code, title_code, open_type, order_sk)}
+    return behavior
+
+
 class OBScripts(BaseRefreshWdg):
     def init(my):
         my.order_sk = ''
@@ -1159,133 +1180,6 @@ class OBScripts(BaseRefreshWdg):
          '''}
         return behavior
 
-    def get_deliverable_killer_behavior(my, wo_deliverable_code, work_order_code, title_code, source_code, my_title, is_master):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var server = TacticServerStub.get();
-                          wo_deliverable_code = '%s';
-                          work_order_code = '%s';
-                          title_code = '%s';
-                          source_code = '%s';
-                          my_title = '%s';
-                          is_master = '%s';
-                          order_sk = '%s';
-                          var overhead_el = spt.api.get_parent(bvr.src_el, '.out_overhead_' + work_order_code);
-                          var oh_cell = overhead_el.getElementsByClassName('deliverable_list_cell')[0];
-                          deliv_sk = server.build_search_key('twog/work_order_deliverables', wo_deliverable_code);
-                          work_order_sk = server.build_search_key('twog/work_order', work_order_code);
-                          if(confirm("Are you sure you want to delete " + my_title + "?")){
-                                  server.retire_sobject(deliv_sk);
-                                  //also need to remove title code from the source "deliverable_for"                         //maybe this should be a trigger?
-                                  source = server.eval("@SOBJECT(twog/source['code','" + source_code + "'])")[0];
-                                  deliv_for = source.deliverable_for.split(',');
-                                  new_deliv_str = ''
-                                  for(var r = 0; r < deliv_for.length; r++){
-                                      if(deliv_for[r] != title_code && deliv_for[r] != work_order_code){
-                                          if(new_deliv_str == ''){
-                                              new_deliv_str = deliv_for[r];
-                                          }else{
-                                              new_deliv_str = new_deliv_str + ',' + deliv_for[r];
-                                          }
-                                      }
-                                  }
-                                  server.update(source.__search_key__, {'deliverable_for': new_deliv_str});
-                                  if(is_master == 'true'){
-                                      wot_code = server.eval("@GET(twog/work_order['code','" + work_order_code + "'].work_order_templ_code)")[0];
-                                      wot = server.eval("@SOBJECT(twog/work_order_templ['code','" + wot_code + "'])")[0];
-                                      new_str = '';
-                                      deliv_codes = wot.deliverable_templ_codes.split(',');
-                                      for(var r = 0; r < deliv_codes.length; r++){
-                                          d_templ = server.eval("@SOBJECT(twog/deliverable_templ['code','" + deliv_codes[r] + "'])")[0];
-                                          if(d_templ.work_order_deliverables_code != wo_deliverable_code){
-                                              if(new_str == ''){
-                                                  new_str = deliv_codes[r];
-                                              }else{
-                                                  new_str = new_str + ',' + deliv_codes[r];
-                                              }
-                                          }
-                                      }
-                                      server.update(wot.__search_key__, {'deliverable_templ_codes': new_str})
-                                  }
-                                  full_title_name = ''
-                                  title = server.eval("@SOBJECT(twog/title['code','" + title_code + "'])")[0];
-                                  full_title_name = title.title;
-                                  if(title.episode != '' && title.episode != null){
-                                      full_title_name = full_title_name + ': ' + title.episode;
-                                  }
-                                  spt.api.load_panel(oh_cell, 'order_builder.DeliverableWdg', {title_code: title_code, order_sk: order_sk});
-                                  top_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
-                                  var count_cell = top_el.getElementsByClassName('deliverable_count_' + title_code)[0];
-                                  spt.api.load_panel(count_cell, 'order_builder.DeliverableCountWdg', {title_code: title_code, order_sk: order_sk, full_title: full_title_name});
-                                  var sources_line = document.getElementsByClassName('wo_sources_' + work_order_sk)[0];
-                                  spt.api.load_panel(sources_line, 'order_builder.WorkOrderSourcesRow', {'work_order_code': work_order_code, 'order_sk': order_sk});
-                                  var out_cell = overhead_el.getElementsByClassName('out_list_cell')[0];
-                                  spt.api.load_panel(out_cell, 'order_builder.OutFilesWdg', {'work_order_code': work_order_code, 'work_order_sk': work_order_sk, 'client_code': client_code, 'order_sk': order_sk});
-                          }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (wo_deliverable_code, work_order_code, title_code, source_code, my_title, is_master, my.order_sk)}
-        return behavior
-
-    def get_intermediate_killer_behavior(my, inter_link_code, inter_title, work_order_code, is_master):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m14');
-                          var server = TacticServerStub.get();
-                          inter_link_code = '%s';
-                          inter_title = '%s';
-                          work_order_code = '%s';
-                          is_master = '%s';
-                          order_sk = '%s';
-                          if(confirm("Do you really want to delete intermediate file: " + inter_title)){
-                                  inter_link_sk = server.build_search_key('twog/work_order_intermediate', inter_link_code);
-                                  work_order_sk = server.build_search_key('twog/work_order', work_order_code);
-                                  var overhead_el = spt.api.get_parent(bvr.src_el, '.out_overhead_' + work_order_code);
-                                  client_code = overhead_el.getAttribute('client_code');
-                                  wo_interm_expr = "@SOBJECT(twog/work_order_intermediate['code','" + inter_link_code + "'])";
-                                  wo_interm = server.eval(wo_interm_expr)[0];
-                                  int_file_code = wo_interm.intermediate_file_code;
-                                  server.retire_sobject(inter_link_sk);
-                                  if(is_master == 'true'){
-                                      inter_templ_code = '';
-                                      inter = server.eval("@SOBJECT(twog/intermediate_file['code','" + int_file_code + "'])")
-                                      if(inter.length > 0){
-                                          inter_templ_code = inter[0].intermediate_file_templ_code;
-                                          server.update(inter.__search_key__, {'intermediate_file_templ_code': ''});
-                                      }
-                                      wot_code = server.eval("@GET(twog/work_order['code','" + work_order_code + "'].work_order_templ_code)")[0];
-                                      wot = server.eval("@SOBJECT(twog/work_order_templ['code','" + wot_code + "'])")[0];
-                                      new_str = '';
-                                      interm_codes = wot.intermediate_file_templ_codes.split(',');
-                                      for(var r = 0; r < interm_codes.length; r++){
-                                          if(interm_codes[r] != inter_templ_code){
-                                              if(new_str == ''){
-                                                  new_str = interm_codes[r];
-                                              }else{
-                                                  new_str = new_str + ',' + interm_codes[r];
-                                              }
-                                          }
-                                      }
-                                      server.update(wot.__search_key__, {'intermediate_file_templ_codes': new_str})
-                                  }
-                                  var sources_line = document.getElementsByClassName('wo_sources_' + work_order_sk)[0];
-                                  spt.api.load_panel(sources_line, 'order_builder.WorkOrderSourcesRow', {'work_order_code': work_order_code, 'order_sk': order_sk});
-                                  var out_cell = overhead_el.getElementsByClassName('out_list_cell')[0];
-                                  spt.api.load_panel(out_cell, 'order_builder.OutFilesWdg', {'work_order_code': work_order_code, 'work_order_sk': work_order_sk, 'client_code': client_code, 'order_sk': order_sk});
-                          }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (inter_link_code, inter_title, work_order_code, is_master, my.order_sk)}
-        return behavior
-
     def get_prereq_killer_behavior(my, prereq_code, prereq_st, sob_code, sob_sk, sob_st, sob_name, pipeline):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
@@ -1315,43 +1209,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (prereq_code, prereq_st, sob_code, sob_sk, sob_st, sob_name, pipeline, my.order_sk)}
-        return behavior
-
-    def get_add_deliverable_behavior(my, work_order_code, client_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m16');
-                          var server = TacticServerStub.get();
-                          work_order_code = '%s';
-                          client_code = '%s';
-                          order_sk = '%s';
-                          spt.panel.load_popup('Create New Permanent Element', 'order_builder.DeliverableAddWdg', {'work_order_code': work_order_code, 'order_sk': order_sk, 'client_code': client_code});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (work_order_code, client_code, my.order_sk)}
-        return behavior
-
-    def get_add_inter_behavior(my, work_order_code, client_code, is_master):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m17');
-                          var server = TacticServerStub.get();
-                          work_order_code = '%s';
-                          client_code = '%s';
-                          is_master = '%s';
-                          order_sk = '%s';
-                          spt.panel.load_popup('Create New Intermediate File', 'order_builder.IntermediateFileAddWdg', {'work_order_code': work_order_code, 'order_sk': order_sk, 'client_code': client_code, 'is_master': is_master});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (work_order_code, client_code, is_master, my.order_sk)}
         return behavior
 
     def get_add_wo_sources_behavior(my, work_order_code, work_order_sk, proj_sk, sob_name):
@@ -1429,139 +1286,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (work_order_code, work_order_sk, call_me, my.order_sk)}
-        return behavior
-
-    def get_template_deliverable_behavior(my, wo_deliverable_code, wo_templ_code, deliverable_source_code, work_order_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m24');
-                          var server = TacticServerStub.get();
-                          wo_deliverable_code = '%s';
-                          wo_templ_code = '%s';
-                          //alert(wo_templ_code);
-                          deliverable_source_code = '%s';
-                          work_order_code = '%s';
-                          wo_deliverable_expr = "@SOBJECT(twog/work_order_deliverables['code','" + wo_deliverable_code + "'])";
-                          wo_deliverable = server.eval(wo_deliverable_expr)[0];
-
-                          deliverable_expr = "@SOBJECT(twog/source['code','" + deliverable_source_code + "'])";
-                          deliverable = server.eval(deliverable_expr)[0];
-                          data = {};
-                          data['aspect_ratio'] = deliverable.aspect_ratio;
-                          data['color_space'] = deliverable.color_space;
-                          data['title'] = deliverable.title;
-                          data['file_type'] = deliverable.file_type;
-                          data['format'] = deliverable.format;
-                          data['frame_rate'] = deliverable.frame_rate;
-                          data['standard'] = deliverable.standard;
-                          data['total_run_time'] = deliverable.total_run_time;
-                          data['source_type'] = deliverable.source_type;
-                          data['subtitles'] = deliverable.subtitles;
-                          data['captioning'] = deliverable.captioning;
-                          data['textless'] = deliverable.textless;
-                          data['generation'] = deliverable.generation;
-                          data['audio_ch_1'] = deliverable.audio_ch_1;
-                          data['audio_ch_2'] = deliverable.audio_ch_2;
-                          data['audio_ch_3'] = deliverable.audio_ch_3;
-                          data['audio_ch_4'] = deliverable.audio_ch_4;
-                          data['audio_ch_5'] = deliverable.audio_ch_5;
-                          data['audio_ch_6'] = deliverable.audio_ch_6;
-                          data['audio_ch_7'] = deliverable.audio_ch_7;
-                          data['audio_ch_8'] = deliverable.audio_ch_8;
-                          data['audio_ch_9'] = deliverable.audio_ch_9;
-                          data['audio_ch_10'] = deliverable.audio_ch_10;
-                          data['audio_ch_11'] = deliverable.audio_ch_11;
-                          data['audio_ch_12'] = deliverable.audio_ch_12;
-                          data['audio_ch_13'] = deliverable.audio_ch_13;
-                          data['audio_ch_14'] = deliverable.audio_ch_14;
-                          data['audio_ch_15'] = deliverable.audio_ch_15;
-                          data['audio_ch_16'] = deliverable.audio_ch_16;
-                          data['audio_ch_17'] = deliverable.audio_ch_17;
-                          data['audio_ch_18'] = deliverable.audio_ch_18;
-                          data['audio_ch_19'] = deliverable.audio_ch_19;
-                          data['audio_ch_20'] = deliverable.audio_ch_20;
-                          data['audio_ch_21'] = deliverable.audio_ch_21;
-                          data['audio_ch_22'] = deliverable.audio_ch_22;
-                          data['audio_ch_23'] = deliverable.audio_ch_23;
-                          data['audio_ch_24'] = deliverable.audio_ch_24;
-                          data['work_order_templ_code'] = wo_templ_code;
-                          data['work_order_deliverables_code'] = wo_deliverable_code;
-                          data['attn'] = wo_deliverable.attn;
-                          data['name'] = wo_deliverable.name;
-                          data['deliver_to'] = wo_deliverable.deliver_to;
-                          res = server.insert('twog/deliverable_templ', data);
-                          d_templ_code = res.code;
-                          server.update(wo_deliverable.__search_key__, {'deliverable_templ_code': res.code});
-                          templ_expr = "@SOBJECT(twog/work_order_templ['code','" + wo_templ_code + "'])";
-                          wo_templ = server.eval(templ_expr)[0];
-                          del_templ_codes = wo_templ.deliverable_templ_codes;
-                          if(del_templ_codes == ''){
-                              del_templ_codes = d_templ_code;
-                          }else{
-                              del_templ_codes = del_templ_codes + ',' + d_templ_code;
-                          }
-                          server.update(wo_templ.__search_key__, {'deliverable_templ_codes': del_templ_codes})
-                          var top_el = spt.api.get_parent(bvr.src_el, '.out_overhead_' + work_order_code);
-                          var cell = top_el.getElementsByClassName('deliverable_templ_' + wo_deliverable_code)[0];
-                          cell.innerHTML = '<img border="0" style="vertical-align: middle" title="Templated" name="Templated" src="/context/icons/silk/tick.png">';
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (wo_deliverable_code, wo_templ_code, deliverable_source_code, work_order_code)}
-        return behavior
-
-    def get_template_intermediate_behavior(my, intermediate_file_code, work_order_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        function oc(a){
-                            var o = {};
-                            for(var i=0;i<a.length;i++){
-                                o[a[i]]='';
-                            }
-                            return o;
-                        }
-                        try{
-                          //alert('m25');
-                          var server = TacticServerStub.get();
-                          intermediate_file_code = '%s';
-                          work_order_code = '%s';
-                          order_sk = '%s';
-                          intermediate_file = server.eval("@SOBJECT(twog/intermediate_file['code','" + intermediate_file_code + "'])")[0]
-                          work_order = server.eval("@SOBJECT(twog/work_order['code','" + work_order_code + "'])")[0]
-                          work_order_templ = server.eval("@SOBJECT(twog/work_order_templ['code','" + work_order.work_order_templ_code + "'])")[0]
-                          existing_codes = work_order_templ.intermediate_file_templ_codes;
-                          codes_list = existing_codes.split(',');
-                          templ = server.insert('twog/intermediate_file_templ', {'title': intermediate_file.title, 'description': intermediate_file.description})
-                          templ_code = templ.code;
-                          server.update(intermediate_file.__search_key__, {'intermediate_file_templ_code': templ_code});
-                          if(!(templ_code in oc(codes_list))){
-                              new_codes = ''
-                              for(var r = 0; r < codes_list.length; r++){
-                                  if(new_codes == ''){
-                                      new_codes = codes_list[r];
-                                  }else{
-                                      new_codes = new_codes + ',' + codes_list[r];
-                                  }
-                              }
-                              if(new_codes == ''){
-                                  new_codes = templ_code;
-                              }else{
-                                  new_codes = new_codes + ',' + templ_code;
-                              }
-                              server.update(work_order_templ.__search_key__, {'intermediate_file_templ_codes': new_codes});
-                          }
-                          var top_el = spt.api.get_parent(bvr.src_el, '.out_overhead_' + work_order_code);
-                          var cell = top_el.getElementsByClassName('inter_templ_' + intermediate_file_code)[0];
-                          cell.innerHTML = '<img border="0" style="vertical-align: middle" title="Templated" name="Templated" src="/context/icons/silk/tick.png">';
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (intermediate_file_code, work_order_code, my.order_sk)}
         return behavior
 
     def get_template_wo_prereq_behavior(my, sob_code, prereq_st, prereq_code, work_order_templ_code):
@@ -1759,134 +1483,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (prereq_code, prereq_st, sob_code, pipeline)}
-        return behavior
-
-    def get_open_deliverable_behavior(my, deliverable_source_code, work_order_code, title_code, open_type):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m33');
-                          var server = TacticServerStub.get();
-                          deliverable_source_code = '%s';
-                          work_order_code = '%s';
-                          title_code = '%s';
-                          open_type = '%s';
-                          order_sk = '%s';
-                          spt.panel.load_popup('Permanent Element Portal', 'order_builder.DeliverableEditWdg', {'order_sk': order_sk, 'deliverable_source_code': deliverable_source_code, 'work_order_code': work_order_code, 'title_code': title_code});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (deliverable_source_code, work_order_code, title_code, open_type, my.order_sk)}
-        return behavior
-
-    def get_save_deliv_info_behavior(my, wo_deliverable_code, work_order_code, title_code, client_code, is_master):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var server = TacticServerStub.get();
-                          wo_deliverable_code = '%s';
-                          work_order_code = '%s';
-                          title_code = '%s';
-                          client_code = '%s';
-                          is_master = '%s';
-                          order_sk = '%s';
-                          wo_del_sk = server.build_search_key('twog/work_order_deliverables', wo_deliverable_code);
-                          var overhead_el = spt.api.get_parent(bvr.src_el, '.out_overhead_' + work_order_code);
-                          name_el = overhead_el.getElementsByClassName('deliv_name_' + wo_deliverable_code)[0];
-                          attn_el = overhead_el.getElementsByClassName('deliv_attn_' + wo_deliverable_code)[0];
-                          deliver_to_el = overhead_el.getElementsByClassName('deliver_to_' + wo_deliverable_code)[0];
-                          server.update(wo_del_sk, {'attn': attn_el.value, 'name': name_el.value, 'deliver_to': deliver_to_el.value})
-                          if(is_master == 'true'){
-                             delv_tmpls = server.eval("@SOBJECT(twog/deliverable_templ['work_order_deliverables_code','" + wo_deliverable_code + "'])")
-                             if(delv_templs.length > 0){
-                                 server.update(delv_templs[0].__search_key__, {'attn': attn_el.value, 'name': name_el.value, 'deliver_to': deliver_to_el.value})
-                             }
-                          }
-                          top_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
-                          var count_cell = top_el.getElementsByClassName('deliverable_count_' + title_code)[0];
-                          full_title_name = ''
-                          title = server.eval("@SOBJECT(twog/title['code','" + title_code + "'])")[0];
-                          full_title_name = title.title;
-                          if(title.episode != '' && title.episode != null){
-                              full_title_name = full_title_name + ': ' + title.episode;
-                          }
-                          spt.api.load_panel(count_cell, 'order_builder.DeliverableCountWdg', {title_code: title_code, order_sk: order_sk, full_title: full_title_name});
-                          var out_cell = overhead_el.getElementsByClassName('out_list_cell')[0];
-                          work_order_sk = server.build_search_key('twog/work_order', work_order_code)
-                          spt.api.load_panel(out_cell, 'order_builder.OutFilesWdg', {'work_order_code': work_order_code, 'work_order_sk': work_order_sk, 'client_code': client_code, 'order_sk': order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
-         ''' % (wo_deliverable_code, work_order_code, title_code, client_code, is_master, my.order_sk)}
-        return behavior
-
-    #MTM Type used to be "change" with the old way of doing checkboxes
-    def get_change_deliverable_satisfied_behavior(my, wo_deliverable_code, work_order_code, title_code, current_state, client_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var server = TacticServerStub.get();
-                          wo_deliverable_code = '%s';
-                          work_order_code = '%s';
-                          title_code = '%s';
-                          state = '%s';
-                          client_code = '%s';
-                          order_sk = '%s';
-                          new_val = '';
-                          if(state == 'False'){
-                              new_val = 'True';
-                          }else{
-                              new_val = 'False';
-                          }
-                          server.update(server.build_search_key('twog/work_order_deliverables', wo_deliverable_code), {'satisfied': new_val});
-                          var overhead_el = spt.api.get_parent(bvr.src_el, '.out_overhead_' + work_order_code);
-                          var oh_cell = overhead_el.getElementsByClassName('deliverable_list_cell')[0];
-                          spt.api.load_panel(oh_cell, 'order_builder.DeliverableWdg', {title_code: title_code, order_sk: order_sk});
-                          top_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
-                          var count_cell = top_el.getElementsByClassName('deliverable_count_' + title_code)[0];
-                          title = server.eval("@SOBJECT(twog/title['code','" + title_code + "'])")[0];
-                          full_title_name = title.title;
-                          if(title.episode != '' && title.episode != null){
-                              full_title_name = full_title_name + ': ' + title.episode;
-                          }
-                          spt.api.load_panel(count_cell, 'order_builder.DeliverableCountWdg', {title_code: title_code, order_sk: order_sk, full_title: full_title_name});
-                          var out_cell = overhead_el.getElementsByClassName('out_list_cell')[0];
-                          work_order_sk = server.build_search_key('twog/work_order', work_order_code)
-                          spt.api.load_panel(out_cell, 'order_builder.OutFilesWdg', {'work_order_code': work_order_code, 'work_order_sk': work_order_sk, 'client_code': client_code, 'order_sk': order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
-         ''' % (wo_deliverable_code, work_order_code, title_code, current_state, client_code, my.order_sk)}
-        return behavior
-
-    #MTM Type used to be "change" with the old way of doing checkboxes
-    def get_change_inter_satisfied_behavior(my, inter_link_code, work_order_code, client_code, current_state):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var server = TacticServerStub.get();
-                          inter_link_code = '%s';
-                          work_order_code = '%s';
-                          client_code = '%s';
-                          state = '%s';
-                          order_sk = '%s';
-                          new_val = '';
-                          if(state == 'False'){
-                              new_val = 'True';
-                          }else{
-                              new_val = 'False';
-                          }
-                          server.update(server.build_search_key('twog/work_order_intermediate', inter_link_code), {'satisfied': new_val});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (inter_link_code, work_order_code, client_code, current_state, my.order_sk)}
         return behavior
 
     def get_select_checks_by_group_behavior(my):
