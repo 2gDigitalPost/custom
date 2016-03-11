@@ -18,6 +18,7 @@ from equipment_used_row import *
 from error_entry_wdg import *
 from multi_manual_adder_wdg import *
 from order_table_wdg import *
+from outfiles_wdg import *
 from prereq_wdg import *
 from proj_row import *
 from quick_edit_wdg import *
