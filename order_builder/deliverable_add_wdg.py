@@ -7,7 +7,6 @@ from pyasm.widget import TextWdg
 from pyasm.search import Search
 
 from barcoder import Barcoder
-from order_builder_utils import OBScripts
 
 
 class DeliverableAddWdg(BaseRefreshWdg):
@@ -39,7 +38,7 @@ class DeliverableAddWdg(BaseRefreshWdg):
             deliverable_attn = str(my.kwargs.get('deliverable_attn'))
         if 'clone_code' in my.kwargs.keys():
             clone_code = str(my.kwargs.get('clone_code'))
-        obs = OBScripts(order_sk=my.order_sk)
+
         my.client_code = str(my.kwargs.get('client_code'))
         table = Table()
         table.add_attr('class','deliverable_add_wdg')
@@ -73,7 +72,7 @@ class DeliverableAddWdg(BaseRefreshWdg):
         nw = switch_table.add_cell('Switch Asset To Existing Asset By Barcode: ')
         nw.add_attr('nowrap','nowrap')
         barcode_wdg = TextWdg('barcode_switcher')
-        barcode_wdg.add_behavior(obs.get_switch_by_barcode_behavior(my.work_order_code, my.order_sk, my.client_code))
+        barcode_wdg.add_behavior(get_switch_by_barcode_behavior(my.work_order_code, my.order_sk, my.client_code))
         switch_table.add_cell(barcode_wdg)
         table.add_row()
         table.add_cell(switch_table)
@@ -83,7 +82,7 @@ class DeliverableAddWdg(BaseRefreshWdg):
         nw = clone_table.add_cell('Clone Existing Asset By Barcode: ')
         nw.add_attr('nowrap','nowrap')
         barcode_wdg = TextWdg('barcode_cloner')
-        barcode_wdg.add_behavior(obs.get_clone_by_barcode_behavior(my.work_order_code, my.order_sk, my.client_code))
+        barcode_wdg.add_behavior(get_clone_by_barcode_behavior(my.work_order_code, my.order_sk, my.client_code))
         clone_table.add_cell(barcode_wdg)
         table.add_row()
         table.add_cell(clone_table)
@@ -105,3 +104,99 @@ class DeliverableAddWdg(BaseRefreshWdg):
         table.add_cell(insert_wdg)
 
         return table
+
+
+def get_switch_by_barcode_behavior(work_order_code, order_sk, client_code):
+    behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
+                    try{
+                      //alert('m39');
+                      var server = TacticServerStub.get();
+                      work_order_code = '%s';
+                      order_sk = '%s';
+                      client_code = '%s';
+                      top_el = document.getElementsByClassName('deliverable_add_wdg')[0];
+                      name_el = top_el.getElementsByClassName('deliverable_name')[0];
+                      deliver_to_el = top_el.getElementsByClassName('deliver_to')[0];
+                      attn_el = top_el.getElementsByClassName('deliverable_attn')[0];
+                      barcode = bvr.src_el.value;
+                      barcode = barcode.toUpperCase();
+                      source_expr = "@SOBJECT(twog/source['barcode','" + barcode + "'])";
+                      sources = server.eval(source_expr);
+                      if(sources.length > 1){
+                          alert('Something is wrong with inventory. There are ' + sources.length + ' sources with that barcode.');
+                          bvr.src_el.value = '';
+                      }else if(sources.length == 0){
+                          source_expr = "@SOBJECT(twog/source['client_asset_id','" + barcode + "'])";
+                          sources = server.eval(source_expr);
+                          if(sources.length > 1){
+                              alert('Something is wrong with inventory. There are ' + sources.length + ' sources with that client_asset_id.');
+                              bvr.src_el.value = '';
+                              sources = []
+                          }
+                      }
+                      if(sources.length > 0){
+                          sources_code = sources[0].code;
+                          spt.popup.close(spt.popup.get_popup(bvr.src_el));
+                          spt.panel.load_popup('Use Existing Element As Permanent/Deliverable', 'order_builder.DeliverableAddWdg', {'work_order_code': work_order_code, 'order_sk': order_sk, 'client_code': client_code, 'switching_to': sources_code, 'deliver_to': deliver_to_el.value, 'deliverable_attn': attn_el.value, 'deliverable_name': name_el.value});
+                      }else{
+                          alert('There are no sources with that barcode. Try a different barcode?');
+                          bvr.src_el.value = '';
+                      }
+
+
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (work_order_code, order_sk, client_code)}
+    return behavior
+
+
+def get_clone_by_barcode_behavior(work_order_code, order_sk, client_code):
+    behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
+                    try{
+                      //alert('m39');
+                      var server = TacticServerStub.get();
+                      work_order_code = '%s';
+                      order_sk = '%s';
+                      client_code = '%s';
+                      top_el = document.getElementsByClassName('deliverable_add_wdg')[0];
+                      name_el = top_el.getElementsByClassName('deliverable_name')[0];
+                      deliver_to_el = top_el.getElementsByClassName('deliver_to')[0];
+                      attn_el = top_el.getElementsByClassName('deliverable_attn')[0];
+                      barcode = bvr.src_el.value;
+                      barcode = barcode.toUpperCase();
+                      source_expr = "@SOBJECT(twog/source['barcode','" + barcode + "'])";
+                      sources = server.eval(source_expr);
+                      if(sources.length > 1){
+                          alert('Something is wrong with inventory. There are ' + sources.length + ' sources with that barcode.');
+                          bvr.src_el.value = '';
+                      }else if(sources.length == 0){
+                          source_expr = "@SOBJECT(twog/source['client_asset_id','" + barcode + "'])";
+                          sources = server.eval(source_expr);
+                          if(sources.length > 1){
+                              alert('Something is wrong with inventory. There are ' + sources.length + ' sources with that client_asset_id.');
+                              bvr.src_el.value = '';
+                              sources = []
+                          }
+                      }
+                      if(sources.length > 0){
+                          sources_code = sources[0].code;
+                          spt.popup.close(spt.popup.get_popup(bvr.src_el));
+                          spt.panel.load_popup('Cloned Permanent/Deliverable Creation', 'order_builder.DeliverableAddWdg', {'work_order_code': work_order_code, 'order_sk': order_sk, 'client_code': client_code, 'clone_code': sources_code, 'deliver_to': deliver_to_el.value, 'deliverable_attn': attn_el.value, 'deliverable_name': name_el.value});
+                      }else{
+                          alert('There are no sources with that barcode. Try a different barcode?');
+                          bvr.src_el.value = '';
+                      }
+
+
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (work_order_code, order_sk, client_code)}
+    return behavior
