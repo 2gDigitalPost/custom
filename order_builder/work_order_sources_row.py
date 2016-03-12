@@ -36,7 +36,7 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
         my.work_order_sk = str(my.kwargs.get('work_order_sk'))
         my.work_order_sk = my.server.build_search_key('twog/work_order', my.work_order_code)
         my.order_sk = str(my.kwargs.get('order_sk'))
-        obs = OBScripts(order_sk=my.order_sk)
+
         wsource_search = Search("twog/work_order_sources")
         wsource_search.add_filter('work_order_code', my.work_order_code)
         wo_sources = wsource_search.get_sobjects()
@@ -205,7 +205,8 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
                     celly.add_attr('nowrap','nowrap')
                     celly.add_style('cursor: pointer;')
                     celly.add_style('font-size: 80%s;' % '%')
-                    celly.add_behavior(obs.get_launch_wo_deliv_behavior(my.work_order_code,my.work_order_sk,deliv_code))
+                    celly.add_behavior(get_launch_wo_deliv_behavior(my.work_order_code, my.work_order_sk, deliv_code,
+                                                                    my.order_sk))
                     if count % source_limit == 0:
                         deliv_table.add_row()
                     inner_cell = deliv_table.add_cell(inner_table)
@@ -231,7 +232,7 @@ class WorkOrderSourcesRow(BaseRefreshWdg):
         table2 = Table()
         table2.add_row()
         barcode_text_wdg = TextWdg('wo_barcode_insert')
-        barcode_text_wdg.add_behavior(obs.get_wo_barcode_insert_behavior(my.work_order_code, my.work_order_sk))
+        barcode_text_wdg.add_behavior(get_wo_barcode_insert_behavior(my.work_order_code, my.work_order_sk, my.order_sk))
         bct = table2.add_cell(barcode_text_wdg)
         bct.add_attr('align', 'right')
         bct.add_attr('width', '100%')
@@ -309,4 +310,156 @@ def get_launch_wo_inter_behavior(work_order_code, work_order_sk, wo_inter, order
                       //alert(err);
             }
      ''' % (work_order_code, work_order_sk, wo_inter, order_sk)}
+    return behavior
+
+
+def get_launch_wo_deliv_behavior(work_order_code, work_order_sk, wo_deliv, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m40');
+                      var server = TacticServerStub.get();
+                      var work_order_code = '%s';
+                      var work_order_sk = '%s';
+                      var wo_deliv = '%s';
+                      var order_sk = '%s';
+                      spt.panel.load_popup('Permanent Source Portal', 'order_builder.SourceEditWdg', {'code': wo_deliv, 'order_sk': order_sk});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (work_order_code, work_order_sk, wo_deliv, order_sk)}
+    return behavior
+
+
+def get_wo_barcode_insert_behavior(wo_code, wo_sk, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
+                    function oc(a){
+                        var o = {};
+                        for(var i=0;i<a.length;i++){
+                            o[a[i]]='';
+                        }
+                        return o;
+                    }
+                    try{
+                      //alert('m38');
+                      var server = TacticServerStub.get();
+                      wo_code = '%s';
+                      wo_sk = '%s';
+                      order_sk = '%s';
+                      wo = server.eval("@SOBJECT(twog/work_order['code','" + wo_code + "'])")[0];
+                      title_code = server.eval("@GET(twog/proj['code','" + wo.proj_code + "'].title_code)")[0];
+                      title_sk = server.build_search_key('twog/title', title_code);
+                      var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                      var source_el = top_el.getElementsByClassName('wo_sources_' + wo_sk)[0];
+                      var title_source_el = top_el.getElementsByClassName('sources_' + title_sk)[0];
+                      barcode = bvr.src_el.value;
+                      barcode = barcode.toUpperCase();
+                      source_expr = "@SOBJECT(twog/source['barcode','" + barcode + "'])";
+                      sources = server.eval(source_expr);
+                      if(sources.length > 1){
+                          alert('Something is wrong with inventory. There are ' + sources.length + ' sources with that barcode.');
+                          bvr.src_el.value = '';
+                      }else if(sources.length == 0){
+                          source_expr = "@SOBJECT(twog/source['client_asset_id','" + barcode + "'])";
+                          sources = server.eval(source_expr);
+                          if(sources.length > 1){
+                              alert('Something is wrong with inventory. There are ' + sources.length + ' sources with that client_asset_id.');
+                              bvr.src_el.value = '';
+                              sources = []
+                          }
+                      }
+                      if(sources.length > 0){
+                          source = sources[0];
+                          title_sources = server.eval("@GET(twog/title_origin['title_code','" + title_code + "'].source_code)");
+                          if(!(source.code in oc(title_sources))){
+                              server.insert('twog/title_origin', {title_code: title_code, source_code: source.code});
+                              spt.api.load_panel(title_source_el, 'order_builder.SourcesRow', {title_code: title_code, title_sk: title_sk, order_sk: order_sk});
+                          }
+                          wo_sources = server.eval("@GET(twog/work_order_sources['work_order_code','" + wo_code + "'].source_code)");
+                          wo_passins = server.eval("@SOBJECT(twog/work_order_passin['work_order_code','" + wo_code + "'])");
+                          for(var r = 0; r < wo_passins.length; r++){
+                              if(wo_passins[r].deliverable_source_code != ''){
+                                  wo_sources.push(wo_passins[r].deliverable_source_code);
+                              }
+                          }
+                          if(!(source.code in oc(wo_sources))){
+                              server.insert('twog/work_order_sources', {work_order_code: wo_code, source_code: source.code});
+                              spt.api.load_panel(source_el, 'order_builder.WorkOrderSourcesRow', {work_order_code: wo_code, work_order_sk: wo_sk, order_sk: order_sk});
+
+                              work_o_sources_expr = "@SOBJECT(twog/work_order_sources['work_order_code','" + wo_code + "'])";
+                              work_o_sources = server.eval(work_o_sources_expr);
+                              work_o_passins = server.eval("@SOBJECT(twog/work_order_passin['work_order_code','" + wo_code + "'])");
+                              work_o_deliverables_expr = "@SOBJECT(twog/work_order_deliverables['work_order_code','" + wo_code + "'])";
+                              work_o_deliverables = server.eval(work_o_deliverables_expr);
+                              my_sources = []
+                              my_deliverables = []
+                              for(var r = 0; r < work_o_sources.length; r++){
+                                  source_expr = "@SOBJECT(twog/source['code','" + work_o_sources[r].source_code + "'])";
+                                  source = server.eval(source_expr)
+                                  if(source.length > 0){
+                                      my_sources.push(source[0])
+                                  }
+                              }
+                              for(var r = 0; r < work_o_passins.length; r++){
+                                  var dsc = work_o_passins[r].deliverable_source_code;
+                                  if(dsc != '' && dsc != null){
+                                      source_expr = "@SOBJECT(twog/source['code','" + dsc + "'])";
+                                      source = server.eval(source_expr);
+                                      if(source.length > 0){
+                                          my_sources.push(source[0]);
+                                      }
+                                  }
+                              }
+                              for(var r = 0; r < work_o_deliverables.length; r++){
+                                  source_expr = "@SOBJECT(twog/source['code','" + work_o_deliverables[r].deliverable_source_code + "'])";
+                                  source = server.eval(source_expr);
+                                  if(source.length > 0){
+                                       my_deliverables.push(source[0])
+                                  }
+                              }
+                              for(var r = 0; r < my_sources.length; r++){
+                                  kids = my_sources[r].children.split(',');
+                                  new_str = my_sources[r].children;
+                                  for(var t = 0; t < my_deliverables.length; t++){
+                                      if(!(my_deliverables[t].code in oc(kids))){
+                                          if(new_str == '' || new_str == null){
+                                              new_str = my_deliverables[t].code;
+                                          }else{
+                                              new_str = new_str + ',' + my_deliverables[t].code;
+                                          }
+                                      }
+                                  }
+                                  server.update(my_sources[r].__search_key__, {'children': new_str});
+                              }
+                              for(var r = 0; r < my_deliverables.length; r++){
+                                  ancestors = my_deliverables[r].ancestors.split(',');
+                                  new_str = my_deliverables[r].ancestors;
+                                  for(var t = 0; t < my_sources.length; t++){
+                                      if(!(my_sources[t].code in oc(ancestors))){
+                                          if(new_str == '' || new_str == null){
+                                              new_str = my_sources[t].code;
+                                          }else{
+                                              new_str = new_str + ',' + my_sources[t].code;
+                                          }
+                                      }
+                                  }
+                                  server.update(my_deliverables[r].__search_key__, {'ancestors': new_str});
+                              }
+
+                          }
+                      }else{
+                          alert('There are no sources with that barcode. Try a different barcode?');
+                          bvr.src_el.value = '';
+                      }
+
+
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (wo_code, wo_sk, order_sk)}
     return behavior
