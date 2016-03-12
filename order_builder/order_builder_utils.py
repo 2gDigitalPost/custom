@@ -1180,37 +1180,6 @@ class OBScripts(BaseRefreshWdg):
          '''}
         return behavior
 
-    def get_prereq_killer_behavior(my, prereq_code, prereq_st, sob_code, sob_sk, sob_st, sob_name, pipeline):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m15');
-                          var server = TacticServerStub.get();
-                          prereq_code = '%s';
-                          prereq_st = '%s';
-                          sob_code = '%s';
-                          sob_sk = '%s';
-                          sob_st = '%s';
-                          sob_name = '%s';
-                          pipeline = '%s';
-                          order_sk = '%s';
-                          //need to finish
-                          var overhead_el = spt.api.get_parent(bvr.src_el, '.overhead_' + sob_code);
-                          var oh_cell = overhead_el.getElementsByClassName('prereq_adder_cell')[0];
-                          pre_sk = server.build_search_key(prereq_st, prereq_code);
-                          server.retire_sobject(pre_sk);
-                          spt.api.load_panel(oh_cell, 'order_builder.PreReqWdg', {sob_code: sob_code, sob_sk: sob_sk, sob_st: sob_st, sob_name: sob_name, pipeline: pipeline, order_sk: order_sk});
-                          top_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
-                          var count_cell = top_el.getElementsByClassName('prereq_count_' + sob_code)[0];
-                          spt.api.load_panel(count_cell, 'order_builder.PreReqCountWdg', {sob_code: sob_code, sob_sk: sob_sk, sob_st: sob_st, sob_name: sob_name, prereq_st: prereq_st, pipeline: pipeline, order_sk: order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (prereq_code, prereq_st, sob_code, sob_sk, sob_st, sob_name, pipeline, my.order_sk)}
-        return behavior
-
     def get_add_wo_sources_behavior(my, work_order_code, work_order_sk, proj_sk, sob_name):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
@@ -1288,107 +1257,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (work_order_code, work_order_sk, call_me, my.order_sk)}
         return behavior
 
-    def get_template_wo_prereq_behavior(my, sob_code, prereq_st, prereq_code, work_order_templ_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m26');
-                          var server = TacticServerStub.get();
-                          sob_code = '%s';
-                          prereq_st = '%s';
-                          prereq_code = '%s';
-                          work_order_templ_code = '%s';
-                          prereq_expr = "@GET(" + prereq_st + "['code','" + prereq_code + "'].prereq)";
-                          prereq = server.eval(prereq_expr)[0];
-                          server.insert('twog/work_order_prereq_templ', {'work_order_templ_code': work_order_templ_code, 'prereq': prereq});
-                          var top_el = spt.api.get_parent(bvr.src_el, '.prereq_adder_' + sob_code);
-                          var cell = top_el.getElementsByClassName('prereq_templ_' + prereq_code)[0];
-                          cell.innerHTML = '<img border="0" style="vertical-align: middle" title="Templated" name="Templated" src="/context/icons/silk/tick.png">';
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sob_code, prereq_st, prereq_code, work_order_templ_code)}
-        return behavior
-
-    def get_template_prereq_behavior(my, sob_code, pipeline, prereq_st, prereq_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m27');
-                          var server = TacticServerStub.get();
-                          sob_code = '%s';
-                          pipeline = '%s';
-                          prereq_st = '%s';
-                          prereq_code = '%s';
-                          prereq_expr = "@GET(" + prereq_st + "['code','" + prereq_code + "'].prereq)";
-                          prereq = server.eval(prereq_expr)[0];
-                          server.insert('twog/pipeline_prereq', {'pipeline_code': pipeline, 'prereq': prereq});
-                          var top_el = spt.api.get_parent(bvr.src_el, '.prereq_adder_' + sob_code);
-                          var cell = top_el.getElementsByClassName('prereq_templ_' + prereq_code)[0];
-                          cell.innerHTML = '<img border="0" style="vertical-align: middle" title="Templated" name="Templated" src="/context/icons/silk/tick.png">';
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sob_code, pipeline, prereq_st, prereq_code)}
-        return behavior
-
-    def get_create_prereq_change_behavior(my, sob_code, prereq_st, sob_sk, sob_st, sob_name, pipeline):
-        behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
-                        try{
-                          var server = TacticServerStub.get();
-                          sob_code = '%s';
-                          prereq_st = '%s';
-                          sob_sk = '%s';
-                          sob_st = '%s';
-                          sob_name = '%s';
-                          pipeline = '%s';
-                          order_sk = '%s';
-                          which_code = 'title_code';
-                          if(sob_st == 'twog/work_order'){
-                              which_code = 'work_order_code';
-                          }
-                          var overhead_el = spt.api.get_parent(bvr.src_el, '.overhead_' + sob_code);
-                          var oh_cell = overhead_el.getElementsByClassName('prereq_adder_cell')[0];
-                          var top_el = spt.api.get_parent(bvr.src_el, '.prereq_adder_' + sob_code);
-                          var new_prereq_inp = '';//top_el.getElementsByClassName('new_prereq')[0];
-                          inps = top_el.getElementsByTagName('input');
-                          for(var r = 0; r < inps.length; r++){
-                              if(inps[r].name == 'new_prereq'){
-                                  new_prereq_inp = inps[r];
-                              }
-                          }
-                          var prereq = new_prereq_inp.value;
-                          left_count = prereq.split('(').length;
-                          right_count = prereq.split(')').length;
-                          if(left_count > right_count){
-                              for(var x = 0; x < (left_count - right_count); x++){
-                                  prereq = prereq + ')';
-                              }
-                          }else if(right_count > left_count){
-                              for(var x = 0; x < (right_count - left_count); x++){
-                                  prereq = '(' + prereq;
-                              }
-                          }
-                          data = {'prereq': prereq, 'satisfied': false}
-                          data[which_code] = sob_code;
-                          server.insert(prereq_st, data);
-                          spt.api.load_panel(oh_cell, 'order_builder.PreReqWdg', {sob_code: sob_code, sob_sk: sob_sk, sob_st: sob_st, sob_name: sob_name, pipeline: pipeline, order_sk: order_sk});
-                          top_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
-                          var count_cell = top_el.getElementsByClassName('prereq_count_' + sob_code)[0];
-                          spt.api.load_panel(count_cell, 'order_builder.PreReqCountWdg', {sob_code: sob_code, sob_sk: sob_sk, sob_st: sob_st, sob_name: sob_name, prereq_st: prereq_st, pipeline: pipeline, order_sk: order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sob_code, prereq_st, sob_sk, sob_st, sob_name, pipeline, my.order_sk)}
-        return behavior
-
     def get_create_deliverable_behavior(my, sob_code, prereq_st, sob_sk, sob_st, sob_name, pipeline):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
@@ -1409,80 +1277,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (sob_code, prereq_st, sob_sk, sob_st, sob_name, pipeline, my.order_sk)}
-        return behavior
-
-    def get_create_prereq_behavior(my, sob_code, prereq_st, sob_sk, sob_st, sob_name, pipeline):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var server = TacticServerStub.get();
-                          sob_code = '%s';
-                          prereq_st = '%s';
-                          sob_sk = '%s';
-                          sob_st = '%s';
-                          sob_name = '%s';
-                          pipeline = '%s';
-                          order_sk = '%s';
-                          which_code = 'title_code';
-                          if(sob_st == 'twog/work_order'){
-                              which_code = 'work_order_code';
-                          }
-                          var overhead_el = spt.api.get_parent(bvr.src_el, '.overhead_' + sob_code);
-                          var oh_cell = overhead_el.getElementsByClassName('prereq_adder_cell')[0];
-                          var top_el = spt.api.get_parent(bvr.src_el, '.prereq_adder_' + sob_code);
-                          var new_prereq_inp = '';//top_el.getElementsByClassName('new_prereq')[0];
-                          inps = top_el.getElementsByTagName('input');
-                          for(var r = 0; r < inps.length; r++){
-                              if(inps[r].name == 'new_prereq'){
-                                  new_prereq_inp = inps[r];
-                              }
-                          }
-                          var prereq = new_prereq_inp.value;
-                          left_count = prereq.split('(').length;
-                          right_count = prereq.split(')').length;
-                          if(left_count > right_count){
-                              for(var x = 0; x < (left_count - right_count); x++){
-                                  prereq = prereq + ')';
-                              }
-                          }else if(right_count > left_count){
-                              for(var x = 0; x < (right_count - left_count); x++){
-                                  prereq = '(' + prereq;
-                              }
-                          }
-                          data = {'prereq': prereq, 'satisfied': false}
-                          data[which_code] = sob_code;
-                          server.insert(prereq_st, data);
-                          spt.api.load_panel(oh_cell, 'order_builder.PreReqWdg', {sob_code: sob_code, sob_sk: sob_sk, sob_st: sob_st, sob_name: sob_name, pipeline: pipeline, order_sk: order_sk});
-                          top_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
-                          var count_cell = top_el.getElementsByClassName('prereq_count_' + sob_code)[0];
-                          spt.api.load_panel(count_cell, 'order_builder.PreReqCountWdg', {sob_code: sob_code, sob_sk: sob_sk, sob_st: sob_st, sob_name: sob_name, prereq_st: prereq_st, pipeline: pipeline, order_sk: order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sob_code, prereq_st, sob_sk, sob_st, sob_name, pipeline, my.order_sk)}
-        return behavior
-
-    def get_save_prereq_behavior(my, prereq_code, prereq_st, sob_code, pipeline):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m31');
-                          var server = TacticServerStub.get();
-                          prereq_code = '%s';
-                          prereq_st = '%s';
-                          sob_code = '%s';
-                          pipeline = '%s';
-                          var top_el = spt.api.get_parent(bvr.src_el, '.prereq_adder_' + sob_code);
-                          cell = top_el.getElementsByClassName('prereq_' + prereq_code)[0];
-                          server.update(server.build_search_key(prereq_st, prereq_code), {'prereq': cell.value});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (prereq_code, prereq_st, sob_code, pipeline)}
         return behavior
 
     def get_select_checks_by_group_behavior(my):
@@ -1533,41 +1327,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (my.order_sk)}
-        return behavior
-
-    #MTM The old way to do this with tactic checkboxes was "type": "change"
-    def get_change_satisfied_behavior(my, prereq_code, prereq_st, sob_code, current_state, sob_sk, sob_st, sob_name, pipeline):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var server = TacticServerStub.get();
-                          prereq_code = '%s';
-                          prereq_st = '%s';
-                          sob_code = '%s';
-                          state = '%s';
-                          sob_sk = '%s';
-                          sob_st = '%s';
-                          sob_name = '%s';
-                          pipeline = '%s';
-                          order_sk = '%s';
-                          new_val = '';
-                          if(state == 'False'){
-                              new_val = 'True';
-                          }else{
-                              new_val = 'False';
-                          }
-                          server.update(server.build_search_key(prereq_st, prereq_code), {'satisfied': new_val});
-                          var overhead_el = spt.api.get_parent(bvr.src_el, '.overhead_' + sob_code);
-                          var oh_cell = overhead_el.getElementsByClassName('prereq_adder_cell')[0];
-                          spt.api.load_panel(oh_cell, 'order_builder.PreReqWdg', {sob_code: sob_code, sob_sk: sob_sk, sob_st: sob_st, sob_name: sob_name, pipeline: pipeline, order_sk: order_sk});
-                          top_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
-                          var count_cell = top_el.getElementsByClassName('prereq_count_' + sob_code)[0];
-                          spt.api.load_panel(count_cell, 'order_builder.PreReqCountWdg', {sob_code: sob_code, sob_sk: sob_sk, sob_st: sob_st, sob_name: sob_name, prereq_st: prereq_st, pipeline: pipeline, order_sk: order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                }
-         ''' % (prereq_code, prereq_st, sob_code, current_state, sob_sk, sob_st, sob_name, pipeline, my.order_sk)}
         return behavior
 
     def get_wo_barcode_insert_behavior(my, wo_code, wo_sk):
@@ -2846,34 +2605,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % proj_sk}
-        return behavior
-
-
-    def get_kill_wos_title_prereqs_behavior(my, sob_sk, order_sk, sob_name, pipeline):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var sob_sk = "%s";
-                          var order_sk = "%s";
-                          var sob_name = "%s";
-                          var pipeline = "%s";
-                          var wo_code = sob_sk.split('code=')[1];
-                          if(confirm("Are you sure you want to delete all PreReq items inherited from the Title?")){
-                              var server = TacticServerStub.get();
-                              var work_order_prereqs = server.eval("@SOBJECT(twog/work_order_prereq['work_order_code','" + wo_code + "']['from_title','in','True'])");
-                              for(var r = 0; r < work_order_prereqs.length; r++){
-                                  server.delete_sobject(work_order_prereqs[r].__search_key__);
-                              }
-                              var overhead_el = spt.api.get_parent(bvr.src_el, '.overhead_' + wo_code);
-                              var oh_cell = overhead_el.getElementsByClassName('prereq_adder_cell')[0];
-                              spt.api.load_panel(oh_cell, 'order_builder.PreReqWdg', {'sob_code': wo_code, 'sob_sk': sob_sk, 'sob_st': 'twog/work_order', 'sob_name': sob_name, 'pipeline': pipeline, 'order_sk': order_sk});
-                          }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sob_sk, order_sk, sob_name, pipeline)}
         return behavior
 
     def get_eu_submit_behavior(my, work_order_code, parent_pyclass): #SIDDED
