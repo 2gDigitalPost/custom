@@ -1473,54 +1473,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (wo_code, wo_sk, wot_code, my.order_sk, my.is_master_str)}
         return behavior
 
-    def get_eq_change_behavior(my, work_order_code): #NO SID NECC
-        behavior = {'css_class': 'sel_change', 'type': 'change', 'cbjs_action': '''
-                        try{
-                          //alert('m70');
-                          var server = TacticServerStub.get();
-                          var work_order_code = '%s';
-                          var top_el = document.getElementsByClassName('equipment_used_adder_top_' + work_order_code)[0];
-                          var puller1 = '';
-                          var puller2 = '';
-                          var unit_el = '';
-                          var sels = top_el.getElementsByTagName('select');
-                          for(var r= 0; r < sels.length; r++){
-                              if(sels[r].name == 'equipment_changer'){
-                                  puller1 = sels[r];
-                              }else if(sels[r].name == 'client_eu_changer'){
-                                  puller2 = sels[r];
-                              }else if(sels[r].name == 'eu_add_units'){
-                                  unit_el = sels[r];
-                              }
-                          }
-                          if(puller1.value != 'NOTHINGXsXNOTHING'){
-                              puller2.value = 'NOTHINGXsXNOTHING';
-                              var name_el = top_el.getElementsByClassName('eu_add_name')[0];
-                              var quantity_el = top_el.getElementsByClassName('eu_add_quantity')[0];
-                              var duration_el = top_el.getElementsByClassName('eu_add_duration')[0];
-                              var description_el = top_el.getElementsByClassName('eu_add_description')[0];
-                              splits = puller1.value.split('XsX');
-                              e_code = splits[0];
-                              e_name = splits[1];
-                              e_expr = "@SOBJECT(twog/equipment['code','" + e_code + "'])";
-                              equip = server.eval(e_expr)[0];
-                              name_el.value = equip.name;
-                              quantity_el.value = '';
-                              duration_el.value = '';
-                              description_el.innerHTML = equip.description;
-                              description_el.value = equip.description;
-                              unit_el.value = equip.units;
-                              //this needs to set the other pulldown to --Select--
-                          }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % work_order_code}
-        return behavior
-
     def get_client_eq_change_behavior(my, work_order_code): #NO SID NECC
         behavior = {'css_class': 'sel_change', 'type': 'change', 'cbjs_action': '''
                         try{

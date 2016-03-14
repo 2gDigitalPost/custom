@@ -1,7 +1,7 @@
 __all__ = ["OrderBuilderLauncherWdg", "TitleCloneSelectorWdg", "TitleDeletorWdg", "TitleProjStatusTriggerWdg",
            "OrderBuilder", "TitleRow", "EditHackPipe", "HackPipeConnectWdg", "DeliverableWdg", "IntermediateEditWdg",
            "DeliverableEditWdg", "TwogEasyCheckinWdg", "OutsideBarcodesListWdg", "NewSourceWdg", "SourceEditWdg",
-           "ProjDueDateChanger", "IntermediateFileAddWdg", "EquipmentUsedAdderWdg", "EquipmentUsedMultiAdderWdg",
+           "ProjDueDateChanger", "IntermediateFileAddWdg", "EquipmentUsedMultiAdderWdg",
            "OperatorErrorDescriptPopupWdg", "ExternalRejectionReasonWdg", "TitleRedoWdg"]
 
 import tacticenv
@@ -1769,91 +1769,6 @@ class IntermediateFileAddWdg(BaseRefreshWdg):
 
         insert_wdg = EditWdg(element_name='general', mode='insert', search_type='twog/intermediate_file', title='Create Intermediate File', view='insert', widget_key='edit_layout', cbjs_insert_path='builder/new_inter_file')
         table.add_cell(insert_wdg)
-
-        return table
-
-
-class EquipmentUsedAdderWdg(BaseRefreshWdg):
-    def init(my):
-        my.work_order_sk = ''
-        my.work_order_code = ''
-        my.client_code = ''
-        my.parent_pyclass = 'ProjRow'
-        my.parent_sk = ''
-        my.order_sk = ''
-        my.user = Environment.get_user_name() 
-        my.width = '1000px'
-        my.height = '300px'
-        my.submit_eu = "<input type='button' value='Submit'/>"
-    
-    def get_display(my):
-        my.work_order_sk = str(my.kwargs.get('work_order_sk'))
-        my.work_order_code = str(my.kwargs.get('work_order_code'))
-        my.client_code = str(my.kwargs.get('client_code'))
-        my.parent_sk = str(my.kwargs.get('parent_sk'))
-        my.order_sk = str(my.kwargs.get('order_sk'))
-        obs = OBScripts(order_sk=my.order_sk)
-        eq_search = Search("twog/equipment")
-        eq_search.add_order_by('name desc')
-        all_equip = eq_search.get_sobjects()
-        client_eq_search = Search("twog/equipment_used_templ")
-        client_eq_search.add_filter('client_code',my.client_code)
-        client_eq_search.add_order_by('name desc')
-        all_client_equip = client_eq_search.get_sobjects()
-        table = Table()
-        table.add_attr('class', 'equipment_used_adder_top_%s' % my.work_order_code)
-        table.add_row()
-        table.add_cell('Equipment: ')
-        puller = SelectWdg('equipment_changer')
-        if len(all_equip) > 0:
-            puller.append_option('--Select--', 'NOTHINGXsXNOTHING')
-            for equip in all_equip:
-                puller.append_option(equip.get_value('name'), '%sXsX%s' % (equip.get_value('code'), equip.get_value('name')))
-        puller.add_behavior(obs.get_eq_change_behavior(my.work_order_code))
-        table.add_cell(puller)
-
-        table.add_row()
-        table.add_cell("Client's Template-Used Equipment: ")
-        puller2 = SelectWdg('client_eu_changer')
-        if len(all_client_equip) > 0:
-            puller2.append_option('--Select--', 'NOTHINGXsXNOTHING')
-            for equip in all_client_equip:
-                puller2.append_option('%s: Quant: %s, Units: %s, Dur: %s' % (equip.get_value('name'), equip.get_value('expected_quantity'), equip.get_value('units'), equip.get_value('expected_duration')), '%sXsX%s' % (equip.get_value('code'), equip.get_value('name')))
-        puller2.add_behavior(obs.get_client_eq_change_behavior(my.work_order_code))
-        table.add_cell(puller2)
-
-        table.add_row()
-        hr = table.add_cell('<hr/>')
-        hr.add_attr('colspan','2')
-        table.add_row()
-        table.add_cell('Name: ')# if name here does not match name in pulldown when submitted, create a new 'equipment' entry out of info in panel
-        table.add_cell('<input type="text" class="eu_add_name" style="width: 200px;"/>')
-        table.add_row()
-        eqt = table.add_cell('Estimated Quantity: ')
-        eqt.add_attr('nowrap','nowrap')
-        table.add_cell('<input type="text" class="eu_add_quantity" style="width: 200px;"/>')
-        table.add_row()
-        edt = table.add_cell('Estimated Duration: ')
-        edt.add_attr('nowrap','nowrap')
-        table.add_cell('<input type="text" class="eu_add_duration" style="width: 200px;"/>')
-        units = ['items','mb','gb','tb']
-        unit_pull = SelectWdg('eu_add_units')
-        unit_pull.append_option('--Select--','NOTHING')
-        for unit in units:
-            unit_pull.append_option(unit, unit)
-        table.add_row()
-        table.add_cell('Units: ')
-        table.add_cell(unit_pull)
-        table.add_row()
-        table.add_cell('Description')
-        table.add_row()
-        desc = table.add_cell('<textarea rows="5" cols="50" class="eu_add_description"></textarea>')
-        desc.add_attr('colspan','2')
-        table.add_row()
-        saver = table.add_cell(my.submit_eu)
-        saver.add_attr('colspan','2')
-        saver.add_attr('align','right')
-        saver.add_behavior(obs.get_eu_submit_behavior(my.work_order_code, my.parent_pyclass))
 
         return table
 
