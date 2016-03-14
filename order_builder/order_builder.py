@@ -3,7 +3,7 @@ __all__ = ["OrderBuilderLauncherWdg", "TitleSelectorWdg", "TitleCloneSelectorWdg
            "AddProjWdg", "EditHackPipe", "HackPipeConnectWdg", "DeliverableWdg",
            "IntermediateEditWdg", "DeliverableEditWdg", "WorkOrderSourceAddWdg", "TwogEasyCheckinWdg",
            "OutsideBarcodesListWdg", "NewSourceWdg", "SourceEditWdg", "ProjDueDateChanger",
-           "IntermediatePassinAddWdg", "DeliverablePassinAddWdg", "DeliverableAddWdg",
+           "IntermediatePassinAddWdg", "DeliverablePassinAddWdg",
            "IntermediateFileAddWdg", "EquipmentUsedAdderWdg", "EquipmentUsedMultiAdderWdg",
            "OperatorErrorDescriptPopupWdg", "ExternalRejectionReasonWdg", "Barcoder", "TitleRedoWdg"]
 
