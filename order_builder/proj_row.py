@@ -261,7 +261,7 @@ class ProjRow(BaseRefreshWdg):
         prio_wdg.add_attr('old_prio',main_obj.get_value('priority'))
         prio_wdg.set_value(main_obj.get_value('priority'))
         if user_is_scheduler:
-            prio_wdg.add_behavior(obs.get_alter_prio_behavior(main_obj.get_search_key()))
+            prio_wdg.add_behavior(get_alter_prio_behavior(main_obj.get_search_key()))
         else:
             prio_wdg.add_attr('disabled', 'disabled')
             prio_wdg.add_attr('readonly', 'readonly')
@@ -297,13 +297,16 @@ class ProjRow(BaseRefreshWdg):
                     add = bottom_buttons.add_cell(adder)
                     add.add_attr('align', 'right')
                     priority = ButtonSmallNewWdg(title="Change Priority", icon=CustomIconWdg.icons.get('PRIORITY'))
-                    priority.add_behavior(obs.get_change_priority_behavior(main_obj.get_value('code'),
-                                                                           main_obj.get_value('process')))
+                    priority.add_behavior(get_change_priority_behavior(main_obj.get_value('code'),
+                                                                       main_obj.get_value('process'),
+                                                                       my.order_sk,
+                                                                       my.is_master_str))
                     prio = bottom_buttons.add_cell(priority)
                     prio.add_attr('align', 'right')
                     duedate = ButtonSmallNewWdg(title="Change Due Date", icon=CustomIconWdg.icons.get('CALENDAR'))
-                    duedate.add_behavior(obs.get_change_due_date_behavior(main_obj.get_value('code'),
-                                                                          main_obj.get_value('process')))
+                    duedate.add_behavior(get_change_due_date_behavior(main_obj.get_value('code'),
+                                                                      main_obj.get_value('process'),
+                                                                      my.order_sk))
                     due = bottom_buttons.add_cell(duedate)
                     due.add_attr('align', 'right')
 
@@ -334,9 +337,10 @@ class ProjRow(BaseRefreshWdg):
                     templ_icon = CustomIconWdg.icons.get('TEMPLATE')
                 templ_button = ButtonSmallNewWdg(title="Template Me", icon=templ_icon)
                 if main_obj.get_value('templ_me') == False:
-                    templ_button.add_behavior(obs.get_templ_proj_behavior(main_obj.get_value('templ_me'),
-                                                                          main_obj.get_value('proj_templ_code'),
-                                                                          main_obj.get_search_key()))
+                    templ_button.add_behavior(get_templ_proj_behavior(main_obj.get_value('templ_me'),
+                                                                      main_obj.get_value('proj_templ_code'),
+                                                                      main_obj.get_search_key(),
+                                                                      my.order_sk))
                 templ_butt = bottom_buttons.add_cell(templ_button)
                 templ_butt.add_attr('class', 'templ_butt_%s' % my.sk)
 
@@ -397,5 +401,130 @@ def get_multi_add_wos_behavior(proj_sk, order_sk):
                       spt.alert(spt.exception.handler(err));
                       //alert(err);
             }
-     ''' % (proj_sk, order_sk)}
+    ''' % (proj_sk, order_sk)}
+
+    return behavior
+
+
+def get_templ_proj_behavior(templ_me, proj_templ_code, sk, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                       var server = TacticServerStub.get();
+                       var templ_me = '%s';
+                       var proj_templ_code = '%s';
+                       var sk = '%s';
+                       var order_sk = '%s';
+                       var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                       expr = "@SOBJECT(twog/proj['proj_templ_code','" + proj_templ_code + "']['templ_me','true'])";
+                       proj_ts = server.eval(expr);
+                       if(proj_ts.length == 0){
+                           server.update(sk, {'templ_me': 'true'});
+                           me = top_el.getElementsByClassName('templ_butt_' + sk)[0];
+                           spt.api.load_panel(me, 'tactic.ui.widget.button_new_wdg.ButtonSmallNewWdg', {title: "This is the Templating Project", icon: '/context/icons/silk/tick.png'});
+                       }else{
+                           alert('This cannot become the Template. Please go to the Master Order for this Template.');
+                       }
+
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+            }
+    ''' % (templ_me, proj_templ_code, sk, order_sk)}
+
+    return behavior
+
+
+def get_alter_prio_behavior(proj_sk):
+    behavior = {'css_class': 'txt_change', 'type': 'change', 'cbjs_action': '''
+                    function flicker(a){
+                        a.style.background = '#FF0000';
+                        setTimeout(function(){a.style.background = '#FFFFFF';}, 1000);
+                    }
+                    try{
+                      var proj_sk = '%s';
+                      var server = TacticServerStub.get();
+                      var new_prio = bvr.src_el.value;
+                      var old_val = bvr.src_el.getAttribute('old_prio');
+                      new_prio = new_prio.trim();
+                      if(!(isNaN(new_prio))){
+                          new_val = Number(new_prio);
+                          server.update(proj_sk, {'priority': new_val});
+                          bvr.src_el.setAttribute('old_prio',new_val);
+                          flicker(bvr.src_el);
+                      }else{
+                          bvr.src_el.value = old_val;
+                          alert('Please only enter numbers into this box');
+                      }
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % proj_sk}
+    return behavior
+
+
+def get_change_priority_behavior(proj_code, proj_name, order_sk, is_master_str):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                        //alert('m57');
+                        var server = TacticServerStub.get();
+                        proj_code = '%s';
+                        proj_name = '%s';
+                        order_sk = '%s';
+                        is_master_str = '%s';
+                        proj_sk = server.build_search_key('twog/proj', proj_code);
+                        new_priority = prompt("Please enter the desired priority number for " + proj_name + "'s work orders.");
+                        reload_wos = [];
+                        if(!(isNaN(new_priority))){
+                           update_priority = Number(new_priority);
+                           server.update(proj_sk, {'priority': update_priority});
+                           wos = server.eval("@SOBJECT(twog/work_order['proj_code','" + proj_code + "'])");
+                           for(var r = 0; r < wos.length; r++){
+                               reload_wos.push(wos[r].__search_key__);
+                           }
+                        }
+                        if(reload_wos.length > 0){
+                            var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                            display_mode = top_el.getAttribute('display_mode');
+                            user = top_el.getAttribute('user');
+                            groups_str = top_el.get('groups_str');
+                            allowed_titles = top_el.getAttribute('allowed_titles');
+                            for(var r = 0; r < reload_wos.length; r++){
+                                wo_el = top_el.getElementsByClassName('cell_' + reload_wos[r])[0];
+                                sk = wo_el.get('sk');
+                                parent_sk = wo_el.get('parent_sk');
+                                parent_sid = wo_el.get('parent_sid');
+                                spt.api.load_panel(wo_el, 'order_builder.WorkOrderRow', {'sk': sk, 'parent_sk': parent_sk, 'order_sk': order_sk, 'parent_sid': parent_sid, display_mode: display_mode, user: user, groups_str: groups_str, allowed_titles: allowed_titles, is_master: is_master_str});
+                            }
+                        }
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (proj_code, proj_name, order_sk, is_master_str)}
+    return behavior
+
+
+def get_change_due_date_behavior(proj_code, proj_name, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                        //alert('m57');
+                        proj_code = '%s';
+                        proj_name = '%s';
+                        order_sk = '%s';
+                        kwargs = {'proj_code': proj_code, 'proj_name': proj_name, 'order_sk': order_sk, 'send_wdg': 'OrderBuilder'};
+                        spt.panel.load_popup("Change Due Date for " + proj_name + "'s work orders", 'order_builder.order_builder.ProjDueDateChanger', kwargs);
+
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (proj_code, proj_name, order_sk)}
     return behavior
