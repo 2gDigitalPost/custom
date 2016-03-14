@@ -622,42 +622,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (eqsk, eqname, work_order_code)}
         return behavior
 
-    def get_assign_intermediate_passins_behavior(my, work_order_code):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                           var server = TacticServerStub.get();
-                           var work_order_code = '%s';
-                           var order_sk = '%s';
-                           var top_el = spt.api.get_parent(bvr.src_el, '.intermediate_passin_add_wdg');
-                           checks = top_el.getElementsByClassName('inter_passin_selector');
-                           for(var r = 0; r < checks.length; r++){
-                               if(checks[r].getAttribute('checked') == 'true'){
-                                   woi_code = checks[r].getAttribute('woi_code');
-                                   inter_code = checks[r].getAttribute('inter_code');
-                                   server.insert('twog/work_order_passin', {'work_order_code': work_order_code, 'intermediate_file_code': inter_code, 'work_order_intermediate_code': woi_code})
-                               }
-                           }
-                           work_order_sk = server.build_search_key('twog/work_order', work_order_code);
-                           var sources_line = document.getElementsByClassName('wo_sources_' + work_order_sk)[0];
-                           spt.api.load_panel(sources_line, 'order_builder.WorkOrderSourcesRow', {'work_order_code': work_order_code, 'order_sk': order_sk});
-                           var sp = document.getElementsByClassName('sp_overhead_' + work_order_code)[0];
-                           parent_pipe = sp.getAttribute('parent_pipe');
-                           client_code = sp.getAttribute('client_code');
-                           is_master = sp.getAttribute('is_master');
-                           var sp_el = sp.getElementsByClassName('sp_list_cell')[0];
-                           spt.api.load_panel(sp_el, 'order_builder.SourcePortalWdg', {'work_order_code': work_order_code, 'parent_pipe': parent_pipe, 'client_code': client_code, 'is_master': is_master, 'order_sk': order_sk});
-                           spt.popup.close(spt.popup.get_popup(bvr.src_el));
-
-
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (work_order_code, my.order_sk)}
-        return behavior
-
     def get_templ_proj_behavior(my, templ_me, proj_templ_code, sk):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
