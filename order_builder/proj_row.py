@@ -389,8 +389,8 @@ def get_multi_add_wos_behavior(proj_sk, order_sk):
                     try{
                         proj_sk = '%s';
                         order_sk = '%s';
-                        kwargs = {'parent_sk': proj_sk, 'order_sk': order_sk, 'search_type': 'twog/work_order'};
-                        spt.panel.load_popup('Add Work Order(s)', 'order_builder.MultiManualAdderWdg', kwargs);
+                        kwargs = {'parent_sk': proj_sk, 'order_sk': order_sk};
+                        spt.panel.load_popup('Add Work Order(s)', 'order_builder.WorkOrderAdderWdg', kwargs);
             }
             catch(err){
                       spt.app_busy.hide();

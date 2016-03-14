@@ -22,6 +22,7 @@ from order_table_wdg import *
 from outfiles_wdg import *
 from prereq_wdg import *
 from proj_row import *
+from project_adder_wdg import *
 from quick_edit_wdg import *
 from source_portal_wdg import *
 from sources_row import *
@@ -30,5 +31,6 @@ from title_due_prio_bb_wdg import *
 from title_row import *
 from title_selector_wdg import *
 from title_source_inspector_wdg import *
+from work_order_adder_wdg import *
 from work_order_row import *
 from work_order_sources_row import *
