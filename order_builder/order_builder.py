@@ -1,9 +1,9 @@
 __all__ = ["OrderBuilderLauncherWdg", "TitleCloneSelectorWdg", "TitleDeletorWdg", "TitleProjStatusTriggerWdg",
-           "OrderBuilder", "TitleRow", "AddWorkOrderWdg", "AddProjWdg", "EditHackPipe", "HackPipeConnectWdg",
-           "DeliverableWdg", "IntermediateEditWdg", "DeliverableEditWdg", "TwogEasyCheckinWdg",
-           "OutsideBarcodesListWdg", "NewSourceWdg", "SourceEditWdg", "ProjDueDateChanger", "IntermediatePassinAddWdg",
-           "IntermediateFileAddWdg", "EquipmentUsedAdderWdg", "EquipmentUsedMultiAdderWdg",
-           "OperatorErrorDescriptPopupWdg", "ExternalRejectionReasonWdg", "TitleRedoWdg"]
+           "OrderBuilder", "TitleRow", "AddProjWdg", "EditHackPipe", "HackPipeConnectWdg", "DeliverableWdg",
+           "IntermediateEditWdg", "DeliverableEditWdg", "TwogEasyCheckinWdg", "OutsideBarcodesListWdg", "NewSourceWdg",
+           "SourceEditWdg", "ProjDueDateChanger", "IntermediatePassinAddWdg", "IntermediateFileAddWdg",
+           "EquipmentUsedAdderWdg", "EquipmentUsedMultiAdderWdg", "OperatorErrorDescriptPopupWdg",
+           "ExternalRejectionReasonWdg", "TitleRedoWdg"]
 
 import tacticenv
 from tactic_client_lib import TacticServerStub
@@ -857,138 +857,6 @@ class OrderBuilder(BaseRefreshWdg):
         cover_cell = cover_table.add_cell(table)
         cover_cell.add_attr('class','cover_cell')
         return cover_table
-
-
-class AddWorkOrderWdg(BaseRefreshWdg): 
-
-    def init(my):
-        my.proj_sk = ''
-        my.proj_code = ''
-        my.order_sk = ''
-
-    def get_commit(my, user_name):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-                        function encode_utf8( s )
-                        {
-                            return unescape( encodeURIComponent( s ) );
-                        }
-                        try{
-                          var server = TacticServerStub.get();
-                          var proj_sk = '%s';
-                          var order_sk = '%s';
-                          var user_name = '%s';
-                          proj_code = proj_sk.split('code=')[1];
-                          order_code = order_sk.split('code=')[1];
-                          pop_el = document.getElementsByClassName('addwo_' + proj_code)[0];
-                          process_el = pop_el.getElementsByClassName('add_wo_process')[0];
-                          work_hours_el = pop_el.getElementsByClassName('add_wo_work_hours')[0];
-                          instructions_el = pop_el.getElementsByClassName('add_wo_instructions')[0];
-                          work_group_el = null;
-                          selects = pop_el.getElementsByTagName('select');
-                          for(var r = 0; r < selects.length; r++){
-                              if(selects[r].name == 'add_wo_work_group'){
-                                  work_group_el = selects[r];
-                              }
-                          }
-                          all_filled = true;
-                          process = process_el.value;
-                          if(process == '' || process == null){
-                              all_filled = false;
-                          }
-                          work_hours = work_hours_el.value;
-                          if(work_hours == '' || work_hours == null || Number(work_hours) == 0){
-                              all_filled = false;
-                          }
-                          instructions = instructions_el.value;
-                          instructions = encode_utf8(instructions);
-                          work_group = work_group_el.value;
-                          if(work_group == '--Select--' || work_group == ''){
-                              all_filled = false;
-                          }  
-                          if(all_filled){
-                              proj = server.eval("@SOBJECT(twog/proj['code','" + proj_code + "'])")[0];
-                              title = server.eval("@SOBJECT(twog/title['code','" + proj.title_code + "'])")[0];
-                              order = server.eval("@SOBJECT(twog/order['code','" + order_code + "'])")[0];
-                              client_code = title.client_code
-                              client = server.eval("@SOBJECT(twog/client['code','" + client_code + "'])");
-                              client_name = '';
-                              client_hold = 'no problems';
-                              if(client.length > 0){
-                                  client = client[0];
-                                  client_name = client.name;
-                                  client_billing_status = client.billing_status;
-                                  if(client_billing_status.indexOf('Do Not Book') != -1){
-                                      client_hold = 'nobook';
-                                  }else if(client_billing_status.indexOf('Do Not Ship') != -1){
-                                      client_hold = 'noship';
-                                  }
-                              }
-                              new_wo = server.insert('twog/work_order', {'process': process, 'work_group': work_group, 'instructions': instructions, 'estimated_work_hours': work_hours, 'proj_code': proj_code, 'parent_pipe': 'Manually Inserted into ' + proj.pipeline_code, 'login': user_name, 'creation_type': 'hackup', 'title_code': title.code, 'order_code': order_code, 'client_code': client_code})
-                              new_task_data = {'process': process, 'context': process, 'assigned_login_group': work_group, 'active': false, 'client_name': client_name, 'title': title.title, 'episode': title.episode, 'territory': title.territory, 'creator_login': user_name, 'lookup_code': new_wo.code, 'search_type': 'twog/proj?project=twog', 'search_id': proj.id, 'pipeline_code': 'Manually Inserted into ' + proj.pipeline_code, 'po_number': title.po_number, 'status': 'Pending', 'title_code': title.code, 'order_code': order_code, 'client_code': client_code, 'client_hold': client_hold};
-                              if(order.classification == 'in_production' || order.classification == 'In Production'){
-                                  new_task_data['active'] = true;
-                              }
-                              new_task = server.insert('sthpw/task', new_task_data);
-                              server.update(new_wo.__search_key__, {'task_code': new_task.code}); 
-                              
-                              kwargs = {'parent_sk': proj_sk, 'order_sk': order_sk, 'user_name': user_name, 'task_sk': new_task.__search_key__, 'new_item_sk': new_wo.__search_key__};
-                              spt.panel.load_popup('Connect Work Order To Pipeline', 'order_builder.HackPipeConnectWdg', kwargs); 
-                              spt.popup.close(spt.popup.get_popup(bvr.src_el));
-                          }else{
-                              alert('Please fill in each field correctly.');
-                          }
-                          
-                          
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (my.proj_sk, my.order_sk, user_name)}
-        return behavior
-
-    def get_display(my):
-        user_name = Environment.get_user_name() 
-        my.proj_sk = str(my.kwargs.get('proj_sk'))
-        my.proj_code = my.proj_sk.split('code=')[1]
-        my.order_sk = str(my.kwargs.get('order_sk'))
-
-        table = Table()
-        table.add_attr('class', 'addwo_%s' % my.proj_code)
-        group_search = Search("sthpw/login_in_group")
-        group_search.add_filter('login', my.user)
-        groups = group_search.get_sobjects()
-        group_sel = SelectWdg('add_wo_work_group')
-        group_sel.append_option('--Select--', '--Select--')
-        for group in groups:
-            group_sel.append_option(group.get_value('login_group'), group.get_value*('login_group'))
-        table.add_row()
-        table.add_cell('Process: ')
-        table.add_cell('<input type="text" class="add_wo_process"/>')
-        table.add_row()
-        table.add_cell('Work Group: ')
-        table.add_cell(group_sel)
-        table.add_row()
-        nw = table.add_cell('Estimated Work Hours: ')
-        nw.add_attr('nowrap','nowrap')
-        table.add_cell('<input type="text" class="add_wo_work_hours"/>')
-        table.add_row()
-        table.add_cell('Instructions: ')
-        table.add_cell('<textarea cols="50" rows="10" class="add_wo_instructions"></textarea>')
-        table.add_row()
-        table2 = Table()
-        table2.add_row()
-        t1 = table2.add_cell(' ')
-        t1.add_attr('width', '100%')
-        button = table2.add_cell('<input type="button" value="Create"/>')
-        button.add_behavior(my.get_commit(user_name))
-        t2 = table2.add_cell(' ')
-        t2.add_attr('width', '100%')
-        table.add_cell(' ')
-        table.add_cell(table2)
-
-        return table
 
 
 class AddProjWdg(BaseRefreshWdg):

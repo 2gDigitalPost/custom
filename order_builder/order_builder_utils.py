@@ -1696,22 +1696,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (title_sk, my.order_sk)}
         return behavior
 
-    def get_add_wo_behavior(my, proj_sk):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                            proj_sk = '%s';
-                            order_sk = '%s';
-                            kwargs = {'proj_sk': proj_sk, 'order_sk': order_sk};
-                            spt.panel.load_popup('Add Work Order', 'order_builder.order_builder.AddWorkOrderWdg', kwargs);
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (proj_sk, my.order_sk)}
-        return behavior
-
     def get_change_due_date_behavior(my, proj_code, proj_name): #PROBABLY NEED TO SID
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
