@@ -1473,55 +1473,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (wo_code, wo_sk, wot_code, my.order_sk, my.is_master_str)}
         return behavior
 
-    def get_client_eq_change_behavior(my, work_order_code): #NO SID NECC
-        behavior = {'css_class': 'sel_change', 'type': 'change', 'cbjs_action': '''
-                        try{
-                          //alert('m71');
-                          var work_order_code = '%s';
-                          var server = TacticServerStub.get();
-                          var top_el = document.getElementsByClassName('equipment_used_adder_top_' + work_order_code)[0];
-                          var puller1 = '';
-                          var puller2 = '';
-                          var unit_el = '';
-                          var sels = top_el.getElementsByTagName('select');
-                          for(var r= 0; r < sels.length; r++){
-                              if(sels[r].name == 'equipment_changer'){
-                                  puller1 = sels[r];
-                              }else if(sels[r].name == 'client_eu_changer'){
-                                  puller2 = sels[r];
-                              }else if(sels[r].name == 'eu_add_units'){
-                                  unit_el = sels[r];
-                              }
-                          }
-                          if(puller2.value != 'NOTHINGXsXNOTHING'){
-                              puller1.value = 'NOTHINGXsXNOTHING';
-                              var name_el = top_el.getElementsByClassName('eu_add_name')[0];
-                              var quantity_el = top_el.getElementsByClassName('eu_add_quantity')[0];
-                              var duration_el = top_el.getElementsByClassName('eu_add_duration')[0];
-                              var description_el = top_el.getElementsByClassName('eu_add_description')[0];
-                              splits = puller2.value.split('XsX');
-                              eut_code = splits[0];
-                              eut_name = splits[1];
-                              eut_expr = "@SOBJECT(twog/equipment_used_templ['code','" + eut_code + "'])";
-                              eut = server.eval(eut_expr)[0];
-                              if(eut != {}){
-                                  name_el.value = eut.name;
-                                  quantity_el.value = eut.expected_quantity;
-                                  duration_el.value = eut.expected_duration;
-                                  description_el.innerHTML = eut.description;
-                                  description_el.value = eut.description;
-                                  unit_el.value = eut.units;
-                              }
-                          }
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % work_order_code}
-        return behavior
-
     def get_eu_submit_behavior(my, work_order_code, parent_pyclass): #SIDDED
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
