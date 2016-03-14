@@ -25,160 +25,161 @@ class WorkOrderAdderWdg(BaseRefreshWdg):
 
     def get_save(my):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                    function encode_utf8( s )
-                    {
-                        return unescape( encodeURIComponent( s ) );
-                    }
-                        try{
-                               var server = TacticServerStub.get();
-                               order_sk = '%s';
-                               order_code = order_sk.split('code=')[1];
-                               top_el = document.getElementById('manual_wo_adder_top_' + order_sk);
-                               title_code = top_el.getAttribute('title_code');
-                               parent_sk = top_el.getAttribute('parent_sk');
-                               proj_code = parent_sk.split('code=')[1];
-                               user_name = top_el.getAttribute('user_name');
-                               make_em = [];
-                               comma_names = top_el.getElementById('comma_names').value;
-                               if(comma_names != '' && comma_names != ' ' && comma_names != null){
-                                   make_em = comma_names.split(',');
-                               }else{
-                                   primary_name = top_el.getElementById('primary_name').value;
-                                   from_number = top_el.getElementById('from_number').value;
-                                   to_number = top_el.getElementById('to_number').value;
-                                   if(isNaN(from_number)){
-                                       from_number = -1;
-                                   }else{
-                                       from_number = Number(from_number);
-                                       if(isNaN(to_number)){
-                                           to_number = -1;
-                                       }else{
-                                           to_number = Number(to_number);
-                                       }
-                                   }
-                                   if(from_number == -1){
-                                       make_em.push(primary_name);
-                                   }else{
-                                       if(to_number == -1){
-                                           make_em.push(primary_name + ' ' + from_number);
-                                       }else{
-                                           for(var r = from_number; r < to_number + 1; r++){
-                                               make_em.push(primary_name + ' ' + r);
-                                           }
-                                       }
-                                   }
-                               }
-                               dates = top_el.getElementsByClassName('spt_calendar_input');
-                               start_date = ''
-                               due_date = '';
-                               for(var r = 0; r < dates.length; r++){
-                                   dname = dates[r].getAttribute('name');
-                                   val = dates[r].value;
-                                   if(dname == 'start_date'){
-                                       start_date = val;
-                                   }else if(dname = 'due_date'){
-                                       due_date = val;
-                                   }
-                               }
-                               instructions = top_el.getElementById('instructions').value;
-                               instructions = encode_utf8(instructions);
-                               assigned_login_group = top_el.getElementById('assigned_login_group').value;
-                               assigned = top_el.getElementById('assigned').value;
-                               title_id_num = top_el.getElementById('title_id_num').value;
-                               estimated_work_hours = top_el.getElementById('estimated_work_hours').value;
-                               proj = server.eval("@SOBJECT(twog/proj['code','" + proj_code + "'])")[0];
-                               title = server.eval("@SOBJECT(twog/title['code','" + title_code + "'])")[0];
-                               order = server.eval("@SOBJECT(twog/order['code','" + order_code + "'])")[0];
-                               client_code = title.client_code
-                               client = server.eval("@SOBJECT(twog/client['code','" + client_code + "'])");
-                               client_name = '';
-                               client_hold = 'no problems';
-                               if(client.length > 0){
-                                   client = client[0];
-                                   client_name = client.name
-                                   client_billing_status = client.billing_status;
-                                   if(client_billing_status.indexOf('Do Not Book') != -1){
-                                       client_hold = 'nobook';
-                                   }else if(client_billing_status.indexOf('Do Not Ship') != -1){
-                                       client_hold = 'noship';
-                                   }
-                               }
-                               codes_inorder = [proj_code];
-                               //HERE INSERT TASKS AND WOS
-                               spt.app_busy.show('CREATING WORK ORDERS');
-                               nada_before = true;
-                               from_els = top_el.getElementsByClassName('from_check');
-                               for(var r = 0; r < from_els.length; r++){
-                                   if(from_els[r].getAttribute('checked') == 'true'){
-                                       nada_before = false;
-                                   }
-                               }
-                               for(var r = 0; r < make_em.length; r++){
-                                   filler = 'NEEDS_TO_BE_FILLED'
-                                   if(r == 0 && nada_before){
-                                       filler = ''
-                                   }
-                                   new_wo = server.insert('twog/work_order', {'process': make_em[r].trim(), 'work_group': assigned_login_group, 'instructions': instructions, 'estimated_work_hours': estimated_work_hours, 'proj_code': proj_code, 'parent_pipe': 'Manually Inserted into ' + proj.pipeline_code, 'login': user_name, 'creation_type': 'hackup', 'title_code': title.code, 'order_code': order_code, 'client_code': client_code, 'client_name': client_name, 'assigned': assigned, 'platform': proj.platform, 'title_id_number': title_id_num, 'territory': title.territory, 'priority': proj.priority, 'title': title.title, 'episode': title.episode, 'due_date': due_date, 'po_number': order.po_number, 'order_name': order.name, 'comes_from': filler, 'goes_to': 'NEEDS_TO_BE_FILLED'});
-                                   spt.app_busy.show('CREATING ' + new_wo.process);
-                                   codes_inorder.push(new_wo.code);
-                                   new_task_data = {'process': new_wo.process, 'context': new_wo.process, 'assigned_login_group': assigned_login_group, 'assigned': assigned, 'active': false, 'client_name': client_name, 'title': title.title, 'episode': title.episode, 'territory': title.territory, 'creator_login': user_name, 'lookup_code': new_wo.code, 'search_type': 'twog/proj?project=twog', 'search_id': proj.id, 'pipeline_code': 'Manually Inserted into ' + proj.pipeline_code, 'po_number': order.po_number, 'status': 'Pending', 'title_code': title.code, 'order_code': order_code, 'order_name': order.name, 'client_code': client_code, 'client_hold': client_hold, 'platform': proj.platform, 'priority': proj.priority, 'project_code': 'twog', 'bid_end_date': due_date, 'bid_start_date': start_date};
-                                   if(order.classification == 'in_production' || order.classification == 'In Production'){
-                                       new_task_data['active'] = true;
-                                   }
-                                   new_task = server.insert('sthpw/task',new_task_data);
-                                   server.update(new_wo.__search_key__, {'task_code': new_task.code});
-                               }
-                               //CONNECT EACH TO THE NEXT AS A HACKUP
-                               spt.app_busy.show('CREATING CONNECTIONS');
-                               for(var r = 0; r < codes_inorder.length - 1; r++){
-                                   server.insert('twog/hackpipe_out', {'lookup_code': codes_inorder[r], 'out_to': codes_inorder[r + 1]})
-                               }
-                               //DO FINAL HACKUP CONNECTIONS HERE WITH THE FIRST PROJ INSERTED CONNECTING TO FROMS, LAST PROJ CONNECTING TO TOS
-                               from_els = top_el.getElementsByClassName('from_check');
-                               for(var r = 0; r < from_els.length; r++){
-                                   if(from_els[r].getAttribute('checked') == 'true'){
-                                       server.insert('twog/hackpipe_out', {'lookup_code': from_els[r].getAttribute('id'), 'out_to': codes_inorder[1]})
-                                   }
-                               }
-                               to_els = top_el.getElementsByClassName('to_check');
-                               for(var r = 0; r < to_els.length; r++){
-                                   if(to_els[r].getAttribute('checked') == 'true'){
-                                       server.insert('twog/hackpipe_out', {'out_to': to_els[r].getAttribute('id'), 'lookup_code': codes_inorder[codes_inorder.length - 1]})
-                                   }
-                               }
-                               last_inserted = codes_inorder[codes_inorder.length - 1];
-                               if(last_inserted.indexOf('PROJ') != -1){
-                                   server.insert('twog/simplify_pipe', {'proj_code': last_inserted});
-                               }else{
-                                   server.insert('twog/simplify_pipe', {'work_order_code': last_inserted});
-                               }
+function encode_utf8( s )
+{
+    return unescape( encodeURIComponent( s ) );
+}
 
-                               //AT THE END HERE, WE WANT TO ADD EQUIPMENT TO ALL INSERTED WOS
+try{
+    var server = TacticServerStub.get();
+    order_sk = '%s';
+    order_code = order_sk.split('code=')[1];
+    top_el = document.getElementById('manual_wo_adder_top_' + order_sk);
+    title_code = top_el.getAttribute('title_code');
+    parent_sk = top_el.getAttribute('parent_sk');
+    proj_code = parent_sk.split('code=')[1];
+    user_name = top_el.getAttribute('user_name');
+    make_em = [];
+    comma_names = top_el.getElementById('comma_names').value;
+    if(comma_names != '' && comma_names != ' ' && comma_names != null) {
+        make_em = comma_names.split(',');
+    } else {
+        primary_name = top_el.getElementById('primary_name').value;
+        from_number = top_el.getElementById('from_number').value;
+        to_number = top_el.getElementById('to_number').value;
+        if(isNaN(from_number)){
+            from_number = -1;
+        } else {
+            from_number = Number(from_number);
+            if(isNaN(to_number)){
+                to_number = -1;
+            } else {
+                to_number = Number(to_number);
+            }
+        }
+        if(from_number == -1){
+            make_em.push(primary_name);
+        } else {
+            if(to_number == -1){
+                make_em.push(primary_name + ' ' + from_number);
+            }else{
+                for(var r = from_number; r < to_number + 1; r++){
+                    make_em.push(primary_name + ' ' + r);
+                }
+            }
+        }
+    }
+    dates = top_el.getElementsByClassName('spt_calendar_input');
+    start_date = ''
+    due_date = '';
+    for(var r = 0; r < dates.length; r++) {
+        dname = dates[r].getAttribute('name');
+        val = dates[r].value;
+        if(dname == 'start_date'){
+        start_date = val;
+        } else if(dname = 'due_date') {
+            due_date = val;
+        }
+    }
 
-                               var big_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
-                               display_mode = big_el.getAttribute('display_mode');
-                               user = big_el.getAttribute('user');
-                               groups_str = big_el.get('groups_str');
-                               allowed_titles = big_el.getAttribute('allowed_titles');
-                               parent_el = big_el.getElementsByClassName('cell_' + parent_sk)[0];
-                               found_parent_sk = parent_el.get('parent_sk');
-                               found_parent_sid = parent_el.get('parent_sid');
-                               send_data = {sk: parent_sk, parent_sid: found_parent_sid, parent_sk: found_parent_sk, order_sk: order_sk, user: user, groups_str: groups_str, allowed_titles: allowed_titles, display_mode: display_mode};
-                               parent_pyclass = '';
-                               if(parent_sk.indexOf('twog/proj') != -1){
-                                   parent_pyclass = 'ProjRow'
-                               }else if(parent_sk.indexOf('twog/title') != -1){
-                                   parent_pyclass = 'TitleRow'
-                               }
-                               spt.api.load_panel(parent_el, 'order_builder.' + parent_pyclass, send_data);
-                               spt.popup.close(spt.popup.get_popup(bvr.src_el));
-                               spt.app_busy.hide();
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
+    instructions = top_el.getElementById('instructions').value;
+    instructions = encode_utf8(instructions);
+    assigned_login_group = top_el.getElementById('assigned_login_group').value;
+    assigned = top_el.getElementById('assigned').value;
+    title_id_num = top_el.getElementById('title_id_num').value;
+    estimated_work_hours = top_el.getElementById('estimated_work_hours').value;
+    proj = server.eval("@SOBJECT(twog/proj['code','" + proj_code + "'])")[0];
+    title = server.eval("@SOBJECT(twog/title['code','" + title_code + "'])")[0];
+    order = server.eval("@SOBJECT(twog/order['code','" + order_code + "'])")[0];
+    client_code = title.client_code
+    client = server.eval("@SOBJECT(twog/client['code','" + client_code + "'])");
+    client_name = '';
+    client_hold = 'no problems';
+    if(client.length > 0){
+       client = client[0];
+       client_name = client.name
+       client_billing_status = client.billing_status;
+       if(client_billing_status.indexOf('Do Not Book') != -1){
+           client_hold = 'nobook';
+       }else if(client_billing_status.indexOf('Do Not Ship') != -1){
+           client_hold = 'noship';
+       }
+    }
+    codes_inorder = [proj_code];
+
+    spt.app_busy.show('CREATING WORK ORDERS');
+    nada_before = true;
+    from_els = top_el.getElementsByClassName('from_check');
+    for(var r = 0; r < from_els.length; r++){
+       if(from_els[r].getAttribute('checked') == 'true'){
+           nada_before = false;
+       }
+    }
+    for(var r = 0; r < make_em.length; r++){
+       filler = 'NEEDS_TO_BE_FILLED'
+       if(r == 0 && nada_before){
+           filler = ''
+       }
+       new_wo = server.insert('twog/work_order', {'process': make_em[r].trim(), 'work_group': assigned_login_group, 'instructions': instructions, 'estimated_work_hours': estimated_work_hours, 'proj_code': proj_code, 'parent_pipe': 'Manually Inserted into ' + proj.pipeline_code, 'login': user_name, 'creation_type': 'hackup', 'title_code': title.code, 'order_code': order_code, 'client_code': client_code, 'client_name': client_name, 'assigned': assigned, 'platform': proj.platform, 'title_id_number': title_id_num, 'territory': title.territory, 'priority': proj.priority, 'title': title.title, 'episode': title.episode, 'due_date': due_date, 'po_number': order.po_number, 'order_name': order.name, 'comes_from': filler, 'goes_to': 'NEEDS_TO_BE_FILLED'});
+       spt.app_busy.show('CREATING ' + new_wo.process);
+       codes_inorder.push(new_wo.code);
+       new_task_data = {'process': new_wo.process, 'context': new_wo.process, 'assigned_login_group': assigned_login_group, 'assigned': assigned, 'active': false, 'client_name': client_name, 'title': title.title, 'episode': title.episode, 'territory': title.territory, 'creator_login': user_name, 'lookup_code': new_wo.code, 'search_type': 'twog/proj?project=twog', 'search_id': proj.id, 'pipeline_code': 'Manually Inserted into ' + proj.pipeline_code, 'po_number': order.po_number, 'status': 'Pending', 'title_code': title.code, 'order_code': order_code, 'order_name': order.name, 'client_code': client_code, 'client_hold': client_hold, 'platform': proj.platform, 'priority': proj.priority, 'project_code': 'twog', 'bid_end_date': due_date, 'bid_start_date': start_date};
+       if(order.classification == 'in_production' || order.classification == 'In Production'){
+           new_task_data['active'] = true;
+       }
+       new_task = server.insert('sthpw/task',new_task_data);
+       server.update(new_wo.__search_key__, {'task_code': new_task.code});
+    }
+    //CONNECT EACH TO THE NEXT AS A HACKUP
+    spt.app_busy.show('CREATING CONNECTIONS');
+    for(var r = 0; r < codes_inorder.length - 1; r++){
+       server.insert('twog/hackpipe_out', {'lookup_code': codes_inorder[r], 'out_to': codes_inorder[r + 1]})
+    }
+    //DO FINAL HACKUP CONNECTIONS HERE WITH THE FIRST PROJ INSERTED CONNECTING TO FROMS, LAST PROJ CONNECTING TO TOS
+    from_els = top_el.getElementsByClassName('from_check');
+    for(var r = 0; r < from_els.length; r++){
+       if(from_els[r].getAttribute('checked') == 'true'){
+           server.insert('twog/hackpipe_out', {'lookup_code': from_els[r].getAttribute('id'), 'out_to': codes_inorder[1]})
+       }
+    }
+    to_els = top_el.getElementsByClassName('to_check');
+    for(var r = 0; r < to_els.length; r++){
+       if(to_els[r].getAttribute('checked') == 'true'){
+           server.insert('twog/hackpipe_out', {'out_to': to_els[r].getAttribute('id'), 'lookup_code': codes_inorder[codes_inorder.length - 1]})
+       }
+    }
+    last_inserted = codes_inorder[codes_inorder.length - 1];
+    if(last_inserted.indexOf('PROJ') != -1){
+       server.insert('twog/simplify_pipe', {'proj_code': last_inserted});
+    }else{
+       server.insert('twog/simplify_pipe', {'work_order_code': last_inserted});
+    }
+
+    //AT THE END HERE, WE WANT TO ADD EQUIPMENT TO ALL INSERTED WOS
+
+    var big_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
+    display_mode = big_el.getAttribute('display_mode');
+    user = big_el.getAttribute('user');
+    groups_str = big_el.get('groups_str');
+    allowed_titles = big_el.getAttribute('allowed_titles');
+    parent_el = big_el.getElementsByClassName('cell_' + parent_sk)[0];
+    found_parent_sk = parent_el.get('parent_sk');
+    found_parent_sid = parent_el.get('parent_sid');
+    send_data = {sk: parent_sk, parent_sid: found_parent_sid, parent_sk: found_parent_sk, order_sk: order_sk, user: user, groups_str: groups_str, allowed_titles: allowed_titles, display_mode: display_mode};
+    parent_pyclass = '';
+    if(parent_sk.indexOf('twog/proj') != -1){
+       parent_pyclass = 'ProjRow'
+    }else if(parent_sk.indexOf('twog/title') != -1){
+       parent_pyclass = 'TitleRow'
+    }
+    spt.api.load_panel(parent_el, 'order_builder.' + parent_pyclass, send_data);
+    spt.popup.close(spt.popup.get_popup(bvr.src_el));
+    spt.app_busy.hide();
+}
+catch(err){
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
          ''' % my.order_sk}
 
         return behavior
