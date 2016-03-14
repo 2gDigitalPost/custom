@@ -10,6 +10,7 @@ from pyasm.widget import SelectWdg
 
 from alternative_elements.customcheckbox import *
 
+
 class WorkOrderAdderWdg(BaseRefreshWdg):
     def init(my):
         my.server = TacticServerStub.get()
