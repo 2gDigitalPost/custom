@@ -1170,54 +1170,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (work_order_code, work_order_sk, proj_sk, sob_name, my.order_sk)}
         return behavior
 
-    #MTM - Don't de-checkbox this one. This one uses regular html checkboxes
-    def get_attach_sources_to_wo_behavior(my, work_order_code, work_order_sk, call_me):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          var server = TacticServerStub.get();
-                          work_order_code = '%s';
-                          work_order_sk = '%s';
-                          call_me = '%s';
-                          order_sk = '%s';
-                          var top_el = spt.api.get_parent(bvr.src_el, '.wo_src_attacher');
-                          all_checks = top_el.getElementsByClassName('src_add_checks');
-                          code_trans = {'twog/source': 'source_code', 'sthpw/snapshot': 'snapshot_code'};
-                          for(var r =0; r < all_checks.length; r++){
-                              check = all_checks[r];
-                              data = {'work_order_code': work_order_code};
-                              if(check.getAttribute('preselected') == 'true'){
-                                  if(check.checked){
-                                      //Do nothing, it's already been inserted
-                                  }else{
-                                     //remove the work_order_sources entry
-                                     wos_sk = check.getAttribute('wos_sk');
-                                     if(wos_sk != ''){
-                                         server.retire_sobject(wos_sk);
-                                     }
-                                  }
-                              }else{
-                                  if(check.checked){
-                                      data['source_code'] = check.getAttribute('src_code')
-                                      data[code_trans[check.get('st')]] = check.getAttribute('code');
-                                      server.insert('twog/work_order_sources',data);
-                                  }else{
-                                      //Do nothing, it isn't checked
-                                  }
-                              }
-                          }
-                          var boss_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
-                          var sources_el = boss_el.getElementsByClassName('sources_' + work_order_sk)[0];
-                          spt.api.load_panel(sources_el, 'order_builder.WorkOrderSourcesRow', {work_order_code: work_order_code, work_order_sk: work_order_sk, order_sk: order_sk});
-                          spt.popup.close(spt.popup.get_popup(bvr.src_el));
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (work_order_code, work_order_sk, call_me, my.order_sk)}
-        return behavior
-
     def get_create_deliverable_behavior(my, sob_code, prereq_st, sob_sk, sob_st, sob_name, pipeline):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
