@@ -14,6 +14,7 @@ from task_edit_widget import *
 from builder_tools_wdg import *
 from global_replacer_wdg import *
 
+from deliverable_passin_add_wdg import *
 from equipment_used_row import *
 from error_entry_wdg import *
 from multi_manual_adder_wdg import *

@@ -2,7 +2,7 @@ __all__ = ["OrderBuilderLauncherWdg", "TitleCloneSelectorWdg", "TitleDeletorWdg"
            "OrderBuilder", "TitleRow", "AddWorkOrderWdg", "AddProjWdg", "EditHackPipe", "HackPipeConnectWdg",
            "DeliverableWdg", "IntermediateEditWdg", "DeliverableEditWdg", "WorkOrderSourceAddWdg", "TwogEasyCheckinWdg",
            "OutsideBarcodesListWdg", "NewSourceWdg", "SourceEditWdg", "ProjDueDateChanger", "IntermediatePassinAddWdg",
-           "DeliverablePassinAddWdg", "IntermediateFileAddWdg", "EquipmentUsedAdderWdg", "EquipmentUsedMultiAdderWdg",
+           "IntermediateFileAddWdg", "EquipmentUsedAdderWdg", "EquipmentUsedMultiAdderWdg",
            "OperatorErrorDescriptPopupWdg", "ExternalRejectionReasonWdg", "TitleRedoWdg"]
 
 import tacticenv
@@ -2117,55 +2117,6 @@ class IntermediatePassinAddWdg(BaseRefreshWdg):
         table.add_row()
         passin_butt = table.add_cell('<input type="button" value="Add As Pass-in(s) to Work Order"/>')
         passin_butt.add_behavior(obs.get_assign_intermediate_passins_behavior(my.work_order_code))
-
-        return table
-
-class DeliverablePassinAddWdg(BaseRefreshWdg): 
-
-    def init(my):
-        my.work_order_code = ''
-        my.order_sk = ''
-        my.proj_code = ''
-        my.wo_templ_code = ''
-
-    def get_display(my):
-        my.work_order_code = str(my.kwargs.get('work_order_code'))
-        my.proj_code = str(my.kwargs.get('proj_code'))
-        my.wo_templ_code = str(my.kwargs.get('wo_templ_code'))
-        my.order_sk = str(my.kwargs.get('order_sk'))
-        obs = OBScripts(order_sk=my.order_sk)
-        table = Table()
-        table.add_attr('class', 'deliverable_passin_add_wdg')
-        wo_search = Search("twog/work_order")
-        wo_search.add_filter('proj_code',my.proj_code)
-        wo_search.add_filter('code',my.work_order_code,op="!=")
-        wo_search.add_order_by('order_in_pipe')
-        all_wos = wo_search.get_sobjects()
-        all_wo_ds = []
-        for a in all_wos:
-            deliv_search = Search("twog/work_order_deliverables")
-            deliv_search.add_filter("work_order_code",a.get_value('code'))
-            wo_delivs = deliv_search.get_sobjects()
-            for wod in wo_delivs:
-                src_search = Search("twog/source")
-                src_search.add_filter('code',wod.get_value('deliverable_source_code'))
-                src = src_search.get_sobject()
-                all_wo_ds.append([a.get_value('code'), wod.get_value('code'), wod.get_value('name'), '%s: %s' % (src.get_value('title'), src.get_value('episode')), src.get_value('code')])
-        for b in all_wo_ds:
-            table.add_row()
-
-            checkbox = CustomCheckboxWdg(name='selecta_perm_%s' % b[1],value_field=b[1],checked='false',dom_class='deliverable_passin_selector',code=b[1],wod_code=b[1],src_code=b[4])
-
-            ck = table.add_cell(checkbox)
-            ck.add_attr('align','center')
-            nw1 = table.add_cell('From Work Order: %s' % b[0])
-            nw1.add_attr('nowrap','nowrap')
-            table.add_cell(' &nbsp;&nbsp; ')
-            nw2 = table.add_cell('Permanent: %s (%s)' % (b[3], b[2]))
-            nw2.add_attr('nowrap','nowrap')
-        table.add_row()
-        passin_butt = table.add_cell('<input type="button" value="Add As Pass-in(s) to Work Order"/>')
-        passin_butt.add_behavior(obs.get_assign_deliverable_passins_behavior(my.work_order_code))
 
         return table
 
