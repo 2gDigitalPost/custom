@@ -421,55 +421,6 @@ class OBScripts(BaseRefreshWdg):
             #print "OBS DISPLAY MODE = %s" % my.disp_mode
             my.disp_mode = str(my.kwargs.get('disp_mode'))
 
-    def get_add_wo_error_behavior(my, code): #NO SID NECC
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          order_sk = '%s';
-                          user = '%s';
-                          code = '%s';
-                          top_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
-                          groups_str = top_el.getAttribute('groups_str');
-                          display_mode = top_el.getAttribute('display_mode');
-                          spt.panel.load_popup('Report Error for ' + code, 'order_builder.ErrorEntryWdg', {'order_sk': order_sk, 'code': code, 'user': user, 'groups_str': groups_str, 'display_mode': display_mode});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (my.order_sk, my.user, code)}
-        return behavior
-
-
-    def get_templ_wo_behavior(my, templ_me, wo_templ_code, sk):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                           //alert('m1');
-                           var server = TacticServerStub.get();
-                           var templ_me = '%s';
-                           var wo_templ_code = '%s';
-                           var sk = '%s';
-                           var order_sk = '%s';
-                           var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
-                           expr = "@SOBJECT(twog/work_order['work_order_templ_code','" + wo_templ_code + "']['templ_me','true'])";
-                           wo_ts = server.eval(expr);
-                           if(wo_ts.length == 0){
-                               server.update(sk, {'templ_me': 'true'});
-                               me = top_el.getElementsByClassName('templ_butt_' + sk)[0];
-                               spt.api.load_panel(me, 'tactic.ui.widget.button_new_wdg.ButtonSmallNewWdg', {title: "This is the Templating Work Order", icon: '/context/icons/silk/tick.png'});
-                           }else{
-                               alert('This cannot become the template. Please go to the Master Order for this Template.');
-                           }
-
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (templ_me, wo_templ_code, sk, my.order_sk)}
-        return behavior
-
     def get_save_multi_eq_changes_behavior(my, work_order_code, order_sk):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
@@ -1517,71 +1468,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (sk, name)}
-        return behavior
-
-    def get_launch_source_portal_behavior(my, work_order_name, work_order_sk, work_order_code, parent_pipe, is_master): #NO SID NECC
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m65');
-                          var work_order_name = '%s';
-                          var work_order_sk = '%s';
-                          var work_order_code = '%s';
-                          var parent_pipe = '%s';
-                          var is_master = '%s';
-                          var client_code = '';
-                          var order_sk = '%s';
-                          var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
-                          client_code = top_el.get('client');
-                          spt.panel.load_popup('Source Portal for ' + work_order_name, 'order_builder.SourcePortalWdg', {'work_order_sk': work_order_sk, 'work_order_code': work_order_code, 'client_code': client_code, 'parent_pipe': parent_pipe, 'is_master': is_master, 'order_sk': order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (work_order_name, work_order_sk, work_order_code, parent_pipe, is_master, my.order_sk)}
-        return behavior
-
-    def get_launch_out_files_behavior(my, work_order_name, work_order_sk, work_order_code): #NO SID NECC
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m66');
-                          var work_order_name = '%s';
-                          var work_order_sk = '%s';
-                          var work_order_code = '%s';
-                          var client_code = '';
-                          var order_sk = '%s';
-                          var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
-                          client_code = top_el.get('client');
-                          spt.panel.load_popup('Out Files for ' + work_order_name, 'order_builder.OutFilesWdg', {'work_order_sk': work_order_sk, 'work_order_code': work_order_code, 'client_code': client_code, 'order_sk': order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (work_order_name, work_order_sk, work_order_code, my.order_sk)}
-        return behavior
-
-    def get_eu_add_behavior(my, work_order_name, work_order_sk, work_order_code): #NO SID NECC
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m67');
-                          var work_order_name = '%s';
-                          var work_order_sk = '%s';
-                          var work_order_code = '%s';
-                          var client_code = '';
-                          var order_sk = '%s';
-                          var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
-                          client_code = top_el.getAttribute('client');
-                          spt.panel.load_popup('Add Equipment to ' + work_order_name, 'order_builder.EquipmentUsedMultiAdderWdg', {'work_order_sk': work_order_sk, 'order_sk': order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (work_order_name, work_order_sk, work_order_code, my.order_sk)}
         return behavior
 
     def get_template_single_eu_from_multi_behavior(my,eq_sk,eq_templ_code,work_order_code,wot_code):

@@ -287,7 +287,7 @@ class WorkOrderRow(BaseRefreshWdg):
 
             if user_is_scheduler:
                 error_edit = ButtonSmallNewWdg(title="Report Error", icon=CustomIconWdg.icons.get('REPORT_ERROR'))
-                error_edit.add_behavior(obs.get_add_wo_error_behavior(my.code))
+                error_edit.add_behavior(get_add_wo_error_behavior(my.order_sk, my.user, my.code))
                 uno = bbr.add_cell('&nbsp;')
                 er = bbr.add_cell(error_edit)
                 er.add_attr('align', 'right')
@@ -335,9 +335,10 @@ class WorkOrderRow(BaseRefreshWdg):
             if user_is_scheduler:
                 add_eq_used_butt = ButtonSmallNewWdg(title="Add Equipment",
                                                      icon=CustomIconWdg.icons.get('EQUIPMENT_ADD'))
-                add_eq_used_butt.add_behavior(obs.get_eu_add_behavior(main_obj.get_value('process'),
-                                                                      main_obj.get_search_key(),
-                                                                      main_obj.get_value('code')))
+                add_eq_used_butt.add_behavior(get_eu_add_behavior(main_obj.get_value('process'),
+                                                                  main_obj.get_search_key(),
+                                                                  main_obj.get_value('code'),
+                                                                  my.order_sk))
                 eu_adder = bbr.add_cell(add_eq_used_butt)
                 eu_adder.add_attr('width','100%')
                 eu_adder.add_attr('align', 'right')
@@ -346,19 +347,21 @@ class WorkOrderRow(BaseRefreshWdg):
 
                 source_portal = ButtonSmallNewWdg(title="Passed in Result(s) or Source(s)",
                                                   icon=CustomIconWdg.icons.get('SOURCE_PORTAL'))
-                source_portal.add_behavior(obs.get_launch_source_portal_behavior(main_obj.get_value('process'),
-                                                                                 main_obj.get_search_key(),
-                                                                                 main_obj.get_value('code'),
-                                                                                 parent_obj.get_value('pipeline_code'),
-                                                                                 my.is_master_str))
+                source_portal.add_behavior(get_launch_source_portal_behavior(main_obj.get_value('process'),
+                                                                             main_obj.get_search_key(),
+                                                                             main_obj.get_value('code'),
+                                                                             parent_obj.get_value('pipeline_code'),
+                                                                             my.is_master_str,
+                                                                             my.order_sk))
                 sp = bbr.add_cell(source_portal)
                 sp.add_attr('align', 'right')
                 sp.add_attr('valign', 'bottom')
 
                 file_add = ButtonSmallNewWdg(title="Intermediate File(s) or Permanent Element(s)", icon=CustomIconWdg.icons.get('FILE_ADD'))
-                file_add.add_behavior(obs.get_launch_out_files_behavior(main_obj.get_value('process'),
-                                                                        main_obj.get_search_key(),
-                                                                        main_obj.get_value('code')))
+                file_add.add_behavior(get_launch_out_files_behavior(main_obj.get_value('process'),
+                                                                    main_obj.get_search_key(),
+                                                                    main_obj.get_value('code'),
+                                                                    my.order_sk))
                 fa = bbr.add_cell(file_add)
                 fa.add_attr('align', 'right')
                 fa.add_attr('valign', 'bottom')
@@ -372,9 +375,10 @@ class WorkOrderRow(BaseRefreshWdg):
                     templ_title = "Use This as Template for Parent Pipeline"
                 templ_button = ButtonSmallNewWdg(title=templ_title, icon=templ_icon)
                 if main_obj.get_value('templ_me') == False:
-                    templ_button.add_behavior(obs.get_templ_wo_behavior(main_obj.get_value('templ_me'),
-                                                                        main_obj.get_value('work_order_templ_code'),
-                                                                        main_obj.get_search_key()))
+                    templ_button.add_behavior(get_templ_wo_behavior(main_obj.get_value('templ_me'),
+                                                                    main_obj.get_value('work_order_templ_code'),
+                                                                    main_obj.get_search_key(),
+                                                                    my.order_sk))
                 templ_butt = bbr.add_cell(templ_button)
                 templ_butt.add_attr('class', 'templ_butt_%s' % my.sk)
                 templ_butt.add_attr('width', '100%')
@@ -417,8 +421,8 @@ class WorkOrderRow(BaseRefreshWdg):
             eu_cell.add_attr('width', '100%')
             eu_cell.add_attr('sk', eu_sk)
             eu_cell.add_attr('order_sk', my.order_sk)
-            eu_cell.add_attr('parent_sk', my.sk )
-            eu_cell.add_attr('parent_sid', my.search_id )
+            eu_cell.add_attr('parent_sk', my.sk)
+            eu_cell.add_attr('parent_sid', my.search_id)
             eu_cell.add_attr('call_me', eu.get_value('name'))
             eu_cell.add_attr('wot_code', main_obj.get_value('work_order_templ_code'))
             eu_cell.add_attr('my_class', 'EquipmentUsedRow')
@@ -438,3 +442,122 @@ class WorkOrderRow(BaseRefreshWdg):
         bot.add_style('padding-left: 40px;')
 
         return tab2ret
+
+
+def get_add_wo_error_behavior(order_sk, user, code):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      order_sk = '%s';
+                      user = '%s';
+                      code = '%s';
+                      top_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
+                      groups_str = top_el.getAttribute('groups_str');
+                      display_mode = top_el.getAttribute('display_mode');
+                      spt.panel.load_popup('Report Error for ' + code, 'order_builder.ErrorEntryWdg', {'order_sk': order_sk, 'code': code, 'user': user, 'groups_str': groups_str, 'display_mode': display_mode});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (order_sk, user, code)}
+    return behavior
+
+
+def get_eu_add_behavior(work_order_name, work_order_sk, work_order_code, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m67');
+                      var work_order_name = '%s';
+                      var work_order_sk = '%s';
+                      var work_order_code = '%s';
+                      var client_code = '';
+                      var order_sk = '%s';
+                      var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                      client_code = top_el.getAttribute('client');
+                      spt.panel.load_popup('Add Equipment to ' + work_order_name, 'order_builder.EquipmentUsedMultiAdderWdg', {'work_order_sk': work_order_sk, 'order_sk': order_sk});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (work_order_name, work_order_sk, work_order_code, order_sk)}
+    return behavior
+
+
+def get_launch_source_portal_behavior(work_order_name, work_order_sk, work_order_code, parent_pipe, is_master,
+                                      order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m65');
+                      var work_order_name = '%s';
+                      var work_order_sk = '%s';
+                      var work_order_code = '%s';
+                      var parent_pipe = '%s';
+                      var is_master = '%s';
+                      var client_code = '';
+                      var order_sk = '%s';
+                      var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                      client_code = top_el.get('client');
+                      spt.panel.load_popup('Source Portal for ' + work_order_name, 'order_builder.SourcePortalWdg', {'work_order_sk': work_order_sk, 'work_order_code': work_order_code, 'client_code': client_code, 'parent_pipe': parent_pipe, 'is_master': is_master, 'order_sk': order_sk});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (work_order_name, work_order_sk, work_order_code, parent_pipe, is_master, order_sk)}
+    return behavior
+
+
+def get_launch_out_files_behavior(work_order_name, work_order_sk, work_order_code, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m66');
+                      var work_order_name = '%s';
+                      var work_order_sk = '%s';
+                      var work_order_code = '%s';
+                      var client_code = '';
+                      var order_sk = '%s';
+                      var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                      client_code = top_el.get('client');
+                      spt.panel.load_popup('Out Files for ' + work_order_name, 'order_builder.OutFilesWdg', {'work_order_sk': work_order_sk, 'work_order_code': work_order_code, 'client_code': client_code, 'order_sk': order_sk});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (work_order_name, work_order_sk, work_order_code, order_sk)}
+    return behavior
+
+
+def get_templ_wo_behavior(templ_me, wo_templ_code, sk, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                       //alert('m1');
+                       var server = TacticServerStub.get();
+                       var templ_me = '%s';
+                       var wo_templ_code = '%s';
+                       var sk = '%s';
+                       var order_sk = '%s';
+                       var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                       expr = "@SOBJECT(twog/work_order['work_order_templ_code','" + wo_templ_code + "']['templ_me','true'])";
+                       wo_ts = server.eval(expr);
+                       if(wo_ts.length == 0){
+                           server.update(sk, {'templ_me': 'true'});
+                           me = top_el.getElementsByClassName('templ_butt_' + sk)[0];
+                           spt.api.load_panel(me, 'tactic.ui.widget.button_new_wdg.ButtonSmallNewWdg', {title: "This is the Templating Work Order", icon: '/context/icons/silk/tick.png'});
+                       }else{
+                           alert('This cannot become the template. Please go to the Master Order for this Template.');
+                       }
+
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (templ_me, wo_templ_code, sk, order_sk)}
+    return behavior
