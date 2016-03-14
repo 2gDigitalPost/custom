@@ -1679,23 +1679,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (parent_sk, parent_pyclass, my_sk, title, my.order_sk, my.is_master_str)}
         return behavior
 
-    def get_add_proj_behavior(my, title_sk):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                            //alert('m57');
-                            title_sk = '%s';
-                            order_sk = '%s';
-                            kwargs = {'title_sk': title_sk, 'order_sk': order_sk};
-                            spt.panel.load_popup('Add Project', 'order_builder.order_builder.AddProjWdg', kwargs);
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (title_sk, my.order_sk)}
-        return behavior
-
     def get_change_due_date_behavior(my, proj_code, proj_name): #PROBABLY NEED TO SID
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{

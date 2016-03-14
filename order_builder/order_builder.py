@@ -1,9 +1,8 @@
 __all__ = ["OrderBuilderLauncherWdg", "TitleCloneSelectorWdg", "TitleDeletorWdg", "TitleProjStatusTriggerWdg",
-           "OrderBuilder", "TitleRow", "AddProjWdg", "EditHackPipe", "HackPipeConnectWdg", "DeliverableWdg",
-           "IntermediateEditWdg", "DeliverableEditWdg", "TwogEasyCheckinWdg", "OutsideBarcodesListWdg", "NewSourceWdg",
-           "SourceEditWdg", "ProjDueDateChanger", "IntermediatePassinAddWdg", "IntermediateFileAddWdg",
-           "EquipmentUsedAdderWdg", "EquipmentUsedMultiAdderWdg", "OperatorErrorDescriptPopupWdg",
-           "ExternalRejectionReasonWdg", "TitleRedoWdg"]
+           "OrderBuilder", "TitleRow", "EditHackPipe", "HackPipeConnectWdg", "DeliverableWdg", "IntermediateEditWdg",
+           "DeliverableEditWdg", "TwogEasyCheckinWdg", "OutsideBarcodesListWdg", "NewSourceWdg", "SourceEditWdg",
+           "ProjDueDateChanger", "IntermediatePassinAddWdg", "IntermediateFileAddWdg", "EquipmentUsedAdderWdg",
+           "EquipmentUsedMultiAdderWdg", "OperatorErrorDescriptPopupWdg", "ExternalRejectionReasonWdg", "TitleRedoWdg"]
 
 import tacticenv
 from tactic_client_lib import TacticServerStub
@@ -857,95 +856,6 @@ class OrderBuilder(BaseRefreshWdg):
         cover_cell = cover_table.add_cell(table)
         cover_cell.add_attr('class','cover_cell')
         return cover_table
-
-
-class AddProjWdg(BaseRefreshWdg):
-
-    def init(my):
-        my.title_sk = ''
-        my.title_code = ''
-        my.order_sk = ''
-
-    @staticmethod
-    def get_commit(tsk, osk, user_name):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''        
-                        function encode_utf8( s )
-                        {
-                            return unescape( encodeURIComponent( s ) );
-                        }
-                        try{
-                          var server = TacticServerStub.get();
-                          var title_sk = '%s';
-                          var order_sk = '%s';
-                          var user_name = '%s';
-                          order_code = order_sk.split('code=')[1];
-                          title_code = title_sk.split('code=')[1];
-                          pop_el = document.getElementsByClassName('addproj_' + title_code)[0];
-                          process_el = pop_el.getElementsByClassName('add_proj_process')[0];
-                          specs_el = pop_el.getElementsByClassName('add_proj_specs')[0];
-                          process = process_el.value;
-                          specs = specs_el.value;
-                          all_filled = true;
-                          if(all_filled){
-                              title = server.eval("@SOBJECT(twog/title['code','" + title_code + "'])")[0];
-                              order = server.eval("@SOBJECT(twog/order['code','" + order_code + "'])")[0];
-                              client_code = title.client_code
-                              client = server.eval("@SOBJECT(twog/client['code','" + client_code + "'])");
-                              client_name = '';
-                              if(client.length > 0){
-                                  client = client[0];
-                                  client_name = client.name
-                              }
-                              new_proj = server.insert('twog/proj', {'process': process, 'specs': specs, 'title_code': title_code, 'parent_pipe': 'Manually Inserted into ' + title.pipeline_code, 'login': user_name, 'creation_type': 'hackup', 'status': 'Pending', 'order_code': order_code, 'client_code': client_code})
-                              new_task_data = {'process': process, 'context': process, 'active': false, 'client_name': client_name, 'title': title.title, 'episode': title.episode, 'territory': title.territory, 'creator_login': user_name, 'lookup_code': new_proj.code, 'search_type': 'twog/title?project=twog', 'search_id': title.id, 'pipeline_code': 'Manually Inserted into ' + title.pipeline_code, 'po_number': title.po_number, 'status': 'Pending', 'title_code': title_code, 'order_code': order_code, 'client_code': client_code};
-                              if(order.classification == 'in_production' || order.classification == 'In Production'){
-                                  new_task_data['active'] = true;
-                              }
-                              new_task = server.insert('sthpw/task',new_task_data);
-                              server.update(new_proj.__search_key__, {'task_code': new_task.code}); 
-                              kwargs = {'parent_sk': title_sk, 'order_sk': order_sk, 'user_name': user_name, 'task_sk': new_task.__search_key__, 'new_item_sk': new_proj.__search_key__} 
-                              spt.panel.load_popup('Connect Project To Pipeline', 'order_builder.HackPipeConnectWdg', kwargs); 
-                              spt.popup.close(spt.popup.get_popup(bvr.src_el));
-                          }else{
-                              alert('Please fill in each field correctly.');
-                          }
-                          
-                          
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (tsk, osk, user_name)}
-        return behavior
-    
-    def get_display(my):
-        user_name = Environment.get_user_name() 
-        my.title_sk = str(my.kwargs.get('title_sk'))
-        my.title_code = my.title_sk.split('code=')[1]
-        my.order_sk = str(my.kwargs.get('order_sk'))
-        table = Table()
-        table.add_attr('class','addproj_%s' % my.title_code)
-        table.add_row()
-        table.add_cell('Process: ')
-        table.add_cell('<input type="text" class="add_proj_process"/>')
-        table.add_row()
-        table.add_cell('Specs: ')
-        table.add_cell('<input type="text" class="add_proj_specs"/>')
-        table.add_row()
-        table2 = Table()
-        table2.add_row()
-        t1 = table2.add_cell(' ')
-        t1.add_attr('width', '100%s' % '%')
-        button = table2.add_cell('<input type="button" value="Create"/>')
-        button.add_behavior(my.get_commit(my.title_sk, my.order_sk, user_name))
-        t2 = table2.add_cell(' ')
-        t2.add_attr('width', '100%s' % '%')
-        table.add_cell(' ')
-        table.add_cell(table2)
-
-        return table
 
 
 class EditHackPipe(BaseRefreshWdg): 
