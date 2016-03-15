@@ -11,9 +11,7 @@ def main(server=None, trigger_input=None):
         trigger_input = {}
 
     try:
-        print("BEFORE IMPORT")
         from pyasm.search import Search
-        print("PLEASE DO SOMETHING")
 
         sob = trigger_input.get('sobject')
         client_code = sob.get('client_code')
