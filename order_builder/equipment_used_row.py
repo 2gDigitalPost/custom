@@ -14,7 +14,6 @@ from widget.button_small_new_wdg import ButtonSmallNewWdg
 class EquipmentUsedRow(BaseRefreshWdg):
 
     def init(my):
-        my.search_type = 'twog/equipment_used'
         my.title = 'Equipment Used'
         my.sk = ''
         my.code = ''
@@ -103,7 +102,9 @@ class EquipmentUsedRow(BaseRefreshWdg):
         eu_cell = table.add_cell('<b><u>%s</u></b>' % name_to_use)
         eu_cell.add_attr('nowrap','nowrap')
         eu_cell.add_style('cursor: pointer;')
-        eu_cell.add_behavior(get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title, '', 'builder/refresh_from_save', '', my.parent_sk, main_obj.get_value('name'), user_is_scheduler))
+        eu_cell.add_behavior(get_panel_change_behavior('twog/equipment_used', my.code, my.sk, my.order_sk, my.title,
+                                                       '', 'builder/refresh_from_save', '', my.parent_sk,
+                                                       main_obj.get_value('name'), user_is_scheduler))
         top_buttons = Table()
         top_buttons.add_row()
         if my.is_master and not my.small:

@@ -16,7 +16,6 @@ class OrderTable(BaseRefreshWdg):
     ''' This is the top level view of the dynamic order builder part '''
 
     def init(my):
-        my.search_type = 'twog/order'
         my.title = "Order"
         my.sk = ''
         my.sid = ''
@@ -131,8 +130,8 @@ class OrderTable(BaseRefreshWdg):
         order_name_cell = table.add_cell('<b><u>Order: %s</u><b>' % full_o_name)
         order_name_cell.add_attr('nowrap','nowrap')
         order_name_cell.add_style('cursor: pointer;')
-        order_name_cell.add_behavior(get_panel_change_behavior(my.search_type, my.code, my.sk, my.sk, my.title, '',
-                                                                   'builder/refresh_from_save', '', my.sk,
+        order_name_cell.add_behavior(get_panel_change_behavior('twog/order', my.code, my.sk, my.sk, my.title, '',
+                                                               'builder/refresh_from_save', '', my.sk,
                                                                main_obj.get_value('name'), user_is_scheduler))
         order_due_cell = table.add_cell("Due: %s" % fix_date(main_obj.get_value('due_date')).split(' ')[0])
         order_due_cell.add_attr('nowrap', 'nowrap')

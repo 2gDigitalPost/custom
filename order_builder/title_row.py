@@ -22,7 +22,6 @@ from sources_row import SourcesRow
 class TitleRow(BaseRefreshWdg):
 
     def init(my):
-        my.search_type = 'twog/title'
         my.title = 'Title'
         my.sk = ''
         my.code = ''
@@ -162,10 +161,10 @@ class TitleRow(BaseRefreshWdg):
         title_cell = table.add_cell('<b><u>Title: %s%s</u></b>' % (main_obj.get_value('title'), epis))
         title_cell.add_attr('nowrap', 'nowrap')
         title_cell.add_style('cursor: pointer;')
-        title_cell.add_behavior(get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title, '',
-                                                              'builder/refresh_from_save', '', my.parent_sk,
-                                                              '%s: %s' % (main_obj.get_value('title'),
-                                                                          main_obj.get_value('episode')),
+        title_cell.add_behavior(get_panel_change_behavior('twog/title', my.code, my.sk, my.order_sk, my.title, '',
+                                                          'builder/refresh_from_save', '', my.parent_sk,
+                                                          '%s: %s' % (main_obj.get_value('title'),
+                                                                      main_obj.get_value('episode')),
                                                           user_is_scheduler))
         due_cell = table.add_cell('Due: %s' % fix_date(main_obj.get_value('due_date')).split(' ')[0])
         due_cell.add_attr('nowrap', 'nowrap')

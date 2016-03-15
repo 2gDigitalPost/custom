@@ -20,7 +20,6 @@ class ProjRow(BaseRefreshWdg):
 
     def init(my):
         my.server = TacticServerStub.get()
-        my.search_type = 'twog/proj'
         my.title = "Project"
         my.sk = ''
         my.code = ''
@@ -206,7 +205,7 @@ class ProjRow(BaseRefreshWdg):
         proj_cell = table.add_cell('<b><u>Project: %s</u></b>' % main_obj.get_value('process'))
         proj_cell.add_attr('nowrap','nowrap')
         proj_cell.add_style('cursor: pointer;')
-        proj_cell.add_behavior(get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title,
+        proj_cell.add_behavior(get_panel_change_behavior('twog/proj', my.code, my.sk, my.order_sk, my.title,
                                                          main_obj.get_value('proj_templ_code'),
                                                              'builder/refresh_from_save',
                                                          main_obj.get_value('task_code'),
