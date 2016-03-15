@@ -703,28 +703,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (work_order_code, work_order_sk, proj_sk, sob_name, my.order_sk)}
         return behavior
 
-    def get_create_deliverable_behavior(my, sob_code, prereq_st, sob_sk, sob_st, sob_name, pipeline):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m29');
-                          var server = TacticServerStub.get();
-                          sob_code = '%s';
-                          prereq_st = '%s';
-                          sob_sk = '%s';
-                          sob_st = '%s';
-                          sob_name = '%s';
-                          pipeline = '%s';
-                          order_sk = '%s';
-                          spt.panel.load_popup('Create New Permanent Element', 'tactic.ui.panel.EditWdg', {element_name: 'general', mode: 'insert', search_type: 'twog/deliverable', title: 'Create New Deliverable', view: 'insert', widget_key: 'edit_layout', cbjs_insert_path: 'builder/reload_deliverable_table'});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sob_code, prereq_st, sob_sk, sob_st, sob_name, pipeline, my.order_sk)}
-        return behavior
-
     def get_barcode_insert_behavior(my, title_code, title_sk):
         behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
                         try{
