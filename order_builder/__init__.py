@@ -27,6 +27,7 @@ from quick_edit_wdg import *
 from source_portal_wdg import *
 from sources_row import *
 from title_adder_wdg import *
+from title_deletor_wdg import *
 from title_due_prio_bb_wdg import *
 from title_row import *
 from title_selector_wdg import *
