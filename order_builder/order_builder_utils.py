@@ -1156,45 +1156,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (code, work_order_name)}
         return behavior
 
-    def old_get_upload_behavior(my, search_key, process, ctx, processes):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                            //alert('m57');
-                            search_key = '%s';
-                            process = '%s';
-                            ctx = '%s';
-                            processes = '%s';
-                            var values = {};
-                            var top = bvr.src_el.getParent(".spt_checkin_top");
-                            //alert('top = ' + top);
-                            if(top){
-                                var transfer_mode = top.getElement(".spt_checkin_transfer_mode").value;
-                                values['transfer_mode'] = transfer_mode;
-                            }
-                            var options=  {
-                                title: "Check-in Widget",
-                                class_name: 'tactic.ui.widget.CheckinWdg',
-                                popup_id: 'checkin_widget'
-                            };
-                            if(search_key.indexOf('ORDER') != -1){
-                                search_key = search_key.replace('?proj=','?project=');
-                            }
-                            var bvr2 = {};
-                            bvr2.options = options;
-                            bvr2.values = values;
-                            bvr2.args = {'search_key': search_key, 'process': process, 'context': ctx, 'processes': processes};
-                            //alert(bvr2.args);
-                            spt.popup.get_widget({}, bvr2);
-
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (search_key, process, ctx, processes)}
-        return behavior
-
     def get_save_outside_barcodes_behavior(my,source_code):
         if source_code == None:
             source_code = ''
