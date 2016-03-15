@@ -397,6 +397,61 @@ def get_open_deliverable_behavior(deliverable_source_code, work_order_code, titl
     return behavior
 
 
+def get_panel_change_behavior(search_type, code, sk, order_sk, title, templ_code, edit_path, task_code, parent_sk,
+                              name, is_scheduler):
+    if is_scheduler:
+        edit_mode = 'edit'
+    else:
+        edit_mode = 'view'
+
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m48');
+                      search_type = '%s';
+                      code = '%s';
+                      sk = '%s';
+                      order_sk = '%s';
+                      title = '%s';
+                      edit_path = '%s';
+                      templ_code = '%s';
+                      task_code = '%s';
+                      parent_sk = '%s';
+                      name = '%s';
+                      edit_mode = '%s';
+                      name_for_selected = name;
+                      spt.app_busy.show('Loading ' + title);
+                      //var top_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
+                      var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                      var client_code = top_el.get('client');
+                      edit_panel = top_el.getElementsByClassName('edit_' + order_sk)[0];
+                      wiki_panel = top_el.getElementsByClassName('main_wiki')[0];
+                      translate_panel = top_el.getElementsByClassName('translate_cell')[0];
+                      spt.api.load_panel(edit_panel, 'tactic.ui.panel.EditWdg', {element_name: 'general', mode: edit_mode, search_type: search_type, code: code, title: 'Modify ' + title, view: 'edit', widget_key: 'edit_layout', cbjs_edit_path: edit_path, scroll_height: '1000px'});
+                      if(edit_mode == 'edit'){
+                          task_panel = top_el.getElementsByClassName('task_cell')[0];
+                          spt.api.load_panel(task_panel, 'order_builder.TaskEditWdg',  {task_code: task_code, parent_sk: parent_sk});
+                      }
+                      var sob_selected = top_el.getElementsByClassName('selected_sobject')[0];
+                      sob_selected.innerHTML = 'Selected: ' + name_for_selected;
+                      if(search_type != 'twog/order' && search_type != 'twog/equipment_used'){
+                          var bot = top_el.getElementsByClassName('bot_' + sk)[0];
+                          if(bot.style.display == 'none'){
+                              bot.style.display = 'table-row';
+                          }else{
+                              bot.style.display = 'none';
+                          }
+                      }
+                      spt.app_busy.hide();
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (search_type, code, sk, order_sk, title, edit_path, templ_code, task_code, parent_sk, name, edit_mode)}
+    return behavior
+
+
 class OBScripts(BaseRefreshWdg):
     def init(my):
         my.order_sk = ''
@@ -973,57 +1028,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (task_sk, parent_sk, parent_pyclass, my.order_sk, my.is_master_str, my.user)}
-        return behavior
-
-    def get_panel_change_behavior(my, search_type, code, sk, order_sk, title, templ_code, edit_path, task_code, parent_sk, name, is_scheduler): # SIDDED THROUGH 'refresh_from_save'
-        edit_mode = 'view'
-        if is_scheduler:
-            edit_mode = 'edit'
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m48');
-                          search_type = '%s';
-                          code = '%s';
-                          sk = '%s';
-                          order_sk = '%s';
-                          title = '%s';
-                          edit_path = '%s';
-                          templ_code = '%s';
-                          task_code = '%s';
-                          parent_sk = '%s';
-                          name = '%s';
-                          edit_mode = '%s';
-                          name_for_selected = name;
-                          spt.app_busy.show('Loading ' + title);
-                          //var top_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
-                          var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
-                          var client_code = top_el.get('client');
-                          edit_panel = top_el.getElementsByClassName('edit_' + order_sk)[0];
-                          wiki_panel = top_el.getElementsByClassName('main_wiki')[0];
-                          translate_panel = top_el.getElementsByClassName('translate_cell')[0];
-                          spt.api.load_panel(edit_panel, 'tactic.ui.panel.EditWdg', {element_name: 'general', mode: edit_mode, search_type: search_type, code: code, title: 'Modify ' + title, view: 'edit', widget_key: 'edit_layout', cbjs_edit_path: edit_path, scroll_height: '1000px'});
-                          if(edit_mode == 'edit'){
-                              task_panel = top_el.getElementsByClassName('task_cell')[0];
-                              spt.api.load_panel(task_panel, 'order_builder.TaskEditWdg',  {task_code: task_code, parent_sk: parent_sk});
-                          }
-                          var sob_selected = top_el.getElementsByClassName('selected_sobject')[0];
-                          sob_selected.innerHTML = 'Selected: ' + name_for_selected;
-                          if(search_type != 'twog/order' && search_type != 'twog/equipment_used'){
-                              var bot = top_el.getElementsByClassName('bot_' + sk)[0];
-                              if(bot.style.display == 'none'){
-                                  bot.style.display = 'table-row';
-                              }else{
-                                  bot.style.display = 'none';
-                              }
-                          }
-                          spt.app_busy.hide();
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (search_type, code, sk, order_sk, title, edit_path, templ_code, task_code, parent_sk, name, edit_mode)}
         return behavior
 
     def get_killer_behavior(my, my_sk, parent_sk, parent_pyclass, title): #SIDDED

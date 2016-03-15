@@ -9,7 +9,8 @@ from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
-from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior, get_scratch_pipe_behavior
+from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior, \
+    get_scratch_pipe_behavior, get_panel_change_behavior
 from widget.button_small_new_wdg import ButtonSmallNewWdg
 
 from work_order_row import WorkOrderRow
@@ -205,12 +206,12 @@ class ProjRow(BaseRefreshWdg):
         proj_cell = table.add_cell('<b><u>Project: %s</u></b>' % main_obj.get_value('process'))
         proj_cell.add_attr('nowrap','nowrap')
         proj_cell.add_style('cursor: pointer;')
-        proj_cell.add_behavior(obs.get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title,
-                                                             main_obj.get_value('proj_templ_code'),
+        proj_cell.add_behavior(get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title,
+                                                         main_obj.get_value('proj_templ_code'),
                                                              'builder/refresh_from_save',
-                                                             main_obj.get_value('task_code'),
-                                                             my.parent_sk,main_obj.get_value('process'),
-                                                             user_is_scheduler))
+                                                         main_obj.get_value('task_code'),
+                                                         my.parent_sk, main_obj.get_value('process'),
+                                                         user_is_scheduler))
         stat_tbl = Table()
         stat_tbl.add_row()
         stat_cell = stat_tbl.add_cell('Status: %s' % status)

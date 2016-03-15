@@ -10,7 +10,7 @@ from widget.new_icon_wdg import CustomIconWdg
 from widget.button_small_new_wdg import ButtonSmallNewWdg
 
 from title_row import TitleRow
-from order_builder_utils import OBScripts, get_upload_behavior
+from order_builder_utils import OBScripts, get_upload_behavior, get_panel_change_behavior
 
 class OrderTable(BaseRefreshWdg):
     ''' This is the top level view of the dynamic order builder part '''
@@ -131,9 +131,9 @@ class OrderTable(BaseRefreshWdg):
         order_name_cell = table.add_cell('<b><u>Order: %s</u><b>' % full_o_name)
         order_name_cell.add_attr('nowrap','nowrap')
         order_name_cell.add_style('cursor: pointer;')
-        order_name_cell.add_behavior(obs.get_panel_change_behavior(my.search_type, my.code, my.sk, my.sk, my.title, '',
+        order_name_cell.add_behavior(get_panel_change_behavior(my.search_type, my.code, my.sk, my.sk, my.title, '',
                                                                    'builder/refresh_from_save', '', my.sk,
-                                                                   main_obj.get_value('name'), user_is_scheduler))
+                                                               main_obj.get_value('name'), user_is_scheduler))
         order_due_cell = table.add_cell("Due: %s" % fix_date(main_obj.get_value('due_date')).split(' ')[0])
         order_due_cell.add_attr('nowrap', 'nowrap')
         long_cell1 = table.add_cell('Scheduler: %s' % sched_full_name)

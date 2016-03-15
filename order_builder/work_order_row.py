@@ -9,7 +9,7 @@ from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
-from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior
+from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior, get_panel_change_behavior
 
 from equipment_used_row import EquipmentUsedRow
 from nighttime_hotlist.nighttime_hotlist import BigBoardSingleWOSelectWdg, IndieBigBoardSelectWdg
@@ -192,12 +192,12 @@ class WorkOrderRow(BaseRefreshWdg):
         wo_cell = table.add_cell('<b><u>Work Order: %s</u></b>' % main_obj.get_value('process'))
         wo_cell.add_attr('nowrap', 'nowrap')
         wo_cell.add_style('cursor: pointer;')
-        wo_cell.add_behavior(obs.get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title,
-                                                           main_obj.get_value('work_order_templ_code'),
+        wo_cell.add_behavior(get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title,
+                                                       main_obj.get_value('work_order_templ_code'),
                                                            'builder/refresh_from_save',
-                                                           main_obj.get_value('task_code'),
-                                                           my.parent_sk,main_obj.get_value('process'),
-                                                           user_is_scheduler))
+                                                       main_obj.get_value('task_code'),
+                                                       my.parent_sk, main_obj.get_value('process'),
+                                                       user_is_scheduler))
         stat_cell = table.add_cell('Status: %s' % status)
         stat_cell.add_attr('nowrap', 'nowrap')
         if status not in [None,'']:

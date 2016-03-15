@@ -8,7 +8,8 @@ from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
-from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior, get_scratch_pipe_behavior
+from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior, \
+    get_scratch_pipe_behavior, get_panel_change_behavior
 from qc_reports import QCReportLauncherWdg
 
 from deliverable_count_wdg import DeliverableCountWdg
@@ -161,11 +162,11 @@ class TitleRow(BaseRefreshWdg):
         title_cell = table.add_cell('<b><u>Title: %s%s</u></b>' % (main_obj.get_value('title'), epis))
         title_cell.add_attr('nowrap', 'nowrap')
         title_cell.add_style('cursor: pointer;')
-        title_cell.add_behavior(obs.get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title, '',
+        title_cell.add_behavior(get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title, '',
                                                               'builder/refresh_from_save', '', my.parent_sk,
                                                               '%s: %s' % (main_obj.get_value('title'),
                                                                           main_obj.get_value('episode')),
-                                                              user_is_scheduler))
+                                                          user_is_scheduler))
         due_cell = table.add_cell('Due: %s' % fix_date(main_obj.get_value('due_date')).split(' ')[0])
         due_cell.add_attr('nowrap', 'nowrap')
         pipe_disp = main_obj.get_value('pipeline_code')
