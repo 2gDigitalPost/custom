@@ -22,8 +22,6 @@ class WorkOrderRow(BaseRefreshWdg):
 
     def init(my):
         my.server = TacticServerStub.get()
-        my.search_type = 'twog/work_order'
-        my.title = "Work Order"
         my.sk = ''
         my.search_id = ''
         my.code = ''
@@ -32,17 +30,50 @@ class WorkOrderRow(BaseRefreshWdg):
         my.parent_sk = ''
         my.parent_sid = ''
         my.order_sk = ''
-        my.x_butt = "<img src='/context/icons/common/BtnKill.gif' title='Delete' name='Delete'/>"
-        my.add_eu = "<table border=0 cellspacing=0 cellpadding=2 style='font-size: 60%s; border-color: #FFFFFF; border-style: solid; border-width: 1px; cursor: pointer;'><tr><td align='center'><font color='#FFFFFF'>Add Equipment</font></td></tr></table>" % '%'
-        my.width = '1000px'
-        my.height = '300px'
         my.disp_mode = 'Small'
         my.small = False
         my.is_master = False
         my.is_master_str = 'false'
         my.on_color = '#ff0000'
         my.off_color = '#c6eda0'
-        my.stat_colors = {'Assignment': '#fcaf88', 'Pending': '#d7d7d7', 'In Progress': '#f5f3a4', 'In_Progress': '#f5f3a4', 'In Production': '#f5f3a4', 'In_Production': '#f5f3a4', 'In production': '#f5f3a4', 'In_production': '#f5f3a4', 'Waiting': '#ffd97f', 'Need Assistance': '#fc88fb', 'Need_Assistance': '#fc88fb', 'Review': '#888bfc', 'Approved': '#d4b5e7', 'On Hold': '#e8b2b8', 'On_Hold': '#e8b2b8', 'Client Response': '#ddd5b8', 'Completed': '#b7e0a5', 'Ready': '#b2cee8', 'Internal Rejection': '#ff0000', 'External Rejection': '#ff0000', 'Rejected': '#ff0000', 'Failed QC': '#ff0000', 'Fix Needed': '#c466a1', 'Need Buddy Check': '#e3701a', 'DR In_Progress': '#d6e0a4', 'DR In Progress': '#d6e0a4','Amberfin01_In_Progress':'#D8F1A8', 'Amberfin01 In Progress':'#D8F1A8', 'Amberfin02_In_Progress':'#F3D291',  'Amberfin02 In Progress':'#F3D291','BATON In_Progress': '#c6e0a4', 'BATON In Progress': '#c6e0a4','Export In_Progress': '#796999', 'Export In Progress': '#796999','Buddy Check In_Progress': '#1aade3','Buddy Check In Progress': '#1aade3'}
+        my.stat_colors = {
+            'Assignment': '#fcaf88',
+            'Pending': '#d7d7d7',
+            'In Progress': '#f5f3a4',
+            'In_Progress': '#f5f3a4',
+            'In Production': '#f5f3a4',
+            'In_Production': '#f5f3a4',
+            'In production': '#f5f3a4',
+            'In_production': '#f5f3a4',
+            'Waiting': '#ffd97f',
+            'Need Assistance': '#fc88fb',
+            'Need_Assistance': '#fc88fb',
+            'Review': '#888bfc',
+            'Approved': '#d4b5e7',
+            'On Hold': '#e8b2b8',
+            'On_Hold': '#e8b2b8',
+            'Client Response': '#ddd5b8',
+            'Completed': '#b7e0a5',
+            'Ready': '#b2cee8',
+            'Internal Rejection': '#ff0000',
+            'External Rejection': '#ff0000',
+            'Rejected': '#ff0000',
+            'Failed QC': '#ff0000',
+            'Fix Needed': '#c466a1',
+            'Need Buddy Check': '#e3701a',
+            'DR In_Progress': '#d6e0a4',
+            'DR In Progress': '#d6e0a4',
+            'Amberfin01_In_Progress':'#D8F1A8',
+            'Amberfin01 In Progress':'#D8F1A8',
+            'Amberfin02_In_Progress':'#F3D291',
+            'Amberfin02 In Progress':'#F3D291',
+            'BATON In_Progress': '#c6e0a4',
+            'BATON In Progress': '#c6e0a4',
+            'Export In_Progress': '#796999',
+            'Export In Progress': '#796999',
+            'Buddy Check In_Progress': '#1aade3',
+            'Buddy Check In Progress': '#1aade3'
+        }
 
     def get_parent_context_file_link(my,search_id,process_name,parent_st):
         what_to_ret = ''
@@ -192,12 +223,10 @@ class WorkOrderRow(BaseRefreshWdg):
         wo_cell = table.add_cell('<b><u>Work Order: %s</u></b>' % main_obj.get_value('process'))
         wo_cell.add_attr('nowrap', 'nowrap')
         wo_cell.add_style('cursor: pointer;')
-        wo_cell.add_behavior(get_panel_change_behavior(my.search_type, my.code, my.sk, my.order_sk, my.title,
+        wo_cell.add_behavior(get_panel_change_behavior('twog/work_order', my.code, my.sk, my.order_sk, 'Work Order',
                                                        main_obj.get_value('work_order_templ_code'),
-                                                           'builder/refresh_from_save',
-                                                       main_obj.get_value('task_code'),
-                                                       my.parent_sk, main_obj.get_value('process'),
-                                                       user_is_scheduler))
+                                                       'builder/refresh_from_save', main_obj.get_value('task_code'),
+                                                       my.parent_sk, main_obj.get_value('process'), user_is_scheduler))
         stat_cell = table.add_cell('Status: %s' % status)
         stat_cell.add_attr('nowrap', 'nowrap')
         if status not in [None,'']:
@@ -224,7 +253,7 @@ class WorkOrderRow(BaseRefreshWdg):
                                                                                        my.on_color, my.off_color))
             cb = top_buttons.add_cell(select_check)
         elif user_is_scheduler:
-            xb = top_buttons.add_cell(my.x_butt)
+            xb = top_buttons.add_cell("<img src='/context/icons/common/BtnKill.gif' title='Delete' name='Delete'/>")
             xb.add_attr('align', 'right')
             xb.add_style('cursor: pointer;')
             xb.add_behavior(obs.get_killer_behavior(my.sk, my.parent_sk, 'ProjRow', main_obj.get_value('process')))
