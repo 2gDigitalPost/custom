@@ -6,7 +6,7 @@ from pyasm.search import Search
 from pyasm.web import Table
 from pyasm.widget import TextWdg
 
-from order_builder_utils import OBScripts
+from order_builder_utils import get_launch_source_behavior
 
 
 class SourcesRow(BaseRefreshWdg):
@@ -21,7 +21,7 @@ class SourcesRow(BaseRefreshWdg):
         my.title_code = str(my.kwargs.get('title_code'))
         my.title_sk = str(my.kwargs.get('title_sk'))
         my.order_sk = str(my.kwargs.get('order_sk'))
-        obs = OBScripts(order_sk=my.order_sk)
+
         origin_search = Search("twog/title_origin")
         origin_search.add_filter('title_code',my.title_code)
         origins = origin_search.get_sobjects()
@@ -69,7 +69,7 @@ class SourcesRow(BaseRefreshWdg):
                 celly.add_attr('nowrap','nowrap')
                 celly.add_style('cursor: pointer;')
                 celly.add_style('font-size: 80%s;' % '%')
-                celly.add_behavior(obs.get_launch_source_behavior(my.title_code,my.title_sk,source.get_value('code'),source.get_search_key()))
+                celly.add_behavior(get_launch_source_behavior(my.title_code, my.title_sk, source.get_value('code'), source.get_search_key(), my.order_sk))
 
                 table.add_cell(' &nbsp;&nbsp; ')
                 count += 1
@@ -81,7 +81,7 @@ class SourcesRow(BaseRefreshWdg):
         if user_is_scheduler:
             table2.add_row()
             barcode_text_wdg = TextWdg('barcode_insert')
-            barcode_text_wdg.add_behavior(obs.get_barcode_insert_behavior(my.title_code,my.title_sk))
+            barcode_text_wdg.add_behavior(my.get_barcode_insert_behavior(my.title_code, my.title_sk, my.order_sk))
             bct = table2.add_cell(barcode_text_wdg)
             bct.add_attr('align','right')
             bct.add_attr('width','100%s' % '%')
@@ -94,5 +94,51 @@ class SourcesRow(BaseRefreshWdg):
             bcentry = two_gether.add_cell(table2)
             bcentry.add_attr('valign','top')
 
-#        print "SOURCES ROW TIME = %s" % (time.time() - sources_row_time)
         return two_gether
+
+    @staticmethod
+    def get_barcode_insert_behavior(title_code, title_sk, order_sk):
+        behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
+                        try{
+                          //alert('m39');
+                          var server = TacticServerStub.get();
+                          title_code = '%s';
+                          title_sk = '%s';
+                          order_sk = '%s';
+                          var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                          //var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder_' + order_sk);
+                          var source_el = top_el.getElementsByClassName('sources_' + title_sk)[0];
+                          barcode = bvr.src_el.value;
+                          barcode = barcode.toUpperCase();
+                          source_expr = "@SOBJECT(twog/source['barcode','" + barcode + "'])";
+                          sources = server.eval(source_expr);
+                          if(sources.length > 1){
+                              alert('Something is wrong with inventory. There are ' + sources.length + ' sources with that barcode.');
+                              bvr.src_el.value = '';
+                          }else if(sources.length == 0){
+                              source_expr = "@SOBJECT(twog/source['client_asset_id','" + barcode + "'])";
+                              sources = server.eval(source_expr);
+                              if(sources.length > 1){
+                                  alert('Something is wrong with inventory. There are ' + sources.length + ' sources with that client_asset_id.');
+                                  bvr.src_el.value = '';
+                                  sources = []
+                              }
+                          }
+                          if(sources.length > 0){
+                              source = sources[0];
+                              server.insert('twog/title_origin', {title_code: title_code, source_code: source.code});
+                              spt.api.load_panel(source_el, 'order_builder.SourcesRow', {title_code: title_code, title_sk: title_sk, order_sk: order_sk});
+                          }else{
+                              alert('There are no sources with that barcode. Try a different barcode?');
+                              bvr.src_el.value = '';
+                          }
+
+
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                          //alert(err);
+                }
+         ''' % (title_code, title_sk, order_sk)}
+        return behavior

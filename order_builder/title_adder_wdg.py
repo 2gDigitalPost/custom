@@ -8,7 +8,6 @@ from pyasm.widget import SelectWdg
 from pyasm.search import Search
 
 from common_tools.common_functions import fix_date
-from order_builder_utils import OBScripts
 
 
 class TitleAdderWdg(BaseRefreshWdg):
@@ -39,7 +38,7 @@ class TitleAdderWdg(BaseRefreshWdg):
         order_search = Search("twog/order")
         order_search.add_filter('code',order_code)
         the_order = order_search.get_sobject()
-        obs = OBScripts(order_sk=my.order_sk)
+
         table = Table()
         table.add_attr('class', 'title_adder_top_%s' % my.order_sk)
         table.add_row()

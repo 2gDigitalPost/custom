@@ -9,8 +9,6 @@ from alternative_elements.customcheckbox import CustomCheckboxWdg
 from widget.new_icon_wdg import CustomIconWdg
 from widget.button_small_new_wdg import ButtonSmallNewWdg
 
-from order_builder_utils import OBScripts
-
 
 class PreReqWdg(BaseRefreshWdg):
 

@@ -469,6 +469,27 @@ def get_edit_hackup_connections(code, work_order_name):
     return behavior
 
 
+def get_launch_source_behavior(title_code, title_sk, source_code, source_sk, order_sk):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m43');
+                      var server = TacticServerStub.get();
+                      var title_code = '%s';
+                      var title_sk = '%s';
+                      var source_code = '%s';
+                      var source_sk = '%s';
+                      var order_sk = '%s';
+                      spt.panel.load_popup('Source Portal', 'order_builder.SourceEditWdg', {'code': source_code, 'order_sk': order_sk});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (title_code, title_sk, source_code, source_sk, order_sk)}
+    return behavior
+
+
 class OBScripts(BaseRefreshWdg):
     def init(my):
         my.order_sk = ''
@@ -775,52 +796,6 @@ class OBScripts(BaseRefreshWdg):
          ''' % (work_order_code, work_order_sk, proj_sk, sob_name, my.order_sk)}
         return behavior
 
-    def get_barcode_insert_behavior(my, title_code, title_sk):
-        behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
-                        try{
-                          //alert('m39');
-                          var server = TacticServerStub.get();
-                          title_code = '%s';
-                          title_sk = '%s';
-                          order_sk = '%s';
-                          var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
-                          //var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder_' + order_sk);
-                          var source_el = top_el.getElementsByClassName('sources_' + title_sk)[0];
-                          barcode = bvr.src_el.value;
-                          barcode = barcode.toUpperCase();
-                          source_expr = "@SOBJECT(twog/source['barcode','" + barcode + "'])";
-                          sources = server.eval(source_expr);
-                          if(sources.length > 1){
-                              alert('Something is wrong with inventory. There are ' + sources.length + ' sources with that barcode.');
-                              bvr.src_el.value = '';
-                          }else if(sources.length == 0){
-                              source_expr = "@SOBJECT(twog/source['client_asset_id','" + barcode + "'])";
-                              sources = server.eval(source_expr);
-                              if(sources.length > 1){
-                                  alert('Something is wrong with inventory. There are ' + sources.length + ' sources with that client_asset_id.');
-                                  bvr.src_el.value = '';
-                                  sources = []
-                              }
-                          }
-                          if(sources.length > 0){
-                              source = sources[0];
-                              server.insert('twog/title_origin', {title_code: title_code, source_code: source.code});
-                              spt.api.load_panel(source_el, 'order_builder.SourcesRow', {title_code: title_code, title_sk: title_sk, order_sk: order_sk});
-                          }else{
-                              alert('There are no sources with that barcode. Try a different barcode?');
-                              bvr.src_el.value = '';
-                          }
-
-
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (title_code, title_sk, my.order_sk)}
-        return behavior
-
     def get_launch_wo_source_behavior(my, work_order_code, work_order_sk, wo_source):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
@@ -838,26 +813,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (work_order_code, work_order_sk, wo_source, my.order_sk)}
-        return behavior
-
-    def get_launch_source_behavior(my, title_code, title_sk, source_code, source_sk):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m43');
-                          var server = TacticServerStub.get();
-                          var title_code = '%s';
-                          var title_sk = '%s';
-                          var source_code = '%s';
-                          var source_sk = '%s';
-                          var order_sk = '%s';
-                          spt.panel.load_popup('Source Portal', 'order_builder.SourceEditWdg', {'code': source_code, 'order_sk': order_sk});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (title_code, title_sk, source_code, source_sk, my.order_sk)}
         return behavior
 
     def get_save_task_info_behavior(my, task_sk, parent_sk, parent_pyclass):

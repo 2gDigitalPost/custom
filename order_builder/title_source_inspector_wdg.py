@@ -4,7 +4,7 @@ from pyasm.common import Environment
 from pyasm.web import Table
 from pyasm.search import Search
 
-from order_builder_utils import OBScripts
+from order_builder_utils import get_launch_source_behavior
 
 
 class TitleSourceInspectorWdg(BaseRefreshWdg):
@@ -35,7 +35,7 @@ class TitleSourceInspectorWdg(BaseRefreshWdg):
         sources = []
         for ss in sources_searched:
             sources.append(ss.get_value('source_code'))
-        obs = OBScripts()
+
         table = Table()
         table.add_attr('class', 'titlesourceinspector_%s' % my.sk)
         if sources in [None,[]]:
@@ -58,7 +58,8 @@ class TitleSourceInspectorWdg(BaseRefreshWdg):
                 name = table.add_cell('<b><u>Barcode: %s  Title: %s: %s, Code : %s</u></b>' % (source.get_value('barcode'), source.get_value('title'), source.get_value('episode'), source.get_value('code')))
                 name.add_attr('nowrap','nowrap')
                 name.add_style('cursor: pointer;')
-                name.add_behavior(obs.get_launch_source_behavior(my.code,my.sk,source.get_value('code'),source.get_search_key()))
+                name.add_behavior(get_launch_source_behavior(my.code, my.sk, source.get_value('code'),
+                                                             source.get_search_key(), ''))
 
         return table
 
