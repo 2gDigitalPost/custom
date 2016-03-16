@@ -1381,8 +1381,7 @@ class OutsideBarcodesListWdg(BaseRefreshWdg):
             obc_row.add_style('display: table-row;')
         else:
             obc_row.add_style('display: none;') # Change to none
-         
-        obs = OBScripts(order_sk=my.order_sk)
+
         obc = Table()
         obc.add_attr('class','outside_barcodes_list')
         obc.add_row()
@@ -1430,12 +1429,98 @@ class OutsideBarcodesListWdg(BaseRefreshWdg):
         widhun = obc.add_cell()
         widhun.add_style('width: 100%;')
         create_butt = obc.add_cell('<input type="button" value="Assign"/>')
-        create_butt.add_behavior(obs.get_save_outside_barcodes_behavior(my.source_code))
+        create_butt.add_behavior(my.get_save_outside_barcodes_behavior(my.source_code))
         widhun = obc.add_cell()
         widhun.add_style('width: 100%;')
         table.add_cell(obc)
 
         return table
+
+    @staticmethod
+    def get_save_outside_barcodes_behavior(source_code):
+        if source_code == None:
+            source_code = ''
+        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                        function oc(a){
+                            var o = {};
+                            for(var i=0;i<a.length;i++){
+                                o[a[i]]='';
+                            }
+                            return o;
+                        }
+                        try{
+                          //alert('m58');
+                          var server = TacticServerStub.get();
+                          var out_tbl = spt.api.get_parent(bvr.src_el, '.outside_barcodes_list');
+                          var source_code = '%s';
+                          var added_one = false;
+                          if(source_code != ''){
+                                  var inps = out_tbl.getElementsByTagName('input');
+                                  var pairs = {};
+                                  var seen = [];
+                                  for(var r = 0; r < inps.length; r++){
+                                      if(inps[r].getAttribute('type') == 'text'){
+                                          if(inps[r].value != ''){
+                                              var name = inps[r].getAttribute('name');
+                                              var num = Number(name.split('utside_barcode_insert_')[1]);
+                                              if(!(num in oc(seen))){
+                                                  seen.push(num);
+                                                  pairs[num] = [];
+                                              }
+                                              pairs[num].push(inps[r].value);
+                                          }
+                                      }
+                                  }
+                                  sels = out_tbl.getElementsByTagName('select');
+                                  for(var r = 0; r < sels.length; r++){
+                                      var meclass = sels[r].getAttribute('class');
+                                      var num = Number(meclass.split('utside_client_')[1]);
+                                      if(sels[r].value != ''){
+                                          if(num in oc(seen)){
+                                              pairs[num].push(sels[r].value);
+                                              if(sels[r].getAttribute('out_code') != ''){
+                                                  pairs[num].push(sels[r].getAttribute('out_code'));
+                                              }else{
+                                                  pairs[num].push('');
+                                              }
+                                          }
+                                      }else{
+                                          if(num in oc(seen)){
+                                              pairs[num].push('');
+                                              pairs[num].push('');
+                                              alert('Make Sure Barcode ' + pairs[num][0] + ' is associated with a client.');
+                                          }
+                                      }
+                                  }
+                                  for(var r = 0; r < seen.length; r++){
+                                      if(pairs[r][0] != '' && pairs[r][1] != '' && pairs[r][2] == '' && source_code != ''){
+                                              check_expr = "@SOBJECT(twog/outside_barcode['client_code','" + pairs[r][1] + "']['barcode','" + pairs[r][0] + "']['source_code','" + source_code + "'])";
+                                              check = server.eval(check_expr);
+                                              if(check.length < 1){
+                                                  added_one = true;
+                                                  server.insert('twog/outside_barcode',{'client_code': pairs[r][1], 'barcode': pairs[r][0].toUpperCase(), 'source_code': source_code});
+                                              }else{
+                                                  alert('Barcode ' + pairs[r][0] + ' is already in the system.');
+                                              }
+                                      }else if(pairs[r][0] != '' && pairs[r][1] != '' && pairs[r][2] != '' && source_code != ''){
+                                          added_one = true;
+                                          server.update(server.build_search_key('twog/outside_barcode', pairs[r][2]),{'client_code': pairs[r][1], 'barcode': pairs[r][0].toUpperCase(), 'source_code': source_code});
+                                      }
+                                  }
+                                  if(added_one){
+                                      alert('Outside Barcodes Assigned');
+                                  }
+                          }else{
+                              alert("You have not saved the Source element yet. Please 'Add' it, then you can save the outside barcodes to it.");
+                          }
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                          //alert(err);
+                }
+         ''' % source_code}
+        return behavior
 
 class NewSourceWdg(BaseRefreshWdg):
     def init(my):
