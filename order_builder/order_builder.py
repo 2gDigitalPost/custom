@@ -1275,7 +1275,7 @@ class TwogEasyCheckinWdg(BaseRefreshWdg):
         my.sk = str(my.kwargs.get('sk'))
         my.order_sk = str(my.kwargs.get('order_sk'))
         my.source_contexts = ProdSetting.get_value_by_key('source_contexts').split('|')
-        obs = OBScripts(order_sk=my.order_sk)
+
         table = Table()
         table.add_attr('class','twog_easy_checkin')
         table.add_attr('width','100%s' % '%')
@@ -1302,13 +1302,67 @@ class TwogEasyCheckinWdg(BaseRefreshWdg):
         button = mini1.add_cell('<input type="button" value="Browse"/>')
         button.add_attr('align','right')
         button.add_style('cursor: pointer;')
-        button.add_behavior(obs.get_easy_checkin_browse_behavior())
+        button.add_behavior(my.get_easy_checkin_browse_behavior())
         big_button = mini1.add_cell('<input type="button" value="Check In" class="easy_checkin_commit" disabled/>')
         big_button.add_style('cursor: pointer;')
-        big_button.add_behavior(obs.get_easy_checkin_commit_behavior(my.sk))
+        big_button.add_behavior(my.get_easy_checkin_commit_behavior(my.sk))
         table.add_cell(mini1)
 
         return table
+
+    @staticmethod
+    def get_easy_checkin_browse_behavior():
+        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                        try{
+                           var server = TacticServerStub.get();
+                           var applet = spt.Applet.get();
+                           var base_dirs = server.get_base_dirs();
+                           var base_sandbox = base_dirs.win32_sandbox_dir;
+                           var source_top_el = document.getElementsByClassName('twog_easy_checkin')[0];
+                           var potential_files = applet.open_file_browser(base_sandbox);
+                           var main_file = potential_files[0];
+                           var file_selected_cell = source_top_el.getElementsByClassName('file_holder')[0];
+                           file_selected_cell.innerHTML = main_file;
+                           var commit_button = source_top_el.getElementsByClassName('easy_checkin_commit')[0];
+                           commit_button.disabled = false;
+
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                }
+         '''}
+        return behavior
+
+    @staticmethod
+    def get_easy_checkin_commit_behavior(source_sk):
+        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                        try{
+                           var server = TacticServerStub.get();
+                           var source_sk = '%s';
+                           var source_top_el = document.getElementsByClassName('source_edit_top')[0];
+                           var file_selected_cell = source_top_el.getElementsByClassName('file_holder')[0];
+                           var file_selected = file_selected_cell.innerHTML;
+                           var selects = source_top_el.getElementsByTagName('select');
+                           var ctx_select = '';
+                           for(var r = 0; r < selects.length; r++){
+                               if(selects[r].name == 'source_process_select'){
+                                   ctx_select = selects[r];
+                               }
+                           }
+                           var ctx = ctx_select.value;
+                           server.simple_checkin(source_sk, ctx, file_selected, {'mode': 'inplace'});
+                           var history = source_top_el.getElementsByClassName('history_source_cell')[0];
+                           spt.api.load_panel(history, 'tactic.ui.widget.SObjectCheckinHistoryWdg', {search_key: source_sk});
+
+
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                }
+         ''' % (source_sk)}
+        return behavior
     
 class OutsideBarcodesListWdg(BaseRefreshWdg):
     def init(my):
