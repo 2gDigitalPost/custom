@@ -7,7 +7,7 @@ from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 
-from order_builder_utils import OBScripts, get_selected_color_behavior, get_panel_change_behavior
+from order_builder_utils import OBScripts, get_selected_color_behavior, get_panel_change_behavior, get_killer_behavior
 from widget.button_small_new_wdg import ButtonSmallNewWdg
 
 
@@ -126,7 +126,8 @@ class EquipmentUsedRow(BaseRefreshWdg):
             xb = top_buttons.add_cell(my.x_butt)
             xb.add_attr('align','right')
             xb.add_style('cursor: pointer;')
-            xb.add_behavior(obs.get_killer_behavior(my.sk, my.parent_sk, 'WorkOrderRow', main_obj.get_value('name')))
+            xb.add_behavior(get_killer_behavior(my.sk, my.parent_sk, 'WorkOrderRow', main_obj.get_value('name'),
+                                                my.order_sk, my.is_master))
         unit_cell = table.add_cell('UNITS: %s' % main_obj.get_value('units'))
         unit_cell.add_attr('nowrap','nowrap')
         unit_cell.add_style('font-size: 10px;')

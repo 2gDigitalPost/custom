@@ -9,8 +9,8 @@ from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
-from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior, \
-    get_panel_change_behavior, get_edit_hackup_connections, get_launch_note_behavior
+from order_builder_utils import get_selected_color_behavior, get_upload_behavior, get_panel_change_behavior, \
+    get_edit_hackup_connections, get_launch_note_behavior, get_killer_behavior
 
 from equipment_used_row import EquipmentUsedRow
 from nighttime_hotlist.nighttime_hotlist import BigBoardSingleWOSelectWdg, IndieBigBoardSelectWdg
@@ -141,7 +141,6 @@ class WorkOrderRow(BaseRefreshWdg):
             if ob_text in [True, 'true', 't', '1', 1]:
                 open_bottom = True
 
-        obs = OBScripts(order_sk=my.order_sk, user=my.user, groups_str=my.groups_str, is_master=my.is_master)
         main_obj = None
         if 'main_obj' in my.kwargs.keys():
             main_obj = my.kwargs.get('main_obj')
@@ -257,7 +256,8 @@ class WorkOrderRow(BaseRefreshWdg):
             xb = top_buttons.add_cell("<img src='/context/icons/common/BtnKill.gif' title='Delete' name='Delete'/>")
             xb.add_attr('align', 'right')
             xb.add_style('cursor: pointer;')
-            xb.add_behavior(obs.get_killer_behavior(my.sk, my.parent_sk, 'ProjRow', main_obj.get_value('process')))
+            xb.add_behavior(get_killer_behavior(my.sk, my.parent_sk, 'ProjRow', main_obj.get_value('process'),
+                                                my.order_sk, my.is_master))
         long_cell1 = table.add_cell(top_buttons)
         long_cell1.add_attr('align', 'right')
         long_cell1.add_attr('colspan', '1')

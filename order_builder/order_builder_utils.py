@@ -512,6 +512,61 @@ def get_launch_note_behavior(sk, name):
     return behavior
 
 
+def get_killer_behavior(my_sk, parent_sk, parent_pyclass, title, order_sk, is_master):
+    if is_master:
+        is_master_str = 'true'
+    else:
+        is_master_str = 'false'
+
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m56');
+                      var parent_sk = '%s';
+                      var parent_pyclass = '%s';
+                      var my_sk = '%s';
+                      var my_title = '%s';
+                      var order_sk = '%s';
+                      var is_master_str = '%s';
+                      //alert('parent_sk = ' + parent_sk + ' parent_pyclass = ' + parent_pyclass + ' my_sk = ' + my_sk + ' my_title = ' + my_title);
+                      if(confirm('Do you really want to delete ' + my_title + '?')){
+                              spt.app_busy.show('Deleting ' + my_title + '...');
+                              var server = TacticServerStub.get();
+                              //var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder_' + order_sk);
+                              var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                              order_sk = top_el.getAttribute('order_sk');
+                              display_mode = top_el.getAttribute('display_mode');
+                              user = top_el.getAttribute('user');
+                              groups_str = top_el.get('groups_str');
+                              allowed_titles = top_el.getAttribute('allowed_titles');
+                              parent_el = top_el.getElementsByClassName('cell_' + parent_sk)[0];
+                              found_parent_sk = parent_el.get('parent_sk');
+                              found_parent_sid = parent_el.get('parent_sid');
+                              server.retire_sobject(my_sk);
+                              parent_code = parent_sk.split('code=')[1];
+                              if(parent_code.indexOf('TITLE') != -1){
+                                  server.insert('twog/simplify_pipe', {'title_code': parent_code, 'do_all': 'yes'});
+                              }else if(parent_code.indexOf('PROJ') != -1){
+                                  server.insert('twog/simplify_pipe', {'proj_code': parent_code, 'do_all': 'yes'});
+                              }
+                              send_data =  {sk: parent_sk, parent_sid: found_parent_sid, parent_sk: found_parent_sk, order_sk: order_sk, display_mode: display_mode, user: user, groups_str: groups_str, allowed_titles: allowed_titles, is_master: is_master_str};
+                              spt.api.load_panel(parent_el, 'order_builder.' + parent_pyclass, send_data);
+                              if('twog/order' != parent_sk.split('?')[0]){
+                                  bot = top_el.getElementsByClassName('bot_' + parent_sk)[0];
+                                  bot.style.display = 'table-row';
+                              }
+                      }
+                      spt.app_busy.hide();
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (parent_sk, parent_pyclass, my_sk, title, order_sk, is_master_str)}
+    return behavior
+
+
+
 class OBScripts(BaseRefreshWdg):
     def init(my):
         my.order_sk = ''
@@ -1022,54 +1077,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (task_sk, parent_sk, parent_pyclass, my.order_sk, my.is_master_str, my.user)}
-        return behavior
-
-    def get_killer_behavior(my, my_sk, parent_sk, parent_pyclass, title): #SIDDED
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m56');
-                          var parent_sk = '%s';
-                          var parent_pyclass = '%s';
-                          var my_sk = '%s';
-                          var my_title = '%s';
-                          var order_sk = '%s';
-                          var is_master_str = '%s';
-                          //alert('parent_sk = ' + parent_sk + ' parent_pyclass = ' + parent_pyclass + ' my_sk = ' + my_sk + ' my_title = ' + my_title);
-                          if(confirm('Do you really want to delete ' + my_title + '?')){
-                                  spt.app_busy.show('Deleting ' + my_title + '...');
-                                  var server = TacticServerStub.get();
-                                  //var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder_' + order_sk);
-                                  var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
-                                  order_sk = top_el.getAttribute('order_sk');
-                                  display_mode = top_el.getAttribute('display_mode');
-                                  user = top_el.getAttribute('user');
-                                  groups_str = top_el.get('groups_str');
-                                  allowed_titles = top_el.getAttribute('allowed_titles');
-                                  parent_el = top_el.getElementsByClassName('cell_' + parent_sk)[0];
-                                  found_parent_sk = parent_el.get('parent_sk');
-                                  found_parent_sid = parent_el.get('parent_sid');
-                                  server.retire_sobject(my_sk);
-                                  parent_code = parent_sk.split('code=')[1];
-                                  if(parent_code.indexOf('TITLE') != -1){
-                                      server.insert('twog/simplify_pipe', {'title_code': parent_code, 'do_all': 'yes'});
-                                  }else if(parent_code.indexOf('PROJ') != -1){
-                                      server.insert('twog/simplify_pipe', {'proj_code': parent_code, 'do_all': 'yes'});
-                                  }
-                                  send_data =  {sk: parent_sk, parent_sid: found_parent_sid, parent_sk: found_parent_sk, order_sk: order_sk, display_mode: display_mode, user: user, groups_str: groups_str, allowed_titles: allowed_titles, is_master: is_master_str};
-                                  spt.api.load_panel(parent_el, 'order_builder.' + parent_pyclass, send_data);
-                                  if('twog/order' != parent_sk.split('?')[0]){
-                                      bot = top_el.getElementsByClassName('bot_' + parent_sk)[0];
-                                      bot.style.display = 'table-row';
-                                  }
-                          }
-                          spt.app_busy.hide();
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (parent_sk, parent_pyclass, my_sk, title, my.order_sk, my.is_master_str)}
         return behavior
 
     def get_save_outside_barcodes_behavior(my,source_code):

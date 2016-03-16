@@ -8,8 +8,8 @@ from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
-from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior, \
-    get_scratch_pipe_behavior, get_panel_change_behavior, get_launch_note_behavior
+from order_builder_utils import get_selected_color_behavior, get_upload_behavior, get_scratch_pipe_behavior, \
+    get_panel_change_behavior, get_launch_note_behavior, get_killer_behavior
 from qc_reports import QCReportLauncherWdg
 
 from deliverable_count_wdg import DeliverableCountWdg
@@ -125,8 +125,6 @@ class TitleRow(BaseRefreshWdg):
             if ob_text in [True, 'true', 't', '1', 1]:
                 open_bottom = True
         my.parent_sk = my.order_sk
-        obs = OBScripts(order_sk=my.order_sk, user=my.user, groups_str=my.groups_str, display_mode=my.disp_mode,
-                        is_master=my.is_master)
 
         if 'main_obj' in my.kwargs.keys():
             main_obj = my.kwargs.get('main_obj')
@@ -191,9 +189,10 @@ class TitleRow(BaseRefreshWdg):
             xb = table.add_cell(my.x_butt)
             xb.add_attr('align', 'right')
             xb.add_style('cursor: pointer;')
-            xb.add_behavior(obs.get_killer_behavior(my.sk, my.parent_sk, 'OrderTable',
-                                                    '%s: %s' % (main_obj.get_value('title'),
-                                                                main_obj.get_value('episode'))))
+            xb.add_behavior(get_killer_behavior(my.sk, my.parent_sk, 'OrderTable',
+                                                '%s: %s' % (main_obj.get_value('title'),
+                                                            main_obj.get_value('episode')),
+                                                my.order_sk, my.is_master))
         table.add_row()
         long_cell2 = table.add_cell('Code: %s' % my.code)
         long_cell2.add_style('width: 100%')
