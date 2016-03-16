@@ -566,7 +566,6 @@ def get_killer_behavior(my_sk, parent_sk, parent_pyclass, title, order_sk, is_ma
     return behavior
 
 
-
 class OBScripts(BaseRefreshWdg):
     def init(my):
         my.order_sk = ''

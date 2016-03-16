@@ -7,7 +7,7 @@ from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 
-from order_builder_utils import OBScripts, get_selected_color_behavior, get_panel_change_behavior, get_killer_behavior
+from order_builder_utils import get_selected_color_behavior, get_panel_change_behavior, get_killer_behavior
 from widget.button_small_new_wdg import ButtonSmallNewWdg
 
 
@@ -74,7 +74,7 @@ class EquipmentUsedRow(BaseRefreshWdg):
             if order_classification in ['master','Master']:
                 my.is_master = True
                 my.is_master_str = 'true'
-        obs = OBScripts(order_sk=my.order_sk, user=my.user, groups_str=my.groups_str, display_mode=my.disp_mode, is_master=my.is_master_str)
+
         if 'main_obj' in my.kwargs.keys():
             main_obj = my.kwargs.get('main_obj')
         else:

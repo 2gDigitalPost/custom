@@ -5,7 +5,7 @@ from pyasm.search import Search
 from pyasm.web import Table
 from pyasm.widget import TextWdg
 
-from order_builder_utils import OBScripts, get_launch_wo_source_behavior
+from order_builder_utils import get_launch_wo_source_behavior
 
 
 class WorkOrderSourcesRow(BaseRefreshWdg):
