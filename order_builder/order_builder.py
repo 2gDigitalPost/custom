@@ -1126,7 +1126,6 @@ class DeliverableWdg(BaseRefreshWdg):
         my.title_code = str(my.kwargs.get('title_code'))
         my.order_sk = str(my.kwargs.get('order_sk'))
         
-        obs = OBScripts(order_sk=my.order_sk)
         delivs_search = Search("twog/work_order_deliverables")
         delivs_search.add_filter('title_code',my.title_code)
         deliverables = delivs_search.get_sobjects()
