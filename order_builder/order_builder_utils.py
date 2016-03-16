@@ -452,6 +452,23 @@ def get_panel_change_behavior(search_type, code, sk, order_sk, title, templ_code
     return behavior
 
 
+def get_edit_hackup_connections(code, work_order_name):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                        //alert('m57');
+                        code = '%s';
+                        work_order_name = '%s';
+                        spt.panel.load_popup('Edit Connections for ' + work_order_name, 'order_builder.EditHackPipe', {'code': code});
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (code, work_order_name)}
+    return behavior
+
+
 class OBScripts(BaseRefreshWdg):
     def init(my):
         my.order_sk = ''
@@ -1076,22 +1093,6 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % (parent_sk, parent_pyclass, my_sk, title, my.order_sk, my.is_master_str)}
-        return behavior
-
-    def get_edit_hackup_connections(my, code, work_order_name):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                            //alert('m57');
-                            code = '%s';
-                            work_order_name = '%s';
-                            spt.panel.load_popup('Edit Connections for ' + work_order_name, 'order_builder.EditHackPipe', {'code': code});
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (code, work_order_name)}
         return behavior
 
     def get_save_outside_barcodes_behavior(my,source_code):

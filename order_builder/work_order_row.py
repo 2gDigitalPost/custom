@@ -9,7 +9,8 @@ from widget.new_icon_wdg import CustomIconWdg
 
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
-from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior, get_panel_change_behavior
+from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior, \
+    get_panel_change_behavior, get_edit_hackup_connections
 
 from equipment_used_row import EquipmentUsedRow
 from nighttime_hotlist.nighttime_hotlist import BigBoardSingleWOSelectWdg, IndieBigBoardSelectWdg
@@ -307,7 +308,7 @@ class WorkOrderRow(BaseRefreshWdg):
 
             if main_obj.get_value('creation_type') == 'hackup' and user_is_scheduler:
                 hack_edit = ButtonSmallNewWdg(title="Edit Connections", icon=CustomIconWdg.icons.get('HACKUP'))
-                hack_edit.add_behavior(obs.get_edit_hackup_connections(my.code, main_obj.get_value('process')))
+                hack_edit.add_behavior(get_edit_hackup_connections(my.code, main_obj.get_value('process')))
                 he = bbr.add_cell(hack_edit)
                 he.add_attr('align','right')
                 he.add_attr('valign','bottom')
