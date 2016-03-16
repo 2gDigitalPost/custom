@@ -10,7 +10,7 @@ from widget.new_icon_wdg import CustomIconWdg
 from widget.button_small_new_wdg import ButtonSmallNewWdg
 
 from title_row import TitleRow
-from order_builder_utils import OBScripts, get_upload_behavior, get_panel_change_behavior
+from order_builder_utils import get_upload_behavior, get_panel_change_behavior, get_launch_note_behavior
 
 class OrderTable(BaseRefreshWdg):
     ''' This is the top level view of the dynamic order builder part '''
@@ -100,8 +100,6 @@ class OrderTable(BaseRefreshWdg):
             if sales:
                 sales_full_name = '%s %s' % (sales.get_value('first_name'), sales.get_value('last_name'))
 
-        obs = OBScripts(order_sk=my.sk, user=my.user, groups_str=my.groups_str, display_mode=my.disp_mode,
-                        is_master=my.is_master_str)
         title_search = Search("twog/title")
         title_search.add_filter('order_code', main_obj.get_value('code'))
         if allowed_search_titles != '':
@@ -182,7 +180,7 @@ class OrderTable(BaseRefreshWdg):
         up.add_attr('align', 'right')
 
         note_adder = ButtonSmallNewWdg(title="Add Note", icon=CustomIconWdg.icons.get('NOTE_ADD'))
-        note_adder.add_behavior(obs.get_launch_note_behavior(my.sk, main_obj.get_value('name')))
+        note_adder.add_behavior(get_launch_note_behavior(my.sk, main_obj.get_value('name')))
         nadd = bottom_buttons.add_cell(note_adder)
         nadd.add_attr('align', 'right')
         nadd.add_style('cursor: pointer;')

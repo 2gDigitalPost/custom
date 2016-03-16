@@ -10,7 +10,7 @@ from widget.new_icon_wdg import CustomIconWdg
 from alternative_elements.customcheckbox import CustomCheckboxWdg
 from common_tools.common_functions import fix_date
 from order_builder_utils import OBScripts, get_selected_color_behavior, get_upload_behavior, \
-    get_panel_change_behavior, get_edit_hackup_connections
+    get_panel_change_behavior, get_edit_hackup_connections, get_launch_note_behavior
 
 from equipment_used_row import EquipmentUsedRow
 from nighttime_hotlist.nighttime_hotlist import BigBoardSingleWOSelectWdg, IndieBigBoardSelectWdg
@@ -356,7 +356,7 @@ class WorkOrderRow(BaseRefreshWdg):
             up.add_attr('valign', 'bottom')
 
             note_adder = ButtonSmallNewWdg(title="Add Note", icon=CustomIconWdg.icons.get('NOTE_ADD'))
-            note_adder.add_behavior(obs.get_launch_note_behavior(my.parent_sk, parent_obj.get_value('process')))
+            note_adder.add_behavior(get_launch_note_behavior(my.parent_sk, parent_obj.get_value('process')))
             nadd = bbr.add_cell(note_adder)
             nadd.add_attr('align', 'right')
             nadd.add_attr('valign', 'bottom')

@@ -490,6 +490,28 @@ def get_launch_source_behavior(title_code, title_sk, source_code, source_sk, ord
     return behavior
 
 
+def get_launch_note_behavior(sk, name):
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                    try{
+                      //alert('m61');
+                      var sk = '%s';
+                      var name = '%s';
+                      //alert(sk);
+                      kwargs =  {'search_key': sk, 'append_process': 'Redelivery/Rejection Request,Redelivery/Rejection Completed', 'chronological': true};
+                      if(sk.indexOf('TITLE') == -1){
+                          kwargs['treedown'] = 'treedown';
+                      }
+                      spt.panel.load_popup('Notes for ' + name, 'tactic.ui.widget.DiscussionWdg', kwargs);
+            }
+            catch(err){
+                      spt.app_busy.hide();
+                      spt.alert(spt.exception.handler(err));
+                      //alert(err);
+            }
+     ''' % (sk, name)}
+    return behavior
+
+
 class OBScripts(BaseRefreshWdg):
     def init(my):
         my.order_sk = ''
@@ -1155,25 +1177,4 @@ class OBScripts(BaseRefreshWdg):
                           //alert(err);
                 }
          ''' % my.order_sk}
-        return behavior
-
-    def get_launch_note_behavior(my, sk, name):
-        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
-                        try{
-                          //alert('m61');
-                          var sk = '%s';
-                          var name = '%s';
-                          //alert(sk);
-                          kwargs =  {'search_key': sk, 'append_process': 'Redelivery/Rejection Request,Redelivery/Rejection Completed', 'chronological': true};
-                          if(sk.indexOf('TITLE') == -1){
-                              kwargs['treedown'] = 'treedown';
-                          }
-                          spt.panel.load_popup('Notes for ' + name, 'tactic.ui.widget.DiscussionWdg', kwargs);
-                }
-                catch(err){
-                          spt.app_busy.hide();
-                          spt.alert(spt.exception.handler(err));
-                          //alert(err);
-                }
-         ''' % (sk, name)}
         return behavior
