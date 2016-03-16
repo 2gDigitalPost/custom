@@ -29,8 +29,7 @@ from common_tools.common_functions import fix_date
 from builder_tools_wdg import BuilderTools
 from task_edit_widget import TaskEditWdg
 from title_row import TitleRow
-from order_builder_utils import OBScripts, get_upload_behavior, get_open_intermediate_behavior, \
-    get_open_deliverable_behavior
+from order_builder_utils import get_open_deliverable_behavior
 from order_table_wdg import OrderTable
 from quick_edit_wdg import QuickEditWdg
 
@@ -569,7 +568,7 @@ class OrderBuilder(BaseRefreshWdg):
         #These are all of the javascript scripts, in a different class
         #Better for programming (IMHO), but may be worse for loading times???
         #Might want to test speed differences of using this, vs the alternative
-        obs = OBScripts(order_sk=my.sk,user=my.user,groups_str=my.groups_str,is_master=my.is_master_str,display_mode=my.disp_mode)
+
         table = Table()
         table.add_attr('cellspacing', '0')
         table.add_attr('cellpadding', '0')
@@ -596,7 +595,7 @@ class OrderBuilder(BaseRefreshWdg):
         closecell = inner_table.add_cell('CLOSE')
         closecell.add_attr('align','right')
         closecell.add_style('cursor: pointer;')
-        closecell.add_behavior(obs.get_close_piper_behavior())
+        closecell.add_behavior(my.get_close_piper_behavior(my.sk))
         piperow = inner_table.add_row()
         #Hide the section that contains the pipeline editor
         piperow.add_style('display: none;')
@@ -690,6 +689,28 @@ class OrderBuilder(BaseRefreshWdg):
         cover_cell.add_attr('class','cover_cell')
         return cover_table
 
+    @staticmethod
+    def get_close_piper_behavior(order_sk):
+        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                        try{
+                          //alert('m60');
+                          spt.app_busy.show('Closing Pipeline Editor...');
+                          var order_sk = '%s';
+                          //var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder_' + order_sk);
+                          var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+                          var closer_row = top_el.getElementsByClassName('closer_row')[0];
+                          var pipe_row = top_el.getElementsByClassName('pipe_row')[0];
+                          pipe_row.style.display = 'none';
+                          closer_row.style.display = 'none';
+                          spt.app_busy.hide();
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                          //alert(err);
+                }
+         ''' % order_sk}
+        return behavior
 
 class EditHackPipe(BaseRefreshWdg): 
 
@@ -1815,7 +1836,6 @@ class EquipmentUsedMultiAdderWdg(BaseRefreshWdg):
         if 'scheduling' in groups_str:
             user_is_scheduler = True
 
-        obs = OBScripts(order_sk=my.order_sk)
         eq_search = Search("twog/equipment")
         eq_search.add_order_by('name desc')
         all_equip = eq_search.get_sobjects()
@@ -1838,7 +1858,8 @@ class EquipmentUsedMultiAdderWdg(BaseRefreshWdg):
                 killer.add_attr('eq_codes', woeq.get('eq_codes'))
                 killer.add_attr('sks', '|'.join(my.sks))
                 killer.add_style('cursor: pointer;')
-                killer.add_behavior(obs.get_eq_multi_kill_behavior(woeq.get('__search_key__'), woeq.get('name'), my.work_order_code))
+                killer.add_behavior(my.get_eq_multi_kill_behavior(woeq.get('__search_key__'), woeq.get('name'),
+                                                                  my.work_order_code))
             type_eq = ''
             eparent_search = Search("twog/equipment")
             eparent_search.add_filter('code',woeq.get('equipment_code'))
@@ -1886,7 +1907,7 @@ class EquipmentUsedMultiAdderWdg(BaseRefreshWdg):
         ctable.add_cell('Media: ')
         media_sel = SelectWdg('media_select')
         media_sel.add_style('width: 370px;')
-        media_sel.add_behavior(obs.get_change_length_pull_behavior(my.work_order_code))
+        media_sel.add_behavior(my.get_change_length_pull_behavior(my.work_order_code))
         media_sel.append_option('--Select--','NOTHINGXsXNOTHING')
         for eq in all_equip:
             if eq.get_value('type') == 'Media':
@@ -1898,7 +1919,7 @@ class EquipmentUsedMultiAdderWdg(BaseRefreshWdg):
         ctable.add_cell(len_sel)
         ctable.add_cell('<input type="text" class="media_quant" value="1" style="width: 42px;"/>')
         create_media = ctable.add_cell('<input type="button" value="Create"/>')
-        create_media.add_behavior(obs.get_add_eq_from_multi_behavior('media',my.work_order_code))
+        create_media.add_behavior(my.get_add_eq_from_multi_behavior('media', my.work_order_code))
 
         ctable.add_row()
         ctable.add_cell(' ')
@@ -1919,7 +1940,7 @@ class EquipmentUsedMultiAdderWdg(BaseRefreshWdg):
         ctable.add_cell('<input type="text" class="equip_duration" style="width: 77px;"/>')
         ctable.add_cell('<input type="text" class="equip_quant" value="1" style="width: 42px;"/>')
         create_equip = ctable.add_cell('<input type="button" value="Create"/>')
-        create_equip.add_behavior(obs.get_add_eq_from_multi_behavior('equip',my.work_order_code))
+        create_equip.add_behavior(my.get_add_eq_from_multi_behavior('equip', my.work_order_code))
 
         ctable.add_row()
         ctable.add_cell(' ')
@@ -1944,18 +1965,228 @@ class EquipmentUsedMultiAdderWdg(BaseRefreshWdg):
         ctable.add_cell(stor_units_sel)
         ctable.add_cell('<input type="text" class="stor_duration"  style="width: 42px;"/>')
         create_media = ctable.add_cell('<input type="button" value="Create"/>')
-        create_media.add_behavior(obs.get_add_eq_from_multi_behavior('stor',my.work_order_code))
+        create_media.add_behavior(my.get_add_eq_from_multi_behavior('stor', my.work_order_code))
         table.add_row()
         table.add_cell(ctable)
         table.add_row()
         tbl2 = Table()
         tbl2.add_row()
         save_changes = tbl2.add_cell('<input type="button" value="Save Changes"/>')
-        save_changes.add_behavior(obs.get_save_multi_eq_changes_behavior(my.work_order_code, my.order_sk))
+        save_changes.add_behavior(my.get_save_multi_eq_changes_behavior(my.work_order_code, my.order_sk, my.is_master))
         t22 = tbl2.add_cell(' ')
         t22.add_attr('width','100%s' % '%')
         table.add_cell(tbl2)
         return table
+
+    @staticmethod
+    def get_eq_multi_kill_behavior(eqsk, eqname, work_order_code):
+        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                        try{
+                           var server = TacticServerStub.get();
+                           var eqsk = '%s';
+                           var eqname = '%s';
+                           var work_order_code = '%s';
+                           var top_el = document.getElementsByClassName('equipment_used_multi_adder_top_' + work_order_code)[0];
+                           var work_order_sk = top_el.getAttribute('work_order_sk');
+                           var order_sk = top_el.getAttribute('order_sk');
+                           if(work_order_code != 'MULTIPLE'){
+                               if(confirm('Do you really want to delete ' + eqname + ' from this list?')){
+                                   server.delete_sobject(eqsk);
+                                       spt.api.load_panel(top_el, 'order_builder.EquipmentUsedMultiAdderWdg', {'work_order_sk': work_order_sk, 'order_sk': order_sk});
+                               }
+                           }else{
+                               wo_codes_str = bvr.src_el.getAttribute('wo_codes');
+                               wo_codes = wo_codes_str.split('|');
+                               codes_len = wo_codes.length;
+                               if(confirm('Do you really want to delete ' + eqname + ' from ' + codes_len + ' Work Orders?')){
+                                   var top_el = document.getElementsByClassName('equipment_used_multi_adder_top_' + work_order_code)[0];
+                                   //here delete the equipment
+                                   eq_codes = bvr.src_el.getAttribute('eq_codes');
+                                   eqs = eq_codes.split('|');
+                                   spt.app_busy.show('Deleting Equipment. Please Wait.');
+                                   for(var r = 0; r < eqs.length; r++){
+                                       eqsk = server.build_search_key('twog/equipment_used', eqs[r]);
+                                       server.delete_sobject(eqsk);
+                                   }
+                                   spt.app_busy.hide();
+                                   sks = bvr.src_el.getAttribute('sks');
+                                       spt.api.load_panel(top_el, 'order_builder.EquipmentUsedMultiAdderWdg', {'sks': sks, 'order_sk': order_sk});
+                               }
+                           }
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                          //alert(err);
+                }
+         ''' % (eqsk, eqname, work_order_code)}
+        return behavior
+
+    @staticmethod
+    def get_change_length_pull_behavior(work_order_code):
+        behavior = {'css_class': 'clickme', 'type': 'change', 'cbjs_action': '''
+                        try{
+                           //alert('m2');
+                           var server = TacticServerStub.get();
+                           var work_order_code = '%s';
+                           var eq_code = bvr.src_el.value;
+                           lengths = server.eval("@GET(twog/equipment['code','" + eq_code + "'].lengths)")[0].split(',');
+                           new_inner = ''
+                           for(var r =0; r < lengths.length; r++){
+                               new_inner = new_inner + '<option value="' + lengths[r] + '">' + lengths[r] + '</option>';
+                           }
+                           var top_el = document.getElementsByClassName('equipment_used_multi_adder_top_' + work_order_code)[0];
+                           my_selects = top_el.getElementsByTagName('select');
+                           for(var r = 0; r < my_selects.length; r++){
+                               if(my_selects[r].getAttribute('name') == 'media_length'){
+                                   my_length_pull = my_selects[r];
+                               }
+                           }
+                           my_length_pull.innerHTML = new_inner;
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                          //alert(err);
+                }
+         ''' % (work_order_code)}
+        return behavior
+
+    @staticmethod
+    def get_add_eq_from_multi_behavior(type_base, work_order_code):
+        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                        try{
+                           var server = TacticServerStub.get();
+                           var type_base = '%s';
+                           var work_order_code = '%s';
+                           var top_el = document.getElementsByClassName('equipment_used_multi_adder_top_' + work_order_code)[0];
+                           work_order_sk = top_el.getAttribute('work_order_sk');
+                           client_code = top_el.getAttribute('client_code');
+                           order_sk = top_el.getAttribute('order_sk');
+                           my_selects = top_el.getElementsByTagName('select');
+                           my_code = '';
+                           my_units = '';
+                           my_name = '';
+                           my_length = '';
+                           for(var r = 0; r < my_selects.length; r++){
+                               if(my_selects[r].getAttribute('name') == type_base + '_select'){
+                                   my_code = my_selects[r].value;
+                                   my_name = my_selects[r].options[my_selects[r].selectedIndex].text;
+                               }
+                               if(my_selects[r].getAttribute('name') == type_base + '_units_select'){
+                                   my_units = my_selects[r].value;
+                               }
+                               if(my_selects[r].getAttribute('name') == type_base + '_length'){
+                                   my_length = my_selects[r].value;
+                               }
+                           }
+                           if(my_name.indexOf('WORKSTATION') != -1 || my_name.indexOf('MACHINEROOM') != -1){
+                               my_units = 'hr';
+                           }else if(my_name.indexOf('MEDIA') != -1 && my_name.indexOf('MONORAIL') == -1){
+                               my_units = 'length';
+                           }
+                           if(my_code != 'NOTHINGXsXNOTHING'){
+                               if(my_units == 'gb' || my_units == 'tb'){
+                                   quantity = 1
+                               }else{
+                                   quant_el = top_el.getElementsByClassName(type_base + '_quant')[0];
+                                   quantity = quant_el.value;
+                               }
+                               if(quantity == '' || quantity == null){
+                                   quantity = 1;
+                               }
+                               data = {'expected_quantity': quantity, 'units': my_units, 'name': my_name, 'equipment_code': my_code};
+                               if(my_units != 'length'){
+                                   duration_el = top_el.getElementsByClassName(type_base + '_duration')[0];
+                                   duration = duration_el.value;
+                                   if(duration != '' && duration != null){
+                                       data['expected_duration'] = duration;
+                                   }
+                               }else{
+                                   data['length'] = my_length;
+                               }
+                               reload_data = {'order_sk': order_sk};
+                               if(work_order_code != 'MULTIPLE'){
+                                   data['work_order_code'] = work_order_code;
+                                   server.insert('twog/equipment_used', data);
+                                   reload_data['work_order_sk'] = work_order_sk;
+                               }else{
+                                   sks = top_el.getAttribute('sks');
+                                   reload_data['sks'] = sks;
+                                   sks_s = sks.split('|')
+                                   for(var t = 0; t < sks_s.length; t++){
+                                       wo_code = sks_s[t].split('code=')[1];
+                                       data['work_order_code'] = wo_code
+                                       spt.app_busy.show("Attaching " + my_name + " to " + wo_code);
+                                       server.insert('twog/equipment_used', data);
+                                   }
+                                   spt.app_busy.hide();
+                               }
+                                   spt.api.load_panel(top_el, 'order_builder.EquipmentUsedMultiAdderWdg', reload_data);
+                           }else{
+                               alert('You must select the type of equipment you want to add.');
+                           }
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                          //alert(err);
+                }
+         ''' % (type_base, work_order_code)}
+        return behavior
+
+    @staticmethod
+    def get_save_multi_eq_changes_behavior(work_order_code, order_sk, is_master):
+        if is_master:
+            is_master_str = 'true'
+        else:
+            is_master_str = 'false'
+
+        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                        try{
+                           var server = TacticServerStub.get();
+                           var work_order_code = '%s';
+                           order_sk = '%s';
+                           is_master_str = '%s';
+                           top_el = document.getElementsByClassName('twog_order_builder_' + order_sk)[0];
+                           display_mode = top_el.getAttribute('display_mode');
+                           user = top_el.getAttribute('user');
+                           groups_str = top_el.get('groups_str');
+                           allowed_titles = top_el.getAttribute('allowed_titles');
+                           var pop_el = document.getElementsByClassName('equipment_used_multi_adder_top_' + work_order_code)[0];
+                           if(work_order_code != 'MULTIPLE'){
+                               wo_sk = server.build_search_key('twog/work_order', work_order_code);
+                               wo_el = top_el.getElementsByClassName('cell_' + wo_sk)[0];
+                               parent_sk = wo_el.getAttribute('parent_sk');
+                               parent_sid = wo_el.get('parent_sid');
+                               spt.api.load_panel(wo_el, 'order_builder.WorkOrderRow', {'sk': wo_sk, 'parent_sk': parent_sk, 'order_sk': order_sk, 'parent_sid': parent_sid, display_mode: display_mode, user: user, groups_str: groups_str, allowed_titles: allowed_titles, is_master: is_master_str});
+                               var wo_bot = document.getElementsByClassName('bot_' + wo_sk)[0];
+                               wo_bot.style.display = 'table-row';
+                           }else{
+                               sks = pop_el.getAttribute('sks');
+                               sks_s = sks.split('|');
+                               for(var r = 0; r < sks_s.length; r++){
+                                   wo_sk = sks_s[r];
+                                   wo_code = wo_sk.split('code=')[1];
+                                   spt.app_busy.show('Reloading ' + wo_code);
+                                   wo_el = top_el.getElementsByClassName('cell_' + wo_sk)[0];
+                                   parent_sk = wo_el.getAttribute('parent_sk');
+                                   parent_sid = wo_el.get('parent_sid');
+                                   spt.api.load_panel(wo_el, 'order_builder.WorkOrderRow', {'sk': wo_sk, 'parent_sk': parent_sk, 'order_sk': order_sk, 'parent_sid': parent_sid, display_mode: display_mode, user: user, groups_str: groups_str, allowed_titles: allowed_titles, is_master: is_master_str});
+                                   var wo_bot = document.getElementsByClassName('bot_' + wo_sk)[0];
+                                   wo_bot.style.display = 'table-row';
+                               }
+                               spt.app_busy.hide();
+                           }
+                           spt.popup.close(spt.popup.get_popup(bvr.src_el));
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                          //alert(err);
+                }
+         ''' % (work_order_code, order_sk, is_master_str)}
+        return behavior
 
 
 class OperatorErrorDescriptPopupWdg(BaseRefreshWdg): 
