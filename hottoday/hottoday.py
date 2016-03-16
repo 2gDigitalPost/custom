@@ -5,7 +5,7 @@ from pyasm.search import Search
 from pyasm.common import Environment
 from tactic.ui.common import BaseRefreshWdg, BaseTableElementWdg
 from common_tools.common_functions import title_case, abbreviate_text
-from hottoday_utils import get_date_status, get_client_img, get_platform_img, get_launch_note_behavior,\
+from hottoday_utils import get_date_status, get_client_img, get_platform_img, get_launch_note_behavior_for_hotlist, \
     bring_to_top, show_change, save_priorities, get_scrollbar_width
 from order_builder import OrderBuilderLauncherWdg
 from order_builder.taskobjlauncher import TaskObjLauncherWdg
@@ -299,7 +299,7 @@ class HotTodayWdg(BaseRefreshWdg):
 
         notes = title_table.add_cell('<img src="/context/icons/silk/note_add.png"/>')
         notes.add_style('cursor: pointer;')
-        notes.add_behavior(get_launch_note_behavior(title.get_search_key(), name))
+        notes.add_behavior(get_launch_note_behavior_for_hotlist(title.get_search_key(), name))
 
         if is_admin_user:
             priority_row = title_table.add_row()

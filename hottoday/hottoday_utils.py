@@ -96,7 +96,15 @@ def get_date_status(delivery_datetime):
 
 # The following functions are Javascript behaviors that the hot list uses
 
-def get_launch_note_behavior(sk, name):
+def get_launch_note_behavior_for_hotlist(sk, name):
+    """
+    Get the note widget for the specific title. Function is similar to get_launch_note_behavior in order_builder module,
+    but there are some slight differences (hence the name change).
+
+    :param sk: The title's search key
+    :param name: The title's name
+    :return: Javascript behavior
+    """
     behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
         try{
             var sk = '%s';
