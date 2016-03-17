@@ -429,6 +429,7 @@ class CreateTitlesCmd(Command):
         #THIS IS MAKE KIDS MATCH PIPE
         #begin_time = time.time()
         from pyasm.common import Environment
+        from client_platform_create import create_client_platform
         pipeline_code = my.data.get('pipeline_code')
         order_code = my.data.get('order_code')
         order = my.server.eval("@SOBJECT(twog/order['code','%s'])" % order_code)[0]
@@ -455,7 +456,9 @@ class CreateTitlesCmd(Command):
 
         title_id_number = my.data.get('title_id_number')
         if title_id_number in [None,'']:
-            title_id_number = '' 
+            title_id_number = ''
+
+        create_client_platform(my.server, order.get('client_code'), my.data.get('platform'))
 
         spt_processes_expr = "@SOBJECT(config/process['pipeline_code','%s'])" % (pipeline_code)
         spt_processes = my.server.eval(spt_processes_expr)
