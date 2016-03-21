@@ -288,3 +288,28 @@ var thead = document.getElementById('thead-section');
 thead.style.padding = "0px " + getScrollbarWidth() + "px 0px 0px";
             '''
             }
+
+
+def open_client_platform_connection_tab():
+    """
+    Open the Client Platform Connection tab
+
+    :return: Javascript behavior
+    """
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try{
+    var class_name = 'tactic.ui.panel.ViewPanelWdg';
+    var kwargs = {
+        search_type: 'twog/client_platform',
+        view: 'client_platform_hl',
+    }
+
+    spt.tab.add_new('client_platform', 'Client Platform Connections', class_name, kwargs);
+}
+catch(err){
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+    '''
+                }
+    return behavior

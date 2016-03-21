@@ -6,7 +6,7 @@ from pyasm.common import Environment
 from tactic.ui.common import BaseRefreshWdg, BaseTableElementWdg
 from common_tools.common_functions import title_case, abbreviate_text
 from hottoday_utils import get_date_status, get_client_img, get_platform_img, get_launch_note_behavior_for_hotlist, \
-    bring_to_top, show_change, save_priorities, get_scrollbar_width
+    bring_to_top, show_change, save_priorities, get_scrollbar_width, open_client_platform_connection_tab
 from order_builder import OrderBuilderLauncherWdg
 from order_builder.taskobjlauncher import TaskObjLauncherWdg
 
@@ -180,6 +180,22 @@ class HotTodayWdg(BaseRefreshWdg):
 
         table.add_cell(data=info_text, row=extra_info_row)
 
+    @staticmethod
+    def set_connection_row(parent_table, row_text, row_color):
+        connection_task_row = parent_table.add_row()
+        connection_task_row.add_style('padding', '3px')
+        connection_task_row.add_style('min-height', '20px')
+        connection_task_row.add_style('border-top-left-radius', '10px')
+        connection_task_row.add_style('border-bottom-left-radius', '10px')
+        connection_task_row.add_style('background-color', row_color)
+
+        connection_icon = parent_table.add_cell('<img border="0" style="vertical-align: middle" title="Inspect" name="Inspect" src="/context/icons/silk/information.png">')
+        connection_icon.add_behavior(open_client_platform_connection_tab())
+        connection_icon.add_style('cursor', 'pointer')
+
+        connection_text = parent_table.add_cell(data=row_text, row=connection_task_row)
+        connection_text.add_attr('colspan', '4')
+
     def set_row(self, title, table, counter, header_groups, tasks, current_priority, is_admin_user,
                 is_external_rejection=False):
         """
@@ -294,20 +310,6 @@ class HotTodayWdg(BaseRefreshWdg):
         client_platform_connection_search.add_filter('platform_code', platform_code)
         client_platform_connection = client_platform_connection_search.get_sobject()
 
-        if client_platform_connection:
-            connection_status_row = title_table.add_row()
-
-            connection_status = client_platform_connection.get_value('connection_status')
-
-            if connection_status == 'testing':
-                connection_status_row.add_style('color', 'yellow')
-                title_table.add_cell(data='Connection is still testing, please verify.', row=connection_status_row)
-            else:
-                connection_status_row.add_style('color', 'red')
-                title_table.add_cell(data='Disconnected.', row=connection_status_row)
-        else:
-            create_client_platform(TacticServerStub.get(), client_code, platform)
-
         code_cell = title_table.add_cell(data=code, row=code_row)
         client_cell = title_table.add_cell(data=client_data, row=code_row)
         platform_cell = title_table.add_cell(data=platform_data, row=code_row)
@@ -407,12 +409,37 @@ class HotTodayWdg(BaseRefreshWdg):
                     for cell_name in cell_names:
                         task_table.add_cell(data=abbreviate_text(task.get_value(cell_name), 7), row=current_task_row)
 
+                if column == 'edeliveries':
+                    if client_platform_connection:
+                        connection_status = client_platform_connection.get_value('connection_status')
+
+                        if connection_status == 'testing':
+                            self.set_connection_row(task_table, 'Platform Status: Testing', 'yellow')
+                        elif connection_status == 'disconnected':
+                            self.set_connection_row(task_table, 'Platform Status: Disconnected', 'red')
+
                 row_cell = table.add_cell(task_table)
                 row_cell.add_style('border', '1px solid #EEE')
                 row_cell.add_style('vertical-align', 'top')
                 row_cell.add_style('width', '{0}%'.format(76.0 / len(header_groups)))
             else:
-                row_cell = table.add_cell()
+                task_table = Table()
+                task_table.add_style('width', '100%')
+                task_table.add_style('font-size', '10px')
+
+                if column == 'edeliveries':
+                    if client_platform_connection:
+                        connection_status = client_platform_connection.get_value('connection_status')
+
+                        if connection_status == 'testing':
+                            self.set_connection_row(task_table, 'Platform Status: Testing', 'yellow')
+                        elif connection_status == 'disconnected':
+                            self.set_connection_row(task_table, 'Platform Status: Disconnected', 'red')
+
+                    row_cell = table.add_cell(task_table)
+                else:
+                    row_cell = table.add_cell()
+
                 row_cell.add_style('border', '1px solid #EEE')
                 row_cell.add_style('width', '{0}%'.format(76.0 / len(header_groups)))
 
