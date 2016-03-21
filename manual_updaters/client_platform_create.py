@@ -7,8 +7,9 @@ def create_client_platform(server, client_code, platform):
     If no entry exists in the twog/client_platform table, create it by inserting the client_code, platform_code,
     a name, and a connection_status set to 'disconnected'.
 
-    :param server: the TacticServerStub object
-    :param trigger_input: a dict with data like like search_key, search_type, sobject, and update_data
+    :param server: The TacticServerStub object
+    :param client_code: The client's unique code identifier
+    :param platform: The platform object
     :return: None
     """
 
