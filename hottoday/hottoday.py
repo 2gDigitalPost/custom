@@ -10,6 +10,9 @@ from hottoday_utils import get_date_status, get_client_img, get_platform_img, ge
 from order_builder import OrderBuilderLauncherWdg
 from order_builder.taskobjlauncher import TaskObjLauncherWdg
 
+from tactic_client_lib import TacticServerStub
+from manual_updaters.client_platform_create import create_client_platform
+
 
 class HotTodayRibbonWdg(BaseTableElementWdg):
     """
@@ -278,6 +281,32 @@ class HotTodayWdg(BaseRefreshWdg):
             platform_image = '<i>{0}</i>'.format(platform)
 
         platform_data = '<b>Platform: </b>{0}'.format(platform_image)
+
+        # The platform_code we need is not included in the Title sobject. We have to query for it using the platform name.
+        platform_code_search = Search("twog/platform")
+        platform_code_search.add_filter('name', platform)
+        platform_search_object = platform_code_search.get_sobject()
+        platform_code = platform_search_object.get_value('code')
+
+        # Using the client_code and platform_code, search for an existing entry.
+        client_platform_connection_search = Search("twog/client_platform")
+        client_platform_connection_search.add_filter('client_code', client_code)
+        client_platform_connection_search.add_filter('platform_code', platform_code)
+        client_platform_connection = client_platform_connection_search.get_sobject()
+
+        if client_platform_connection:
+            connection_status_row = title_table.add_row()
+
+            connection_status = client_platform_connection.get_value('connection_status')
+
+            if connection_status == 'testing':
+                connection_status_row.add_style('color', 'yellow')
+                title_table.add_cell(data='Connection is still testing, please verify.', row=connection_status_row)
+            else:
+                connection_status_row.add_style('color', 'red')
+                title_table.add_cell(data='Disconnected.', row=connection_status_row)
+        else:
+            create_client_platform(TacticServerStub.get(), client_code, platform)
 
         code_cell = title_table.add_cell(data=code, row=code_row)
         client_cell = title_table.add_cell(data=client_data, row=code_row)
