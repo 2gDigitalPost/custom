@@ -9,6 +9,7 @@ Author: Tyler Standridge
 
 import datetime
 from tactic_client_lib import TacticServerStub
+from pyasm.prod.biz import ProdSetting
 from pyasm.search import Search
 
 
@@ -92,6 +93,27 @@ def get_date_status(delivery_datetime):
         return 'due_today'
     else:
         return 'late'
+
+
+def show_platform_connection():
+    """
+    A short convenience function to check Tactic's Project Settings for a value called
+    show_platform_connection_on_hot_today, which tells the hot list whether or not to display Client-Platform
+    connections as part of Edel's tasks.
+
+    show_platform_connection_on_hot_today should be a string value set to either 'True' or 'False' (sadly Tactic
+    does not support Boolean values for ProdSettings)
+
+    :return: Boolean
+    """
+
+    # Cast the value to str, just in case it returns None
+    show_platform_connection_string = str(ProdSetting.get_value_by_key('show_platform_connection_on_hot_today'))
+
+    if show_platform_connection_string.lower() == 'true':
+        return True
+    else:
+        return False
 
 
 # The following functions are Javascript behaviors that the hot list uses

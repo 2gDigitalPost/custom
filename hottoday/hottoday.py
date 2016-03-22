@@ -6,7 +6,8 @@ from pyasm.common import Environment
 from tactic.ui.common import BaseRefreshWdg, BaseTableElementWdg
 from common_tools.common_functions import title_case, abbreviate_text
 from hottoday_utils import get_date_status, get_client_img, get_platform_img, get_launch_note_behavior_for_hotlist, \
-    bring_to_top, show_change, save_priorities, get_scrollbar_width, open_client_platform_connection_tab
+    bring_to_top, show_change, save_priorities, get_scrollbar_width, open_client_platform_connection_tab, \
+    show_platform_connection
 from order_builder import OrderBuilderLauncherWdg
 from order_builder.taskobjlauncher import TaskObjLauncherWdg
 
@@ -304,11 +305,12 @@ class HotTodayWdg(BaseRefreshWdg):
         platform_search_object = platform_code_search.get_sobject()
         platform_code = platform_search_object.get_value('code')
 
-        # Using the client_code and platform_code, search for an existing entry.
-        client_platform_connection_search = Search("twog/client_platform")
-        client_platform_connection_search.add_filter('client_code', client_code)
-        client_platform_connection_search.add_filter('platform_code', platform_code)
-        client_platform_connection = client_platform_connection_search.get_sobject()
+        if show_platform_connection():
+            # Using the client_code and platform_code, search for an existing entry.
+            client_platform_connection_search = Search("twog/client_platform")
+            client_platform_connection_search.add_filter('client_code', client_code)
+            client_platform_connection_search.add_filter('platform_code', platform_code)
+            client_platform_connection = client_platform_connection_search.get_sobject()
 
         code_cell = title_table.add_cell(data=code, row=code_row)
         client_cell = title_table.add_cell(data=client_data, row=code_row)
@@ -409,14 +411,13 @@ class HotTodayWdg(BaseRefreshWdg):
                     for cell_name in cell_names:
                         task_table.add_cell(data=abbreviate_text(task.get_value(cell_name), 7), row=current_task_row)
 
-                if column == 'edeliveries':
-                    if client_platform_connection:
-                        connection_status = client_platform_connection.get_value('connection_status')
+                if show_platform_connection() and column == 'edeliveries' and client_platform_connection:
+                    connection_status = client_platform_connection.get_value('connection_status')
 
-                        if connection_status == 'testing':
-                            self.set_connection_row(task_table, 'Platform Status: Testing', 'yellow')
-                        elif connection_status == 'disconnected':
-                            self.set_connection_row(task_table, 'Platform Status: Disconnected', 'red')
+                    if connection_status == 'testing':
+                        self.set_connection_row(task_table, 'Platform Status: Testing', 'yellow')
+                    elif connection_status == 'disconnected':
+                        self.set_connection_row(task_table, 'Platform Status: Disconnected', 'red')
 
                 row_cell = table.add_cell(task_table)
                 row_cell.add_style('border', '1px solid #EEE')
@@ -427,14 +428,13 @@ class HotTodayWdg(BaseRefreshWdg):
                 task_table.add_style('width', '100%')
                 task_table.add_style('font-size', '10px')
 
-                if column == 'edeliveries':
-                    if client_platform_connection:
-                        connection_status = client_platform_connection.get_value('connection_status')
+                if show_platform_connection() and column == 'edeliveries' and client_platform_connection:
+                    connection_status = client_platform_connection.get_value('connection_status')
 
-                        if connection_status == 'testing':
-                            self.set_connection_row(task_table, 'Platform Status: Testing', 'yellow')
-                        elif connection_status == 'disconnected':
-                            self.set_connection_row(task_table, 'Platform Status: Disconnected', 'red')
+                    if connection_status == 'testing':
+                        self.set_connection_row(task_table, 'Platform Status: Testing', 'yellow')
+                    elif connection_status == 'disconnected':
+                        self.set_connection_row(task_table, 'Platform Status: Disconnected', 'red')
 
                     row_cell = table.add_cell(task_table)
                 else:
