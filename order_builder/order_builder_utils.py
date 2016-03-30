@@ -4,6 +4,10 @@
 # 'Not Set' key was written twice, once as '#d7d7d7' and again as '#FFFFCC'
 # I've removed the second one for now. Not sure which one is correct
 
+from pyasm.web import DivWdg
+from pyasm.search import Search
+from pyasm.widget import SelectWdg
+
 
 client_status_colors = {
     'Assignment': '#fcaf88',
@@ -55,6 +59,39 @@ client_status_colors = {
 statuses = ['Pending', 'Ready', 'On Hold', 'Client Response', 'Fix Needed', 'Rejected', 'In Progress', 'DR In Progress',
             'Amberfin01 In Progress', 'Amberfin02 In Progress', 'BATON In Progress', 'Export In Progress',
             'Need Buddy Check', 'Buddy Check In Progress', 'Completed']
+
+
+def get_label_widget(label):
+    """
+    Given a label string, return a DivWdg containing the label
+
+    :param label: String
+    :return: DivWdg
+    """
+    widget = DivWdg()
+    widget.add(label)
+
+    return widget
+
+
+def get_select_widget_from_search_type(search_type, label, label_column, value_column):
+    """
+    Given a search_type, create a SelectWdg. Provide label, label_column, and value_column to set the SearchWdg
+    attributes.
+
+    :param search_type: s_type ('twog/title' for example)
+    :param label: String, set as 'label' on the select html element
+    :param label_column: String, the database column to use for the option labels
+    :param value_column: String, the database column to use for the option values
+    :return: SelectWdg
+    """
+    search = Search(search_type)
+
+    search_wdg = SelectWdg(label)
+    search_wdg.add_empty_option('----')
+    search_wdg.set_search_for_options(search, label_column=label_column, value_column=value_column)
+
+    return search_wdg
 
 
 def get_save_task_info_behavior(task_sk, parent_sk, parent_pyclass, order_sk, is_master_str, user):

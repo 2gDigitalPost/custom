@@ -37,3 +37,5 @@ from work_order_adder_wdg import *
 from work_order_row import *
 from work_order_source_add_wdg import *
 from work_order_sources_row import *
+
+from order_title_builder import *
