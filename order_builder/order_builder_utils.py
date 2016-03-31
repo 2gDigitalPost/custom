@@ -74,18 +74,23 @@ def get_label_widget(label):
     return widget
 
 
-def get_select_widget_from_search_type(search_type, label, label_column, value_column):
+def get_select_widget_from_search_type(search_type, label, label_column, value_column, filters=None):
     """
     Given a search_type, create a SelectWdg. Provide label, label_column, and value_column to set the SearchWdg
-    attributes.
+    attributes. If filters are given, apply those to the search as well.
 
     :param search_type: s_type ('twog/title' for example)
     :param label: String, set as 'label' on the select html element
     :param label_column: String, the database column to use for the option labels
     :param value_column: String, the database column to use for the option values
+    :param filters: A dictionary of search filters (optional)
     :return: SelectWdg
     """
     search = Search(search_type)
+
+    if filters:
+        for filter_key, filter_value in filters.iteritems():
+            search.add_filter(filter_key, filter_value)
 
     search_wdg = SelectWdg(label)
     search_wdg.add_empty_option('----')

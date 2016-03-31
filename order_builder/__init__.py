@@ -38,5 +38,6 @@ from work_order_row import *
 from work_order_source_add_wdg import *
 from work_order_sources_row import *
 
+from order_entry_wdg import *
 from order_title_builder import *
 from title_entry_wdg import *
