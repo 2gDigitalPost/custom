@@ -28,7 +28,8 @@ class OrderTitleEntryWdg(BaseRefreshWdg):
         outer_div.add(get_label_widget('Platform'))
         outer_div.add(platform_select_wdg)
 
-        title_select_wdg = self.get_title_select_widget()
+        title_select_wdg = get_select_widget_from_search_type('twog/title', 'Title', 'title', 'code',
+                                                              {'master_title': True})
 
         outer_div.add(get_label_widget('Title'))
         outer_div.add(title_select_wdg)
@@ -49,17 +50,6 @@ class OrderTitleEntryWdg(BaseRefreshWdg):
         outer_div.add(territory_wdg)
 
         return outer_div
-
-    @staticmethod
-    def get_title_select_widget():
-        title_search = Search("twog/title")
-        title_search.add_filter('master_title', True)
-
-        title_select_wdg = SelectWdg("title")
-        title_select_wdg.add_empty_option('----')
-        title_select_wdg.set_search_for_options(title_search, label_column='title', value_column='code')
-
-        return title_select_wdg
 
     @staticmethod
     def get_languages_widget():
