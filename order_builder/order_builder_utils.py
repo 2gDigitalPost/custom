@@ -74,7 +74,7 @@ def get_label_widget(label):
     return widget
 
 
-def get_select_widget_from_search_type(search_type, label, label_column, value_column, filters=None):
+def get_select_widget_from_search_type(search_type, label, label_column, value_column, search_filters=None):
     """
     Given a search_type, create a SelectWdg. Provide label, label_column, and value_column to set the SearchWdg
     attributes. If filters are given, apply those to the search as well.
@@ -83,14 +83,25 @@ def get_select_widget_from_search_type(search_type, label, label_column, value_c
     :param label: String, set as 'label' on the select html element
     :param label_column: String, the database column to use for the option labels
     :param value_column: String, the database column to use for the option values
-    :param filters: A dictionary of search filters (optional)
+    :param search_filters: A list of tuples containing search filters (optional)
     :return: SelectWdg
     """
     search = Search(search_type)
 
-    if filters:
-        for filter_key, filter_value in filters.iteritems():
-            search.add_filter(filter_key, filter_value)
+    if search_filters:
+        for search_filter in search_filters:
+            filter_name = search_filter[0]
+            filter_value = search_filter[1]
+
+            try:
+                filter_operator = search_filter[2]
+            except IndexError:
+                filter_operator = None
+
+            if filter_operator:
+                search.add_filter(filter_name, filter_value, filter_operator)
+            else:
+                search.add_filter(filter_name, filter_value)
 
     search_wdg = SelectWdg(label)
     search_wdg.add_empty_option('----')

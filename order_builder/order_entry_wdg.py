@@ -31,7 +31,7 @@ class OrderEntryWdg(BaseRefreshWdg):
         outer_div.add(client_select_wdg)
 
         sales_rep_select_wdg = get_select_widget_from_search_type('sthpw/login_in_group', 'Client', 'login_full_name',
-                                                                  'code', {'login_group': 'sales'})
+                                                                  'code', [('login_group', 'sales')])
 
         outer_div.add(get_label_widget('Sales Rep'))
         outer_div.add(sales_rep_select_wdg)
