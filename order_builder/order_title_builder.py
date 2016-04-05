@@ -1,10 +1,10 @@
 from tactic.ui.common import BaseRefreshWdg
-from tactic.ui.input import TextInputWdg
-from tactic.ui.widget import CalendarWdg
+from tactic.ui.input import TextInputWdg, TextAreaInputWdg
+from tactic.ui.widget import CalendarInputWdg
 
 from pyasm.web import DivWdg
 from pyasm.search import Search
-from pyasm.widget import SelectWdg, MultiSelectWdg, SubmitWdg
+from pyasm.widget import CheckboxWdg, MultiSelectWdg, SubmitWdg
 
 from order_builder_utils import get_label_widget, get_select_widget_from_search_type
 
@@ -12,29 +12,37 @@ from order_builder_utils import get_label_widget, get_select_widget_from_search_
 class OrderTitleEntryWdg(BaseRefreshWdg):
     def get_display(self):
         outer_div = DivWdg()
+        outer_div.add_class('new-order-title-entry-form')
+
+        order_title_name_input = TextInputWdg()
+        order_title_name_input.set_name('name')
+
+        outer_div.add(get_label_widget('Name'))
+        outer_div.add(order_title_name_input)
 
         order_search_filters = [('classification', 'Master', '!='),
                                 ('classification', 'Completed', '!='),
                                 ('classification', 'Test', '!=')]
 
-        order_select_wdg = get_select_widget_from_search_type('twog/order', 'Order', 'name', 'code',
+        order_select_wdg = get_select_widget_from_search_type('twog/order', 'order_code', 'name', 'code',
                                                               order_search_filters)
 
         outer_div.add(get_label_widget('Order Code'))
         outer_div.add(order_select_wdg)
 
-        platform_select_wdg = get_select_widget_from_search_type('twog/platform', 'Platform', 'name', 'code')
+        platform_select_wdg = get_select_widget_from_search_type('twog/platform', 'platform_code', 'name', 'code')
 
         outer_div.add(get_label_widget('Platform'))
         outer_div.add(platform_select_wdg)
 
-        title_select_wdg = get_select_widget_from_search_type('twog/title', 'Title', 'title', 'code',
+        title_select_wdg = get_select_widget_from_search_type('twog/title', 'title_code', 'title', 'code',
                                                               [('master_title', True)])
 
         outer_div.add(get_label_widget('Title'))
         outer_div.add(title_select_wdg)
 
-        due_date_wdg = CalendarWdg()
+        due_date_wdg = CalendarInputWdg('Due Date')
+        due_date_wdg.add_class('due_date')
 
         outer_div.add(get_label_widget('Due Date'))
         outer_div.add(due_date_wdg)
@@ -44,10 +52,27 @@ class OrderTitleEntryWdg(BaseRefreshWdg):
         outer_div.add(get_label_widget('Language'))
         outer_div.add(language_wdg)
 
-        territory_wdg = get_select_widget_from_search_type('twog/territory', 'Territory', 'name', 'code')
+        territory_wdg = get_select_widget_from_search_type('twog/territory', 'territory', 'name', 'code')
 
         outer_div.add(get_label_widget('Territory'))
         outer_div.add(territory_wdg)
+
+        description_input = TextAreaInputWdg()
+        description_input.set_name('description')
+        description_input.add_class('description')
+
+        outer_div.add(get_label_widget('Description'))
+        outer_div.add(description_input)
+
+        checkboxes_div = DivWdg()
+
+        no_charge_wdg = CheckboxWdg('no_charge', 'No Charge')
+        redo_wdg = CheckboxWdg('redo', 'Redo')
+
+        checkboxes_div.add(no_charge_wdg)
+        checkboxes_div.add(redo_wdg)
+
+        outer_div.add(checkboxes_div)
 
         submit_button = SubmitWdg('Submit')
         submit_button.add_behavior(self.submit_button_behavior())
@@ -67,23 +92,27 @@ try {
 
     var server = TacticServerStub.get();
 
-    server.
-
     // Get the form values
-    var outer_div = spt.api.get_parent(bvr.src_el, '.new-order-entry-form');
+    var outer_div = spt.api.get_parent(bvr.src_el, '.new-order-title-entry-form');
     var values = spt.api.get_input_values(outer_div);
 
     // Set up the object for the new title. Note that 'master_title' is always set to true.
-    var new_order = {
+    var new_order_title = {
         'name': values.name,
-        'po_number': values.po_number,
-        'client_code': values.client_code
+        'order_code': values.order_code,
+        'title_code': values.title_code,
+        'platform': values.platform_code,
+        'due_date': values.due_date,
+        'languages': values.languages,
+        'territory': values.territory,
+        'description': values.description,
+        'no_charge': values.no_charge,
+        'redo': values.redo
     }
-
 
     // Have to set 'triggers' to false to avoid all the other stupid custom crap. Will remove once this method
     // of inserting becomes the norm.
-    server.insert('twog/order', new_order, {'triggers': false});
+    server.insert('twog/title_order', new_order_title, {'triggers': false});
 
     spt.api.app_busy_hide();
 }
