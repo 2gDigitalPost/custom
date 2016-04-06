@@ -1,4 +1,4 @@
-__all__ = ["OrderBuilderLauncherWdg", "TitleCloneSelectorWdg", "TitleProjStatusTriggerWdg", "OrderBuilder", "TitleRow",
+__all__ = ["OrderBuilderLauncherWdg", "TitleProjStatusTriggerWdg", "OrderBuilder", "TitleRow",
            "EditHackPipe", "HackPipeConnectWdg", "DeliverableWdg", "IntermediateEditWdg", "DeliverableEditWdg",
            "TwogEasyCheckinWdg", "OutsideBarcodesListWdg", "NewSourceWdg", "SourceEditWdg", "ProjDueDateChanger",
            "EquipmentUsedMultiAdderWdg", "OperatorErrorDescriptPopupWdg", "ExternalRejectionReasonWdg", "TitleRedoWdg"]
