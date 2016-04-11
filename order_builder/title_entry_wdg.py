@@ -2,10 +2,9 @@ from tactic.ui.common import BaseRefreshWdg
 from tactic.ui.input import TextInputWdg, TextAreaInputWdg
 
 from pyasm.web import DivWdg
-from pyasm.search import Search
-from pyasm.widget import MultiSelectWdg, SelectWdg, TextAreaWdg, SubmitWdg
+from pyasm.widget import SubmitWdg
 
-from order_builder_utils import get_label_widget, get_select_widget_from_search_type
+from order_builder_utils import get_label_widget
 
 
 class TitleEntryWdg(BaseRefreshWdg):
