@@ -38,7 +38,10 @@ def main(server=None, trigger_input=None):
 
             if status == 'Completed':
                 # If the twog/client_platform is not found, create it. If it already exists, then skip this step.
-                if not client_platform_connection:
+                if client_platform_connection:
+                    server.update(client_platform_connection.get_search_key(),
+                                  {'last_successful_connection': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+                else:
                     # Using the client_code, get the client name (needed for the 'name' column data).
                     client_name_search = Search("twog/client")
                     client_name_search.add_filter('code', client_code)
@@ -48,9 +51,6 @@ def main(server=None, trigger_input=None):
                     server.insert('twog/client_platform', {'client_code': client_code, 'platform_code': platform_code,
                                                            'name': '{0} to {1}'.format(client_name, platform),
                                                            'connection_status': 'disconnected'})
-
-                server.update(client_platform_connection.get_search_key(),
-                              {'last_successful_connection': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
 
     except AttributeError as e:
         traceback.print_exc()
