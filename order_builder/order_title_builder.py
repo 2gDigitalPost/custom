@@ -64,6 +64,8 @@ class OrderTitleEntryWdg(BaseRefreshWdg):
         outer_div.add(get_label_widget('Description'))
         outer_div.add(description_input)
 
+        self.get_total_program_runtime_wdg(outer_div)
+
         checkboxes_div = DivWdg()
 
         no_charge_wdg = CheckboxWdg('no_charge', 'No Charge')
@@ -96,8 +98,19 @@ try {
     var outer_div = spt.api.get_parent(bvr.src_el, '.new-order-title-entry-form');
     var values = spt.api.get_input_values(outer_div);
 
-    // Set up the object for the new title. Note that 'master_title' is always set to true.
-    var new_order_title = {
+    var total_program_runtime = String(values.total_program_runtime);
+    console.log(total_program_runtime);
+    if (total_program_runtime) {
+        var runtime_re = /^[\d]+:[\d]+$/;
+        var match = total_program_runtime.match(runtime_re);
+
+        if (match < 1) {
+            throw("Total program runtime must be in the format MM:SS (it can also be left blank).")
+        }
+    }
+
+    // Set up the object for the new title_order entry.
+    var new_title_order = {
         'name': values.name,
         'order_code': values.order_code,
         'title_code': values.title_code,
@@ -106,13 +119,14 @@ try {
         'languages': values.languages,
         'territory': values.territory,
         'description': values.description,
+        'total_program_runtime': values.total_program_runtime,
         'no_charge': values.no_charge,
         'redo': values.redo
     }
 
     // Have to set 'triggers' to false to avoid all the other stupid custom crap. Will remove once this method
     // of inserting becomes the norm.
-    server.insert('twog/title_order', new_order_title, {'triggers': false});
+    server.insert('twog/title_order', new_title_order, {'triggers': false});
 
     spt.api.app_busy_hide();
 }
@@ -133,3 +147,11 @@ catch(err) {
         languages_wdg.set_search_for_options(languages_search, label_column='name', value_column='code')
 
         return languages_wdg
+
+    @staticmethod
+    def get_total_program_runtime_wdg(outer_div):
+        total_program_runtime_input = TextInputWdg()
+        total_program_runtime_input.set_name('total_program_runtime')
+
+        outer_div.add(get_label_widget('Total Program Runtime'))
+        outer_div.add(total_program_runtime_input)
