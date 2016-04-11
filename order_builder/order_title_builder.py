@@ -14,67 +14,15 @@ class OrderTitleEntryWdg(BaseRefreshWdg):
         outer_div = DivWdg()
         outer_div.add_class('new-order-title-entry-form')
 
-        order_title_name_input = TextInputWdg()
-        order_title_name_input.set_name('name')
-
-        outer_div.add(get_label_widget('Name'))
-        outer_div.add(order_title_name_input)
-
-        order_search_filters = [('classification', 'Master', '!='),
-                                ('classification', 'Completed', '!='),
-                                ('classification', 'Test', '!=')]
-
-        order_select_wdg = get_select_widget_from_search_type('twog/order', 'order_code', 'name', 'code',
-                                                              order_search_filters)
-
-        outer_div.add(get_label_widget('Order Code'))
-        outer_div.add(order_select_wdg)
-
-        platform_select_wdg = get_select_widget_from_search_type('twog/platform', 'platform_code', 'name', 'code')
-
-        outer_div.add(get_label_widget('Platform'))
-        outer_div.add(platform_select_wdg)
-
-        title_select_wdg = get_select_widget_from_search_type('twog/title', 'title_code', 'title', 'code',
-                                                              [('master_title', True)])
-
-        outer_div.add(get_label_widget('Title'))
-        outer_div.add(title_select_wdg)
-
-        due_date_wdg = CalendarInputWdg('Due Date')
-        due_date_wdg.add_class('due_date')
-
-        outer_div.add(get_label_widget('Due Date'))
-        outer_div.add(due_date_wdg)
-
-        language_wdg = self.get_languages_widget()
-
-        outer_div.add(get_label_widget('Language'))
-        outer_div.add(language_wdg)
-
-        territory_wdg = get_select_widget_from_search_type('twog/territory', 'territory', 'name', 'code')
-
-        outer_div.add(get_label_widget('Territory'))
-        outer_div.add(territory_wdg)
-
-        description_input = TextAreaInputWdg()
-        description_input.set_name('description')
-        description_input.add_class('description')
-
-        outer_div.add(get_label_widget('Description'))
-        outer_div.add(description_input)
-
-        self.get_total_program_runtime_wdg(outer_div)
-
-        checkboxes_div = DivWdg()
-
-        no_charge_wdg = CheckboxWdg('no_charge', 'No Charge')
-        redo_wdg = CheckboxWdg('redo', 'Redo')
-
-        checkboxes_div.add(no_charge_wdg)
-        checkboxes_div.add(redo_wdg)
-
-        outer_div.add(checkboxes_div)
+        self.get_order_code_select_widget(outer_div)
+        self.get_platform_select_widget(outer_div)
+        self.get_title_select_widget(outer_div)
+        self.get_due_date_widget(outer_div)
+        self.get_languages_widget(outer_div)
+        self.get_territory_widget(outer_div)
+        self.get_description_input_widget(outer_div)
+        self.get_total_program_runtime_widget(outer_div)
+        self.get_checkboxes_section(outer_div)
 
         submit_button = SubmitWdg('Submit')
         submit_button.add_behavior(self.submit_button_behavior())
@@ -111,7 +59,7 @@ try {
 
     // Set up the object for the new title_order entry.
     var new_title_order = {
-        'name': values.name,
+        'name': String(values.title_code + values.order_code),
         'order_code': values.order_code,
         'title_code': values.title_code,
         'platform': values.platform_code,
@@ -139,19 +87,83 @@ catch(err) {
         return behavior
 
     @staticmethod
-    def get_languages_widget():
+    def get_order_code_select_widget(outer_div):
+        order_search_filters = [('classification', 'Master', '!='),
+                                ('classification', 'Completed', '!='),
+                                ('classification', 'Test', '!=')]
+
+        order_select_wdg = get_select_widget_from_search_type('twog/order', 'order_code', 'name', 'code',
+                                                              order_search_filters)
+
+        outer_div.add(get_label_widget('Order Code'))
+        outer_div.add(order_select_wdg)
+
+    @staticmethod
+    def get_platform_select_widget(outer_div):
+        platform_select_wdg = get_select_widget_from_search_type('twog/platform', 'platform_code', 'name', 'code')
+
+        outer_div.add(get_label_widget('Platform'))
+        outer_div.add(platform_select_wdg)
+
+    @staticmethod
+    def get_title_select_widget(outer_div):
+        title_select_wdg = get_select_widget_from_search_type('twog/title', 'title_code', 'title', 'code',
+                                                              [('master_title', True)])
+
+        outer_div.add(get_label_widget('Title'))
+        outer_div.add(title_select_wdg)
+
+    @staticmethod
+    def get_due_date_widget(outer_div):
+        due_date_wdg = CalendarInputWdg('Due Date')
+        due_date_wdg.add_class('due_date')
+
+        outer_div.add(get_label_widget('Due Date'))
+        outer_div.add(due_date_wdg)
+
+    @staticmethod
+    def get_languages_widget(outer_div):
         languages_search = Search('twog/language')
 
         languages_wdg = MultiSelectWdg('Languages')
         languages_wdg.add_empty_option('----')
         languages_wdg.set_search_for_options(languages_search, label_column='name', value_column='code')
 
-        return languages_wdg
+        outer_div.add(get_label_widget('Language'))
+        outer_div.add(languages_wdg)
 
     @staticmethod
-    def get_total_program_runtime_wdg(outer_div):
+    def get_territory_widget(outer_div):
+        territory_wdg = get_select_widget_from_search_type('twog/territory', 'territory', 'name', 'code')
+
+        outer_div.add(get_label_widget('Territory'))
+        outer_div.add(territory_wdg)
+
+    @staticmethod
+    def get_description_input_widget(outer_div):
+        description_input = TextAreaInputWdg()
+        description_input.set_name('description')
+        description_input.add_class('description')
+
+        outer_div.add(get_label_widget('Description'))
+        outer_div.add(description_input)
+
+    @staticmethod
+    def get_total_program_runtime_widget(outer_div):
         total_program_runtime_input = TextInputWdg()
         total_program_runtime_input.set_name('total_program_runtime')
 
         outer_div.add(get_label_widget('Total Program Runtime'))
         outer_div.add(total_program_runtime_input)
+
+    @staticmethod
+    def get_checkboxes_section(outer_div):
+        checkboxes_div = DivWdg()
+
+        no_charge_wdg = CheckboxWdg('no_charge', 'No Charge')
+        redo_wdg = CheckboxWdg('redo', 'Redo')
+
+        checkboxes_div.add(no_charge_wdg)
+        checkboxes_div.add(redo_wdg)
+
+        outer_div.add(checkboxes_div)
