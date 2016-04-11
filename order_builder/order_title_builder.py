@@ -15,8 +15,8 @@ class OrderTitleEntryWdg(BaseRefreshWdg):
         outer_div.add_class('new-order-title-entry-form')
 
         self.get_order_code_select_widget(outer_div)
-        self.get_platform_select_widget(outer_div)
         self.get_title_select_widget(outer_div)
+        self.get_platform_select_widget(outer_div)
         self.get_due_date_widget(outer_div)
         self.get_languages_widget(outer_div)
         self.get_territory_widget(outer_div)
@@ -47,7 +47,7 @@ try {
     var values = spt.api.get_input_values(outer_div);
 
     var total_program_runtime = String(values.total_program_runtime);
-    console.log(total_program_runtime);
+
     if (total_program_runtime) {
         var runtime_re = /^[\d]+:[\d]+$/;
         var match = total_program_runtime.match(runtime_re);
@@ -57,9 +57,35 @@ try {
         }
     }
 
+    var bigboard;
+    var no_charge;
+    var redo;
+    var repurpose;
+
+    if (values.bigboard == 'on') {
+        bigboard = true;
+    }
+    else {
+        bigboard = false;
+    }
+
+    if (values.no_charge == 'on') {
+        no_charge = true;
+    }
+    else {
+        no_charge = false;
+    }
+
+    if (values.redo == 'on') {
+        redo = true;
+    }
+    else {
+        redo = false;
+    }
+
     // Set up the object for the new title_order entry.
     var new_title_order = {
-        'name': String(values.title_code + values.order_code),
+        'name': String(values.title_code + " in " + values.order_code),
         'order_code': values.order_code,
         'title_code': values.title_code,
         'platform': values.platform_code,
@@ -67,9 +93,11 @@ try {
         'languages': values.languages,
         'territory': values.territory,
         'description': values.description,
-        'total_program_runtime': values.total_program_runtime,
-        'no_charge': values.no_charge,
-        'redo': values.redo
+        'total_program_runtime': total_program_runtime,
+        'bigboard': bigboard,
+        'no_charge': no_charge,
+        'redo': redo,
+        'repurpose': repurpose
     }
 
     // Have to set 'triggers' to false to avoid all the other stupid custom crap. Will remove once this method
@@ -95,7 +123,7 @@ catch(err) {
         order_select_wdg = get_select_widget_from_search_type('twog/order', 'order_code', 'name', 'code',
                                                               order_search_filters)
 
-        outer_div.add(get_label_widget('Order Code'))
+        outer_div.add(get_label_widget('Order'))
         outer_div.add(order_select_wdg)
 
     @staticmethod
@@ -160,10 +188,16 @@ catch(err) {
     def get_checkboxes_section(outer_div):
         checkboxes_div = DivWdg()
 
+        bigboard_wdg = CheckboxWdg('bigboard', 'Hot Title?')
         no_charge_wdg = CheckboxWdg('no_charge', 'No Charge')
         redo_wdg = CheckboxWdg('redo', 'Redo')
+        repurpose_wdg = CheckboxWdg('repurpose', 'Repurpose')
 
+        bigboard_wdg.get_value()
+
+        checkboxes_div.add(bigboard_wdg)
         checkboxes_div.add(no_charge_wdg)
         checkboxes_div.add(redo_wdg)
+        checkboxes_div.add(repurpose_wdg)
 
         outer_div.add(checkboxes_div)
