@@ -4,7 +4,7 @@ from tactic.ui.widget import CalendarInputWdg
 
 from pyasm.web import DivWdg
 from pyasm.search import Search
-from pyasm.widget import CheckboxWdg, MultiSelectWdg, SubmitWdg
+from pyasm.widget import CheckboxWdg, MultiSelectWdg, SubmitWdg, ButtonWdg
 
 from order_builder_utils import get_label_widget, get_select_widget_from_search_type
 
@@ -15,7 +15,9 @@ class OrderTitleEntryWdg(BaseRefreshWdg):
         outer_div.add_class('new-order-title-entry-form')
 
         self.get_order_code_select_widget(outer_div)
+        self.get_order_entry_widget(outer_div)
         self.get_title_select_widget(outer_div)
+        self.get_title_entry_wdg(outer_div)
         self.get_platform_select_widget(outer_div)
         self.get_due_date_widget(outer_div)
         self.get_languages_widget(outer_div)
@@ -26,6 +28,10 @@ class OrderTitleEntryWdg(BaseRefreshWdg):
 
         submit_button = SubmitWdg('Submit')
         submit_button.add_behavior(self.submit_button_behavior())
+
+        popup_button = ButtonWdg('Popup')
+        popup_button.add_behavior({'css_class': 'popup_click', 'type': 'click_up', 'cbjs_action': 'spt.panel.load_popup("Test", "order_builder.OrderTitleEntryWdg", {});'})
+        outer_div.add(popup_button)
 
         outer_div.add(submit_button)
 
@@ -127,11 +133,11 @@ catch(err) {
         outer_div.add(order_select_wdg)
 
     @staticmethod
-    def get_platform_select_widget(outer_div):
-        platform_select_wdg = get_select_widget_from_search_type('twog/platform', 'platform_code', 'name', 'code')
+    def get_order_entry_widget(outer_div):
+        add_order_button = ButtonWdg('New Order')
+        add_order_button.set_behavior({'css_class': 'popup_click', 'type': 'click_up', 'cbjs_action': 'spt.panel.load_popup("New Order", "order_builder.OrderEntryWdg", {});'})
 
-        outer_div.add(get_label_widget('Platform'))
-        outer_div.add(platform_select_wdg)
+        outer_div.add(add_order_button)
 
     @staticmethod
     def get_title_select_widget(outer_div):
@@ -140,6 +146,20 @@ catch(err) {
 
         outer_div.add(get_label_widget('Title'))
         outer_div.add(title_select_wdg)
+
+    @staticmethod
+    def get_title_entry_wdg(outer_div):
+        add_order_button = ButtonWdg('New Title')
+        add_order_button.set_behavior({'css_class': 'popup_click', 'type': 'click_up', 'cbjs_action': 'spt.panel.load_popup("New Title", "order_builder.TitleEntryPopupWdg", {});'})
+
+        outer_div.add(add_order_button)
+
+    @staticmethod
+    def get_platform_select_widget(outer_div):
+        platform_select_wdg = get_select_widget_from_search_type('twog/platform', 'platform_code', 'name', 'code')
+
+        outer_div.add(get_label_widget('Platform'))
+        outer_div.add(platform_select_wdg)
 
     @staticmethod
     def get_due_date_widget(outer_div):
