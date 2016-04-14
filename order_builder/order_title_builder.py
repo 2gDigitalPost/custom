@@ -142,7 +142,7 @@ catch(err) {
     @staticmethod
     def get_title_select_widget(outer_div):
         title_select_wdg = get_select_widget_from_search_type('twog/title', 'title_code', 'title', 'code',
-                                                              [('master_title', True)])
+                                                              [('master_title', True)], ['title'])
 
         outer_div.add(get_label_widget('Title'))
         outer_div.add(title_select_wdg)
