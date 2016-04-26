@@ -81,41 +81,84 @@ class NewOnboardingTask(BaseRefreshWdg):
             'type': 'click_up',
             'cbjs_action': '''
 try {
-    spt.api.app_busy_show('Saving...');
+    var submit_form = function(values) {
+        spt.api.app_busy_show('Saving...');
+
+        var env = spt.Environment.get();
+        var login = env.user;
+
+        // Get the values needed to submit the form
+        var process = values.process;
+        var description = values.description;
+        var priority = values.priority;
+        var assigned = values.assigned;
+        var due_date = values.due_date;
+
+        // Set up the object for the new task.
+        var new_onboarding_task = {
+            'process': process,
+            'description': description,
+            'status': 'Pending',
+            'priority': priority,
+            'assigned': assigned,
+            'assigned_login_group': 'onboarding',
+            'bid_end_date': due_date,
+            'login': login
+        }
+
+        var server = TacticServerStub.get();
+
+        // Have to set 'triggers' to false to avoid all the other stupid custom crap. Will remove once this method
+        // of inserting becomes the norm.
+        server.insert('sthpw/task', new_onboarding_task, {'triggers': false});
+
+        spt.api.app_busy_hide();
+
+        // Get the board table by its ID
+        var entry_form = document.getElementsByClassName('new-onboarding-task-entry-form')[0];
+
+        // Refresh the view
+        spt.api.app_busy_show("Refreshing...");
+        spt.api.load_panel(entry_form, 'tasks.NewOnboardingTask');
+        spt.api.app_busy_hide();
+    }
 
     // Get the form values
     var outer_div = spt.api.get_parent(bvr.src_el, '.new-onboarding-task-entry-form');
     var values = spt.api.get_input_values(outer_div);
-    var env = spt.Environment.get();
-    var login = env.user;
 
-    // Set up the object for the new title. Note that 'master_title' is always set to true.
-    var new_onboarding_task = {
-        'process': values.process,
-        'description': values.description,
-        'status': 'Pending',
-        'priority': values.priority,
-        'assigned': values.assigned,
-        'assigned_login_group': 'onboarding',
-        'bid_end_date': values.due_date,
-        'login': login
+    // Process is required, so if it is blank, alert the user
+    if (!values.process || values.process == '') {
+        spt.api.app_busy_hide();
+        spt.alert("Process field is required.");
+        return;
     }
 
-    var server = TacticServerStub.get();
+    // Due date is not required, but it is recommended, so alert the user if it's blank
+    /*
+    if (!values.due_date || values.due_date == '') {
+        spt.api.app_busy_hide();
+        spt.confirm("You did not enter a due date. You don't have to, but it's highly recommended. Do you want to add one?",
+        submit_form(values), null, {
+		    okText: 'Continue without Due Date',
+		    cancelText: 'Cancel',
+		    focus: true,
+		    textPClass: 'MooDialogConfirm',
+            type: 'html'
+	    });
+    }
+    else {
+        submit_form(values);
+    }
+    */
 
-    // Have to set 'triggers' to false to avoid all the other stupid custom crap. Will remove once this method
-    // of inserting becomes the norm.
-    server.insert('sthpw/task', new_onboarding_task, {'triggers': false});
+    if (!values.due_date || values.due_date == '') {
+        spt.api.app_busy_hide();
+        spt.alert("Due Date field is required.");
+        return;
+    }
 
-    spt.api.app_busy_hide();
-
-    // Get the board table by its ID
-    var entry_form = document.getElementsByClassName('new-onboarding-task-entry-form')[0];
-
-    // Refresh the view
-    spt.api.app_busy_show("Refreshing...");
-    spt.api.load_panel(entry_form, 'tasks.NewOnboardingTask');
-    spt.api.app_busy_hide();
+    submit_form(values);
 }
 catch(err) {
     spt.app_busy.hide();
