@@ -19,7 +19,7 @@ class OrderTitleEntryWdg(BaseRefreshWdg):
         self.get_title_select_widget(outer_div)
         self.get_title_entry_wdg(outer_div)
         self.get_platform_select_widget(outer_div)
-        self.get_due_date_widget(outer_div)
+
         self.get_languages_widget(outer_div)
         self.get_territory_widget(outer_div)
         self.get_description_input_widget(outer_div)
