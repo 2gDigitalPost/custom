@@ -68,7 +68,6 @@ class NewTitleOrderTask(BaseRefreshWdg):
         task_utils.get_process_widget(outer_div)
         task_utils.get_description_widget(outer_div)
         task_utils.get_priority_widget(outer_div)
-        task_utils.get_assigned_to_select_widget(outer_div)
         task_utils.get_due_date_widget(outer_div)
         self.get_submit_widget(outer_div)
 

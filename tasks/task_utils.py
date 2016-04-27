@@ -12,8 +12,12 @@ def get_process_widget(outer_div):
     outer_div.add(process_input)
 
 
-def get_assigned_to_select_widget(outer_div):
-    user_search_filters = [('login_group', 'onboarding')]
+def get_assigned_to_select_widget(outer_div, login_group=None):
+    if login_group:
+        user_search_filters = [('login_group', login_group)]
+    else:
+        user_search_filters = []
+
     assigned_to_select_widget = get_select_widget_from_search_type('sthpw/login_in_group', 'login', 'login', 'code',
                                                                    user_search_filters)
     assigned_to_select_widget.set_name('assigned')
