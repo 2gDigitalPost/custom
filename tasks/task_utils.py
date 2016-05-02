@@ -12,6 +12,15 @@ def get_process_widget(outer_div):
     outer_div.add(process_input)
 
 
+def get_assigned_login_group_widget(outer_div):
+    assigned_login_group_widget = get_select_widget_from_search_type('sthpw/login_group', 'login_group','login_group',
+                                                                     'login_group')
+    assigned_login_group_widget.set_name('assigned_login_group')
+
+    outer_div.add(get_label_widget('Assigned Login Group'))
+    outer_div.add(assigned_login_group_widget)
+
+
 def get_assigned_to_select_widget(outer_div, login_group=None):
     if login_group:
         user_search_filters = [('login_group', login_group)]
