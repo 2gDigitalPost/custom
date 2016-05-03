@@ -345,6 +345,11 @@ class TitleRow(BaseRefreshWdg):
                                                                    my.order_sk))
                 bottom_buttons.add_cell(pipe_button)
 
+                request_pipeline_button = ButtonSmallNewWdg(title="Request a Pipeline",
+                                                            icon=CustomIconWdg.icons.get('PROCESS'))
+                request_pipeline_button.add_behavior(request_pipeline_behavior(my.sk))
+                bottom_buttons.add_cell(request_pipeline_button)
+
             if my.is_master and user_is_scheduler:
                 templer = ButtonSmallNewWdg(title="Template All", icon=CustomIconWdg.icons.get('TEMPLATE_DOWN'))
                 templer.add_behavior(get_template_all_behavior(my.order_sk, my.code, my.is_master_str))
@@ -820,4 +825,28 @@ catch(err){
     spt.alert(spt.exception.handler(err));
 }
      ''' % (order_sk, title_code, is_master_str)}
+    return behavior
+
+
+def request_pipeline_behavior(title_search_key):
+    """
+    Load a popup to fill out a task that requests the onboarding department to create a pipeline for this title.
+    :return:
+    """
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try {
+    var class_name = 'tasks.NewPipelineRequest';
+
+    kwargs = {
+        'parent_key': '%s'
+    }
+
+    spt.panel.load_popup('Request a new pipeline', class_name, kwargs);
+}
+catch(err){
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % title_search_key
+                }
     return behavior
