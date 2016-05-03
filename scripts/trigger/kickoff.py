@@ -54,6 +54,14 @@ def main(server=None, input=None):
         READY = 'Ready'
         PENDING = 'Pending'
         sobj = input.get('sobject')
+
+        # This next statement will basically skip the entire script if the task is a task assigned to onboarding,
+        # asking them to create a workflow/pipeline. Ideally I would disable this entire script, since it's an
+        # incoherent mess, but I can't do that without messing up a bunch of other things. Once the Order/Title/Task
+        # logic has all been updated, then this script can be removed entirely, but until then, this will have to do.
+        if 'Make a Workflow for' in sobj.get('process'):
+            return
+
         this_process = sobj.get('process')
         this_lookup = sobj.get('lookup_code')
         sk = input.get('search_key')
