@@ -527,15 +527,13 @@ class ElementEvalWdg(BaseTableElementWdg):
                               descriptioner = top_el.getElementById('description-' + linect);
                               if(descriptioner){
                                     value = descriptioner.value;
-                                    // lines[r].removeChild(descriptioner);
-                                    // top_el.innerHTML('div' + descriptioner.value + '</div>');
-
-                                    // descriptioner.innerHTML = '<div>' + value + '</div>';
-                                    // descriptioner.style.width = '520px';
 
                                     var newDiv = document.createElement('div');
                                     newDiv.innerHTML = value;
                                     newDiv.style.width = '520px';
+                                    newDiv.style.borderWidth = '1px';
+                                    newDiv.style.borderStyle = 'solid';
+                                    newDiv.style.borderColor = 'gray';
 
                                     descriptioner.parentNode.insertBefore(newDiv, descriptioner);
 
