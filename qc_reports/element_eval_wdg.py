@@ -432,6 +432,173 @@ class ElementEvalWdg(BaseTableElementWdg):
         return behavior
 
     @staticmethod
+    def get_new_print_bvr(wo_code, el_code, type):
+        behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+                        function replaceAll(find, replace, str) {
+                          find = find.replace('[','\\\[').replace(']','\\\]').replace('+','\\\+');
+                          return str.replace(new RegExp(find, 'g'), replace);
+                        }
+                        function printExternal(url) {
+                            var printWindow = window.open( url, 'Print', 'toolbar=1,location=1,directories=1,status=1,menubar=1,scrollbars=0,resizable=0');
+                            printWindow.addEventListener('load', function(){
+                                printWindow.print();
+                                //printWindow.close();
+                            }, true);
+                        }
+                        try{
+                          wo_code = '%s';
+                          element_code = '%s';
+                          type = '%s';
+                          top_els = document.getElementsByClassName('printable_element_form_' + wo_code);
+                          top_el = null;
+                          for(var r = 0; r < top_els.length; r++){
+                              if(top_els[r].getAttribute('element_code') == element_code){
+                                  top_el = top_els[r];
+                              }
+                          }
+                          title = top_el.getElementById('title').value;
+                          episode = top_el.getElementById('episode').value;
+                          language = top_el.getElementById('language').value;
+                          file_name_str = replaceAll(' ','_',title);
+                          if(episode != '' && episode != null){
+                              file_name_str = file_name_str + '__' + replaceAll(' ','_',episode);
+                          }
+                          if(language == '' || language == null){
+                              language = 'None_Set';
+                          }
+                          whole_status = '';
+                          stat_els = top_el.getElementsByClassName('spt_input');
+                          for(var r = 0; r < stat_els.length; r++){
+                              name = stat_els[r].getAttribute('name');
+                              if(name.indexOf('marked_') != -1 && stat_els[r].getAttribute('type') == 'checkbox'){
+                                  if(stat_els[r].checked){
+                                      if(whole_status == ''){
+                                          whole_status = name.replace('marked_','');
+                                      }else{
+                                          whole_status = whole_status + '_' + name.replace('marked_','');
+                                      }
+                                  }
+                              }
+                          }
+                          file_name_str = file_name_str + '__' + replaceAll(' ','_',language) + '__' + whole_status;
+                          file_name_str = replaceAll("\\\'",'',file_name_str);
+                          file_name_str = replaceAll("\\\-",'_',file_name_str);
+                          file_name_str = replaceAll("\\\.",'',file_name_str);
+                          file_name_str = replaceAll("\\\,",'',file_name_str);
+                          file_name_str = replaceAll("\\\!",'',file_name_str);
+                          file_name_str = replaceAll("\\\?",'',file_name_str);
+                          file_name_str = replaceAll("\\\^",'',file_name_str);
+                          file_name_str = replaceAll("\\\#",'',file_name_str);
+                          file_name_str = replaceAll("\\\&",'_and_',file_name_str);
+                          file_name_str = replaceAll("\\\(",'',file_name_str);
+                          file_name_str = replaceAll("\\\)",'',file_name_str);
+                          file_name_str = replaceAll("\\\*",'',file_name_str);
+                          file_name_str = replaceAll("\\\%s",'',file_name_str);
+                          file_name_str = replaceAll("\\\$",'',file_name_str);
+                          file_name_str = replaceAll("\\\@",'',file_name_str);
+                          file_name_str = replaceAll("\\\~",'',file_name_str);
+                          file_name_str = replaceAll("\\\`",'',file_name_str);
+                          file_name_str = replaceAll("\\\:",'',file_name_str);
+                          file_name_str = replaceAll("\\\;",'',file_name_str);
+                          file_name_str = replaceAll('\\\"','',file_name_str);
+                          file_name_str = replaceAll('\\\<','',file_name_str);
+                          file_name_str = replaceAll('\\\>','',file_name_str);
+                          file_name_str = replaceAll('\\\/','',file_name_str);
+                          file_name_str = replaceAll('\\\|','',file_name_str);
+                          file_name_str = replaceAll('\\\}','',file_name_str);
+                          file_name_str = replaceAll('\\\{','',file_name_str);
+                          file_name_str = replaceAll('\\\=','',file_name_str);
+                          var server = TacticServerStub.get();
+                          lines = top_el.getElementsByClassName('element_lines');
+                          for(var r = 0; r < lines.length; r++){
+                              linect = lines[r].getAttribute('line');
+                              tc = top_el.getElementById('timecode_in-' + linect);
+                              if(tc.value == '' || tc.value == null){
+                                  lines[r].style.display = 'none';
+                              }
+                              ord = top_el.getElementById('ordering-' + linect);
+                              if(ord){
+                                  ord.style.display = 'none';
+                              }
+                              killer = top_el.getElementById('killer-' + linect);
+                              if(killer){
+                                  killer.style.display = 'none';
+                              }
+                              descriptioner = top_el.getElementById('description-' + linect);
+                              if(descriptioner){
+                                    value = descriptioner.value;
+                                    // lines[r].removeChild(descriptioner);
+                                    // top_el.innerHTML('div' + descriptioner.value + '</div>');
+
+                                    // descriptioner.innerHTML = '<div>' + value + '</div>';
+                                    // descriptioner.style.width = '520px';
+
+                                    var newDiv = document.createElement('div');
+                                    newDiv.innerHTML = value;
+                                    newDiv.style.width = '520px';
+
+                                    descriptioner.parentNode.insertBefore(newDiv, descriptioner);
+
+                                    descriptioner.parentNode.removeChild(descriptioner);
+                              }
+                          }
+                          bcs = top_el.getElementsByClassName('element_barcodes');
+                          for(var r = 0; r < bcs.length; r++){
+                              linect = bcs[r].getAttribute('line');
+                              tc = top_el.getElementById('barcode-' + linect);
+                              if(tc.value == '' || tc.value == null){
+                                  bcs[r].style.display = 'none';
+                              }else{
+                                  cells = bcs[r].getElementsByTagName('td');
+                                  for(var w = 0; w < cells.length; w++){
+                                      if(cells[w].innerHTML == '<b>X</b>'){
+                                          cells[w].style.display = 'none';
+                                      }
+                                  }
+                              }
+                          }
+                          sels = top_el.getElementsByClassName('select_cell');
+                          for(var r = 0; r < sels.length; r++){
+                              select_el = sels[r].getElementsByTagName('select')[0];
+                              offset_width = select_el.offsetWidth;
+                              value = select_el.value;
+                              sels[r].innerHTML = '<input type="text" value="' + value + '" style="width: ' + offset_width + ';"/>';
+                          }
+                          tc_shifter = top_el.getElementById('tc_shifter');
+                          tc_shifter.style.display = 'none';
+                          description_el = top_el.getElementById('description');
+                          description_el.setAttribute('cols','110');
+                          darkrow = top_el.getElementById('darkrow');
+                          darkrow.setAttribute('width','110px');
+                          audio_row = top_el.getElementById('audio_row');
+                          audio_row.innerHTML = audio_row.innerHTML.replace('- click to change number of channels','');
+                          top_els = document.getElementsByClassName('printable_element_form_' + wo_code);
+                          top_el = null;
+                          for(var r = 0; r < top_els.length; r++){
+                              if(top_els[r].getAttribute('element_code') == element_code){
+                                  top_el = top_els[r];
+                              }
+                          }
+                          new_html = top_el.innerHTML;
+
+                          thing = server.execute_cmd('qc_reports.PrintQCReportWdg', {'html': '<table>' + new_html + '</table>','preppend_file_name': file_name_str, 'type': ''});
+                          var url = '/qc_reports/work_orders/' + file_name_str + '.html';
+                          printExternal(url);
+                          if(element_code != '' && element_code != null){
+                              //close, then reload page
+                              var class_name = 'qc_reports.element_eval_wdg.ElementEvalWdg';
+                              kwargs = {'code': wo_code, 'element_code': element_code}
+                              spt.tab.add_new('ElementEvalWdg_qc_report_for_' + wo_code,'Element Evaluation for ' + wo_code, class_name, kwargs);
+                          }
+                }
+                catch(err){
+                          spt.app_busy.hide();
+                          spt.alert(spt.exception.handler(err));
+                }
+         ''' % (wo_code, el_code, type, '%')}
+        return behavior
+
+    @staticmethod
     def get_click_row(wo_code, el_code):
         behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
                         try{
@@ -1260,7 +1427,7 @@ class ElementEvalWdg(BaseTableElementWdg):
         print_button_table = Table()
 
         print_button = print_button_table.add_cell('<button style="margin: 3px;">Print This Report</button>')
-        print_button.add_behavior(my.get_print_bvr(code, my.element.get('code'), 'element'))
+        print_button.add_behavior(my.get_new_print_bvr(code, my.element.get('code'), 'element'))
 
         table.add_row()
         table.add_cell(fulllines)
