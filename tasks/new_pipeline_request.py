@@ -56,11 +56,12 @@ try {
         var new_pipeline_request = {
             'process': process,
             'description': description,
-            'status': 'Pending',
+            'status': 'Ready',
             'priority': priority,
             'assigned_login_group': 'onboarding',
             'bid_end_date': due_date,
-            'login': login
+            'login': login,
+            'pipeline_code': 'twog_pipeline_request'
         }
 
         var server = TacticServerStub.get();
