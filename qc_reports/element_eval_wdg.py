@@ -974,7 +974,8 @@ class ElementEvalWdg(BaseTableElementWdg):
         ad.add_row()
         address = ad.add_cell('<b>2G Digital Post, Inc.</b><br/>280 E. Magnolia Blvd.<br/>Burbank, CA 91502<br/>310-840-0600<br/>www.2gdigitalpost.com')
         address.add_attr('nowrap', 'nowrap')
-        address.add_style('font-size: 9px;')
+        address.add_style('font-size: 12px;')
+        address.add_style('padding-left: 4px;')
         img_tbl.add_cell(ad)
         acr_s = ['APPROVED', 'REJECTED']
         acr = Table()
