@@ -58,3 +58,13 @@ def get_due_date_widget(outer_div):
 
     outer_div.add(get_label_widget('Due Date'))
     outer_div.add(due_date_wdg)
+
+
+def get_due_date_time_widget(outer_div):
+    due_date_wdg = CalendarInputWdg('due_date')
+    due_date_wdg.set_option('show_time', True)
+    due_date_wdg.add_class('due_date')
+    due_date_wdg.set_name('due_date')
+
+    outer_div.add(get_label_widget('Due Date'))
+    outer_div.add(due_date_wdg)

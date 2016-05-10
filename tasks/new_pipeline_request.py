@@ -1,4 +1,5 @@
 from tactic.ui.common import BaseRefreshWdg
+
 from pyasm.web import DivWdg
 from pyasm.widget import SubmitWdg
 
@@ -22,7 +23,7 @@ class NewPipelineRequest(BaseRefreshWdg):
 
         task_utils.get_description_widget(outer_div)
         task_utils.get_priority_widget(outer_div)
-        task_utils.get_due_date_widget(outer_div)
+        task_utils.get_due_date_time_widget(outer_div)
         self.get_submit_widget(outer_div)
 
         return outer_div
