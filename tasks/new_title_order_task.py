@@ -60,7 +60,7 @@ class NewTitleOrderTask(BaseRefreshWdg):
 
     def get_display(self):
         outer_div = DivWdg()
-        outer_div.add_class('new-onboarding-task-entry-form')
+        outer_div.add_class('new-title-order-task-entry-form')
 
         page_label = "New Task"
         outer_div.add(page_label)
@@ -100,13 +100,11 @@ try {
         var due_date = values.due_date;
 
         // Set up the object for the new task.
-        var new_onboarding_task = {
+        var new_title_order_task = {
             'process': process,
             'description': description,
             'status': 'Pending',
             'priority': priority,
-            'assigned': assigned,
-            'assigned_login_group': 'onboarding',
             'bid_end_date': due_date,
             'login': login
         }
@@ -115,21 +113,21 @@ try {
 
         // Have to set 'triggers' to false to avoid all the other stupid custom crap. Will remove once this method
         // of inserting becomes the norm.
-        server.insert('sthpw/task', new_onboarding_task, {'triggers': false});
+        server.insert('sthpw/task', new_title_order_task, {'triggers': false});
 
         spt.api.app_busy_hide();
 
         // Get the board table by its ID
-        var entry_form = document.getElementsByClassName('new-onboarding-task-entry-form')[0];
+        var entry_form = document.getElementsByClassName('new-title-order-task-entry-form')[0];
 
         // Refresh the view
         spt.api.app_busy_show("Refreshing...");
-        spt.api.load_panel(entry_form, 'tasks.NewOnboardingTask');
+        spt.api.load_panel(entry_form, 'tasks.NewTitleOrderTask');
         spt.api.app_busy_hide();
     }
 
     // Get the form values
-    var outer_div = spt.api.get_parent(bvr.src_el, '.new-onboarding-task-entry-form');
+    var outer_div = spt.api.get_parent(bvr.src_el, '.new-title-order-task-entry-form');
     var values = spt.api.get_input_values(outer_div);
 
     // Process is required, so if it is blank, alert the user
