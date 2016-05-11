@@ -24,7 +24,7 @@ class OrderEntryWdg(BaseRefreshWdg):
         outer_div.add(get_label_widget('PO Number'))
         outer_div.add(po_number_input)
 
-        client_select_wdg = get_select_widget_from_search_type('twog/client', 'Client', 'name', 'code')
+        client_select_wdg = get_select_widget_from_search_type('twog/client', 'client', 'name', 'code')
 
         outer_div.add(get_label_widget('Client'))
         outer_div.add(client_select_wdg)
@@ -49,26 +49,38 @@ class OrderEntryWdg(BaseRefreshWdg):
             'type': 'click_up',
             'cbjs_action': '''
 try {
-    spt.api.app_busy_show('Saving...');
+    function submit_form() {
+        spt.api.app_busy_show('Saving...');
+
+        var client_code = values.client;
+
+        // Set up the object for the new title. Note that 'master_title' is always set to true.
+        var new_order = {
+            'name': values.name,
+            'po_number': values.po_number,
+            'client_code': client_code
+        }
+
+        var server = TacticServerStub.get();
+
+        // Have to set 'triggers' to false to avoid all the other stupid custom crap. Will remove once this method
+        // of inserting becomes the norm.
+        server.insert('twog/order', new_order, {'triggers': false});
+
+        spt.api.app_busy_hide();
+    }
 
     // Get the form values
     var outer_div = spt.api.get_parent(bvr.src_el, '.new-order-entry-form');
     var values = spt.api.get_input_values(outer_div);
 
-    // Set up the object for the new title. Note that 'master_title' is always set to true.
-    var new_order = {
-        'name': values.name,
-        'po_number': values.po_number,
-        'client_code': values.client_code
+    if (!values.client || values.client == '') {
+        spt.api.app_busy_hide();
+        spt.alert("Please select a client.");
+        return;
     }
 
-    var server = TacticServerStub.get();
-
-    // Have to set 'triggers' to false to avoid all the other stupid custom crap. Will remove once this method
-    // of inserting becomes the norm.
-    server.insert('twog/order', new_order, {'triggers': false});
-
-    spt.api.app_busy_hide();
+    submit_form(values);
 }
 catch(err) {
     spt.app_busy.hide();

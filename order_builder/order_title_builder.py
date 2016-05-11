@@ -51,6 +51,7 @@ try {
     // Get the form values
     var outer_div = spt.api.get_parent(bvr.src_el, '.new-order-title-entry-form');
     var values = spt.api.get_input_values(outer_div);
+    var labels = spt.api.get_input_values(outer_div, null, false, true);
 
     var total_program_runtime = String(values.total_program_runtime);
 
@@ -89,9 +90,16 @@ try {
         redo = false;
     }
 
+    if (values.repurpose == 'on') {
+        repurpose = true;
+    }
+    else {
+        repurpose = false;
+    }
+
     // Set up the object for the new title_order entry.
     var new_title_order = {
-        'name': String(values.title_code + " in " + values.order_code),
+        'name': String(labels.title_code + " in " + labels.order_code),
         'order_code': values.order_code,
         'title_code': values.title_code,
         'platform': values.platform_code,
@@ -102,8 +110,8 @@ try {
         'total_program_runtime': total_program_runtime,
         'bigboard': bigboard,
         'no_charge': no_charge,
-        'redo': redo,
-        'repurpose': repurpose
+        'redo': redo
+        // 'repurpose': repurpose
     }
 
     // Have to set 'triggers' to false to avoid all the other stupid custom crap. Will remove once this method
