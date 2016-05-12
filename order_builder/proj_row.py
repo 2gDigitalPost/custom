@@ -321,7 +321,7 @@ class ProjRow(BaseRefreshWdg):
             nadd.add_attr('align', 'right')
             nadd.add_style('cursor: pointer;')
 
-            if user_is_scheduler:
+            if user_is_scheduler or 'onboarding' in my.groups_str:
                 pipe_button = ButtonSmallNewWdg(title="Assign Pipeline", icon=CustomIconWdg.icons.get('PIPELINE'))
                 pipe_button.add_behavior(get_scratch_pipe_behavior('twog/proj', my.search_id, my.parent_sid,
                                                                    my.width, my.height,
