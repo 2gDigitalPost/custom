@@ -334,7 +334,7 @@ class TitleRow(BaseRefreshWdg):
             nadd.add_attr('align', 'right')
             nadd.add_style('cursor: pointer;')
 
-            if user_is_scheduler:
+            if user_is_scheduler or 'onboarding' in my.groups_str:
                 pipe_button = ButtonSmallNewWdg(title="Assign Pipeline", icon=CustomIconWdg.icons.get('PIPELINE'))
                 pipe_button.add_behavior(get_scratch_pipe_behavior('twog/title', my.search_id, my.parent_sid,
                                                                    my.width, my.height,
@@ -350,7 +350,7 @@ class TitleRow(BaseRefreshWdg):
                 request_pipeline_button.add_behavior(request_pipeline_behavior(my.sk))
                 bottom_buttons.add_cell(request_pipeline_button)
 
-            if my.is_master and user_is_scheduler:
+            if my.is_master and (user_is_scheduler or 'onboarding' in my.groups_str):
                 templer = ButtonSmallNewWdg(title="Template All", icon=CustomIconWdg.icons.get('TEMPLATE_DOWN'))
                 templer.add_behavior(get_template_all_behavior(my.order_sk, my.code, my.is_master_str))
                 tem = bottom_buttons.add_cell(templer)

@@ -185,7 +185,7 @@ class OrderTable(BaseRefreshWdg):
         nadd.add_attr('align', 'right')
         nadd.add_style('cursor: pointer;')
 
-        if user_is_scheduler:
+        if user_is_scheduler or 'onboarding' in my.groups_str:
             title_adder = ButtonSmallNewWdg(title="Add Titles", icon=CustomIconWdg.icons.get('INSERT_MULTI'))
             title_adder.add_behavior(get_title_add_behavior(my.sk, my.sid, main_obj.get_value('client_code'),
                                                             main_obj.get_value('name')))
