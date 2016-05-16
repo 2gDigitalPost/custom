@@ -185,7 +185,7 @@ class TitleRow(BaseRefreshWdg):
                                                                                        my.off_color))
 
             table.add_cell(select_check)
-        elif user_is_scheduler:
+        elif user_is_scheduler or 'onboarding' in my.groups_str:
             xb = table.add_cell(my.x_butt)
             xb.add_attr('align', 'right')
             xb.add_style('cursor: pointer;')

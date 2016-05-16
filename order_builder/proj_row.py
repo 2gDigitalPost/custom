@@ -231,7 +231,7 @@ class ProjRow(BaseRefreshWdg):
                                              additional_js=get_selected_color_behavior(my.code, 'ProjRow',
                                                                                        my.on_color, my.off_color))
             cb = top_buttons.add_cell(select_check)
-        elif user_is_scheduler:
+        elif user_is_scheduler or 'onboarding' in my.groups_str:
             xb = top_buttons.add_cell(my.x_butt)
             xb.add_attr('align', 'right')
             xb.add_style('cursor: pointer;')
