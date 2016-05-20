@@ -193,7 +193,7 @@ class OrderBuilder(BaseRefreshWdg):
                 my.groups_str = mg
             else:
                 my.groups_str = '%s,%s' % (my.groups_str, mg)
-        if 'scheduling' in my.groups_str:
+        if 'scheduling' in my.groups_str or 'onboarding' in my.groups_str:
             my.user_is_scheduler = True
             my.g_edit_mode = 'edit'
     

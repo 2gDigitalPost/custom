@@ -52,7 +52,7 @@ class OrderTable(BaseRefreshWdg):
                 else:
                     my.groups_str = '%s,%s' % (my.groups_str, mg)
         user_is_scheduler = False
-        if 'scheduling' in my.groups_str:
+        if 'scheduling' in my.groups_str or 'onboarding' in my.groups_str:
             user_is_scheduler = True
         if 'display_mode' in my.kwargs.keys():
             my.disp_mode = my.kwargs.get('display_mode')

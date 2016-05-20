@@ -54,7 +54,7 @@ class BuilderTools(BaseRefreshWdg):
                 my.is_master = True
                 my.is_master_str = 'true'
         user_is_scheduler = False
-        if 'scheduling' in my.groups_str:
+        if 'scheduling' in my.groups_str or 'onboarding' in my.groups_str:
             user_is_scheduler = True
         if main_obj in [None, '']:
             server = TacticServerStub.get()

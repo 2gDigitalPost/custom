@@ -235,7 +235,7 @@ class TitleSidebarWdg(BaseRefreshWdg):
         row = table.add_row()
         row.add_style('background-color: #d9ed8b;')
         name_cell = table.add_cell('<b><i>%s</i></b>' % proj.get('process'))
-        if 'scheduling' in my.groups_str:
+        if 'scheduling' in my.groups_str or 'onboarding' in my.groups_str:
             tools = Table()
             tools.add_row()
             tools.add_cell('DueDateChange')

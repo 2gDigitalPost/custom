@@ -55,7 +55,7 @@ class EquipmentUsedRow(BaseRefreshWdg):
                     my.groups_str = '%s,%s' % (my.groups_str, mg.get_value('login_group'))
 
         user_is_scheduler = False
-        if 'scheduling' in my.groups_str:
+        if 'scheduling' in my.groups_str or 'onboarding' in my.groups_str:
             user_is_scheduler = True
 
         if 'display_mode' in my.kwargs.keys():
