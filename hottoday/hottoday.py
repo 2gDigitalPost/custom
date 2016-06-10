@@ -303,7 +303,11 @@ class HotTodayWdg(BaseRefreshWdg):
         platform_code_search = Search("twog/platform")
         platform_code_search.add_filter('name', platform)
         platform_search_object = platform_code_search.get_sobject()
-        platform_code = platform_search_object.get_value('code')
+
+        if platform_search_object:
+            platform_code = platform_search_object.get_value('code')
+        else:
+            platform_code = ''
 
         if show_platform_connection():
             # Using the client_code and platform_code, search for an existing entry.
