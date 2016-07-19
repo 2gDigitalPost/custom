@@ -414,7 +414,7 @@ class HotTodayWdg(BaseRefreshWdg):
                     task_table.add_cell(data=inspect_button, row=current_task_row)
 
                     # Each task in the row will have the following properties to be displayed
-                    cell_names = ['process', 'status', 'assigned', 'bid_end_date']
+                    cell_names = ['process', 'status']
 
                     # Add each property from left to right in the current task row. Abbreviate the text to make it
                     # fit better
