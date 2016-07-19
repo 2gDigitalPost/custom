@@ -316,14 +316,18 @@ class HotTodayWdg(BaseRefreshWdg):
             client_platform_connection_search.add_filter('platform_code', platform_code)
             client_platform_connection = client_platform_connection_search.get_sobject()
 
-        code_cell = title_table.add_cell(data=code, row=code_row)
-        client_cell = title_table.add_cell(data=client_data, row=code_row)
-        platform_cell = title_table.add_cell(data=platform_data, row=code_row)
-        code_cell.add_style('padding-right', '3px')
+        code_cell = title_table.add_cell(data='<strong>Title code:</strong> {0}'.format(code), row=code_row)
+        code_cell.add_style('padding-top', '3px')
+        code_cell.add_style('padding-bottom', '3px')
+        code_cell.add_style('padding-left', '3px')
+
+        client_row = title_table.add_row()
+
+        client_cell = title_table.add_cell(data=client_data, row=client_row)
+        platform_cell = title_table.add_cell(data=platform_data, row=client_row)
+
         client_cell.add_style('padding-left', '3px')
         client_cell.add_style('padding-right', '3px')
-        client_cell.add_style('text-align', 'center')
-        client_cell.add_style('width', '33%')
         platform_cell.add_style('padding-left', '3px')
 
         # Third Row: A table containing the Client Deliver By and Expected Due Date dates
