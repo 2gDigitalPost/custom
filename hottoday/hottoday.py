@@ -354,9 +354,6 @@ class HotTodayWdg(BaseRefreshWdg):
             dblbb = title_table.add_cell(data=offbutt, row=priority_row)
             dblbb.add_attr('width', '20px')
 
-            dblpr = title_table.add_cell(data='Set At #: ', row=priority_row)
-            dblpr.add_attr('align', 'left')
-
             prioid = 'prio_{0}'.format(counter)
 
             # TODO: Figure out how to get the external rejection search key and what it's used for
@@ -369,7 +366,7 @@ class HotTodayWdg(BaseRefreshWdg):
                 ami_extr = 'true'
                 row_priority = current_priority
 
-            dbltxt = title_table.add_cell(data='<input type="text" value="{0}" row_type="title" title_sk="{1}" current_count="{0}" current_priority="{2}" class="count_order" id="{3}" external_rejection="{4}" ext_sk="{5}" style="background-color: #FFFFFF;"/>'.format(counter, title.get_search_key(), row_priority, prioid, ami_extr, external_rejection_search_key), row=priority_row)
+            dbltxt = title_table.add_cell(data='Set At #: <input type="text" value="{0}" row_type="title" title_sk="{1}" current_count="{0}" current_priority="{2}" class="count_order" id="{3}" external_rejection="{4}" ext_sk="{5}" style="background-color: #FFFFFF;"/>'.format(counter, title.get_search_key(), row_priority, prioid, ami_extr, external_rejection_search_key), row=priority_row)
             dbltxt.add_attr('align', 'left')
             dbltxt.add_behavior(show_change(prioid))
 
