@@ -328,6 +328,7 @@ class HotTodayWdg(BaseRefreshWdg):
 
         client_cell.add_style('padding-left', '3px')
         client_cell.add_style('padding-right', '3px')
+        client_cell.add_style('width', '35%')
         platform_cell.add_style('padding-left', '3px')
 
         # Third Row: A table containing the Client Deliver By and Expected Due Date dates
