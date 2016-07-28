@@ -23,9 +23,9 @@ class PreQualEvalWdg(BaseTableElementWdg):
         my.styles = ['Technical', 'Spot QC', 'Mastering']
         my.aspect_ratios = ['16x9 1.33', '16x9 1.33 Pan & Scan', '16x9 1.78 Anamorphic', '16x9 1.78 Full Frame',
                             '16x9 1.85 Letterbox', '16x9 1.85 Matted', '16x9 1.85 Matted Anamorphic', '16x9 2.20',
-                            '16x9 2.20 Letterbox', '16x9 2.35 Anamorphic', '16x9 2.35 Letterbox', '16x9 2.40 Letterbox',
-                            '16x9 2.55 Letterbox', '4x3 1.33 Full Frame', '4x3 1.78 Letterbox', '4x3 1.85 Letterbox',
-                            '4x3 2.35 Letterbox', '4x3 2.40 Letterbox']
+                            '16x9 2.20 Letterbox', '16x9 2.35 Anamorphic', '16x9 2.35 Letterbox', '16x9 2.39 Letterbox',
+                            '16x9 2.40 Letterbox', '16x9 2.55 Letterbox', '4x3 1.33 Full Frame', '4x3 1.78 Letterbox',
+                            '4x3 1.85 Letterbox', '4x3 2.35 Letterbox', '4x3 2.40 Letterbox']
 
         my.standards = ['625', '525', '720', '1080 (4:4:4)', '1080', 'PAL', 'NTSC']
 
