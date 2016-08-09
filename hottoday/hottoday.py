@@ -252,7 +252,7 @@ class HotTodayWdg(BaseRefreshWdg):
         elif is_repurpose:
             title_cell_background_color = '#4190B7'
         elif is_imf:
-            title_cell_background_color = '#5EC729'
+            title_cell_background_color = '#4D7D35'
         else:
             title_cell_background_color = '#D7D7D7'
 
