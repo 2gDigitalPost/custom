@@ -306,6 +306,20 @@ class TitleRow(BaseRefreshWdg):
                 repurpose_button_cell.add_attr('id', 'repurpose_button_{0}'.format(my.code))
                 repurpose_button_cell.add_attr('align', 'right')
 
+                if main_obj.get('imf'):
+                    imf_button_text = 'Title is set as an IMF order, do you want to remove this?'
+                else:
+                    imf_button_text = 'Set title as an IMF order?'
+
+                imf_button = ButtonSmallNewWdg(title=imf_button_text,
+                                               icon=CustomIconWdg.icons.get('IMF'))
+                imf_button.add_behavior(set_imf(main_obj.get_value('code'), my.order_sk,
+                                                main_obj.get_value('imf')))
+
+                imf_button_cell = bottom_buttons.add_cell(imf_button)
+                imf_button_cell.add_attr('id', 'imf_button_{0}'.format(my.code))
+                imf_button_cell.add_attr('align', 'right')
+
                 prio_reset = ButtonSmallNewWdg(title="Reset Dept Priorities", icon=CustomIconWdg.icons.get('UNDO'))
                 prio_reset.add_behavior(get_reset_dept_prios(main_obj.get_value('code')))
                 pr = bottom_buttons.add_cell(prio_reset)
@@ -565,6 +579,66 @@ catch(err) {
     spt.alert(spt.exception.handler(err));
 }
      ''' % (title_code, order_sk, is_repurpose)}
+    return behavior
+
+
+def set_imf(title_code, order_sk, is_imf):
+    """
+    Toggles 'IMF' flag on an order
+
+    :param title_code: The title code
+    :param order_sk: The order's search key
+    :return: Javascript behavior
+    """
+    behavior = {'css_class': 'clickme', 'type': 'click_up', 'cbjs_action': '''
+try {
+    var top_el = spt.api.get_parent(bvr.src_el, '.twog_order_builder');
+    var server = TacticServerStub.get();
+    var title_code = '%s';
+    var order_sk = '%s';
+    var is_currently_imf = '%s';
+    var title_sk = server.build_search_key('twog/title', title_code);
+    var repurpose_button = top_el.getElementById('repurpose_button_' + title_code).getElementsByClassName("spt_button_icon")[0];
+
+    var is_currently_on;
+    var confirm_text;
+
+    if(is_currently_imf == 'True') {
+        is_currently_on = true;
+        confirm_text = "Are you sure you want to unset this title as an IMF order?";
+    } else {
+        is_currently_on = false;
+        confirm_text = "Are you sure you want to set this title as an IMF order?";
+    }
+
+    if(confirm(confirm_text)) {
+        if(!is_currently_on) {
+            spt.app_busy.show("Setting 'IMF'...");
+            server.update(title_sk, {'imf': true});
+        } else {
+            spt.app_busy.show("Removing 'IMF'...");
+            server.update(title_sk, {'imf': false});
+        }
+
+        order_sk = top_el.getAttribute('order_sk');
+        var display_mode = top_el.getAttribute('display_mode');
+        var user = top_el.getAttribute('user');
+        var groups_str = top_el.get('groups_str');
+        var is_master_str = top_el.getAttribute('is_master_str');
+        var allowed_titles = top_el.getAttribute('allowed_titles');
+        var title_el = top_el.getElementsByClassName('cell_' + title_sk)[0];
+        var found_parent_sk = title_el.get('parent_sk');
+        var found_parent_sid = title_el.get('parent_sid');
+        var send_data =  {sk: title_sk, parent_sid: found_parent_sid, parent_sk: found_parent_sk, order_sk: order_sk, display_mode: display_mode, user: user, groups_str: groups_str, allowed_titles: allowed_titles, is_master: is_master_str};
+        spt.api.load_panel(title_el, 'order_builder.TitleRow', send_data);
+        spt.app_busy.hide();
+    }
+}
+catch(err) {
+    spt.app_busy.hide();
+    spt.alert(spt.exception.handler(err));
+}
+     ''' % (title_code, order_sk, is_imf)}
     return behavior
 
 

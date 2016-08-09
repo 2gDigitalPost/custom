@@ -18,6 +18,7 @@ class CustomIconWdg(IconWdg):
         'FILE_ADD':            "/context/icons/custom/file_add.png",
         'GRAY_BOMB':           "/context/icons/custom/gray_bomb.png",
         'HACKUP':              "/context/icons/custom/hackup.png",
+        'IMF':                 "/context/icons/custom/imf.png",
         'NORMAL_EDIT':         "/context/icons/custom/normal_edit.png",
         'PRIORITY':            "/context/icons/custom/priority.png",
         'QUICK_EDIT':          "/context/icons/custom/quick_edit.png",

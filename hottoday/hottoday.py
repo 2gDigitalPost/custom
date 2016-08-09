@@ -225,6 +225,7 @@ class HotTodayWdg(BaseRefreshWdg):
         requires_mastering_qc = title.get_value('requires_mastering_qc', False)
         is_redo = title.get_value('redo', False)
         is_repurpose = title.get_value('repurpose', False)
+        is_imf = title.get_value('imf', False)
 
         # If there is an 'episode', append it to the title's name
         if episode:
@@ -250,6 +251,8 @@ class HotTodayWdg(BaseRefreshWdg):
             title_cell_background_color = '#C8A2C8'
         elif is_repurpose:
             title_cell_background_color = '#4190B7'
+        elif is_imf:
+            title_cell_background_color = '#5EC729'
         else:
             title_cell_background_color = '#D7D7D7'
 
@@ -263,6 +266,8 @@ class HotTodayWdg(BaseRefreshWdg):
             self.set_extra_info_row('Repurposed Title', '#0C2FB7', title_table)
         if requires_mastering_qc:
             self.set_extra_info_row('Requires Mastering QC', 'red', title_table)
+        if is_imf:
+            self.set_extra_info_row('IMF', 'red', title_table)
 
         # First row: Number (counter) and name
         name_row = title_table.add_row()
