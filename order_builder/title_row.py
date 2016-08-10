@@ -77,7 +77,8 @@ class TitleRow(BaseRefreshWdg):
             'Export In_Progress': '#796999',
             'Export In Progress': '#796999',
             'Buddy Check In_Progress': '#1aade3',
-            'Buddy Check In Progress': '#1aade3'
+            'Buddy Check In Progress': '#1aade3',
+            'Waiting on client materials': '#ffd97f'
         }
 
     def get_display(my):
