@@ -37,13 +37,14 @@ class ElementEvalWdg(BaseTableElementWdg):
                             '16x9 2.35 Letterbox',
                             '16x9 2.39 Letterbox',
                             '16x9 2.40 Letterbox',
+                            '16x9 2:51 Letterbox',
                             '16x9 2.55 Letterbox',
                             '4x3 1.33 Full Frame',
                             '4x3 1.78 Letterbox',
                             '4x3 1.85 Letterbox',
                             '4x3 2.35 Letterbox',
-                            '4x3 2.40 Letterbox',
-                            '2:51 Letterbox']
+                            '4x3 2.40 Letterbox'
+                            ]
         my.standards = ['625', '525', '720', '1080 (4:4:4)', '1080', 'PAL', 'NTSC', '-']
         my.element = None
         my.element_lines = None
