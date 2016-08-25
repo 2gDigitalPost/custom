@@ -31,6 +31,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                             '16x9 1.85 Matted',
                             '16x9 1.85 Matted Anamorphic',
                             '16x9 2.00 Letterbox',
+                            '16x9 2.06 Letterbox',
                             '16x9 2.10 Letterbox',
                             '16x9 2.20 Letterbox',
                             '16x9 2.35 Anamorphic',
