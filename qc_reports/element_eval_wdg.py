@@ -1669,7 +1669,7 @@ class ElementEvalLinesWdg(BaseTableElementWdg):
         scales = ['1', '2', '3', 'FYI']
         in_safe = ['No', 'Yes']
         insrc = ['No', 'Yes', 'New', 'Approved', 'Fixed', 'Not Fixed', 'Approved by Production', 'Approved by Client',
-                 'Approved as is', 'Approved by Territory']
+                 'Approved as is', 'Approved by Territory', 'From Approved Master']
         wo_code = str(my.kwargs.get('wo_code'))
         reloaded = False
         if 'reload' in my.kwargs.keys():
