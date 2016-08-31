@@ -480,8 +480,8 @@ class HotTodayWdg(BaseRefreshWdg):
         expected_due_date_status_color = self.DATE_STATUS_COLOR.get(expected_due_date_status, '#000000')
 
         # The tr's for our td's in the table
-        client_deliver_by_row = date_table.add_row()
         expected_due_date_row = date_table.add_row()
+        client_deliver_by_row = date_table.add_row()
 
         # Set the row's color
         client_deliver_by_row.add_style('color', client_deliver_by_date_status_color)
