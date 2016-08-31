@@ -494,14 +494,14 @@ class HotTodayWdg(BaseRefreshWdg):
             each_row.add_style('text-shadow', '1px 1px #000000')
 
         # Set the td's for Client Deliver By row, get the second cell for the padding-left function below
-        date_table.add_cell(data='Client Deliver By:', row=client_deliver_by_row)
-        client_deliver_by_cell = date_table.add_cell(data=client_deliver_by_date.strftime('%m-%d-%Y %I:%M %p'),
-                                                     row=client_deliver_by_row)
-
-        # Set the td's for Expected Due Date row, get the second cell for the padding-left function below
-        date_table.add_cell(data='Expected Due Date:', row=expected_due_date_row)
+        date_table.add_cell(data='Client Deliver By:', row=expected_due_date_row)
         expected_due_date_cell = date_table.add_cell(data=expected_due_date.strftime('%m-%d-%Y %I:%M %p'),
                                                      row=expected_due_date_row)
+
+        # Set the td's for Expected Due Date row, get the second cell for the padding-left function below
+        date_table.add_cell(data='Expected Due Date:', row=client_deliver_by_row)
+        client_deliver_by_cell = date_table.add_cell(data=client_deliver_by_date.strftime('%m-%d-%Y %I:%M %p'),
+                                                     row=client_deliver_by_row)
 
         # Add left side padding to each of the td's with the dates (looks a little better when rendered)
         map(lambda x: x.add_style('padding-left', '5px'), [client_deliver_by_cell, expected_due_date_cell])
