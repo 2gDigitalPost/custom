@@ -21,7 +21,7 @@ class ElementEvalWdg(BaseTableElementWdg):
                        'VTR235', 'VTR251', 'VTR252', 'VTR253', 'VTR254', 'VTR255', 'VTR261', 'VTR262', 'VTR263',
                        'VTR264', 'VTR265', 'VTR281', 'VTR282', 'VTR283', 'VTR284', 'VTR285', 'FCP01', 'FCP02', 'FCP03',
                        'FCP04', 'FCP05', 'FCP06', 'FCP07', 'FCP08', 'FCP09', 'FCP10', 'FCP11', 'FCP12', 'Amberfin',
-                       'Clipster', 'Stradis']
+                       'Clipster', 'Stradis', 'Switch Player']
         my.styles = ['Technical', 'Spot QC', 'Mastering']
         my.aspect_ratios = ['16x9 1.33',
                             '16x9 1.33 Pan & Scan',
