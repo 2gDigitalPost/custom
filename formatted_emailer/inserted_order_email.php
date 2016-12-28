@@ -42,7 +42,7 @@
 		#echo "\nValid Email address found: " . $To . " Return Code for valid email is: " . $validEmailResult . "\n";
 		$mail = new PHPMailer();
 		$mail->IsSMTP();
-		$mail->Host = "mail.2gdigital.com";
+		$mail->Host = "192.168.53.100";
 		$mail->SMTPAuth = false;
 		$mail->From = $From;
 		$mail->FromName = $From_Name;
